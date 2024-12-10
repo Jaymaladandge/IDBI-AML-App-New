@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+
+</style>
+</head>
+<!--  <div id="load"></div> -->
+<body
+	class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+						<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Action Plan</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a href="#">Home</a></li>
+								<li class="breadcrumb-item active">Action Plan</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-12">
+							<!--  <form class="form-horizontal" id="mainkrifrm"> -->
+								<div class="invoice p-3 mb-3">
+
+									<div class="card card-tabs">
+										<div class="card-header p-2">
+											<ul class="nav nav-tabs">
+												<li class="nav-item"><a class="nav-link bg-secondary active"
+													href="#activity" data-toggle="tab" id="summarylink"><i
+														class="fas fa-list-ul"></i> Summary</a></li>
+												<li class="nav-item"><a class="nav-link bg-secondary"
+													href="#timeline" data-toggle="tab" id="timelinelink" style="display:none;" ><i
+														class="fas fa-history"></i> Logs</a></li>
+											</ul>
+										</div>
+										<!-- /.row -->
+										<!-- Filter Table row -->
+										<!-- /.card-header -->
+										<div class="card-body">
+											<div class="tab-content">
+												<div class="active tab-pane" id="activity">
+											<div class="row">
+												<div class="col-12">
+													<a th:href="@{/createActionPlan}"><button
+																class="btn  bg-teal float-left">
+																<i class="fas fa-plus-square"></i> Create Action Plan
+																
+															</button></a>
+												</div>
+											</div>
+											<br>
+											<div class="row invoice-info">
+
+												<div class="col-sm-3">
+													<div class="form-group">
+													<label>Select Parameter</label><select class="form-control select2" name="dimension" id="dimension"
+														data-placeholder="Search Parameter" style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='statementid'>Action Id</option>
+														<option value='category'>Action Name</option>
+														<option value='subcategory'>Source Name</option>
+														<option value='deptdata'>Status
+															</option>
+														<option value='frequency'>Completion percent</option>
+														<option value='riskowner'>Completion Date</option>
+														<option value='status'>Frequency</option>
+														
+													</select><br>
+													<br>
+													</div>
+												</div>
+												<div class="col-sm-5">
+													<label>Value</label> <input type="text" class="form-control form-control-sm"
+														name="searchcriteria" id="searchcriteria"
+														placeholder="Value">
+												</div>
+												<div class="col-sm-2">
+													<label>Sort</label><select class="select2" name="sorting" id="sorting"
+														data-placeholder="Sort" style="width: 100%;">
+														<option value=''>Sort</option>
+														<option value='a'>Ascending</option>
+														<option value='d'>Descending</option>
+														<option value='n'>None</option>
+													</select><br>
+													<br>
+												</div>
+												<div class="col-sm-2 pl=5">
+													<label></label><a class="text-info mt-4" href="#"><h3>
+															<i class="fab fa-searchengin"></i>
+														</h3></a><br>
+												</div>
+											</div>
+											<!-- /.row -->
+											<!-- Table row -->
+											<div class="row">
+												<div class="col-12">
+													<table id="actionplantable"
+														class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr>
+																<th>Serial#</th>
+																	<th>ID</th>
+																	<th>Name</th>
+																	<th>Source Name</th>
+																	<th>Status</th>
+																	<th>Completion(%)</th>
+																	<th>Completion Date</th>
+																	<th>Frequency</th>
+																	<th></th>
+																	<th></th>
+															</tr>
+														</thead>
+																													<tbody>
+																<tr>
+																	<td>1</td>
+																	<td><a class="btn text-blue" href="#" data-toggle="modal" data-target="#actionmodal">LIC04058921007611</a></td>
+																	<td>RSA Action Name</td>
+																	<td>RSA</td>
+																	<td>Complete</td>
+																	<td>70%</td>
+																	<td>07/16/2021</td>
+																	<td>Monthy</td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple"
+																			th:href="@{/ModifyActionPlan(sourceId='LIC04058921007612',sourceName='RSA')}">
+																				<i class="fa fa-edit fa-1x text-black">&nbsp;Edit</i>
+																		</a>
+																	</span></td>
+
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-maroon" href="#"> <i
+																				class="fa fa-history fa-1x text-black">&nbsp;Log</i></a></span></td>
+																	
+																</tr>
+																<tr>
+																	<td>2</td>
+																	<td><a class="btn text-blue" href="#" data-toggle="modal" data-target="#actionmodal">LIC04058921007612</a></td>
+																	<td>KRI Action Name</td>
+																	<td>KRI</td>
+																	<td>Pending</td>
+																	<td>50%</td>
+																	<td>07/15/2021</td>
+																	<td>Daily</td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple"
+																			th:href="@{/ModifyActionPlan(sourceId='LIC01234567890',sourceName='KRI')}"> <i
+																				class="fa fa-edit fa-1x text-black">&nbsp;Edit</i></a>
+																	</span></td>
+
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-maroon" href="#"> <i
+																				class="fa fa-history fa-1x text-black">&nbsp;Log</i></a></span></td>
+
+																</tr>
+																<tr>
+																	<td>3</td>
+																	<td><a class="btn text-blue" href="#" data-toggle="modal" data-target="#actionmodal">LIC04058921007613</a></td>
+																	<td>Top Risk Action Name</td>
+																	<td>Top Risk</td>
+																	<td>Active</td>
+																	<td>100%</td>
+																	<td>07/05/2021</td>
+																	<td>Quarterly</td>
+
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple"
+																			th:href="@{/ModifyActionPlan(sourceId='LIC04058921007613',sourceName='Top Risk')}" > <i
+																				class="fa fa-edit fa-1x text-black">&nbsp;Edit</i></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-maroon" href="#"> <i
+																				class="fa fa-history fa-1x text-black">&nbsp;Log</i></a></span></td>
+																</tr>
+
+															</tbody>
+													</table>
+												</div>
+												<!-- /.col -->
+											</div>
+										
+									</div>
+									<!-- /.row -->
+									<div class="tab-pane" id="timeline" >
+									                    <div class="timeline timeline-inverse">
+                      <!-- timeline time label -->
+                         <!-- timeline time label -->
+              <div class="time-label">
+                <span class="bg-success">14 May. 2021</span>
+              </div>
+              <!-- /.timeline-label -->
+              <!-- timeline item -->
+              <div>
+                <i class="fas fa-envelope bg-blue"></i>
+                <div class="timeline-item">
+                  <span class="time"><i class="fas fa-clock"></i> 12:05</span>
+                  <h3 class="timeline-header">Action Plan for KRI Created</h3>
+
+                  <div class="timeline-body">
+                   KRI: Percentage in variation in net addition (of agents) from target
+                  </div>
+                  <div class="timeline-footer">
+                    <a class="btn btn-primary btn-sm">Read more</a>
+                    <a class="btn btn-danger btn-sm">Delete</a>
+                  </div>
+                </div>
+                </div>
+                      <div class="time-label">
+                        <span class="bg-success">
+                          10 Feb. 2014
+                        </span>
+                      </div>
+                      <!-- /.timeline-label -->
+                      <!-- END timeline item -->
+                      <!-- timeline item -->
+                    
+                      <div>
+                         <i class="fas fa-envelope bg-primary"></i>
+
+                        <div class="timeline-item">
+                          <span class="time"><i class="far fa-clock"></i> 5 mins ago</span>
+
+                          <h3 class="timeline-header border-0"><a href="#">Arnold Anthony</a> approved request
+                          </h3>
+                        </div>
+                      </div>
+                      <!-- END timeline item -->
+                      <!-- timeline item -->
+                      <div class="time-label">
+                        <span class="bg-success">
+                          3 Jan. 2014
+                        </span>
+                      </div>
+                      <div>
+                         <i class="fas fa-envelope bg-primary"></i>
+
+                        <div class="timeline-item">
+                          <span class="time"><i class="far fa-clock"></i> 27 mins ago</span>
+
+                          <h3 class="timeline-header"><a href="#">Dinesh Mohanty</a> created request</h3>
+
+                          <div class="timeline-body">
+                            Request created.
+                          </div>
+                         
+                          
+                        </div>
+                      </div>
+                          <div>
+                <i class="fas fa-comments bg-yellow"></i>
+                <div class="timeline-item">
+                  <span class="time"><i class="fas fa-clock"></i> 27 mins ago</span>
+                  <h3 class="timeline-header"><a href="#">Dinesh </a> commented on Risk Appetite Action Plan</h3>
+                  <div class="timeline-body">
+                    new action plan created
+                  </div>
+                 
+                </div>
+              </div>
+                      <!-- END timeline item -->
+                      <!-- timeline time label -->
+                      
+                      <!-- /.timeline-label -->
+
+                      <!-- END timeline item -->
+                      <div>
+                        <i class="far fa-clock bg-gray"></i>
+                      </div>
+                    </div>
+									</div>
+									
+												<!-- /.tab-pane -->
+									
+										<div class="modal fade" id="actionmodal">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <section class="content">
+					
+								<div class="invoice">
+									<div class="card card-info card-tabs">
+										<div class="card-header">
+                  							<h3 class="card-title">
+                   								 View</h3>
+                   								 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+                						</div>
+                <!-- /.col -->
+    								</div> 
+			<form class="form-horizontal" id="frmriskapptstmt">
+				<div class="card-body">
+				<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+                  
+                 <div class="row">
+											<div class="col-sm-12">
+												<div class="form-group row">
+								                    <label for="actionid" class="mt-1 ml-2">Action Plan ID</label>&nbsp;&nbsp;&nbsp;
+								                    <input type="text" class="form-control form-control-sm col-2 text-bold" id="actionid" name="actionid" value="LIC04058921007617" readonly>&nbsp;&nbsp;&nbsp;&nbsp;
+								                    <label for="actionrid" class="mt-1 ml-2">Status</label>&nbsp;&nbsp;&nbsp;
+								                    <input type="text" class="form-control form-control-sm col-2 text-bold" id="actionstatus" name="actionstatus" value="View" readonly>&nbsp;&nbsp;&nbsp;&nbsp;
+								                    <label for="actioncreatedate" class="mt-1">Created Date</label>&nbsp;&nbsp;&nbsp;
+								                    <input type="text" class="form-control form-control-sm col-2 text-bold" id="actioncreatedate" name="actioncreatedate"  readonly>
+								                 </div>
+											</div>
+										</div>
+                  
+                </div></div></div>
+										 <div class="row">
+				
+				 <div class="col-sm-6">
+						<div class="form-group">
+						  <label for="actionname">Source Name <code>*</code></label>
+						  <input type="text" name="sourcename" class="form-control form-control-sm"  id="sourcename" placeholder="Source Name" value="RSA" disabled>
+						</div>
+					</div>
+					
+					 <div class="col-sm-6">
+				 <div class="form-group">
+				 <label for="action Id">Source Id <code>*</code></label>
+				  <input type="text" name="sourceid" class="form-control form-control-sm"  id="sourceid" placeholder="Source Id" value="LIC04058921007617" disabled>
+				 </div>
+				 </div>
+				
+				 </div>
+										<div class="row">
+											
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="actionname">Action Name <code>*</code></label>
+													<input type="text" name="actionname"
+														class="form-control form-control-sm" id="actionname"
+														placeholder="Action Name"
+														value="Risk Analysis and Planning" readonly>
+												</div>
+											</div>
+
+												<div class="col-sm-6">
+												<div class="form-group">
+													<label for="actioncategory">Action Category <code>*</code></label>
+													<select class="form-control select2" name="actioncategory"
+														id="actioncategory" style="width: 100%;" disabled>
+														<option value=''>Select</option>
+														<option value='N' selected>IRDA</option>
+														<option value='P'>R&C</option>
+													</select>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+
+
+
+										<div class="row">
+									
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="actiondescription">Action Description <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="actiondescription" id="actiondescription" rows="2"
+														placeholder="Description" disabled>Zero tolerence of the fraud in policy creation</textarea>
+												</div>
+												</div>
+												<div class="col-sm-6">
+												<div class="form-group">
+													<label for="actionowner">Action Owner <code>*</code></label>
+													<select class="form-control select2" name="actionowner"
+														id="actionowner" style="width: 100%;" disabled>
+														<option value=''>Select</option>
+														<option value='A' selected>Marketing</option>
+														<option value='C'>IT</option>
+														<option value='D'>Audit</option>
+														<option value='T'>Tennessee</option>
+													</select>
+												</div>
+											</div>
+											
+
+										
+										</div>
+										<div class="row">
+											
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="frequency">Update Frequency <code>*</code></label>
+													<select class="form-control select2" name="frequency"
+														id="frequency" style="width: 100%;" disabled>
+														<option value=''>Select</option>
+														<option value='D'>Daily</option>
+														<option value='W'>Weekly</option>
+														<option value='F'>Fortnightly</option>
+														<option value='M'>Monthly</option>
+														<option value='Q' selected>Quarterly</option>
+														<option value='H'>Half Yearly</option>
+														<option value='Y'>Yearly</option>
+													</select>
+												</div>
+											</div>
+											
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="department">Department Providing Data <code>*</code></label>
+													<select class="select2" name="department" id="department"
+														multiple="multiple" data-placeholder="Department"
+														style="width: 100%;" disabled>
+														<option value=''>Select</option>
+														<option value='A'>Marketing</option>
+														<option value='C'>Audit</option>
+														<option value='D' selected>Information Technology</option>
+														<option value='T'>Tennessee</option>
+													</select>
+												</div>
+											</div>
+											
+										</div>
+
+										<!-- /.row -->
+
+										<div class="row">
+										
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="expcompdate"> Completion Date <code>*</code></label>
+													<div class="input-group date" data-target-input="nearest">
+								<input type="text" class="form-control datetimepicker-input" placeholder="Completion Date" name="expcompdate" id="expcompdate" data-target="#expcompdate" value="05/09/2021" disabled/>
+								<div class="input-group-append" data-target="#expcompdate" data-toggle="datetimepicker">
+									<div class="input-group-text"><i class="far fa-calendar-alt"></i></div>
+									
+								</div>
+							</div>
+												</div>
+											</div>
+										
+
+
+										</div>
+										<!-- /.row -->
+										
+
+										<div class="row">
+
+
+										
+											 <div class="col-sm-12">
+					 <div class="form-group">
+						<table class="table uploadTable" style="border: 1px solid #e9ecef;">
+						<thead>
+						  <tr>
+							<th>File Name</th>
+							<th>File Size</th>
+							<th>Upload Date</th>
+							<th>Upload by</th>
+							<th></th>
+							<th></th>
+						  </tr>
+						</thead>
+						<tbody>
+						  <tr>
+							<td>Functional-requirements.docx</td>
+							<td>49.8005 kb</td>
+							<td>11/05/2021</td>
+							<td>Sharath Nair</td>
+							<td class="text-right py-0 align-middle">
+							  <div class="btn-group btn-group-sm">
+								<a href="#" class="btn btn-info"><i class="fas fa-download"></i></a>
+							  </div>
+							</td>
+							<td></td>
+						</tbody>
+						
+						</table>
+					  </div>
+					  </div>
+										</div>
+
+										
+										<!-- /.row -->
+
+									
+
+				 	</div>
+				<!-- /.row -->
+									
+									<!-- /.card-body -->
+									</form>
+									</div>
+									<!-- /.card-footer -->
+								
+              
+              	</section>
+              	</div>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+
+												
+												
+												<!-- /.tab-pane -->
+											</div>
+											<!-- /.tab-content -->
+										</div>
+										<!-- /.card-body -->
+									</div>
+									<!-- /.card -->
+
+								</div>
+								<!-- /.invoice -->
+
+							<!-- </form> -->
+							<!-- /.form -->
+
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script>
+	  $(function () {
+	    $("#actionplantable").DataTable({
+		  "columnDefs": [ { orderable: false, targets: [8,9] } ],
+	      "responsive": true, "autoWidth": true, "searching": false, "fixedHeader": true,
+	      "buttons": ["csv", "excel", "pdf", "print"]
+	    }).buttons().container().appendTo('#actionplantable_wrapper .col-md-6:eq(0)');
+	  });
+	  
+	
+	  //loader
+  document.onreadystatechange = function () {
+  var state = document.readyState
+  if (state == 'interactive') {
+       document.getElementById('contents').style.visibility="hidden";
+   } else if (state == 'complete') {
+      setTimeout(function(){
+         document.getElementById('interactive');
+         document.getElementById('load').style.visibility="hidden";
+         document.getElementById('contents').style.visibility="visible";
+      },1000);
+   }
+  }
+ 	</script>
+	<script>
+  	$(function () {
+	    //Initialize Select2 Elements
+	    $('.select2').select2();
+		
+		bsCustomFileInput.init();
+	}) 
+	</script>
+	<!-- PAGE PLUGINS -->
+	<script>
+	  //Button Click
+	  $(document).ready(function(){
+	  
+	  		
+		
+			$( "a .fa-history" ).click(function() {
+				$('#timelinelink').css('class', 'border');
+	  			$('#timelinelink').css('display', '');
+	  			$('#timelinelink').click();
+			});
+
+			$("#summarylink").click(function() {
+				$('#timelinelink').css('display', 'none');
+			});
+			
+			
+
+		});
+	  $("#actioncreatedate").val(moment(new Date()).format('DD/MM/YYYY'));
+	</script>
+
+</body>
+</html>

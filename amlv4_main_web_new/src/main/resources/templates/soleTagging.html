@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title sec:authentication="principal.ermTitle"></title>
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Select2 -->
+	<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+	<!-- daterange picker -->
+	<link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+	<!-- Tempusdominus Bootstrap 4 -->
+	<link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+	<style>
+		.card-info:not(.card-outline)>.card-header {
+			background-color: #044383 !important;
+		}
+
+		.bg-info {
+			background-color: #044383 !important;
+		}
+
+		.btn-info {
+			color: #fff;
+			background-color: #044383 !important;
+			border-color: #044383 !important;
+			box-shadow: none;
+		}
+
+		#load {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			opacity: 1;
+		}
+	</style>
+</head>
+
+<div id="load"></div>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<!-- <div class="col-sm-6">
+							<h1>Edit Logic</h1>
+						</div> -->
+						<!-- /.col -->
+						<div class="col-sm-12">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<!--  <li class="breadcrumb-item"><a
+								th:href="@{/RuleBuilderSummary}">Rule Builder Summary </a></li>      -->
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- /.row -->
+					<div class="row">
+						<form autocomplete="off" role="form" method="post" id="soleTaggingForm"
+							th:action="@{/createSoleTaggingAction}" th:object="${encryptedRequest}"
+							enctype="multipart/form-data" class="col-sm-12">
+							<input type="hidden" id="encryptedJson" name="encryptedJson" />
+							<div class="col-sm-12">
+								<div class="card card-info">
+									<div class="card-header">
+										<h3 class="card-title text-center">Sole Tagging</h3>
+									</div>
+								</div>
+							</div>
+
+
+							<!--                             Form Start here                          -->
+
+
+							<div class="bs-stepper-content">
+								<div id="create-part" class="content" role="tabpanel"
+									aria-labelledby="create-part-trigger">
+									<div class="row">
+										<div class="col-12">
+											<div class="card card-outline card-info">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="userEin">Enter EIN<code>*</code></label>
+																<div class="input-group">
+																	<input type="text" class="form-control" id="userEin"
+																		name="userEin" placeholder="Enter user Ein">
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-2 mt-3">
+															<button type="button" id="fetchDataBtn"
+																class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+																name="fetchDataBtn">Fetch</button>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="userId">User Id
+																</label>
+																<div class="input-group">
+																	<input type="text" class="form-control" id="userId"
+																		name="userId" readonly />
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="userName">User Name</label>
+																<div class="input-group">
+																	<input type="text" class="form-control"
+																		id="userName" name="userName" readonly />
+
+																</div>
+															</div>
+														</div>
+
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="userEmail">Email Address
+																</label>
+																<div class="input-group">
+																	<input type="text" class="form-control"
+																		id="userEmail" name="userEmail" readonly />
+																</div>
+															</div>
+														</div>
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="userPosition">Position
+																</label>
+																<div class="input-group">
+																	<input type="text" class="form-control"
+																		id="userPosition" name="userPosition"
+																		readonly />
+																</div>
+															</div>
+														</div>
+
+														<div class="col-sm-6  ">
+															<div class="form-group row">
+																<label class="col-12">Select Date Range
+																	<code>*</code>
+																</label>
+																<!-- Date range
+																																										/.form group -->
+																<div class="input-group date"
+																	data-target-input="nearest">
+																	<input type="text"
+																		class="form-control col-6 datetimepicker-input"
+																		placeholder="Start Date" name="startDate"
+																		id="startDate" data-target="#startDate" />
+																	<div class="input-group-append"
+																		data-target="#startDate"
+																		data-toggle="datetimepicker">
+																		<div class="input-group-text">
+																			<em class="far fa-calendar-alt"></em>
+																		</div>
+																	</div>
+																	&nbsp;&nbsp;&nbsp; <input type="text"
+																		class="form-control col-6 datetimepicker-input"
+																		placeholder="End Date" name="endDate"
+																		id="endDate" data-target="#endDate" />
+																	<div class="input-group-append"
+																		data-target="#endDate"
+																		data-toggle="datetimepicker">
+																		<div class="input-group-text">
+																			<em class="far fa-calendar-alt"></em>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+
+													</div>
+
+
+													<div class="row">
+
+														<div class="col-sm-4">
+															<div class="form-group" id="">
+																<label for="zoneDropdown">User Zone</label>
+																<select class="select2 text-capitalize" name="userZone"
+																	data-placeholder="Select Zone" id="zoneDropdown"
+																	style="width: 100%;">
+																	<option value=''>Select</option>
+																	<option th:each="zone :	 ${zoneList}"
+																		th:value="${zone.zoneName}"
+																		th:text="${zone.zoneName}" />
+
+																</select>
+
+															</div>
+														</div>
+
+														<div class="col-sm-4">
+															<div class="form-group" id="">
+																<label for="regionDropdown">User
+																	Region</label>
+																<select class="form-control select2"
+																	data-placeholder="Select Region" name="userRegion"
+																	id="regionDropdown" style="width: 100%;">
+																	<option value=''>Select</option>
+																	<option th:each="region :  ${regionList}"
+																		th:value="${region.regionName}"
+																		th:text="${region.regionName}" />
+																</select>
+															</div>
+														</div>
+
+														<div class="col-sm-4">
+															<div class="form-group" id="">
+																<label for="branchDropdown">User
+																	Branch</label>
+																<select class="form-control select2"
+																	data-placeholder="Select Branch" name="userBranch"
+																	id="branchDropdown" style="width: 100%;">
+																	<!--	<option value=''>Select</option>
+																	<option th:each="branch : ${branchList}"
+																		th:value="${branch.branchId}"
+																		th:text="${branch.branchName}" /> -->
+																</select>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-sm-6 invoice-col">
+															<label class="col-sm-12" for="button"></label> <a
+																type="button" class="btn bg-maroon" id="create-bttn"> <i
+																	class="fas fa-step-forward"
+																	style="padding: 0 7px 0 0px;"></i>Create
+															</a> <a href="#" data-toggle="modal"
+																data-whatever="mainTopRiskPage"
+																data-target="#cancelmodel"><button type="reset"
+																	class="btn btn-warning" title="Cancel">
+																	<i class="fas fa-times"
+																		style="padding: 0 7px 0 0px;"></i>Cancel
+																</button></a>
+														</div>
+													</div>
+
+													<!-- End -->
+
+													<!-- Confirm Modal -->
+
+													<!-- Cancel Modal -->
+
+													<div class="modal fade" id="cancelmodel">
+														<div class="modal-dialog modal-fluid">
+															<div class="modal-content">
+																<div class="modal-header bg-info">
+																	<h6 class="modal-title">Confirm</h6>
+																	<button type="button" class="close"
+																		data-dismiss="modal" aria-label="Close">
+																		<span aria-hidden="true">&times;</span>
+																	</button>
+																</div>
+																<!-- form start -->
+																<div class="modal-body">
+																	<h5 class="card-title">
+																		If you leave this page, all changes will be
+																		lost. <br>
+																		Press "Ok" to Continue.
+																	</h5>
+																</div>
+																<div class="modal-footer">
+																	<button type="button" class="btn btn-secondary"
+																		data-dismiss="modal">
+																		<i class="fas fa-times"
+																			style="padding: 0 7px 0 0px;"></i>Cancel
+																	</button>
+																	<a class="btn btn-primary target"><i
+																			class="fas fa-check"
+																			style="padding: 0 7px 0 0px;"></i>Ok </a>
+																</div>
+															</div>
+															<!-- /.modal-content -->
+														</div>
+														<!-- /.modal-dialog -->
+													</div>
+													<!-- /.Cancel Modal -->
+
+
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<script th:src="@{/dist/appjs/erm/soleTagging.js}"></script>
+
+
+</body>
+
+</html>

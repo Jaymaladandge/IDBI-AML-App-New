@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>UTKARSH Login</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- icheck bootstrap -->
+<link rel="stylesheet"
+	th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+
+<style>
+body {
+	margin: 0;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: .875rem !important;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	text-align: left;
+	background-color: #fff;
+}
+
+header {
+	width: 100%;
+	padding: 10px 0 0 15px;
+	;
+}
+
+.login-box, .register-box {
+	width: 420px;
+	margin: 65px auto;
+	margin-bottom: 100px;
+}
+
+.content {
+	display: flex;
+	width: 85%;
+	margin: 120px auto;
+}
+
+hr {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border: 0;
+}
+
+.loginfooter {
+	bottom: 0;
+	position: fixed;
+	background: white;
+	border-top: 1px solid #dee2e6;
+	color: #869099;
+	width: 100%;
+	display: inline-flex;
+	padding: 5px 0 5px 0;
+}
+
+.beforefooter {
+	left: 10px;
+	bottom: 10%;
+	position: fixed;
+	width: 18%;
+	display: inline-flex;
+	text-align: right;
+	font-size: large;
+	float: right;
+	border: 1px outset black;
+	background-color: lightblue;
+	height: 32px;
+	box-shadow: 1px 1px 10px 10px lightblue;
+}
+
+.float-right {
+	float: right !important;
+	text-align: end;
+	padding: 0 10px 0px 0px;
+}
+
+.lic-hands {
+	margin: 0px;
+	background-color: #ffffff;
+	margin-left: 120px;
+	margin-top: 260px;
+	width: 380px;
+	height: 230px;
+}
+
+.right-side-box-firstRow {
+	margin-top: 0px;
+}
+
+.apis-div {
+	margin-left: 60px;
+	margin-top: 0px;
+}
+
+a:hover {
+	cursor: pointer;
+}
+</style>
+</head>
+<div id="load"></div>
+
+<body
+	style="background: url(dist/img/photo-2.png); background-size: cover;">
+
+	<div class="container-lg">
+
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="logo_left mt-n5">
+
+
+					<img th:src="@{/dist/img/IDBI-Bank-Logo1.png}" class="lic-hands"
+						alt="APIS">
+				</div>
+
+			</div>
+
+
+			<div class="col-lg-6">
+				<div class="login-box mt-5">
+
+					<input type="hidden" th:value="*{message}" id="message" /> <input
+						type="hidden" th:value="*{licenseText}" id="licenseText" />
+
+					<div class="row text-center mt-5 mr-2">
+						<img th:src="@{/dist/img/OMSLOGO.png}"
+							class="img-responsive rounded mx-auto d-block apis-div mt-n3 ml-2"
+							alt="APIS" style="width: 250px; height: 270px;">
+					</div>
+
+					<div class="lockscreen-logo mt-n2">
+						<h2 class="text-primary" style="color: #03468e !important;">Login</h2>
+					</div>
+					<div th:if="${param.error}">Invalid username and password.</div>
+					<form autocomplete="off" role="form" method="post"
+						th:action="@{/login}" id="loginForm">
+						<input type="hidden" name="username" id="username"> <input
+							type="hidden" name="password" id="password"> <input
+							type="hidden" name="officeType" id="officeType"> <input
+							type="hidden" id="officeTypeIs" name="officeType"
+							th:value="${officesType}" />
+						<div class="box-body box-lg">
+							<div class="form-group">
+								<input type="text" class="form-control" name="userName"
+									id="userName" placeholder="EIN">
+							</div>
+							<div class="input-group">
+								<input type="password" class="form-control" name="pass"
+									id="pass" placeholder="Password">
+								<div class="input-group-btn">
+									<button type="submit" id="logbtn" class="btn btn-warning btn">
+										<em class="fa fa-arrow-right text-muted"></em>
+									</button>
+								</div>
+							</div>
+						</div>
+					</form>
+					<br>
+					<!-- /. right side -->
+					<div class="help-block text-center">
+						<strong>Enter your details to start your session</strong> <br>
+
+					</div>
+					<div class="beforefooter ">
+						<div>
+							&nbsp;&nbsp;
+							<svg xmlns="http://www.w3.org/2000/svg" class="admonition-icon"
+								width="20" height="20" viewBox="0 0 18 18">
+        <path
+									d="M0 9c0-5 4-9 9-9s9 4 9 9-4 9-9 9-9-4-9-9zm8-1v5c0 .6.4 1 1 1s1-.4 1-1V8c0-.6-.4-1-1-1s-1 .4-1 1zm1-2c.6 0 1-.4 1-1s-.4-1-1-1-1 .4-1 1 .4 1 1 1z"
+									fill="#0052CC" fill-rule="evenodd"> </path>
+								
+        </svg>
+							&nbsp;&nbsp;
+						</div>
+						<input type="text" id="licenseMsg" name="licenseMsg"
+							disabled="disabled"
+							style="background-color: lightblue; border: 0px none; text-decoration-color: black;">
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+
+	<footer class="loginfooter">
+		<div class="col-md-4" style="float: left; padding: 6px 0 0 10px;">
+			© 2022-2023 All rights reserved.</div>
+		<div class="col-md-4"
+			style="float: left; text-align: center; padding: 6px 0 0 10px;">
+			&nbsp;<img class="img-fluid" src="/oms-web/dist/img/flag.png"
+				alt="Proudly Made In India" width="" height=""> &nbsp; Proudly
+			Made In India
+		</div>
+		<div class="float-right col-md-4">
+			Designed &amp; Developed by
+			<!--<img class="img-fluid" src="/oms-web/dist/img/apis_text.png" alt="Photo" width="60" height="60">-->
+			<img class="img-fluid" src="/oms-web/dist/img/intech-logo.png"
+				alt="Photo" width="100" height="100">
+		</div>
+	</footer>
+
+	<!-- /.login-box -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap 4 -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.min.js}"></script>
+
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<script>
+		$(document).ready(function() {
+			$('.beforefooter').hide();
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.error(message);
+			}
+		});
+	</script>
+	<script>
+		$(document).ready(function() {
+			var licenseText = $('#licenseText').val();
+			if (licenseText != "") {
+				$("#licenseMsg").val(licenseText);
+				$('.beforefooter').show();
+			}
+		});
+	</script>
+
+	<script>
+		$("#logbtn")
+				.click(
+						function() {
+							usernameTemp = $("#userName").val();
+							username = $.trim(usernameTemp);
+							passwd = $("#pass").val();
+							userOfficeType = $("#officeTypeIs").val();
+
+							var iterationCount = 1000;
+							var keySize = 128;
+
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							//var four = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+							//var salt = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							//var ciphertext = aesUtil.encrypt(salt, four, passphrase, username);
+							//var ciphertextpassword = aesUtil.encrypt(salt, four, passphrase, passwd);
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), username);
+							var ciphertextpassword = aesUtil.encrypt(
+									reverseText(passphrase), passwd);
+
+							var ciphertextoffice = aesUtil.encrypt(
+									reverseText(passphrase), userOfficeType);
+
+							$("#username").val(
+									ciphertext + ':~:' + ciphertextoffice);
+							$("#password").val(
+									ciphertextpassword + ':~:' + passphrase);
+							$("#userOfcType").val(ciphertextoffice);
+
+							$("#loginForm").submit();
+
+						});
+
+		$("#userName").keyup(function(e) {
+			var str = $(this).val();
+			$("#userName").val(str.toUpperCase());
+		})
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+	<script>
+		$(document).ready(function() {
+			sessionStorage.clear();
+
+		});
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Build-Jdk-Spec: 15
+Implementation-Title: oms-web
+Implementation-Version: 0.0.1-SNAPSHOT
+Main-Class: com.idbi.intech.erm.ErmWebApplication
+Created-By: Maven Integration for Eclipse
+

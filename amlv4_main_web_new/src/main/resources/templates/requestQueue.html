@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+		<div class="wrapper">
+
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Feedback Request Queue</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item active"><a href="#">Home</a></li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<form class="form-horizontal" id="homeForm"
+									th:action="@{/homeAction}" method="post">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:feild="*{encryptedJson}" /> <input type="hidden"
+										th:value="*{message}" id="message" />
+
+									<!-- TO DO List -->
+									<div class="card card-tabs card-info card-outline">
+										<div class="card-header p-2 border-bottom-0">
+
+
+											<ul class="nav nav-tabs">
+
+												<li class="nav-item"><a
+													class="nav-link card-title text-blue text-bold active  task-notification"
+													href="#activity" id="summarylink" data-toggle="tab"> <i
+														class="fa fa-tasks mr-1 mt-2"></i> Task Notification
+												</a></li>
+
+
+
+											</ul>
+
+										</div>
+
+
+
+										<!-- /.card-header -->
+										<div class="card-body">
+
+											<!-- /. Analysis -->
+
+
+											<div class="tab-content" id="task-tab">
+												<div class="active tab-pane">
+
+
+
+													<table id="taskNotification"
+														class="table table-head-fixed table-bordered table-striped">
+														<thead>
+															<tr>
+																<th>Feedback Id</th>
+																<th>Feedback Subject</th>
+																<th>Office Types</th>
+																<th>Office Code</th>
+																<th>Maker Id</th>
+																<th>Record Timestamp</th>
+																<th></th>
+
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="dashBoardList : ${dashBoardList}">
+																<td th:text="${dashBoardList.sourceId}"></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.taskName}"></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.officeType}"></td>
+																<td th:text="${dashBoardList.officeCode}"></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.makerId}"></td>
+																<td class="text-capitalize"
+																	th:text="${#calendars.format(dashBoardList.recordTimeStamp,'dd-MM-yyyy')}"></td>
+
+																<td class="project-actions text-center"><span><a
+																		href="#" th:id="${dashBoardList.notificationId}"
+																		class="btn-sm tasknotification "
+																		th:classappend="${dashBoardList.bgClass}"><i
+																			class="fas fa-arrow-circle-right text-white	"></i></a></span></td>
+
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+
+
+
+
+
+										</div>
+									</div>
+
+
+
+
+
+
+								</form>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!--/. container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+
+			<!-- Control Sidebar -->
+			<aside class="control-sidebar control-sidebar-dark">
+				<!-- Control sidebar content goes here -->
+			</aside>
+			<!-- /.control-sidebar -->
+
+			<!-- Included Footer -->
+			<div th:insert="/footer::footer"></div>
+		</div>
+		<!-- ./wrapper -->
+
+		<!-- REQUIRED SCRIPTS -->
+		<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+		<!-- Bootstrap -->
+		<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+		<!-- jquery-validation -->
+		<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+		<script
+			th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+		<!-- bs-custom-file-input -->
+		<script
+			th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+		<!-- Select2 -->
+		<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+		<!-- Toastr -->
+		<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+		<!-- overlayScrollbars -->
+		<script
+			th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+		<!-- AdminLTE App -->
+		<script th:src="@{/dist/js/adminlte.js}"></script>
+		<!-- DataTables  & Plugins -->
+		<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+		<script
+			th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+		<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+		<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+		<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+		<script th:src="@{/plugins/moment/moment.min.js}"></script>
+		<!-- Crypto JS JavaScript -->
+		<!-- Crypto JS JavaScript -->
+		<script th:src="@{/dist/appjs/aes.js}"></script>
+		<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+		<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+		<script th:src="@{/dist/appjs/app.js}"></script>
+		<script th:src="@{/dist/appjs/erm/header.js}"></script>
+		<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+		<!-- Developer Added JS -->
+		<script th:src="@{/dist/appjs/erm/dashboard.js}"></script>
+		<script th:src="@{/dist/appjs/erm/home.js}"></script>
+		<script th:src="@{/dist/appjs/erm/viewmodal.js}"></script>
+		<!-- Developer Added Print JS -->
+		<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+		<!-- REQUIRED SCRIPTS -->
+		<script type="text/javascript">
+			document.onreadystatechange = function() {
+				var state = document.readyState
+				if (state == 'interactive') {
+					//document.getElementById('contents').style.visibility = "hidden";
+				} else if (state == 'complete') {
+					setTimeout(
+							function() {
+					document.getElementById('interactive');
+					document.getElementById('load').style.visibility = "hidden";
+					//document.getElementById('contents').style.visibility = "visible";
+							 }, 1000); 
+				}
+			}
+		</script>
+		<script>
+			//message display
+
+			$('.tasknotification').click(
+					function() {
+
+						var notifyInfo = $(this).attr('id');
+
+						
+						var pageValJson;
+						var url;
+						/* var homeString = "{\n" + "    \"moduleId\": \""
+						+ notifyInfo+ "\"\n" + "}"; */
+						
+						var homeString = "{\n" + "    \"moduleId\": \""
+								+ notifyInfo+ "\",\n"
+								+ "    \"moduleName\": \"" + "FEEDBACK"
+								+ "\",\n" + "    \"moduleAction\":\""
+								+ "O" + "\"\n" + "}";
+								
+						
+						var iterationCount = 1000;
+						var keySize = 128;
+						//passPhrase is the key
+						var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+								.toString(CryptoJS.enc.Hex);
+
+						var aesUtil = new AesUtil(keySize, iterationCount);
+						var ciphertext = aesUtil.encrypt(
+								reverseText(passphrase), homeString);
+						$("#encryptedJson")
+								.val(ciphertext + ':~:' + passphrase);
+						
+						
+						
+						$("#homeForm").submit();
+
+					});
+
+			$(function() {
+				$("#taskNotification").DataTable({
+					"columnDefs" : [ {
+						orderable : false,
+						targets : [ 7 ]
+					}],
+					
+					"order" : [ 0, "desc" ],
+					"lengthMenu" : [ 20, 40, 60, 80, 100 ],
+					"responsive" : false,
+					"autoWidth" : false,
+					"searching" : true,
+					"fixedHeader" : true,
+					"language" : {
+						"emptyTable" : "No Data Available"
+					}
+				}).buttons().container().appendTo(
+						'#actionplantable_wrapper .col-md-12:eq(0)');
+			});
+			
+			$(document).ready(function() {
+				var message = $('#message').val();
+				if (message != "") {
+					toastr.success(message);
+				}
+			});
+
+			
+		</script>
+
+
+
+
+
+
+
+
+
+	</div>
+
+</body>
+</html>

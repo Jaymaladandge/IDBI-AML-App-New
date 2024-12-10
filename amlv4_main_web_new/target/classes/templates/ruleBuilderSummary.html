@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-7">
+							<h2>Rule Builder Summary</h2>
+						</div>
+						<div class="col-sm-5">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Rule Builder Summary</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#actionplan" id="actionplanlink" data-toggle="tab"
+											style="display: none"><i class="fas fa-tools text-white"></i>&nbsp;Action
+												Plan - <span id="actionLabelId"></span></a></li>
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<!-- <div class="row ">
+												<div class="col-sm-12">
+													<div
+														class="card collapsed-card card-outline card-secondary"
+														id="collapse">
+														<div class="card-header" data-card-widget="collapse">
+															<h3 class="card-title text-bold">Search</h3>
+															<button type="button" class="btn btn-tool float-right"
+																data-toggle="tooltip" title="Collapse">
+																<em class="fas fa-plus" style="color: #007bff;"></em>
+															</button>
+														</div>
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																id="searchForm" th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row">
+																			<label class="col-4">Select Search
+																				Parameter</label> <label class="col-6">Enter
+																				Search Parameter Value</label> <label class="col-2"></label>
+																			<select class="col-4 form-control select2"
+																				name="ruleParameter" id="ruleParameter"
+																				data-placeholder="Search Parameter">
+																				<option value=''>Select</option>
+																				<option value='ruleId'>Rule Id</option>
+																				<option value='ruleType'>Rule Type</option>
+																				<option value='ruleDesc'>Rule Description</option>
+																				<option value='recordStatus'>Rule Status</option>
+																				<option value='ruleFrequency'>Rule
+																					Frequency</option>
+																				<option value='rulePriority'>Rule Priority</option>
+
+																			</select>&nbsp; <input type="text" class="col-6 form-control "
+																				name="searchcriteria" id="searchcriteria"
+																				placeholder="Value">&nbsp; <a
+																				class="btn btn-sm btn-info" id="search"
+																				title="Search"> <i
+																				class="fas fa-search fa-1x text-black"></i>
+																			</a>
+																		</div>
+																	</div>
+																</div>
+																/row
+															</form>
+														</div>
+														card-body
+													</div>
+													card
+												</div>
+												./col
+											</div>
+											./row -->
+
+
+
+											<input type="hidden" th:value="${message}" id="message" />
+
+											<div class="row ">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-header">
+
+															<span class="float-right"> <a class="btn bg-teal"
+																th:href="@{/createRule}" style="margin-right: 5px;"
+																title="Create Logic"> <i class="fas fa-plus-square"></i>&nbsp;Create
+															</a></span>
+
+
+														</div>
+
+														<div class="card-body table-responsive">
+															<div></div>
+
+															<form autocomplete="off" role="form" method="post"
+																id="editRulePage" th:action="@{/editCreatedRule}"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" />
+																<!-- <input type="hidden"
+																	name="userRole" id="userRole" th:value="${user.userSupRole}"
+																	th:name="clientName" /> -->
+
+																<table id="ruleTable"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+																	<thead>
+
+
+
+
+																		<tr>
+																			<th>RuleID</th>
+																			<th>Rule Type</th>
+																			<th>Rule Description</th>
+																			<th>Rule Frequency</th>
+																			<th>Rule Priority</th>
+																			<!-- <th>Rule Status</th> -->
+																			<th></th>
+																			<th></th>
+
+
+																		</tr>
+
+																	</thead>
+
+																	<tr th:each="ruleList : ${ruleDtoList.ruleList}">
+
+																		<td><a class="text-blue ruleModalView" href="#"
+																			th:id="${ruleList.ruleId}"
+																			th:text="${ruleList.ruleId}"> </a></td>
+																		<td th:text="${ruleList.ruleType}"></td>
+																		<td th:text="${ruleList.ruleDesc}"></td>
+																		<td th:text="${ruleList.ruleFrequencyValue}" class="text-capitalize"></td>
+																		<td th:switch="${ruleList.rulePriority}"><span
+																			th:case='H' class="badge bg-danger">High</span> <span
+																			th:case='M' class="badge bg-warning">Medium</span> <span
+																			th:case='L' class="badge bg-success">Low</span></td>
+																		<!-- <td th:switch="${ruleList.recordStatus}"><span
+																			th:case='CR' class="badge bg-success">Create</span> <span
+																			th:case='VR' class="badge bg-warning">Verified</span>
+																			<span th:case='AR' class="badge bg-info">Approved</span>
+																			<span th:case='ZR' class="badge bg-danger">Rejected</span>
+																			<span th:case='XX' class="badge bg-danger">Close</span>
+																		</td> -->
+
+																		<td class="project-actions text-center"><span>
+																				<a class="btn btn-sm bg-purple editBtn"
+																				th:id="${ruleList.ruleId}" title="Edit"> <i
+																					class="fa fa-edit fa-1x text-black"></i>
+																			</a>
+																		</span></td>
+																		<td class="project-actions text-center"><span><a
+																				class="btn btn-sm bg-maroon viewAuditTrail" href="#"
+																				title="Audit Trail"><i class="fab fa-twitch"></i></a></span></td>
+
+																	</tr>
+
+
+
+																	</tbody>
+																</table>
+
+															</form>
+															<!-- /form -->
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse"></div>
+										</div>
+
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+
+				<!-- /modal -->
+				<div class="modal fade" id="ruleModalView">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-success">
+								<h5 class="modal-title">
+									Rule ID - <span id="ruleId"></span>
+								</h5>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+							<form class="form-horizontal">
+								<div class="card-body">
+
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="ruleStatus">Rule Status</label> <input
+													type="text" class="form-control form-control-sm text-bold text-capitalize"
+													id="ruleStatus" name="status" placeholder="status" readonly>
+											</div>
+										</div>
+
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="rulePriority">Rule Priority</label> <input
+													type="text" class="form-control form-control-sm text-bold"
+													id="rulePriority" name="rulePriority"
+													placeholder="rulePriority" readonly>
+											</div>
+										</div>
+
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="ruleType">Rule Type</label> <input type="text"
+													class="form-control form-control-sm text-bold text-capitalize"
+													id="ruleType" name="ruleType" placeholder="ruleType"
+													readonly>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="Classification">Rule Classification</label> <input
+													type="text" class="form-control form-control-sm text-bold"
+													id="Classification" name="status" placeholder="status"
+													readonly>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="Frequency">Rule Frequency</label> <input
+													type="text" class="form-control form-control-sm text-bold text-capitalize"
+													id="Frequency" name="status" placeholder="status" readonly>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="DataSource">DataSource</label> <input
+													type="text" class="form-control form-control-sm text-bold"
+													id="DataSource" name="status" placeholder="status" readonly>
+											</div>
+										</div>
+
+									</div>
+
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="card card-outline card-success">
+												<div class="card-header">
+													<b>Rule Details</b>
+												</div>
+												<div class="card-body">
+
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="query">Rule Description</label>
+																<div class="input-group">
+																	<textarea class="form-control" name="query"
+																		placeholder="Rule Description" id="Description"
+																		rows="4" readonly></textarea>
+																</div>
+															</div>
+														</div>
+
+													</div>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="query">Rule Main Logic</label>
+																<div class="input-group">
+																	<textarea class="form-control" name="query"
+																		placeholder="Rule Main Logic" id="Logic" rows="5"
+																		readonly></textarea>
+																</div>
+															</div>
+														</div>
+
+													</div>
+
+
+												</div>
+
+											</div>
+										</div>
+									</div>
+
+
+								</div>
+
+								<div class="card-footer">
+									<span class="float-left" aria-hidden="true">
+
+										<button class="btn btn-secondary" data-dismiss="modal">
+											<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+										</button>
+									</span>
+								</div>
+								<!-- /.card-footer -->
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- /.modal -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<script>
+		/* $(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+		}) */
+		$(document)
+				.ready(
+						function() {
+							$("#searchcriteria")
+									.keypress(
+											function(e) {
+												var key = e.keyCode;
+												$return = (key == 8
+														|| key == 32
+														|| (key >= 48 && key <= 57)
+														|| (key > 64 && key < 91) || (key > 96 && key < 123));
+												if (!$return) {
+													toastr
+															.error('No special characters Allowed!');
+													return false;
+												}
+											});
+						});
+
+		$(document).ready(
+				function() {
+
+					$("#ruleTable").DataTable({
+						"columnDefs" : [ {
+							orderable : false,
+							targets : [ 5, 6 ]
+						} ],
+
+						"order" : [ 0, "desc" ],
+						"responsive" : false,
+						"lengthMenu" : [ 25, 50, 75, 100 ],
+						"autoWidth" : true,
+						"searching" : true,
+						"fixedHeader" : true,
+						"buttons" : [ "csv", "excel", "pdf", "print" ],
+						"language" : {
+							"emptyTable" : "No Data Available",
+							"search" : "Search Rule:"
+						},
+
+					}).buttons().container().appendTo(
+							'#ruleTable_wrapper .col-md-6:eq(0)');
+
+					
+				});
+
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			setTimeout(function() {
+				document.getElementById('load').style.visibility = "hidden";
+			}, 1000);
+		}
+
+		//Button Click
+		$(document).ready(function() {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}
+		});
+	</script>
+
+	<script>
+		$('#searchcriteria').keypress(function(e) {
+			if (e.which == 13)
+				return false;
+			if (e.which == 13)
+				e.preventDefault();
+		});
+	</script>
+
+	<script>
+		$(".editBtn").click(
+				function() {
+					var ruleId = $(this).attr('id');
+					//alert("wfGroupId " + wfGroupId);
+					var pageValJson = "{\"ruleId\":" + "\"" + ruleId + "\"}";
+					console.log(pageValJson)
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+							.toString(CryptoJS.enc.Hex);
+					var aesUtil = new AesUtil(keySize, iterationCount);
+					var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+							pageValJson);
+
+					$("#encryptedJsonEdit")
+							.val(ciphertext + ':~:' + passphrase);
+					$("#editRulePage").submit();
+				});
+	</script>
+	<script>
+		$('a.ruleModalView')
+				.click(
+						function() {
+
+							var ruleId = $(this).attr('id');
+
+							var pageValJson = "{\"ruleId\":" + "\"" + ruleId
+									+ "\"}";
+
+							console.log(pageValJson);
+
+							document.getElementById('load').style.visibility = "visible";
+
+							// ajax call
+							$
+									.ajax({
+										url : 'getRuleById',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+													}, 1000);
+											var jsonResponse = JSON
+													.stringify(response);
+											console.log("json Response "
+													+ jsonResponse)
+											var obj = JSON.parse(jsonResponse);
+											console.log("obj " + obj);
+											$("#ruleId").text(obj.ruleId);
+
+											$("#ruleStatus").val(
+													obj.recordStatus);
+											const priority = obj.rulePriorityValue
+											.split("~");
+											$("#rulePriority").val(
+													priority[0]);
+											$("#Description").val(obj.ruleDesc);
+
+											$("#ruleType").val(
+													obj.ruleDependancyValue);
+
+											$("#Classification").val(
+													obj.ruleClassification);
+											$("#Frequency").val(
+													obj.ruleFrequencyValue);
+
+											$("#DataSource")
+													.val(obj.dataSource);
+											$("#Logic").val(obj.ruleQuery);
+
+											if (obj != null) {
+
+											}
+
+										},
+										error : function(xhr, status, error) {
+											toastr.error('Some Error Occured');
+										}
+									});
+							$('#ruleModalView').modal('show');
+						});
+	</script>
+
+	<script>
+		//search method
+		$("#search")
+				.click(
+						function() {
+							var searchParam = $('#ruleParameter').find(
+									":selected").val();
+							var searchValue = $('#searchcriteria').val()
+									.toUpperCase();
+							if (searchParam == '') {
+								toastr
+										.info('Please Select Search Parameter For Search');
+							} else if (searchValue == '') {
+								toastr.info('Please Add Some Value For Search');
+							}/*  else {
+											if (searchParam == 'userActiveStatus') {
+												if (searchValue.includes('PENDING APPROVAL')) {
+													searchValue = 'D';
+												} 
+												
+												else {
+													searchValue = searchValue.charAt(0);
+												}
+											} */
+
+							//var sortValue = $('#sorting').find(":selected").val();
+							var pageValJson = "{\"searchParam\":" + "\""
+									+ searchParam + "\",\"searchValue\":\""
+									+ searchValue + "\"}";
+
+							console.log(pageValJson)
+							document.getElementById('load').style.visibility = "visible";
+							// ajax call
+							$
+									.ajax({
+										url : 'searchRuleList',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+													}, 1000);
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+											console.log("obj " + obj);
+											
+											$('#ruleTable').dataTable()
+											.fnClearTable();
+										$('#ruleTable').DataTable()
+											.destroy();
+										obj.ruleList
+											.forEach(function(item) {
+												//alert(item.ruleId);
+												
+												$(
+												'#ruleTable tbody')
+												.append(
+													'<tr><td> <a class="text-blue ruleModalView" data-toggle="modal" href="#" '
+													+ 'id="' + item.ruleId + '"  >' + item.ruleId
+													+ '</a></td>'
+													+ '<td>'
+													+ item.ruleTypeValue
+													+ '</td>'
+													+ '<td>'
+													+ item.ruleDesc
+													+ '</td>'
+													+ '<td class="text-capitalize">'
+													+ item.ruleFrequencyValue
+													+ '</td>'
+													+ '<td class="project-actions text-center" >'
+													+ item.rulePriorityValue
+													+ '</td>'
+													+ '<td class="project-actions text-center">'
+													+ item.recordStatusValue
+													+ '</td>'
+													+ '<td class="project-actions text-center">'
+													+ '<span><a class="btn btn-sm bg-purple editBtn" href="#" id="' + item.ruleId + '" title="Edit"><i class="fa fa-edit fa-1x text-black"></i>'
+													+ '</td>'
+													+ '<td class="project-actions text-center">'
+													+ '<span><a class="btn btn-sm bg-maroon viewAuditTrail" href="#" id="' + item.ruleId + '" title="Audit Trail"><i class="fab fa-twitch"></i>'
+													+ '</td></tr>');
+												
+												
+											});
+										$(document).ready(
+												function() {
+
+													$("#ruleTable").DataTable({
+														"columnDefs" : [ {
+															orderable : false,
+															targets : [ 6, 7 ]
+														} ],
+
+														"order" : [ 0, "desc" ],
+														"responsive" : false,
+														"lengthMenu" : [ 25, 50, 75, 100 ],
+														"autoWidth" : true,
+														"searching" : true,
+														"fixedHeader" : true,
+														"buttons" : [ "csv", "excel", "pdf", "print" ],
+														"language" : {
+															"emptyTable" : "No Data Available",
+															"search" : "Search RuleId:"
+														},
+
+													}).buttons().container().appendTo(
+															'#ruleTable_wrapper .col-md-6:eq(0)');
+
+													$('#ruleTable').DataTable().columns(3).every(
+															function() {
+																var that = this;
+
+																$('input', this.footer()).on('keyup change',
+																		function() {
+																			that.search(this.value).draw();
+																		});
+															});
+												});
+
+										},
+										error : function(xhr, status, error) {
+											toastr.error('Some Error Occured');
+										}
+									});
+						});
+	</script>
+
+</body>
+</html>

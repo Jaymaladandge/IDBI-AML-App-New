@@ -1,0 +1,4 @@
+.c-example__tilt {
+  transform-style: preserve-3d;
+  transform: perspective(300px);
+}

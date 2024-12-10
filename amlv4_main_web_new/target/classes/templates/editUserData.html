@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+textarea {
+	overflow-y: scroll;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>User Management</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/userSummary}">User
+										Management</a></li>
+								<li class="breadcrumb-item active">edit</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title text-center">Edit</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="frmUser" th:action="@{/editUserDataPage}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="raRecordStatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordStatus" name="recordStatus"
+															th:value="${recordStatus}" readonly>
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="srNo">EIN</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold" id="srNo"
+															name="srNo" th:value="${userDto.srno}" readonly>
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+
+													<div class="input-group">
+														<input type="hidden"
+															class="form-control form-control-sm text-bold"
+															id="userId" name="userId" th:value="${userDto.userId}"
+															readonly>
+
+
+													</div>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="parameter_key">User Name </label> <input
+														type="text" class="form-control form-control-sm text-bold"
+														id="username" name="username"
+														th:value="${userDto.username}" placeholder="User Name"
+														readonly>
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="parameter_key">Email ID </label> <input
+														type="email"
+														class="form-control form-control-sm text-bold"
+														id="emailid" name="emailid"
+														th:value="${userDto.userEmail}" placeholder="Email Id"
+														readonly>
+												</div>
+											</div>
+
+
+										</div>
+										<!-- /.row -->
+
+										<!-- /.row -->
+										<div class="row">
+										
+										<div class="col-sm-6">
+
+												<div class="form-group">
+													<label for="vertical">Vertical</label> <input type="text"
+														class="form-control form-control-sm text-bold"
+														id="vertical" name="vertical"
+														th:value="${userDto.vertical}" placeholder="Vertical"
+														readonly>
+												</div>
+											</div>
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="parameter_key">Mobile Number </label>
+													<input type="text" class="form-control form-control-sm"
+														id="mobileno" name="mobileno"
+														th:value="${userDto.userMobile}"
+														placeholder="Mobile Number" pattern="[1-9]{1}[0-9]{9}"
+														maxlength="10" title="Enter valid Mobile Number">
+												</div>
+											</div>
+
+											
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<label for="activeStatus">Active Status <code>*</code></label>
+
+												<div class="form-group">
+													<div class="row">
+														<div class="col-sm-3">
+															<div class="custom-control custom-radio">
+																<input class="custom-control-input" type="radio"
+																	id="customRadio1" name="activeStatus" value="A" checked>
+																<label for="customRadio1" class="custom-control-label">Active</label>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="custom-control custom-radio">
+																<input class="custom-control-input" type="radio"
+																	id="customRadio2" name="activeStatus" value="I">
+																<label for="customRadio2" class="custom-control-label">In-Active</label>
+															</div>
+														</div>
+													</div>
+												</div>
+
+											</div>
+											<!-- /.row -->
+
+
+
+										</div>
+									</div>
+									<!-- ./card-body -->
+									<div class="card card-outline card-secondary  p-2">
+										<h3 class="card-title text-info">&nbsp; Details for Role</h3>
+
+									</div>
+									<!-- <button type="button" id="update_data_btn"
+										class="btn  bg-gradient-primary  btn-flat float-right mr-4">Update
+										Data</button> -->
+
+									<div class="card-body">
+
+										<div class="row">
+											<!-- <div class="col-sm-4">
+
+												<div class="form-group">
+													<label for="vertical">Vertical</label>
+
+
+
+													<input type="text" class="form-control form-control-sm text-bold"
+														id="vertical" name="vertical"
+														th:value="${userDto.vertical}"
+														placeholder="Vertical" readonly>
+												</div>
+											</div> -->
+
+
+											<!-- <div class="col-sm-4">
+												<div class="form-group" th:if="${ermDeptFlg}">
+													<label for="department">Department <code>*</code></label> <select
+														class="form-control select2" data-placeholder="Department"
+														name="Department" id="Department" style="width: 100%;">
+														<option value=''>Department</option>
+														<option th:each="deptNameList : ${DeptList}"
+															th:value="${deptNameList.split('~')[0]}"
+															th:text="${deptNameList.split('~')[1]}"></option>
+													</select> <input type="hidden" class="form-control form-control-sm"
+														id="departmentSelected" name="departmentSelected"
+														th:value="${userDto.userDeptName}"
+														placeholder="Department" readonly>
+
+												</div>
+												<div class="form-group" th:unless="${ermDeptFlg}">
+													<label for="department">Department <code>*</code></label> <select
+														class="form-control select2" data-placeholder="Department"
+														name="Department" id="Department" style="width: 100%;" disabled>
+														<option th:value="${deptId}" th:text="${deptName}" selected></option>
+													</select>
+												</div>
+											</div> -->
+											<!-- <div class="col-sm-4">
+
+												<div class="form-group">
+													<label for="office code">Office Code <code>*</code></label>
+
+													<input type="text" class="form-control form-control-sm"
+														id="officeCode" name="officeCode"
+														th:value="${userDto.officeCode}" placeholder="office Code"
+														readonly>
+
+												</div>
+
+											</div> -->
+
+
+
+
+										</div>
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="rolename">Role Name <code>*</code>
+													</label> <select class="select2" name="userRole" id="userRole"
+														multiple="multiple" data-placeholder="Role Name"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="selectedRole : ${selectedRoleName}"
+															th:value="${selectedRole.roleId}"
+															th:text="${selectedRole.roleName}" selected />
+														<option th:each="rolename : ${RoleShortNameList}"
+															th:if="${!#lists.contains(selectedRoleId, rolename.split('~')[0])}"
+															th:value="${rolename.split('~')[0]}"
+															th:text="${rolename.split('~')[1]}" />
+
+													</select>
+												</div>
+											</div>
+											<!-- <div class="col-sm-4" th:if="${ermDeptFlg}" style="display:none" id="switchOfcColumn">
+												<div class="form-group">
+													<label for="switchOfcFlg">Switch Office<code>*</code></label>
+													<select class="select2" name="switchAccessFlg"
+														id="switchAccessFlg" data-placeholder="Switch Office"
+														style="width: 100%;">
+														<option value=''>Switch Office</option>
+														<option value='Y'>Yes</option>
+														<option value='N'>No</option>
+
+													</select> <input type="hidden" id="selectedSwitchOfcFlg"
+														th:value="${userDto.switchAccessFlg}">
+												</div>
+											</div> -->
+											<!-- <div class="col-sm-4">
+												<div class="form-group" th:unless="${ermDeptFlg}">
+													<input type="hidden" id="switchAccessFlg"
+														name="switchAccessFlg" value="N">
+												</div>
+											</div> -->
+										</div>
+										<div class="row">
+											<div class="col-sm-4">
+
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<input type="hidden" id="ermDeptIdFlg" name="ermDeptIdFlg"
+														th:value="${ermDeptFlg}">
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+
+													<table
+														class="table uploadTable table-head-fixed table-bordered table-striped"
+														id="filedetails" th:if="${userDto.documentList != null}">
+
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size (kb)</th>
+																<th>Uploaded by</th>
+																<th>Uploaded Date</th>
+																<th></th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="mvc : ${userDto.documentList}">
+																<td th:text="${mvc.fileName}"></td>
+																<td th:text="${mvc.fileSize}"></td>
+																<td th:text="${mvc.uploadedBy}" class="text-capitalize"></td>
+																<td th:text="${mvc.uploadedDate}"></td>
+																<td><a th:name='${mvc.fileName}' href="#"
+																	class="btn btn-info downloadfile"><i
+																		class="fas fa-download"></i></a></td>
+																<td class="project-actions text-right"><a
+																	class="btn btn-danger btn-sm disabled" id="closerow"><i
+																		class="fa fa-window-close"></i></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="comments">Provide your comments <code>*</code></label>
+													<textarea class="form-control" name="commentUser"
+														maxlength="3000" placeholder="Comments" id="commentUser"></textarea>
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<!--./card-body  -->
+
+
+
+
+
+
+
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<input type="hidden" id="username1" th:value="${userName1}">
+										</div>
+										<div class="col-sm-4">
+											<input type="hidden" id="userActiveStatusOld"
+												name="userActiveStatusOld"
+												th:value="${userDto.userActiveStatus}">
+										</div>
+									</div>
+
+
+									<div class="row">
+										<div class="col-sm-12">
+											<input type="hidden" class="form-control form-control-sm"
+												id="emailidtemp" name="emailidtemp"
+												th:value="${userDto.userEmail}" placeholder="Email Id">
+										</div>
+									</div>
+
+
+
+
+
+									<!-- /.card-body -->
+									<div class="card-footer">
+										<a class="btn btn-info" id="edit_btn"> <i
+											class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</a> <a href="#" data-toggle="modal" data-whatever="userSummary"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+									<!-- /.card-footer -->
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/dist/appjs/erm/editUser.js}"></script>
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- Development JavaScript -->
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+
+
+	<script>
+
+</script>
+</body>
+</html>

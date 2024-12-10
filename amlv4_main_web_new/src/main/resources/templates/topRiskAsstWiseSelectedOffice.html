@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- BS Stepper -->
+<link rel="stylesheet"
+	th:href="@{/plugins/bs-stepper/css/bs-stepper.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Selected Top Risk Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Selected Top Risks Report  </li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;Report</a></li>
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+
+											<div class="bs-stepper">
+												<div class="bs-stepper-header" role="tablist">
+													<!-- your steps here -->
+													<div class="step" data-target="#create-part">
+														<button type="button" class="step-trigger" role="tab"
+															aria-controls="create-part" id="create-part-trigger">
+															<span class="bs-stepper-circle">1</span> <span
+																class="bs-stepper-label">Select TopRisk</span>
+														</button>
+													</div>
+													<div class="line"></div>
+													<div class="step" data-target="#link-dept">
+														<button type="button" class="step-trigger" role="tab"
+															aria-controls="link-dept" id="link-dept-trigger">
+															<span class="bs-stepper-circle">2</span> <span
+																class="bs-stepper-label">Get Report</span>
+														</button>
+													</div>
+
+												</div>
+												<div class="bs-stepper-content">
+													<!-- your steps content here -->
+													<!-- Add Top Risk -->
+													<div id="create-part" class="content" role="tabpanel"
+														aria-labelledby="create-part-trigger">
+														<div class="row">
+															<div class="col-12">
+																<!-- Main content -->
+																<div class="invoice p-3 mb-3">
+																	<!-- title row -->
+
+																	<!-- create row -->
+																	<div class="row table-responsive" id="statmentReport">
+																		<div class="col-sm-12">
+																			<div class="card card-outline card-secondary">
+																				<div class="row">
+																					<div class="col-sm-6">
+
+																						<div class="card-body">
+																							<form autocomplete="off" role="form"
+																								method="post"
+																								th:action="@{/getAsstTopRiskReportSelectedTopRisk}"
+																								id="reportForm" th:object="${encryptedRequest}">
+																								<input type="hidden" id="encryptedJson"
+																									name="encryptedJson" /> <input type="hidden"
+																									id="message" th:value="${message}"
+																									name="message" />
+																								<div class="row">
+																									<div class="col-sm-12">
+
+
+																										<span> <label for="assessmentDate">Select
+																												Department</label> <select
+																											class="form-control select2"
+																											data-placeholder="Select Department"
+																											name="Department" id="deptId"
+																											style="width: 100%;">
+																												<option value=''>Select Department</option>
+																												<option th:each="dept : ${deptList}"
+																													th:value="${dept.deptId}"
+																													th:text="${dept.deptName}"></option>
+																										</select> <label for="search"> &nbsp;</label>
+																											<h3>
+																												<a type="submit" class="btn btn-info mb-2"
+																													id="getReport"> <i class="fas fa-save"
+																													style="padding: 0 7px 0 0px;"></i>Get
+																													Report
+																												</a>
+																											</h3>
+																										</span> <span th:if="${topRiskList!=null}"><label
+																											for="assessmentDate">Select
+																												Assessment Period</label> <select
+																											class="form-control"
+																											data-placeholder="Select Assessment Period"
+																											name="asssessmentPeriod"
+																											id="asssessmentPeriod" style="width: 100%;">
+																												<option value=''>Select Assessment
+																													Period</option>
+																												<option
+																													th:each="assessmentDate : ${assessmentList}"
+																													th:value="${#strings.arraySplit(assessmentDate, '~')[0]}"
+																													th:text="${#strings.arraySplit(assessmentDate, '~')[1]}"></option>
+																										</select></span>
+																									</div>
+
+
+
+
+
+																									<!-- /col-sm-12 -->
+																								</div>
+																								<!-- /row -->
+																							</form>
+
+																						</div>
+																						<!-- /.card card-outline card-secondary -->
+																					</div>
+
+
+																				</div>
+
+																				<div class="card-body table-responsive">
+																					<form autocomplete="off" role="form" method="post"
+																						th:action="@{/editRAS}" id="editRaForm"
+																						th:object="${encryptedRequest}">
+
+																						<input type="hidden" id="encryptedJsonEdit1"
+																							name="encryptedJson" /><input type="hidden"
+																							name="userRole" id="userRole"
+																							th:value="${userRole}" th:name="clientName" />
+
+	<span th:if="${selectedTopRiskList!=null}"><input type="checkbox" id="checkAll" class="p-5">&nbsp;&nbsp;<b>Select  All</b></span>
+																						<table id="riskstmttable"
+																							class="table table-head-fixed table-bordered table-striped text-capitalize report-page">
+																							<thead>
+																								<tr>
+																									<!--  <th>Category</th> -->
+
+																									<th>Check Box</th>
+																									<th>Top Risk Id</th>
+																									<th>Department</th>
+																									<th>Statement Description</th>
+
+
+
+																								</tr>
+																							</thead>
+																							<tbody>
+
+																								<tr
+																									th:each="topRisk,iterator : ${selectedTopRiskList}"
+																									th:if="${selectedTopRiskList!=null}">
+
+																									<td><input
+																										th:checked="${topRisk.selectedFlag}"
+																										type="checkbox" name="select_ntf[]"
+																										th:id="${topRisk.topRiskId+'~'+topRisk.userDept}"
+																										th:value="${topRisk.topRiskId+'~'+topRisk.userDept}"></td>
+																									<td th:text="${topRisk.topRiskId}"></td>
+																									<td th:text="${topRisk.userDept}"></td>
+																									<td th:text="${topRisk.topRiskDescription}"></td>
+																								</tr>
+
+
+																							</tbody>
+																						</table>
+
+																					</form>
+																					<!-- /form -->
+																				</div>
+																				<!-- /card-body -->
+																			</div>
+																			<!-- /card -->
+																		</div>
+																		<!-- /col -->
+																	</div>
+
+																	<!-- /.row -->
+
+
+																	<!-- <div class="row"  th:if="${topRiskList!=null}">
+												<div class="col-sm-12">
+													
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/getAsstTopRiskReportSelectedTopRisk}" id="reportForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" /> <input type="hidden"
+																	id="message" th:value="${message}" name="message" />
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row">
+																			<div class="form-group">
+																				<label for="assessmentDate">Select
+																					Assessment Period</label> <select class="form-control select2"
+																					data-placeholder="Select Assessment Period"
+																					name="asssessmentPeriod" id="asssessmentPeriod" style="width: 100%;">
+																					<option value=''>Select Assessment Period</option>
+																					<option th:each="assessmentDate : ${assessmentList}"
+																						th:value="${#strings.arraySplit(assessmentDate, '~')[0]}" th:text="${#strings.arraySplit(assessmentDate, '~')[1]}"></option>
+																				</select>
+																			</div>
+																			<div class="col-sm-1"></div>
+																			
+																		</div>
+																	</div>
+																	/col-sm-12
+																</div>
+																/row
+															</form>
+														
+													</div>
+													/.card card-outline card-secondary
+												</div>
+												/.col-sm-12
+											</div> -->
+
+																	<div class="row ">
+																		<div class="col-sm-6 invoice-col">
+																			<label class="col-sm-12" for="button"></label> <a
+																				type="button" class="btn bg-maroon"
+																				onclick="validateFirst();"> <i
+																				class="fas fa-step-forward"
+																				style="padding: 0 7px 0 0px;"></i>Next
+																			</a>
+																		</div>
+																	</div>
+																	<!-- /.row -->
+
+																</div>
+																<!-- /.invoice -->
+															</div>
+															<!-- /.col -->
+														</div>
+														<!-- /.row -->
+													</div>
+													<!-- Link Department -->
+													<div id="link-dept" class="content" role="tabpanel"
+														aria-labelledby="link-dept-trigger">
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="card ">
+																	<br>
+																	<!-- /.card-header -->
+																	<div class="card-body p-0">
+																		<!-- -->
+																		<div class="row table-responsive" id="statmentReport">
+																			<div class="col-sm-12">
+																				<div class="card card-outline card-secondary">
+																					<div class="card-body table-responsive">
+																						<form autocomplete="off" role="form" method="post"
+																							th:action="@{/getAsstTopRiskReportSelectedTopRiskExport}"
+																							id="exportTableForm"
+																							th:object="${encryptedRequest}">
+
+																							<input type="hidden" id="encryptedJsonEdit"
+																								name="encryptedJson" /><input type="hidden"
+																								name="userRole" id="userRole"
+																								th:value="${userRole}" th:name="clientName" />
+
+																							<a class="btn text-white exportDataBtn mb-2"
+																								id="exportDataBtn"
+																								style="margin-right: 5px; background-color: #006400;"
+																								title="Export Report"> <i
+																								class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																							</a>
+																							<table id="riskstmttableTemp"
+																								class="table table-head-fixed table-bordered table-striped text-capitalize report-page">
+																								<thead>
+																									<tr>
+
+																										<th>Sr. no</th>
+																										<th>Top Risk Id</th>
+																										<th>Department</th>
+																										<th>Top Risk Description</th>
+																										<th th:each="qaList : ${quarterList}"><span
+																											id="asst1" th:text="${qaList.quarterDetails}"></span></th>
+																										<th><span id="asst2"></span></th>
+
+
+
+
+																									</tr>
+																								</thead>
+																								<tbody>
+
+																									<!-- <tr th:each="topRisk,iterator : ${topRiskList}" th:if="${topRisk.selectedFlag}">
+																		<td th:text="${iterator.index+1}"></td>
+																		<td th:text="${topRisk.userDept}"></td>
+																			<td th:text="${topRisk.topRiskDescription}"></td>
+																			<td th:each="raListValue : ${topRisk.valueList}"
+																				th:style="'background-color:'+${raListValue.assessmentColor}">
+																				<span th:text="${raListValue.assessmentStatus}"
+																				class="badge text-white"
+																				th:style="'background-color:'+${raListValue.assessmentColor}"></span>
+																			</td>
+																		</tr> -->
+																								</tbody>
+																							</table>
+
+																						</form>
+
+																					</div>
+
+																				</div>
+
+																			</div>
+
+																		</div>
+																	</div>
+																	<!-- /.card-body -->
+																</div>
+																<a class="btn bg-maroon" th:onclick="stepper.previous()">
+																	<i class="fas fa-step-backward"
+																	style="padding: 0 7px 0 0px;"></i>Previous
+																</a>
+																<!-- <a
+																	class="btn text-white exportDataBtn" id="exportDataBtn"
+																	style="margin-right: 5px; background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a> -->
+															</div>
+														</div>
+													</div>
+													<!-- Link KRI -->
+													<div class="modal fade" id="viewTopRiskmodal">
+														<div class=" modal-dialog modal-xl">
+															<div class=" modal-content">
+																<div class="modal-header bg-info">
+																	<h5 class="modal-title">View Top Risk</h5>
+																	<button type="button" class="close"
+																		data-dismiss="modal" aria-label="Close">
+																		<span aria-hidden="true">&times;</span>
+																	</button>
+																</div>
+																<div class="modal-body">
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="raStmtId">Top Risk ID</label>
+																				<div class="input-group">
+																					<input type="text"
+																						class="form-control form-control-sm text-bold"
+																						id=paramId name="paramId" readonly>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="recordstatus">Record Status</label>
+																				<div class="input-group">
+																					<input type="text"
+																						class="form-control form-control-sm  text-bold"
+																						id="recordstatus" name="recordstatus" readonly>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="Theme">Theme</label>
+																				<div class="input-group">
+																					<input type="text"
+																						class="form-control form-control-sm text-capitalize"
+																						id="theme" name="theme" readonly>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<label for="topRiskDescription">Description
+																				</label>
+																				<textarea class="form-control form-control-sm"
+																					rows="3" name="desc" id="desc" readonly></textarea>
+																			</div>
+																		</div>
+																	</div>
+																	
+																	<div id="modalDeptDiv"></div>
+																	
+																</div>
+																<div class="modal-footer">
+																	<button class="btn btn-secondary" data-dismiss="modal">
+																		<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i>
+																		Back
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+													
+													<div class="modal fade" id="viewTopRiskDetails">
+														<div class=" modal-dialog modal-xl">
+															<div class=" modal-content">
+																<div class="modal-header bg-info">
+																	<h5 class="modal-title">View Top Risk</h5>
+																	<button type="button" class="close"
+																		data-dismiss="modal" aria-label="Close">
+																		<span aria-hidden="true">&times;</span>
+																	</button>
+																</div>
+																<div class="modal-body">
+																<form autocomplete="off" role="form" method="post"
+																							th:action="@{/getAsstTopRiskReportSelectedTopRiskExportModel}"
+																							id="exportTableFormModel"
+																							th:object="${encryptedRequest}">
+																	<input type="hidden" id="encryptedJsonEdit2"
+																									name="encryptedJson" /> <input type="hidden"
+																									id="message" th:value="${message}"
+																									name="message" />
+																	<div class="row">
+																		<div class="col-sm-4">
+																			<div class="form-group">
+																				<label for="tpId">Top Risk Id</label>
+																				<div class="input-group">
+																					<input type="text" id="tpIdModel" name="tpIdModel" size="25">
+																				</div>
+																			</div>
+																		</div>
+																		<div class="col-sm-4">
+																			<div class="form-group">
+																				<label for="tpDepartment">Top Risk Department</label>
+																				<div class="input-group">
+																					<input type="text" id="tpDepartmentModel" name="tpDepartmentModel" size="25">
+																				</div>
+																			</div>
+																		</div>
+																		
+																			<div class="col-sm-4">
+																			<div class="form-group">
+																				<label for="tpAssessmentPeriod">Assessment Period</label>
+																				<div class="input-group">
+																					<input type="text" id="tpAssessmentPeriodModel" name="tpAssessmentPeriodModel" size="25">
+																				</div>
+																			</div>
+																		</div>
+																		</div>
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<label for="tpDesc">Top Risk Description</label>
+																				<div class="input-group">
+																					<!-- <input type="text"
+																						class="form-control form-control-sm text-bold"
+																						id=tpDesc name="tpDesc" readonly> -->
+																						<textarea  id="tpDesc" name="tpDesc" rows="4"  cols="100" readonly></textarea>
+																				</div>
+																			</div>
+																		</div>
+																		
+																	</div>
+																	<label for="kriValue">KRI  Captured Values</label><br>
+																	<div class="row">
+																	<div class="col-sm-6">
+																	<span class="float-left"><a
+																	class="btn text-white exportDataBtnModel" id="exportDataBtnModel"
+																	style="background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span>
+																	</div>
+																	</div>
+																	
+																	<div class="row">
+																		<div class="col-sm-12">
+																			
+																			<table id="topRiskDetailsTable"
+													class="table table-head-fixed table-bordered table-striped">
+													<thead>
+														<tr>
+															<th>KRI Description</th>
+															<th>KRI Benchmark Value</th>
+															<th>KRI Real Time Value</th>
+															<th>Threshold Value</th>
+															
+														</tr>
+													</thead>
+													<tbody>
+
+													</tbody>
+												</table>
+																			</div>
+																			</div>
+																	
+																	
+																	
+																	</form>
+																	
+																</div>
+																<div class="modal-footer">
+																	<button class="btn btn-secondary" data-dismiss="modal">
+																		<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i>
+																		Back
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<!-- /.card -->
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<!-- BS-Stepper -->
+	<script th:src="@{/plugins/bs-stepper/js/bs-stepper.min.js}"></script>
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- <script th:src="@{/dist/appjs/erm/topRiskReport.js}"></script> -->
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/js/jspdf.debug.js}"></script>
+	<script th:src="@{/dist/js/html2canvas.js}"></script>
+
+
+	<script>
+	
+	$(document).ready(function() {
+	
+	
+	$("#riskstmttable").DataTable({
+	
+		
+		 "stateSave": true,
+		"responsive": false,
+		"autoWidth": true,
+		"paging":   false,
+		"ordering": false,
+		"searching": true,
+		"fixedHeader": true,
+		"language": {
+			"emptyTable": "No Data Available",
+		},
+		
+		
+	}).buttons().container().appendTo(
+		'#riskstmttable_wrapper .col-md-6:eq(0)');
+	$("#riskstmttableTemp").DataTable({
+		
+		"order": [2, "asc"],
+		 "stateSave": true,
+		"responsive": false,
+		"autoWidth": false,
+		"paging":   true,
+		"ordering": true,
+		"searching": true,
+		"fixedHeader": true,
+		 "buttons": [{
+				extend: 'pdfHtml5', title: 'Top Risk Report',
+
+			}],
+		"language": {
+			"emptyTable": "No Data Available",
+		},
+		
+		
+	}).buttons().container().appendTo(
+		'#riskstmttableTemp_wrapper .col-md-6:eq(0)');
+		
+
+});
+
+
+//loader
+document.onreadystatechange = function() {
+	var state = document.readyState
+	if (state == 'complete') {
+		document.getElementById('load').style.visibility = "hidden";
+	}
+}
+
+//Button Click
+$(document).ready(function() {
+		
+
+	//download
+	$(document).on('click', '.downloadfile', function() {
+
+		var fileName = $(this).attr('name');
+		var pageValJson = "{\"fileName\":" + "\"" + fileName + "\"}";
+
+		// ajax call
+		$.ajax({
+			url: 'download',
+			type: "POST",
+			data: {
+				pageValJson: pageValJson
+			},// important line for thymeleaf http security
+			headers: {
+				"X-CSRF-TOKEN": $("input[name='_csrf']").val()
+			},
+			cache: false,
+			// async:true,
+			success: function(response) {
+
+				var blob = new Blob([response], {
+					type: "application/octetstream"
+				});
+
+				//Check the Browser type and download the File.
+				var isIE = false || !!document.documentMode;
+				if (isIE) {
+					window.navigator.msSaveBlob(blob, fileName);
+				} else {
+					var url = window.URL || window.webkitURL;
+					link = url.createObjectURL(blob);
+					var a = $("<a />");
+					a.attr("download", fileName);
+					a.attr("href", link);
+					$("body").append(a);
+					a[0].click();
+					$("body").remove(a);
+				}
+
+			},
+			error: function(xhr, status, error) {
+				console.log(xhr);
+				console.log(status);
+				console.log(error);
+				toastr.error('Some Error Occured');
+			}
+		});
+	});
+
+});
+
+$("#getReport").click(function() {
+	var deptId = $("#deptId option:selected").val();
+	var pageValJson = "{\"userDept\":" + "\"" + deptId + "\"}";
+	var iterationCount = 1000;
+	if(deptId==''){
+		toastr
+		.error('Please Select Department For Proceed');
+		return false;
+	}
+	var keySize = 128;
+	//passPhrase is the key
+	var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+		.toString(CryptoJS.enc.Hex);
+
+	var aesUtil = new AesUtil(keySize, iterationCount);
+
+	var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+		pageValJson);
+	$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+	$("#reportForm").submit();
+});
+
+$("#exportDataBtn").click(function() {
+	var checkboxSelectValidation = true;
+	var ntf_list = [];
+	var iterationCount = 1000;
+	$.each($("input[name='select_ntf[]']:checked"),
+			function() {
+				ntf_list.push($(this).val());
+
+			});
+	
+	if ($("input[name='select_ntf[]']:checked").length <= 0) {
+
+		checkboxSelectValidation = false;
+		toastr.error("Select atleast one Checkbox");
+	}
+	/* var pageValJson = "{\"selectedTopRisk\":\"" + ntf_list
+	+ "\"}"; */
+	if( $("#asssessmentPeriod").val()==='' || $("#asssessmentPeriod").val()==null){
+		 var pageValJson = "{\"selectedTopRisk\":\"" + ntf_list
+		 + "\",\n" + "\"asstPeriod1\":\"" + $("#asst1").text()+ "\"}";
+		
+		
+	}else{
+		var pageValJson = "{\"asstPeriod\":\"" + $("#asssessmentPeriod").val()
+		+ "\",\n" + "\"selectedTopRisk\":\"" + ntf_list
+		+ "\",\n" + "\"asstPeriod1\":\"" + $("#asst1").text()
+		+ "\",\n" + "\"asstPeriod2\":\"" +$("#asst2").text()+ "\"}";
+		
+		//
+	}
+	
+	var keySize = 128;
+	//passPhrase is the key
+	var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+		.toString(CryptoJS.enc.Hex);
+
+	var aesUtil = new AesUtil(keySize, iterationCount);
+
+	var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+		pageValJson);
+	$("#encryptedJsonEdit").val(ciphertext + ':~:' + passphrase);
+	$("#exportTableForm").submit();
+});
+
+
+// PDF
+//Print 
+
+
+function downloadPDFWithjsPDF() {
+ //const jsPDF = require('jspdf');
+ var filename = 'Top Risk';
+    const quality = 2 // Higher the better but larger file
+    html2canvas(document.querySelector('#riskstmttable'),
+        { scale: quality }
+    ).then(canvas => {
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        pdf.addImage(canvas.toDataURL('image/jpg'), 'JPG', 0, 0, 300, 298);
+        pdf.save(filename);
+    });
+}
+
+
+	$(function() {
+	//Initialize Select2 Elements
+	$('.select2').select2();
+	//bsCustomFileInput.init();
+})
+$(document).ready(function() {
+	var stepper = new Stepper($('.bs-stepper')[0])
+})
+// BS-Stepper Init
+document.addEventListener('DOMContentLoaded', function() {
+	window.stepper = new Stepper(document.querySelector('.bs-stepper'))
+})
+
+function validateFirst() {
+	var checkboxSelectValidation = true;
+	var ntf_list = [];
+	$.each($("input[name='select_ntf[]']:checked"),
+			function() {
+				ntf_list.push($(this).val());
+				
+
+			});
+	
+	if ($("input[name='select_ntf[]']:checked").length <= 0) {
+
+		checkboxSelectValidation = false;
+		toastr.error("Select atleast one Checkbox");
+	}
+	/* var pageValJson = "{\"selectedTopRisk\":\"" + ntf_list
+	+ "\"}"; */
+	if( $("#asssessmentPeriod").val()==='' || $("#asssessmentPeriod").val()==null){
+		 var pageValJson = "{\"selectedTopRisk\":\"" + ntf_list
+		+ "\"}";
+		 
+		
+		
+	}else{
+		var pageValJson = "{\"asstPeriod\":\"" + $("#asssessmentPeriod").val()
+		+ "\",\n" + "\"selectedTopRisk\":\"" + ntf_list + "\"}";
+		
+	}
+	
+	
+	document.getElementById('load').style.visibility = "visible";
+	$
+			.ajax({
+				url : 'getAsstTopRiskReportSelectedTopRiskReport',
+				type : "POST",
+				data : {
+					pageValJson : pageValJson
+				},// important line for thymeleaf http security
+				headers : {
+					"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+				},
+				cache : false,
+				// async:true,
+				success : function(response) {
+
+					setTimeout(
+							function() {
+								document.getElementById('interactive');
+								document.getElementById('load').style.visibility = "hidden";
+
+							}, 1000);
+
+					var jsonResponse = JSON.stringify(response);
+
+					var obj = JSON.parse(jsonResponse);
+					var topRiskTableData = $('#riskstmttableTemp')
+					.DataTable();
+
+			topRiskTableData.clear().draw();
+			var num=0;
+			var asst2='';
+
+					obj
+					.forEach(
+									function(items) {
+										console.log("test" + items);
+										
+										if(items.asstStatus2!=null){
+											asst2=items.asstPeriod2;
+										}
+										if(items.asstStatus2==null){
+											var topriskDetails=items.topRiskId+'-'+items.userDept
+											var tr = $("<tr>"
+													+ "<td>"
+													+ (++num)
+													+ "</td>"
+													+ "<td  class='text-capitalize'>"
+													+"<a class='text-blue'  data-toggle='modal' href='#' id='"+topriskDetails+"' onclick='viewModel(this.id)'>"+items.topRiskId+" </a>"
+													+ "</td>"
+													+ "<td  class='text-capitalize'>"
+													+ items.userDept
+													+ "</td>"
+													+ "<td class='text-capitalize'>"
+													+ items.topRiskDescription
+													+ "</td>"
+													+ "<td class='text-capitalize' bgcolor='"+items.asstColor+"'>"
+													+"<a class='text-white'  data-toggle='modal' href='#' id='"+topriskDetails+"' onclick='viewModelDetails(this.id)' bgcolor='"+items.asstColor+"'>"+items.asstStatus+" </a>"
+													+ "</td>"
+													+ "<td class='text-capitalize'>"
+													+ '-'
+													+ "</td>"
+													+ "</tr>");
+											topRiskTableData.row.add(tr[0]).draw();
+											
+										}else{
+											var topriskDetails=items.topRiskId+'-'+items.userDept
+											var tr = $("<tr>"
+													+ "<td>"
+													+ (++num)
+													+ "</td>"
+													+ "<td  class='text-capitalize'>"
+													+"<a class='text-blue'  data-toggle='modal' href='#' id='"+topriskDetails+"' onclick='viewModel(this.id)'>"+items.topRiskId+" </a>"
+													+ "</td>"
+													+ "<td  class='text-capitalize'>"
+													+ items.userDept
+													+ "</td>"
+													+ "<td class='text-capitalize'>"
+													+ items.topRiskDescription
+													+ "</td>"
+													+ "<td class='text-capitalize' bgcolor='"+items.asstColor+"'>"
+													+"<a class='text-white'  data-toggle='modal' href='#' id='"+topriskDetails+"' onclick='viewModelDetails(this.id)'>"+items.asstStatus+" </a>"
+													+ "</td>"
+													+ "<td class='text-capitalize' bgcolor='"+items.asstColor1+"'>"
+													+"<a class='text-white'  data-toggle='modal' href='#' id='"+topriskDetails+"' onclick='viewModelDetails2(this.id)'>"+items.asstStatus2+" </a>"
+													+ "</td>"
+													+ "</tr>");
+											topRiskTableData.row.add(tr[0]).draw();
+											
+										}
+											
+
+											
+											
+										
+
+										
+									})
+									var table = $('#riskstmttableTemp').DataTable();
+									if(asst2!=''){
+										
+										table.column( 5 ).visible( true );
+										$("#asst2").text(asst2);
+									}else{
+										$("#asst2").text("No Comparison Assessment Selected");
+										//riskstmttableTemp
+										table.column( 5 ).visible( false );
+									}
+					
+
+				},
+				error : function(xhr, status, error) {
+
+					toastr.success('Some Error Occured');
+
+				}
+			});
+	if (checkboxSelectValidation) {
+		stepper.next();
+	}
+}
+
+	$("#getData").click(function() {
+		var checkboxSelectValidation = true;
+		var ntf_list = [];
+		$.each($("input[name='select_ntf[]']:checked"),
+				function() {
+					ntf_list.push($(this).val());
+
+				});
+		
+		if ($("input[name='select_ntf[]']:checked").length <= 0) {
+
+			checkboxSelectValidation = false;
+			toastr.error("Select atleast one Checkbox");
+		}
+		
+		var pageValJson = "{\"AsstPeriod\":\"" + $("#asssessmentPeriod").val()
+		+ "\",\n" + "\"selectedTopRisk\":\"" + ntf_list + "\"}";
+		
+		//alert(pageValJson);
+		
+		document.getElementById('load').style.visibility = "visible";
+		$
+				.ajax({
+					url : 'getAsstTopRiskReportSelectedTopRiskReport',
+					type : "POST",
+					data : {
+						pageValJson : pageValJson
+					},// important line for thymeleaf http security
+					headers : {
+						"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+					},
+					cache : false,
+					// async:true,
+					success : function(response) {
+
+						setTimeout(
+								function() {
+									document.getElementById('interactive');
+									document.getElementById('load').style.visibility = "hidden";
+
+								}, 1000);
+
+						var jsonResponse = JSON.stringify(response);
+
+						var obj = JSON.parse(jsonResponse);
+						var topRiskTableData = $('#riskstmttableTemp')
+						.DataTable();
+
+				topRiskTableData.clear().draw();
+				var num=0;
+
+						obj
+						.forEach(
+										function(items) {
+											console.log("asstStatus " + items.asstStatus);
+											
+
+											
+										})
+
+					},
+					error : function(xhr, status, error) {
+
+						toastr.success('Some Error Occured');
+
+					}
+				});
+		if (checkboxSelectValidation) {
+			stepper.next();
+		}
+	});
+	
+		function viewModel(topriskId) {
+			//alert("hello");
+			var topRiskId = topriskId.split('-')[0];
+			var deptName=topriskId.split('-')[1];
+			$('#paramId').val(topRiskId);
+			var toleranceValue;
+			
+			var value = "{\"topRiskId\":\"" + topRiskId
+				+ "\",\n" + "\"userDept\":\"" +deptName + "\"}";
+				//alert(value);
+			var ciphertext = null;
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(
+				128 / 8).toString(CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize, iterationCount);
+			var ciphertext = aesUtil.encrypt(
+				reverseText(passphrase), value);
+			var pageValJson = ciphertext + ':~:' + passphrase;
+			document.getElementById('load').style.visibility = "visible";
+			// ajax call
+			$
+				.ajax({
+					url: 'viewTopRiskReport',
+					type: "POST",
+					data: {
+						pageValJson: pageValJson
+					},// important line for thymeleaf http security
+					headers: {
+						"X-CSRF-TOKEN": $(
+							"input[name='_csrf']")
+							.val()
+					},
+					cache: false,
+					// async:true,
+					success: function(response) {
+						setTimeout(
+							function() {
+								document
+									.getElementById('load').style.visibility = "hidden";
+							}, 1000);
+						var jsonResponse = JSON
+							.stringify(response);
+						var obj = JSON.parse(jsonResponse);
+						$('#recordstatus').val(
+							obj.topRiskRecordStatus);
+						$('#theme').val(obj.topRiskTheme);
+						$('#desc').val(
+							obj.topRiskDescription);
+						$('#assessmentPeriod').val(
+							obj.asstPeriod);
+						$('#assessmentStatus').val(
+							obj.asstStatus);
+						$('#assessmentStatus').css('color', obj.asstColor);
+						$('#modalDeptDiv').empty();
+						obj.deptMasterList
+							.forEach(function(item) {
+								var trDiv = "";
+								item.topRiskKriList
+									.forEach(function(
+										listItems) {
+										//alert(listItems);
+										var kriId = listItems.kriId;
+										var kriName = listItems.kriName;
+										var kriWt = listItems.kriWeightage;
+										var threshold = "";
+										listItems.mdtlist
+											.forEach(function(
+												items) {
+												threshold = threshold
+													+ '<tr><td><span style="white-space:pre; color:'
+													+ items.bgClass
+													+ ';" class="text-capitalize text-bold">'
+													+ items.deptThresholdType.toLowerCase()
+													+ '</span></td><td>'
+													+ items.asstTypeDesc
+													+ '</td><td>'
+													+ items.deptThresholdValue
+													+ '</td></tr>';
+											});
+										var thresholdTab = '<table>'
+											+ threshold
+											+ '</table>';
+										trDiv = trDiv
+											+ ('<tr class="mainTab" id="tr' + kriId + '"><td>'
+												+ kriId
+												+ '</td><td> '
+												+ kriName
+												+ '</td><td>'
+												+ thresholdTab
+												+ '</td><td>'
+												+ kriWt + '</td></tr>');
+
+									});
+								$('#modalDeptDiv')
+									.prepend(
+										$('<div class="row"><div class="card card-primary card-outline col-12">'
+											+ '<div class="card-header table-responsive">'
+											+ '	<div class="card-title text-capitalize text-bold row col-sm-12"> <div class="col-sm-6">'
+											+ item.deptName
+											+ '</div>'
+											+ '</div>'
+											+ '	<div class="card-body table-responsive">'
+											+ '		<table class="table centraloffice table-head-fixed table-bordered table-striped">'
+											+ '	<thead><tr>'
+											+ '		<th>KRI ID</th>'
+											+ '			<th>KRI Name</th>'
+											+ '			<th>Threshold</th>'
+											+ '			<th>KRI Weight</th>'
+											+ '	</tr></thead>'
+											+ '	<tbody>'
+											+ '	</tbody>'
+											+ trDiv
+											+ '	</table>'
+											+ '	</div>'
+											+ '</div>'
+											+ '</div>'));
+
+							});
+						var fileFlg = true;
+						obj.filedetails
+							.forEach(function(item) {
+								fileFlg = false;
+								$(
+									'#filedetails tr:last')
+									.after(
+										'<tr><td>'
+										+ item.fileName
+										+ '</td>'
+										+ '<td>'
+										+ item.fileSize
+										+ '</td>'
+										+ '<td>'
+										+ item.uploadTimestamp
+										+ '</td>'
+										+ '<td class="text-capitalize">'
+										+ item.uploadedBy
+										+ '</td>'
+										+ '<td><a name=' + item.fileName + ' href="#"'
+										+ ' class="btn btn-info downloadfile"><i'
+										+ ' class="fas fa-download"></i></a></td></tr>');
+
+							});
+						if (fileFlg) {
+							$('#filedetails').hide();
+						} else {
+							var seen = {};
+							$('#filedetails tr')
+								.each(
+									function() {
+										var txt = $(
+											this)
+											.text();
+										if (seen[txt])
+											$(this)
+												.remove();
+										else
+											seen[txt] = true;
+									});
+							$('#filedetails').show();
+						}
+						$('#viewTopRiskmodal')
+							.modal('show');
+					},
+					error: function(xhr, status, error) {
+						toastr
+							.success('Some Error Occured');
+					}
+				});
+
+		}
+		function viewModelDetails(topriskId) {
+			var topRiskId = topriskId.split('-')[0];
+			var deptName=topriskId.split('-')[1];
+			var value = "{\"topRiskId\":\"" + topRiskId
+				+ "\",\n" + "\"userDept\":\"" +deptName + "\"}";
+				//alert(value);
+			var ciphertext = null;
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(
+				128 / 8).toString(CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize, iterationCount);
+			var ciphertext = aesUtil.encrypt(
+				reverseText(passphrase), value);
+			var pageValJson = ciphertext + ':~:' + passphrase;
+			document.getElementById('load').style.visibility = "visible";
+			// ajax call
+			$
+				.ajax({
+					url: 'viewTopRiskReportDetails',
+					type: "POST",
+					data: {
+						pageValJson: pageValJson
+					},// important line for thymeleaf http security
+					headers: {
+						"X-CSRF-TOKEN": $(
+							"input[name='_csrf']")
+							.val()
+					},
+					cache: false,
+					// async:true,
+					success: function(response) {
+						setTimeout(
+							function() {
+								document
+									.getElementById('load').style.visibility = "hidden";
+							}, 1000);
+						var jsonResponse = JSON
+							.stringify(response);
+						var obj = JSON.parse(jsonResponse);
+						//alert(obj.topRiskDescription);
+						if(obj.topRiskDescription!=null){
+							$("#tpDesc").val(obj.topRiskDescription);
+						}else{
+							$("#tpDesc").val("NA");
+						}
+						
+						//alert('obj.asstValueList '+obj.asstValueList);
+						
+						if(obj.asstValueList!=null){
+							/* obj.asstValueList.forEach({
+								function(itemsTemp){
+									alert('items '+itemsTemp);
+								}
+							}) */
+							// $(".kriDetails").empty();
+							 var topRiskTableData = $('#topRiskDetailsTable')
+								.DataTable();
+							 
+							 $("#tpIdModel").val(obj.topRiskId);
+							 $("#tpDepartmentModel").val(obj.userDept);
+							 $("#tpAssessmentPeriod").val(obj.asstPeriod);
+							 
+
+						topRiskTableData.clear().draw();
+							obj.asstValueList.forEach(function(item){
+								//alert('items '+item.split('~')[0]+' value '+item.split('~')[1]);
+								//$(".kriDetails").append("<span class='m-1 mb-2'><textarea  type='text' class='mb-3 form-control form-control-sm' row='3' cols='33'>"+item.split('-')[0]+"</textarea></span><span class='m-1 mb-2'><input type='text' value='"+item.split('-')[1]+"' class='mb-3'></span><span class='m-1 mb-2'><input type='text' value='"+item.split('-')[2]+"' class='mb-3'></span><span class='m-1 mb-2'><input type='text' value='"+item.split('-')[3]+"' class='mb-3'></span><br>")
+								//$(".kriDetails").append("<table><tr><td>"+item.split('-')[0]+"</td><td>"+item.split('-')[1]+"</td><td>"+item.split('-')[2]+"</td><td>"+item.split('-')[3]+"</td></tr></table>");
+								var tr = $("<tr>"
+										+ "<td>"
+										+ item.split('^')[0]
+										+ "</td>"
+										+ "<td class='text-capitalize'>"
+										+ item.split('^')[1]
+										+ "</td>"
+										+ "<td class='text-capitalize'>"
+										+ item.split('^')[2]
+										+ "</td>"
+										+ "<td class='text-capitalize'>"
+										+ item.split('^')[3]
+										+ "</td>"
+										+ "</tr>");
+
+								topRiskTableData.row.add(tr[0]).draw();
+
+									
+							})
+						}else{
+							
+								
+								$(".kriDetails").append("<span class='m-1 mb-2'>NA</span>")
+								
+							
+						}
+						 $("#tpIdModel").val(obj.topRiskId);
+						 $("#tpDepartmentModel").val(obj.userDept);
+						 $("#tpAssessmentPeriodModel").val(obj.asstPeriod);
+						$('#viewTopRiskDetails')
+							.modal('show');
+					},
+					error: function(xhr, status, error) {
+						toastr
+							.success('Some Error Occured');
+					}
+				});
+
+		}
+		function viewModelDetails2(topriskId) {
+			var topRiskId = topriskId.split('-')[0];
+			var deptName=topriskId.split('-')[1];
+			var value = "{\"topRiskId\":\"" + topRiskId
+				+ "\",\n" + "\"userDept\":\"" +deptName 
+				+ "\",\n" + "\"asstPeriod\":\"" +$("#asssessmentPeriod").val()+ "\"}";
+				//alert(value);
+			var ciphertext = null;
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(
+				128 / 8).toString(CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize, iterationCount);
+			var ciphertext = aesUtil.encrypt(
+				reverseText(passphrase), value);
+			var pageValJson = ciphertext + ':~:' + passphrase;
+			document.getElementById('load').style.visibility = "visible";
+			// ajax call
+			$
+				.ajax({
+					url: 'viewTopRiskReportDetails',
+					type: "POST",
+					data: {
+						pageValJson: pageValJson
+					},// important line for thymeleaf http security
+					headers: {
+						"X-CSRF-TOKEN": $(
+							"input[name='_csrf']")
+							.val()
+					},
+					cache: false,
+					// async:true,
+					success: function(response) {
+						setTimeout(
+							function() {
+								document
+									.getElementById('load').style.visibility = "hidden";
+							}, 1000);
+						var jsonResponse = JSON
+							.stringify(response);
+						var obj = JSON.parse(jsonResponse);
+						//alert(obj.topRiskDescription);
+						$("#tpDesc").val(obj.topRiskDescription);
+						//alert('obj.asstValueList '+obj.asstValueList);
+						
+						if(obj.asstValueList!=null){
+							/* obj.asstValueList.forEach({
+								function(itemsTemp){
+									alert('items '+itemsTemp);
+								}
+							}) */
+							var topRiskTableData = $('#topRiskDetailsTable')
+							.DataTable();
+
+					topRiskTableData.clear().draw();
+							obj.asstValueList.forEach(function(item){
+								
+								
+							//	$(".kriDetails").append("<span class='m-1 mb-2'><textarea  type='text' class='mb-3' row='3' cols='33'>"+item.split('-')[0]+"</textarea></span><span class='m-1 mb-2'><input type='text' value='"+item.split('-')[1]+"' class='mb-3'></span><span class='m-1 mb-2'><input type='text' value='"+item.split('-')[2]+"' class='mb-3'></span><span class='m-1 mb-2'><input type='text' value='"+item.split('-')[3]+"' class='mb-3'></span><br>")
+								//$(".kriDetails").append("<table><tr><td>"+item.split('-')[0]+"</td><td>"+item.split('-')[1]+"</td><td>"+item.split('-')[2]+"</td><td>"+item.split('-')[3]+"</td></tr></table>");
+								var tr = $("<tr>"
+										+ "<td>"
+										+ item.split('^')[0]
+										+ "</td>"
+										+ "<td class='text-capitalize'>"
+										+ item.split('^')[1]
+										+ "</td>"
+										+ "<td class='text-capitalize'>"
+										+ item.split('^')[2]
+										+ "</td>"
+										+ "<td class='text-capitalize'>"
+										+ item.split('^')[3]
+										+ "</td>"
+										+ "</tr>");
+
+								topRiskTableData.row.add(tr[0]).draw();
+							})
+						}
+						
+						
+						 
+						 $("#tpIdModel").val(obj.topRiskId);
+						 $("#tpDepartmentModel").val(obj.userDept);
+						 $("#tpAssessmentPeriodModel").val(obj.asstPeriod);
+						$('#viewTopRiskDetails')
+							.modal('show');
+					},
+					error: function(xhr, status, error) {
+						toastr
+							.success('Some Error Occured');
+					}
+				});
+
+		}
+		$("#checkAll").click(function() {
+			
+			$('input:checkbox').not(this).prop('checked', this.checked);
+		});
+		$(function() {
+			$("#topRiskDetailsTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : []
+				} ],
+
+				"order" : [ 0, "desc" ],
+				"lengthMenu" : [ 10 ],
+				"responsive" : false,
+				"autoWidth" : false,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo('#topRiskRagTitle1');
+			//.buttons().container().appendTo('#topRiskRagTitle');
+		});
+		$("#exportDataBtnModel").click(function() {
+			
+			
+							
+							var topRiskId =  $("#tpIdModel").val();
+							var deptName=$("#tpDepartmentModel").val();
+							var assmentPeriod= $("#tpAssessmentPeriodModel").val();
+							
+							var pageValJson = "{\"topRiskId\":\"" + topRiskId
+							+ "\",\n" + "\"userDept\":\"" +deptName 
+							+ "\",\n" + "\"asstPeriod\":\"" +assmentPeriod+ "\"}";
+					
+						
+								
+
+					document.getElementById('load').style.visibility = "disable";
+		var iterationCount = 1000;
+										var keySize = 128;
+										//passPhrase is the key
+										var passphrase = CryptoJS.lib.WordArray.random(
+												128 / 8).toString(CryptoJS.enc.Hex);
+
+										var aesUtil = new AesUtil(keySize,
+												iterationCount);
+
+										var ciphertext = aesUtil.encrypt(
+												reverseText(passphrase), pageValJson);
+
+										$("#encryptedJsonEdit2").val(
+												ciphertext + ':~:' + passphrase);
+										
+										$("#exportTableFormModel").submit();
+												document.getElementById('load').style.visibility = "disable";
+
+				
+		});
+</script>
+
+
+</body>
+</html>

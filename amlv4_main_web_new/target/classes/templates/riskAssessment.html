@@ -1,0 +1,2291 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.38.0/css/tempusdominus-bootstrap-4.min.css" /> -->
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.ofcCheckbox {
+	display: inline-block;
+}
+</style>
+
+</head>
+<div id="load"></div>
+
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Risk Library</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Risk Register</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+
+
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-tabs card-info card-outline">
+								<form class="form-horizontal" id="riskAssessmentFrm"
+									autocomplete="off" th:action="@{/inherentSaveAction}"
+									method="post" enctype="multipart/form-data"  >
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:feild="*{encryptedJson}" /> <input type="hidden"
+										id="userName" name="userName" th:value="${userName}" /> <input
+										type="hidden" th:value="*{message}" id="message" />
+
+									<div class="card-header p-2 border-bottom-0">
+										<ul class="nav nav-tabs">
+											<li class="nav-item"><a
+												class="nav-link card-title text-md text-blue text-bold  active"
+												href="#" id="registerDetails" data-toggle="tab"> <i
+													class="fa fa-tasks mr-1 mt-2"></i> Register Details
+											</a></li>
+											<li class="nav-item"><a
+												class="nav-link card-title text-md text-blue text-bold"
+												href="#" id="inherentDiv" data-toggle="tab"> <i
+													class="fa fa-tasks mr-1 mt-2"></i> Risk Assessment
+											</a></li>
+
+										</ul>
+										
+									</div>
+									<input type="hidden"th:value="${riskRegister.controlId}"  id="controlId"/>
+									<!-- /.card-header -->
+
+									<!-- /.card-header -->
+
+									<!-- 									<div id="reportPage" class="report-page"> -->
+									<!-- 										<div id="chartContainer" class="chart-Container"> -->
+
+
+
+
+									<div class="card-body mt-2" id="riskRegiserTab">
+
+
+										<!-- RISK LIBRARY DETAILS HERE -->
+										<div class="tab-content" id="incidentdetails-tab">
+											<div class="active tab-pane" id="content-page">
+
+												<div class="card card-info bg-info p-2">
+													<h3 class="card-title">&nbsp; Risk Details</h3>
+												</div>
+
+												
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raStmtId">Risk ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="raStmtId" name="raStmtId"
+																		th:field="${riskRegister.riskId}" readonly>
+
+
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raRecordStatus">Record Status</label>
+
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-capitalize text-bold"
+																		id="raRecordStatus" name="recordstatus"
+																		th:value="${riskRegister.riskStatus}" readonly>
+
+																</div>
+
+
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlDept">Department <code>*</code>
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	id="controlDept" name="controlDept"
+																	th:field="${riskRegister.riskDept}" readonly>
+
+
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raRiskCate">Function <code>*</code></label><input
+																	type="text" class="form-control form-control-sm"
+																	id="controlFunction" name="controlFunction"
+																	th:field="${riskRegister.riskFunction}"
+																	placeholder="Function" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!-- /.row -->
+													<!-- 													<div class="row"> -->
+
+													<!-- 														<div class="col-sm-6"> -->
+													<!-- 															<div class="form-group"> -->
+													<!-- 																<label for="raStmtName">Risk Description <code>*</code> -->
+													<!-- 																</label> <input type="text" class="form-control form-control-sm" -->
+													<!-- 																	th:field="${riskRegister.riskDescription}" name="raStmtName" -->
+													<!-- 																	id="riskName" placeholder="Risk Name" readonly> -->
+													<!-- 															</div> -->
+													<!-- 														</div> -->
+													<!-- 													</div> -->
+
+
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="raStmtDescription">Risk Description
+																	<code>*</code>
+																</label>
+																<textarea class="form-control form-control-sm"
+																	name="raStmtDescription" id="raStmtDescription"
+																	th:field="${riskRegister.riskDescription}"
+																	maxlength="3000" placeholder="Risk Description"
+																	readonly></textarea>
+															</div>
+														</div>
+
+													</div>
+													<!-- /.row -->
+
+													<input type="hidden" th:value="${riskRegister.riskName}"
+														id="riskName">
+
+
+													<!--  row -->
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="raStmtDescription">Root Cause /
+																	Trigger <code>*</code>
+																</label>
+																<textarea class="form-control form-control-sm"
+																	th:field="${riskRegister.rootCauseOrTrigger}"
+																	name="raStmtDescription" id="rootCause"
+																	maxlength="3000" placeholder="Root Cause / Trigger"
+																	readonly></textarea>
+															</div>
+														</div>
+
+													</div>
+													<!-- /. row -->
+													
+													<!--  row -->
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="raStmtDescription"> Key Mitigation Measures <code>*</code>
+																</label>
+																<textarea class="form-control form-control-sm"
+																	th:field="${riskRegister.keyMitigationMeasures}"
+																	name="raStmtDescription" id="rootCause"
+																	maxlength="3000" placeholder="Root Cause / Trigger"
+																	readonly></textarea>
+															</div>
+														</div>
+
+													</div>
+													<!-- /. row -->
+
+
+
+
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raToleranceValueDatatype">Impact <code>*</code></label>
+
+																<input type="text" class="form-control form-control-sm"
+																	th:value="${riskRegister.riskImpact}" readonly />
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raStmtName">Assesment Frequency <code>*</code>
+																</label> <select class="form-control from-control-sm select2"
+																	name="controlAssessmentFreq" id="controlAssessmentFreq"
+																	th:field="${riskRegister.riskAssessmentFreq}"
+																	data-placeholder="Frequency" style="width: 100%;"
+																	disabled>
+																	<option value='Daily'>Daily</option>
+																	<option value='Weekly'>Weekly</option>
+																	<option value='Fortnightly'>Fortnightly</option>
+																	<option value='Monthly'>Monthly</option>
+																	<option value='Quarterly'>Quarterly</option>
+																	<option value='Half Yearly'>Half Yearly</option>
+																	<option value='Yearly'>Yearly</option>
+																</select>
+															</div>
+														</div>
+
+
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raCaptureValueDept">Risk
+																	Classification <code>*</code>
+																</label> <input type="text" class="form-control from-control-sm"
+																	name="riskClassification" id="riskClassification"
+																	th:field="${riskRegister.riskClassification}"
+																	data-placeholder="Risk Classification" readonly>
+															</div>
+														</div>
+
+
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raAssessmentCriteria">Sub Risk <code>*</code>
+																</label> <input type="text" class="form-control from-control-sm"
+																	name="subRisk" id="subRisk"
+																	th:field="${riskRegister.subRiskClassification}"
+																	data-placeholder="Sub Risk" readonly>
+															</div>
+														</div>
+
+													</div>
+
+
+													<!-- Row -->
+													<div class="row" style="display: none;">
+
+														<div class="col-sm-12">
+															<label for="officeType">Applicability for
+																Operating Offices<code>*</code>
+															</label>
+															<div class="form-group text-capitalize office-set"
+																id="officetypeCheck">
+																<div th:each="controlOffice : ${cntrlLib}"
+																	class="form-check ofcCheckbox">
+
+																	<div th:if="${controlOffice.flg} == true">
+																		<input class="form-check-input checkboxOffice"
+																			type="checkbox" name="checkboxOffice"
+																			th:id="${controlOffice.officeType}" checked disabled>
+																	</div>
+
+																	<div th:if="${controlOffice.flg} == false">
+																		<input class="form-check-input checkboxOffice"
+																			type="checkbox" name="checkboxOffice"
+																			th:id="${controlOffice.officeType}" disabled>
+																	</div>
+																	<label
+																		class="form-check-label checkbox-inline text-capitalize"
+																		th:text="${controlOffice.officeType}"> </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+																</div>
+
+															</div>
+														</div>
+
+													</div>
+													<!-- /.Row -->
+
+
+													<!-- Previous Assessment Matrix calculation Start -->
+													<div class="row table-responsive" id="previousMatrixRow"
+														th:if="${riskRegister.matrixCalcList != null}">
+														<div class="col-sm-12">
+															<div
+																class="card collapsed-card card-outline card-secondary">
+																<div class="card-header text-blue">
+																	<label><i class="fas fa-calculator"></i>&nbsp;
+																		Previous Inherent Risk Assessments </label>
+
+																	<div class="card-tools">
+																		<button type="button" class="btn btn-tool"
+																			id="collapse" data-card-widget="collapse"
+																			data-toggle="tooltip" title="Collapse">
+																			<i class="fas fa-plus" style="color: #007bff;"></i>
+																		</button>
+
+																	</div>
+
+																</div>
+
+																<div class="card-body table-responsive">
+																	<table id="previousMatrix"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+																		<thead>
+																			<tr>
+
+																				<th>Risk Name</th>
+																				<th>Likelihood Rating</th>
+																				<th>Impact Rating</th>
+
+																				<th>Inherent Risk Rating</th>
+																				<th>Assessment Date</th>
+																				<!-- 																				<th>Assessment Status</th> -->
+																				<th>Captured By</th>
+
+																			</tr>
+																		</thead>
+																		<tbody class="previousMatrixBody">
+																			<tr
+																				th:each="riskLibMas : ${riskRegister.matrixCalcList}">
+																				<td th:text="${riskRegister.riskName}"></td>
+																				<td th:text="${riskLibMas.likelihoodRatingScale}"></td>
+																				<td th:text="${riskLibMas.impactRatingScale}"></td>
+
+																				<td class="text-capitalize"><span
+																					class="badge text-white"
+																					th:style="'background-color:'+${riskLibMas.colorCode}"
+																					th:text="${riskLibMas.assessmentRatingScale}"></span></td>
+																				<td th:text="${riskLibMas.assessmentDate}"></td>
+																				<!-- 																				<td class="text-capitalize"><span -->
+																				<!-- 																					class="badge text-white" -->
+																				<!-- 																					style="background-color: #28A745;" -->
+																				<!-- 																					th:text="${riskLibMas.assessmentStatus}"></span></td> -->
+																				<td th:text="${riskLibMas.makerId}"></td>
+
+																			</tr>
+
+
+																		</tbody>
+																	</table>
+																</div>
+																<!-- /card-body -->
+															</div>
+															<!-- /card -->
+														</div>
+														<!-- /col -->
+													</div>
+													<!-- /row -->
+
+
+
+
+
+
+													<!-- Previous Assessment Matrix calculation End -->
+
+
+
+													<!-- /.row -->
+													<!-- Linked Controls -->
+													<div class="row table-responsive">
+														<div class="col-sm-12">
+															<div
+																class="card collapsed-card card-outline card-secondary">
+
+																<div class="card-header  text-green">
+																	<label><i class="fas fa-link"></i>&nbsp; Linked
+																		Controls </label>
+
+																	<div class="card-tools">
+																		<button type="button" class="btn btn-tool"
+																			id="collapse" data-card-widget="collapse"
+																			data-toggle="tooltip" title="Collapse">
+																			<i class="fas fa-plus" style="color: #28a745;"></i>
+																		</button>
+
+																	</div>
+
+																</div>
+
+																<div class="card-body table-responsive">
+
+
+
+
+																	<table id="controlTable"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+																		<thead>
+																			<tr>
+																				<th></th>
+																				<th>Control ID</th>
+																				<th>Control Function</th>
+																				<th>Control Name</th>
+																				<th>Control Owner</th>
+																				<th>Control Status</th>
+																				<th>Assessment Frequency</th>
+
+																			</tr>
+																		</thead>
+																		<tbody class="actPlanBody">
+																			<tr th:each="controlList : ${linkedControls}">
+																				<td><input type="checkbox" name="controlid[]"
+																					th:id="${controlList.controlId}"
+																					th:value="${controlList.controlId}" checked
+																					disabled></td>
+
+																				<!-- 																				<td th:text="${controlList.controlId}"></td> -->
+																				<td><a class="text-blue viewControlModal"
+																					data-toggle="modal" href="#"
+																					th:id="${controlList.controlId}"
+																					th:text="${controlList.controlId}"> </a></td>
+
+																				<td th:text="${controlList.controlFunction}"></td>
+																				<td th:text="${controlList.controlName}"></td>
+																				<td th:text="${controlList.controlDept}"></td>
+																				<td th:text="${controlList.controlStatus}"></td>
+																				<td th:text="${controlList.controlAssessmentFreq}"></td>
+
+																			</tr>
+
+																		</tbody>
+																	</table>
+
+
+																	<!-- /form -->
+																</div>
+																<!-- /card-body -->
+															</div>
+															<!-- /card -->
+														</div>
+														<!-- /col -->
+													</div>
+													<!-- /row -->
+													<!-- /. Linked Controls -->
+
+
+
+
+
+
+
+													<!-- /.row -->
+
+
+													<!-- Previous Control Assessment Start -->
+													<div class="row table-responsive"
+														id="residualAssessmentRow"
+														th:if="${riskRegister.matrixCalcList != null}">
+														<div class="col-sm-12">
+															<div
+																class="card collapsed-card card-outline card-secondary">
+																<div class="card-header text-blue">
+																	<label><i class="fas fa-calculator"></i>&nbsp;
+																		Residual Risk Assessments </label>
+
+																	<div class="card-tools">
+																		<button type="button" class="btn btn-tool"
+																			id="collapse" data-card-widget="collapse"
+																			data-toggle="tooltip" title="Collapse">
+																			<i class="fas fa-plus" style="color: #007bff;"></i>
+																		</button>
+
+																	</div>
+
+																</div>
+
+																<div class="card-body table-responsive">
+																	<table id="residualAssessmentTbl"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+																		<thead>
+																			<tr>
+
+																				<th>Assessment Id</th>
+																				<!-- 																				<th>Risk Id</th> -->
+																				<!-- 																				<th>Control Id</th> -->
+																				<th>Inherent Risk Assessment</th>
+																				<th>Control Effectiveness</th>
+																				<th>Residual Risk Rating</th>
+																				<th>Period</th>
+																				<th>Captured Office</th>
+																				<!-- 																				<th>Captured By</th> -->
+
+																			</tr>
+																		</thead>
+																		<tbody class="residualtblBody">
+																			<tr th:each="residual : ${riskRegister.residualList}">
+																				<td th:text="${residual.residualAssessmentId}"></td>
+																				<td class="text-capitalize"><span
+																					class="badge text-white"
+																					th:style="'background-color:'+${residual.riskAssessmentValueCol}"
+																					th:text="${residual.riskAssessmentValue}"></span></td>
+
+
+																				<td class="text-capitalize"><span
+																					class="badge text-white"
+																					th:style="'background-color:'+${residual.controlAssessmentValueCol}"
+																					th:text="${residual.controlAssessmentValue}"></span>
+
+																				</td>
+																				<td class="text-capitalize"><span
+																					class="badge text-white"
+																					th:style="'background-color:'+${residual.residualAssessmentValueCol}"
+																					th:text="${residual.residualAssessmentValue}"></span>
+																				</td>
+																				<td th:text="${residual.residualAssessmentDate}"></td>
+																				<td class="text-capitalize"
+																					th:text="${residual.officeType}"></td>
+																				<!-- 																				<td class="text-capitalize" th:text="${residual.makerId}"></td> -->
+
+																			</tr>
+
+
+																		</tbody>
+																	</table>
+																</div>
+																<!-- /card-body -->
+															</div>
+															<!-- /card -->
+														</div>
+														<!-- /col -->
+													</div>
+													<!-- /row -->
+
+													<!-- Previous Control Assessment End -->
+
+
+													<!-- Action Plan Details Start -->
+													<div class="row table-responsive"
+														id="residualAssessmentRow"
+														th:if="${riskRegister.matrixCalcList != null}">
+														<div class="col-sm-12">
+															<div
+																class="card collapsed-card card-outline card-secondary">
+																<div class="card-header text-green">
+
+																	<label><i class="fas fa-link"></i>&nbsp; Action
+																		Plan Details </label>
+
+																	<div class="card-tools">
+																		<button type="button" class="btn btn-tool"
+																			id="collapse" data-card-widget="collapse"
+																			data-toggle="tooltip" title="Collapse">
+																			<i class="fas fa-plus" style="color: #28a745;"></i>
+																		</button>
+
+																	</div>
+
+																</div>
+
+																<div class="card-body table-responsive">
+																	<table id="actionPlanTbl"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+																		<thead>
+																			<tr>
+
+																				<th>Action Plan ID</th>
+																				<th>Action Name</th>
+
+																				<th>Completion Date</th>
+																				<!-- 																				<th>Revised Date</th> -->
+																				<th>Completion Status</th>
+
+
+																			</tr>
+																		</thead>
+																		<tbody class="residualtblBody">
+																			<tr
+																				th:each="actionPlan : ${riskRegister.actionPlanList}">
+																				<td><a class="text-blue viewActionPlanModal"
+																					data-toggle="modal" href="#"
+																					th:id="${actionPlan.actionId}"
+																					th:text="${actionPlan.actionId}"> </a></td>
+																				<td class="text-capitalize"
+																					th:text="${actionPlan.actionDescription}"></td>
+
+
+
+																				<td class="text-capitalize"
+																					th:text="${actionPlan.exComplDate}"></td>
+																				<!-- 																				<td class="text-capitalize" -->
+																				<!-- 																					th:text="${actionPlan.updatePeriod}"></td> -->
+
+
+																				<td class="text-capitalize"
+																					th:if="${actionPlan.actionCompPercent == '100.00'}">
+																					Completed</td>
+
+																				<td class="text-capitalize"
+																					th:if="${actionPlan.actionCompPercent != '100.00'}">
+																					Not Completed</td>
+
+
+																			</tr>
+
+
+																		</tbody>
+																	</table>
+																</div>
+																<!-- /card-body -->
+															</div>
+															<!-- /card -->
+														</div>
+														<!-- /col -->
+													</div>
+													<!-- /row -->
+
+													<!-- Action Plan Details End -->
+
+
+
+
+
+													<!-- File Details -->
+
+													<div class="row table-responsive">
+														<div class="col-sm-12">
+															<div
+																class="card collapsed-card card-outline card-secondary">
+
+																<div class="card-header text-maroon">
+
+																	<label><i class="far fa-file"></i>&nbsp; File
+																		Details </label>
+
+																	<div class="card-tools">
+																		<button type="button" class="btn btn-tool"
+																			id="collapse" data-card-widget="collapse"
+																			data-toggle="tooltip" title="Collapse">
+																			<i class="fas fa-plus" style="color: #d81b60;"></i>
+																		</button>
+
+																	</div>
+
+
+
+																</div>
+
+
+
+																<div class="card-body table-responsive">
+																	<table
+																		class="table table-head-fixed table-bordered table-striped text-capitalize uploadTable"
+																		id="filedetails"
+																		th:if="${riskRegister.filedetailsList != null}">
+																		<thead>
+																			<tr>
+																				<th>File Name</th>
+																				<th>File Size</th>
+																				<th>Uploaded Date</th>
+																				<th>Uploaded by</th>
+																				<th></th>
+
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr th:each="mvc : ${riskRegister.filedetailsList}">
+																				<td th:text="${mvc.fileName}"></td>
+																				<td th:text="${mvc.fileSize}"></td>
+																				<td th:text="${mvc.uploadTimestamp}"></td>
+																				<td th:text="${mvc.uploadedBy}"
+																					class="text-capitalize"></td>
+																				<td><a th:name='${mvc.fileName}' href="#"
+																					class="btn btn-info downloadfile"><i
+																						class="fas fa-download"></i></a></td>
+
+
+
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+
+													</div>
+													<!-- ./row -->
+
+													<!-- /.File Details  -->
+
+
+
+
+
+
+
+												</div>
+
+
+
+
+											</div>
+										</div>
+										<!-- RISK LIBRARY DETAILS CLOSE HERE -->
+
+
+
+
+										<!-- REMEDIATION DETAILS  -->
+
+
+										<!-- REMEDIATION DETAILS END  -->
+
+
+										<!-- Confirm Modal -->
+
+										<!-- Cancel Modal -->
+										<div class="modal fade" id="cancelmodel">
+											<div class="modal-dialog modal-fluid">
+												<div class="modal-content">
+													<div class="modal-header bg-info">
+														<h6 class="modal-title">Confirm</h6>
+														<button type="button" class="close" data-dismiss="modal"
+															aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<!-- form start -->
+													<div class="modal-body">
+														<h5 class="card-title">
+															If you leave this page, all changes will be lost. <br>
+															Press "Ok" to Continue.
+														</h5>
+													</div>
+													<div class="modal-footer">
+														<button type="button" class="btn btn-secondary"
+															data-dismiss="modal">
+															<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+														</button>
+														<a class="btn btn-primary target"><i
+															class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Ok
+														</a>
+													</div>
+												</div>
+												<!-- /.modal-content -->
+											</div>
+											<!-- /.modal-dialog -->
+										</div>
+										<!-- /.Cancel Modal -->
+
+
+										<!-- FINANCIAL DETAILS -->
+										<div class="modal fade" id="controlmodal">
+											<div class="modal-dialog modal-xl">
+												<div class="modal-content">
+													<div class="modal-header bg-info">
+														<h5 class="modal-title">View</h5>
+														<button type="button" class="close text-white"
+															data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<!-- /.col -->
+
+
+													<div class="card-body">
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="controlId">Control ID</label>
+																	<div class="input-group">
+																		<input type="text"
+																			class="form-control form-control-sm text-bold"
+																			id="controlId" name="controlId" readonly>
+																	</div>
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="recordstatus">Record Status</label>
+																	<div class="input-group">
+																		<input type="text"
+																			class="form-control form-control-sm  text-bold"
+																			value="view" id="recordstatus" name="recordstatus"
+																			readonly>
+
+																	</div>
+																</div>
+															</div>
+														</div>
+														<!-- /.row -->
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="controlDept">Department <code>*</code>
+																	</label> <input type="text"
+																		class="form-control form-control-sm text-capitalize"
+																		id="controlDepartment" name="controlFunction"
+																		placeholder="Department" readonly>
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="controlFunction">Function <code>*</code></label>
+																	<input type="text" class="form-control form-control-sm"
+																		id="controlFunctionM" name="controlFunction"
+																		placeholder="Function" readonly>
+																</div>
+															</div>
+														</div>
+														<!-- /.row -->
+														<div class="row">
+
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="controlName">Control Name <code>*</code>
+																	</label> <input type="text"
+																		class="form-control form-control-sm" id="controlNameM"
+																		name="controlName" placeholder="Control Name" readonly>
+																</div>
+															</div>
+
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="controlAssessmentFreq">Assessment
+																		Frequency <code>*</code>
+																	</label> <input type="text"
+																		class="form-control form-control-sm"
+																		id="controlAssessmentFreqM"
+																		name="controlAssessmentFreq"
+																		placeholder="Control Assessment Frequency" readonly>
+																</div>
+															</div>
+
+														</div>
+														<!--  /. row -->
+														<div class="row">
+															<div class="col-sm-12">
+																<label for="officeType">Applicability of Office
+																	Type <code>*</code>
+																</label>
+
+																<div class="office-set"></div>
+															</div>
+														</div>
+
+														<br>
+														<div class="row text-capitalize">
+															<div class="col-sm-12">
+																<div class="office-desc"></div>
+															</div>
+														</div>
+														<!--  	<div class="row">
+										<div class="col-sm-12">
+												<label for="officeType">Office Type <code>*</code></label>
+												<div class="form-group text-capitalize" id="officetypeCheck">
+													<div th:each="controlOffice : ${control.officeCheckValue}" class="form-check">
+														<input  class="form-check-input checkboxOffice" type="checkbox" th:name="${controlOffice.officeValue}" th:id="'check-'+${controlOffice.officeCode}" th:checked="${controlOffice.officeFlg}" disabled>
+                          								<label class="form-check-label" th:text="${controlOffice.officeValue}"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          							</div>
+                          							
+												</div>
+											</div>
+									</div> -->
+														<!-- Loop Control Option start-->
+														<!--  	<div th:each="controlDesc : ${control.officeDescValue}" class="row text-capitalize">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="controlDescCO" th:text="${controlDesc.officeValue}"> <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm officeDesc"
+														th:name="${controlDesc.officeCode}"  th:id="${controlDesc.officeCode}" th:text="${controlDesc.officeDesc}"
+														maxlength="3000" placeholder="Control Description" readonly></textarea>
+												</div>
+											</div>
+										</div> -->
+														<!-- /.row -->
+														<!-- Loop Control Option End -->
+														<!-- /.row -->
+														<div class="row">
+															<div class="col-sm-12">
+																<label for="indepartment">Control Gaps <code>*</code>
+																</label>
+																<textarea class="form-control form-control-sm"
+																	id="controlGaps" name="controlGaps"
+																	placeholder="Control Gaps" readonly>
+																		</textarea>
+															</div>
+														</div>
+
+														<br>
+
+														<div class="row">
+															<div class="col-sm-6">
+																<label for="indepartment">InterDepartmental
+																	dependencies <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="indepartment" name="indepartment"
+																	placeholder="InterDepartmental
+																	dependencies"
+																	readonly>
+															</div>
+
+														</div>
+
+
+														<br>
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<table
+																		class="table uploadTable table-head-fixed table-bordered table-striped"
+																		id="modalFileId">
+																		<thead>
+																			<tr>
+																				<th>File Name</th>
+																				<th>File Size (kb)</th>
+																				<th>Uploaded Date</th>
+																				<th>Uploaded by</th>
+																				<th></th>
+																				<th></th>
+																			</tr>
+																		</thead>
+																		<tbody>
+
+																		</tbody>
+																		</tr>
+																	</table>
+																</div>
+															</div>
+
+														</div>
+														<!-- ./row -->
+													</div>
+													<!-- /.card-body -->
+													<div class="card-footer">
+														<button class="btn btn-secondary" data-dismiss="modal">
+															<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+														</button>
+													</div>
+													<!-- /.row -->
+												</div>
+												<!-- modal-content -->
+											</div>
+											<!-- /modal-dialog -->
+										</div>
+										<!-- /modal -->
+
+
+
+
+										<!-- View Modal -->
+										<div class="modal fade" id="viewActionModal">
+											<div class="modal-dialog modal-xl">
+												<div class="modal-content">
+													<div class="modal-header bg-info">
+														<h5 class="modal-title">
+															Action Plan ID - <span id="actionIdLabel"></span>
+														</h5>
+														<button type="button" class="close text-white"
+															data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<!-- form start -->
+													
+														<div class="card-body">
+															<div class="row">
+																<div class="col-sm-4">
+																	<div class="form-group">
+																		<label for="actionPlanId">Action Plan ID</label> <input
+																			type="text"
+																			class="form-control form-control-sm  text-bold actionPlanId"
+																			id="actionPlanId" value="" name="actionPlanId"
+																			readonly>
+																	</div>
+																</div>
+																<div class="col-sm-4">
+																	<div class="form-group">
+																		<label for="recordStatus">Record Status</label> <input
+																			type="text"
+																			class="form-control form-control-sm col-4 text-bold actionplanrecordStatus"
+																			id="recordStatus" name="recordStatus" readonly>
+																	</div>
+																</div>
+															</div>
+															<!-- /.row -->
+
+															<div class="row">
+																<div class="col-sm-4">
+																	<div class="form-group">
+																		<label for="actionName">Action Name</label>
+																		<div class="input-group mb-2">
+																			<input type="text"
+																				class="form-control form-control-sm actionPlanName text-capitalize"
+																				id="actionName" name="actionName" readonly>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<!-- /.row -->
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="actionDescription">Action
+																			Description </label>
+																		<textarea
+																			class="form-control form-control-sm actionPlanDescription text-capitalize"
+																			name="actionDescription" id="actionDescription"
+																			rows="3" readonly></textarea>
+																	</div>
+																</div>
+															</div>
+															<!-- /.row -->
+
+															<div class="row">
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="completionDate">Expected
+																			Completion Date </label><input type="text"
+																			class="form-control form-control-sm completionDate "
+																			name="completionDate" id="completionDate" value=""
+																			readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="compPercentage">Completion %</label> <input
+																			type="text"
+																			class="form-control form-control-sm compPercentage"
+																			name="compPercentage" id="compPercentage" value=""
+																			readonly>
+																	</div>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="actionOwner">Action Owner</label> <input
+																			type="text"
+																			class="form-control form-control-sm  actionOwner text-capitalize"
+																			name="actionOwner" id="actionOwner" value="" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="frequency">Action Update Frequency</label>
+																		<input type="text"
+																			class="form-control form-control-sm frequency text-capitalize"
+																			name="frequency" id="frequency" value="Monthly"
+																			readonly>
+																	</div>
+																</div>
+															</div>
+
+															<div class="row" id="asrDiv" style="display: none">
+																<div class="col-sm-12 ">
+																	<div class="card card-outline card-secondary">
+																		<div class="card-header">
+																			<h3 class="card-title">Linked Modules</h3>
+																		</div>
+																		<div class="card-body">
+																			<table
+																				class="table table-head-fixed table-bordered table-striped"
+																				id="linkedModuleTbl">
+																				<thead>
+																					<tr>
+																						<th>Source ID</th>
+																						<th>Source Name</th>
+																						<th>Module Name</th>
+																						<th>Record Status</th>
+																						<th>Assessment Status</th>
+																					</tr>
+																				</thead>
+																				<tbody>
+
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<!-- /.row -->
+
+															<div class="row" id="updateDiv" style="display: none">
+																<div class="col-sm-12 ">
+																	<div class="card card-outline card-secondary">
+																		<div class="card-header">
+																			<h3 class="card-title">Action Update</h3>
+																		</div>
+																		<div class="card-body">
+																			<table
+																				class="table table-head-fixed table-bordered table-striped"
+																				id="updateActionTbl">
+																				<thead>
+																					<tr>
+																						<th>Update Period</th>
+																						<th>Completion %</th>
+																						<th>Updated By</th>
+																						<th>Updated Date</th>
+																					</tr>
+																				</thead>
+																				<tbody>
+
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<!-- /.row -->
+
+															<div class="row" id="recordDateDiv" style="display: none">
+																<div class="col-sm-12 ">
+																	<div class="card card-outline card-secondary">
+																		<div class="card-header">
+																			<h3 class="card-title">Revised Dates</h3>
+																		</div>
+																		<div class="card-body">
+																			<table
+																				class="table table-head-fixed table-bordered table-striped"
+																				id="actionDateTbl">
+																				<thead>
+																					<tr>
+																						<th>Completion Date</th>
+																						<th>Revised Date</th>
+																						<th>Record Create By</th>
+																						<th>Record Date</th>
+																					</tr>
+																				</thead>
+
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<!-- /.row -->
+
+															<div class="row" id="fileRow" style="display: none">
+																<div class="col-sm-12">
+																	<div class="card card-outline card-secondary">
+																		<div class="card-header">
+																			<h3 class="card-title">Document List</h3>
+																		</div>
+																		<div class="card-body">
+																			<table class="table table-bordered table-striped"
+																				id="fileDetails">
+																				<thead>
+																					<tr>
+																						<th>File Name</th>
+																						<th>File Size</th>
+																						<th>Uploaded By</th>
+																						<th>Uploaded Date</th>
+																						<th></th>
+																					</tr>
+																				</thead>
+																				<tbody>
+
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+
+																</div>
+															</div>
+															<!-- /.row -->
+
+
+
+														</div>
+														<!-- /.card-body -->
+														<div class="card-footer">
+
+															<button class="btn btn-secondary" id="backbtn">
+																<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+															</button>
+														</div>
+														<!-- /.card-footer -->
+													<!-- </form> -->
+												</div>
+												<!-- /.modal-content -->
+											</div>
+											<!-- /.modal-dialog -->
+										</div>
+										<!-- /.modal -->
+
+
+
+										<!-- FINANCIAL DETAILS END -->
+
+
+										<!-- CREATE / LINK ACTION PLAN  -->
+
+										<!-- CREATE / LINK ACTION PLAN END -->
+
+									</div>
+								
+
+
+
+
+								<!-- REMEDIATION DETAILS  -->
+								<div class="card-body mt-2" id="inherentRiskTab"
+									style="display: none;">
+
+
+									<!-- RISK LIBRARY DETAILS HERE -->
+									<!-- 										<div class="tab-content" id="incidentdetails-tab"> -->
+									<!-- 											<div class="active tab-pane" id="content-page"> -->
+
+
+									<div class="tab-content" id="inherentRiskTab">
+										<div class="active tab-pane">
+
+											<div class="card-body">
+												<div class="card card-info bg-info p-2 mt-n3">
+													<h3 class="card-title">&nbsp; Periodic Inherent Risk
+														Assessment</h3>
+												</div>
+
+
+
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="raStmtName">Impact <code>*</code>
+															</label> <select class="select2 ratingImpact"
+																name="controlAssessmentFreq" id="impactRating"
+																data-placeholder="Impact Rating" style="width: 100%;">
+																<option value=''>Select</option>
+																<option
+																	th:each="impactRating : ${riskLibMaster.impactRatingScaleList}"
+																	th:value="${impactRating.rating}"
+																	th:text="${impactRating.financeImpact}" />
+															</select> <span id="themeerror"></span>
+														</div>
+													</div>
+
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="raStmtName">Likelihood of Occurrence
+																<code>*</code>
+															</label> <select class="select2 ratingImpact" name="controlDept"
+																id="likelihood" data-placeholder="Likelihood Occurrence"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option
+																	th:each="likelihood : ${riskLibMaster.likelihoodRatingList}"
+																	th:value="${likelihood.rating}"
+																	th:text="${likelihood.probRiskEvent}" />
+
+
+															</select> <span id="themeerror"></span>
+														</div>
+													</div>
+
+												</div>
+
+
+												<!-- Hidden Calculation Part Start -->
+												<div class="row table-responsive" id="hiddenMatrix"
+													style="display: none">
+													<div class="col-sm-12">
+														<div class="card card-outline card-secondary">
+															<div class="card-header text-blue">
+																<label><i class="fas fa-calculator"></i>&nbsp;
+																	Inherent Risk Assessment </label>
+
+															</div>
+															<input type="hidden" id="assessmentValue" />
+															<div class="card-body table-responsive">
+																<table id="matrixTable" data-paging="false"
+																	data-searching="false" data-ordering="false"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+																	<thead>
+																		<tr>
+
+																			<th>Risk Name</th>
+																			<th>Impact Rating</th>
+																			<th>Likelihood Rating</th>
+																			<th>Inherent Risk Rating</th>
+																			<th>Assessment Date</th>
+																			<th>Captured By</th>
+
+																		</tr>
+																	</thead>
+																	<tbody class="matrixBody">
+																	</tbody>
+																</table>
+															</div>
+															<!-- /card-body -->
+														</div>
+														<!-- /card -->
+													</div>
+													<!-- /col -->
+												</div>
+												<!-- /row -->
+												<!-- Hidden Calculation Part End -->
+
+												<!-- Previous Assessment Matrix calculation Start -->
+												<!-- /row -->
+
+												<!-- Residual Risk Assessment Start -->
+												<div class="card card-info bg-info p-2">
+													<h3 class="card-title">&nbsp; Residual Assessment</h3>
+												</div>
+
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="raStmtName"> Office City </label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold"
+																	id="OfficeNumber" name="officeId"
+																	th:field="${officeMaster.officeCity}" readonly>
+																<input type="hidden" id="reportingOfcId"
+																	th:value="${officeMaster.reportingOfficeCode}" />
+
+															</div>
+															<span id="themeerror"></span>
+														</div>
+													</div>
+
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="controlId">Office Code</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold"
+																	id="OfficeNumber" name="officeId"
+																	th:field="${officeMaster.officeCode}" readonly>
+																<input type="hidden" id="officeId"
+																	th:value="${officeMaster.officeId}" />
+
+															</div>
+														</div>
+													</div>
+												</div>
+
+
+												<!-- 												<div class="row"> -->
+												<!-- 													<div class="col-sm-6"> -->
+												<!-- 														<div class="form-group"> -->
+												<!-- 															<label for="raStmtName"> Office City </label> -->
+												<!-- 															<div class="input-group"> -->
+												<!-- 																<input type="text" -->
+												<!-- 																	class="form-control form-control-sm text-bold" -->
+												<!-- 																	id="OfficeNumber" name="officeId" -->
+												<!-- 																	th:field="${officeMaster.officeCity}" readonly> -->
+												<!-- 																<input type="hidden" id="reportingOfcId" -->
+												<!-- 																	th:value="${officeMaster.reportingOfficeCode}" /> -->
+
+												<!-- 															</div> -->
+												<!-- 															<span id="themeerror"></span> -->
+												<!-- 														</div> -->
+												<!-- 													</div> -->
+
+												<!-- 													<div class="col-sm-6"> -->
+												<!-- 														<div class="form-group"> -->
+												<!-- 															<label for="controlId">Office Code</label> -->
+												<!-- 															<div class="input-group"> -->
+												<!-- 																<input type="text" -->
+												<!-- 																	class="form-control form-control-sm text-bold" -->
+												<!-- 																	id="OfficeNumber" name="officeId" -->
+												<!-- 																	th:field="${officeMaster.officeCode}" readonly> -->
+												<!-- 																<input type="hidden" id="officeId" -->
+												<!-- 																	th:value="${officeMaster.officeId}" /> -->
+
+												<!-- 															</div> -->
+												<!-- 														</div> -->
+												<!-- 													</div> -->
+												<!-- 												</div> -->
+
+												<!-- <form id="controlAssessmentFrm"> -->
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="raStmtName"> Control Assessment At
+																Central Office<span class="text-capitalize"></span> <code>*</code>
+															</label> <select class="select2 text-capitalize"
+																name="controlAssessmentFreq" id="controlAssessmentDrop"
+																data-placeholder="Control Assessment"
+																style="width: 100%;" disabled>
+																<option value=''>Select</option>
+																<option th:each="cntrolEffect : ${controlAssessment}"
+																	th:value="${cntrolEffect.effectiveValue}"
+																	th:text="${#strings.toLowerCase(cntrolEffect.effectiveNess)}"
+																	class="text-capitalize" />
+															</select> <span id="themeerror"></span>
+														</div>
+													</div>
+
+
+
+													<!-- Justification for the Rating Override -->
+													<div class="row text-capitalize" id="ratingOverride"
+														style="display: none;">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="controlDescCO"> Justification for
+																	the Rating Override <code>*</code>
+																</label>
+																<textarea
+																	class="form-control form-control-sm officeDesc"
+																	name="overRidejustification" id="overRidejustification"
+																	maxlength="3000"
+																	placeholder="Justification for the Rating Override"
+																	readonly></textarea>
+															</div>
+														</div>
+													</div>
+
+													<!-- Justification Rating -->
+													<div class="row text-capitalize">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="controlDescCO"> Justification for
+																	the Rating <code>*</code>
+																</label>
+																<textarea
+																	class="form-control form-control-sm officeDesc"
+																	name="justification" id="justification"
+																	maxlength="3000"
+																	placeholder="Justification for the Rating" readonly></textarea>
+															</div>
+														</div>
+													</div>
+
+													<!-- Compensative Rating -->
+													<div class="row text-capitalize">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="controlDescCO"> Compensating
+																	Controls <code>*</code>
+																</label>
+																<textarea
+																	class="form-control form-control-sm officeDesc"
+																	name="compensating" id="compensating" maxlength="3000"
+																	placeholder="Compensating Controls" readonly></textarea>
+															</div>
+														</div>
+													</div>
+
+													<!-- Improvements Areas -->
+													<div class="row text-capitalize">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="controlDescCO"> Improvements Areas <code>*</code>
+																</label>
+																<textarea
+																	class="form-control form-control-sm officeDesc"
+																	id="improvementAreas" maxlength="3000"
+																	name="improvementAreas"
+																	placeholder="Improvements Areas" readonly></textarea>
+															</div>
+														</div>
+													</div>
+
+
+
+												</form>
+												<!-- Residual Risk Assessment End  -->
+
+
+												<!-- File Details -->
+												<div class="row">
+													<div class="col-sm-6 mt-2">
+
+														<div class="form-group">
+															<label>Document Attachment</label>
+															<div class="custom-file">
+																<input type="file"
+																	class="custom-file-input input-group-sm"
+																	id="customFile" style="display: none;" name="files[]"
+																	multiple="multiple" onchange="getFileData(this);" /> <label
+																	class="btn bg-gray" for="customFile"> Choose
+																	file</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-12">
+														<table class="table uploadTable" id="filedetails"
+															style="display: none;"
+															th:if="${riskLibMaster.filedetailsList != null}">
+															<thead>
+																<tr>
+																	<th>File Name</th>
+																	<th>File Size</th>
+																	<th>Uploaded Date</th>
+																	<th>Uploaded by</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr th:each="mvc : ${riskLibMaster.filedetailsList}">
+																	<td th:text="${mvc.fileName}"></td>
+																	<td th:text="${mvc.fileSize}"></td>
+																	<td th:text="${mvc.uploadTimestamp}"></td>
+																	<td th:text="${mvc.uploadedBy}" class="text-capitalize"></td>
+																	<td><a th:name='${mvc.fileName}' href="#"
+																		class="btn btn-info downloadfile"><i
+																			class="fas fa-download"></i></a></td>
+																	<td class="project-actions text-right"></td>
+																	<td th:text="${mvc.fileId}"></td>
+
+																</tr>
+															</tbody>
+														</table>
+													</div>
+
+												</div>
+												<!-- ./row -->
+
+												<!-- /.File Details  -->
+
+												<!-- Confirmation Modal -->
+												<div class="modal fade" id="confirmmodal">
+													<div class="modal-dialog modal-lg">
+														<div class="modal-content">
+															<div class="modal-header bg-info">
+																<h5 class="modal-title">Confirm</h5>
+																<button type="button" class="close" data-dismiss="modal"
+																	aria-label="Close">
+																	<span aria-hidden="true">&times;</span>
+																</button>
+															</div>
+
+															<!-- form start -->
+
+															<div class="card-body">
+																<!-- /.tab-pane -->
+																<div class="tab-pane" id="confirm">
+
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="form-group">Are You Sure You Want
+																				To Submit This Record?</div>
+																		</div>
+																	</div>
+																	<div class="card-footer">
+																		<button type="button" class="btn btn-secondary"
+																			data-dismiss="modal">
+																			<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+																		</button>
+																		<button type="button" id="createRA" name="Create"
+																			class="btn btn-info target">
+																			<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+																		</button>
+																	</div>
+																	<!-- /.row -->
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<!-- Confirmation Modal -->
+
+
+
+												<!-- Previous Assessment Matrix calculation End -->
+
+
+												<!--  Footer -->
+												<div class="card-footer">
+													<!--  <button type="button" id="create" class="btn btn-info">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</button>-->
+
+													<div class="row ">
+														<div class="col-sm-6 invoice-col">
+															<a type="button" class="btn btn-info" id="create"> <i
+																class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+															</a> <a href="#" data-toggle="modal"
+																data-whatever="mainTopRiskPage"
+																data-target="#cancelmodel"><button type="reset"
+																	class="btn btn-warning" title="Cancel">
+																	<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+																</button></a>
+														</div>
+													</div>
+
+
+												</div>
+												<!-- /. Footer -->
+
+
+											</div>
+										</div>
+									</div>
+
+									<!-- REMEDIATION DETAILS END  -->
+
+								</div>
+								<!-- /.card-body -->
+
+								<!-- 										</div> -->
+								<!-- 									</div> -->
+								<!-- /. Closed print Div -->
+
+
+
+
+							</div>
+							<!-- /.card -->
+
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!--/. container-fluid -->
+			</section>
+
+			<!-- link previous Incident Modal -->
+
+			<!-- link previous Incident Modal -->
+
+
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+
+	<!-- Developer Added JS -->
+
+	<script th:src="@{/dist/appjs/erm/residualInherentAssessment.js}"></script>
+	<!-- Developer Added Print JS -->
+	<!-- 	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script> -->
+
+	<!-- 	<script th:src="@{/dist/js/jspdf.debug.js}"></script> -->
+	<!-- 	<script th:src="@{/dist/js/html2canvas.js}"></script> -->
+
+
+
+	<!-- <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js">
+        </script> -->
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script> -->
+
+
+	<script>
+	$(document).ready(function() {
+	var getDate = $("#assessmentDate").val();
+	$("#showAsseDate").text(moment(getDate).format('DD-MMM-yyyy'));
+  });
+  $("#dateP").click(function () {
+  			
+  			alert("dateP called");
+       $('#datepicker_recurring_start').datepicker({
+										                    	
+               format: 'DD/MM/YYYY'
+      });
+    });  
+           
+</script>
+
+
+	<!-- <script>
+
+$('#dateP').on('click',".datepicker_recurring_start", function(){
+	    $(this).datepicker();
+});
+		
+
+</script> -->
+
+	<script>
+	
+	//for gross loss
+	
+	$(document).ready(function () {
+
+	// Denotes total number of rows
+	var rowIdx = 0;
+
+	// jQuery button click event to add a row
+	$('#addBtn').on('click', function () {
+		
+		// Adding a row inside the tbody.
+		$('#tbody').append(`<tr id="R${++rowIdx}">
+			<td  id=R ${++rowIdx} class="row-index text-center">
+			
+			<div class="input-group date" data-target-input="nearest"> <input type="text"  id="datepicker_recurring_start" name="Row ${rowIdx}"/>
+				<div class="input-group-text"><i class="fa fa-calendar" id="dateP"></i></div>
+			</div>	
+			
+			
+			
+			</td>
+			<td  id=R ${++rowIdx} class="row-index text-center">
+			
+			<input type="text" class="form-control form-control-sm" name="typeOfLoss" id="Row ${rowIdx}" placeholder="Type Of Loss" />
+			</td>
+			<td id=R ${++rowIdx} class="row-index text-center">
+			
+			<input class="form-control form-control-sm" type="Number" name="lossAmount" placeholder="Loss Amount"  id="Row ${rowIdx}" />
+			
+			</td>
+			
+			<td class="text-center">
+				<button class="btn btn-danger btn-sm remove"
+				type="button"><i class="fas fa-window-close"></i></button>
+				</td>
+			</tr>`);
+	});
+
+	// jQuery button click event to remove a row.
+	$('#tbody').on('click', '.remove', function () {
+
+		// Getting all the rows next to the row
+		// containing the clicked button
+		var child = $(this).closest('tr').nextAll();
+
+		// Iterating across all the rows
+		// obtained to change the index
+		child.each(function () {
+
+		// Getting <tr> id.
+		var id = $(this).attr('id');
+
+		// Getting the <p> inside the .row-index class.
+		var idx = $(this).children('.row-index').children('p');
+
+		// Gets the row number from <tr> id.
+		var dig = parseInt(id.substring(1));
+
+		// Modifying row index.
+		idx.html(`Row ${dig - 1}`);
+
+		// Modifying row id.
+		$(this).attr('id', `R${dig - 1}`);
+		});
+
+		// Removing the current row.
+		$(this).closest('tr').remove();
+
+		// Decreasing total number of rows by 1.
+		rowIdx--;
+		
+		
+		
+	});
+	});
+</script>
+
+
+	<script>
+	
+	//for Recovery loss
+	
+	$(document).ready(function () {
+
+	// Denotes total number of rows
+	var rowIdx = 0;
+
+	// jQuery button click event to add a row
+	$('#add').on('click', function () {
+		
+		// Adding a row inside the tbody.
+		$('#tbodyR').append(`<tr id="R${++rowIdx}">
+			<td  id=R ${++rowIdx} class="row-index text-center">
+			
+			<div class="input-group date col-12" data-target-input="nearest">
+			<input type="text" class="form-control datetimepicker-input dateclass col-10" id="dateOfRecovery" name="dateOfRecovery" data-target="dateOfLoss" />
+			<div class="input-group-append" data-target="#dateOfRecovery" data-toggle="datetimepicker">
+			<div class="input-group-text"> <i class="fa fa-calendar"></i></div></div> </div>
+			</td>
+			<td  id=R ${++rowIdx} class="row-index text-center">
+			
+			<input type="text" class="form-control form-control-sm" name="typeOfRecovery" id="Row ${rowIdx}" placeholder="Type Of Recovery" />
+			</td>
+			<td id=R ${++rowIdx} class="row-index text-center">
+			
+			<input class="form-control form-control-sm" type="Number" name="recoveryAmount" placeholder="Recovery Amount"  id="Row ${rowIdx}" />
+			
+			</td>
+			
+			<td class="text-center">
+				<button class="btn btn-danger btn-sm removeR"
+				type="button"><i class="fas fa-window-close"></i></button>
+				</td>
+			</tr>`);
+	});
+
+	// jQuery button click event to remove a row.
+	$('#tbodyR').on('click', '.removeR', function () {
+
+		// Getting all the rows next to the row
+		// containing the clicked button
+		var child = $(this).closest('tr').nextAll();
+
+		// Iterating across all the rows
+		// obtained to change the index
+		child.each(function () {
+
+		// Getting <tr> id.
+		var id = $(this).attr('id');
+
+		// Getting the <p> inside the .row-index class.
+		var idx = $(this).children('.row-index').children('p');
+
+		// Gets the row number from <tr> id.
+		var dig = parseInt(id.substring(1));
+
+		// Modifying row index.
+		idx.html(`Row ${dig - 1}`);
+
+		// Modifying row id.
+		$(this).attr('id', `R${dig - 1}`);
+		});
+
+		// Removing the current row.
+		$(this).closest('tr').remove();
+
+		// Decreasing total number of rows by 1.
+		rowIdx--;
+	});
+	});
+</script>
+
+
+	<script>
+	
+	$('#downloadPie').click(function(event) {
+	
+		window.print();
+	});
+	
+</script>
+
+
+
+
+
+	<script>
+			$(document).ready(function() {
+					var message = $('#message').val();
+					if (message != "") {
+						toastr.success(message);
+					}
+					$("#registerDetails").click(function() {
+						
+						$('#riskRegiserTab').css('display', '');
+						$('#inherentRiskTab').css('display', 'none');
+						$('#residualAssessmentTab').css('display', 'none');
+						
+						
+					});
+	
+					$("#inherentDiv").click(function() {
+						$('#riskRegiserTab').css('display', 'none');
+						$('#inherentRiskTab').css('display', '');
+						$('#residualAssessmentTab').css('display', 'none');
+					});
+					
+					$("#residualDiv").click(function() {
+						$('#riskRegiserTab').css('display', 'none');
+						$('#inherentRiskTab').css('display', 'none');
+						$('#residualAssessmentTab').css('display', '');
+					});
+					
+				});
+				
+				
+				
+				// PDF
+//Print 
+
+
+function downloadPDFWithjsPDF() {
+
+//alert("Print");
+ //const jsPDF = require('jspdf');
+ var filename = 'Risk Wise Report';
+    const quality = 3 // Higher the better but larger file
+    html2canvas(document.querySelector('#content-page'),
+        { scale: quality }
+    ).then(canvas => {
+        const pdf = new jsPDF('p', 'pt', 'a4');
+        pdf.addImage(canvas.toDataURL('image/jpg'), 'JPG', 0, 0, 200, 200);
+        pdf.save(filename);
+    });
+}
+
+document.querySelector('#jsPDF').addEventListener('click', downloadPDFWithjsPDF);
+	// Print
+
+
+</script>
+
+	<script>
+		$('backbtn').click(function() {
+			window.history.back();
+		});
+
+		$('a.viewActionPlanModal')
+				.click(
+						function() {
+
+							var actionId = $(this).attr('id');
+
+							var pageValJson = "{\"actionId\":" + "\""
+									+ actionId + "\"}";
+							document.getElementById('load').style.visibility = "visible";
+
+							// Linked Module Table
+							var linkModTblCount = 0;
+
+							linkModTblCount = $('#linkedModuleTbl tr').length;
+
+							if (linkModTblCount > 1) {
+								var i = 1;
+								while (i < linkModTblCount) {
+									$('#row_id').remove();
+									i++;
+								}
+
+							}
+
+							// Update Action Table
+							var updateActTblCount = 0;
+
+							updateActTblCount = $('#updateActionTbl tr').length;
+
+							if (updateActTblCount > 1) {
+								//$(".odd").remove();
+								var i = 1;
+								while (i < updateActTblCount) {
+									$('#row_id').remove();
+									i++;
+								}
+							}
+
+							// Modal Fields Table
+							var modalFileIdCount = 0;
+
+							modalFileIdCount = $('#actionDateTbl tr').length;
+
+							if (modalFileIdCount > 1) {
+								//$(".odd").remove();
+								var i = 1;
+								while (i < modalFileIdCount) {
+									$('#row_id').remove();
+									i++;
+								}
+							}
+
+							// File Master Table
+							var fileDetailsCount = 0;
+
+							fileDetailsCount = $('#fileDetails tr').length;
+
+							if (fileDetailsCount > 1) {
+								var i = 1;
+								while (i < fileDetailsCount) {
+									$('#row_id').remove();
+									i++;
+								}
+							}
+
+							// ajax call
+							$
+									.ajax({
+										url : 'viewActionPlanModal',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+														document
+																.getElementById('contents').style.visibility = "visible";
+													}, 1000);
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+
+											$("#actionIdLabel").text(
+													obj.actionPlanId);
+
+											$(".actionPlanId").val(
+													obj.actionPlanId);
+
+											$(".actionPlanName").val(
+													obj.actionName);
+
+											$('.actionplanrecordStatus').val(
+													obj.recordStatus);
+											$('.actionPlanDescription').val(
+													obj.actionDesc);
+
+											$('.completionDate').val(
+													obj.expDate);
+													
+											
+											
+											$('.compPercentage').val(
+													obj.comPercentage);
+											$('.actionOwner').val(
+													obj.actionOwner);
+											$('.frequency').val(
+													obj.actionUpdateFrequency);
+
+											if (obj.linkedModules.length > 0) {
+												obj.linkedModules
+														.forEach(function(item) {
+															$(
+																	'#linkedModuleTbl tr:last')
+																	.after(
+																			'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+																					+ item.sourceId
+																					+ '</td><td>'
+																					+ item.sourceName
+																					+ '</td><td>'
+																					+ item.moduleName
+																					+ '</td><td><span class="badge bg-success">'
+
+																					+ item.recStatus
+																					+ '</span></td><td><span class="badge bg-success">'
+																					+ item.asstStatus
+																					+ '</span></td></tr>');
+														});
+
+												var seen = {};
+
+												$('#linkedModuleTbl tr')
+														.each(
+																function() {
+																	var txt = $(
+																			this)
+																			.text();
+																	if (seen[txt])
+																		$(this)
+																				.remove();
+																	else
+																		seen[txt] = true;
+																});
+
+												$('#asrDiv').show();
+											}
+
+											if (obj.actionUpdatesList.length > 0) {
+												obj.actionUpdatesList
+														.forEach(function(item) {
+															$(
+																	'#updateActionTbl tr:last')
+																	.after(
+																			'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+																					+ item.updatePeriod
+																					+ '</td><td>'
+																					+ item.completionPerEntry
+																					+ '</td><td><span class="text-capitalize">'
+																					+ item.updatedBy
+																					+ '</span></td><td>'
+
+																					+ item.updatedDate
+																					+ '</td></tr>');
+														});
+												$('#updateDiv').show();
+											}
+
+											//  updates 
+											//if (obj.revisedDateList.length > 0) {
+											//	obj.revisedDateList
+											//			.forEach(function(item) {
+											//				$(
+											//						'#actionDateTbl tr:last')
+											//						.after(
+											//								'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+											//										+ item.completionDate
+											//										+ '</td><td>'
+											//										+ item.revisedDate
+											//										+ '</td><td>'
+											//										+ item.recordCreatedBy
+											//										+ '</td><td>'
+											//										+ item.recordDate
+											//										+ '</td><td>></tr>');
+											//			});
+											//	$('#recordDateDiv').show();
+											//}
+
+											//file
+											if (obj.documentList.length > 0) {
+												obj.documentList
+														.forEach(function(item) {
+															$(
+																	'#fileDetails tr:last')
+																	.after(
+																			'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+																					+ item.fileName
+																					+ '</td><td>'
+																					+ item.fileSize
+																					+ '</td><td><span class="text-capitalize">'
+																					+ item.uploadedBy
+																					+ '<span></td><td>'
+																					+ item.uploadedDate
+																					+ '</td><td><div class="btn-group btn-group-sm">'
+																					+ '<a name='+item.fileName+' class="btn btn-info downloadfile"><i '
+																					+' class="fas fa-download"></i></a>'
+																					+ '</div></td></tr>');
+														});
+												$('#fileRow').show();
+											}
+
+										},
+										error : function(xhr, status, error) {
+											toastr.error('Some Error Occured');
+										}
+									});
+							$('#viewActionModal').modal('show');
+						});
+	</script>
+
+
+
+
+</body>
+
+</html>
+

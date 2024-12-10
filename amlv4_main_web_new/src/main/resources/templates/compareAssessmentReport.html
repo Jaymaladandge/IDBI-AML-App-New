@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Comparative Assessment Report of Inherent & Residual
+								Assessment</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Comparative Assessment
+									Report of Inherent & Residual Assessment</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a class="nav-link bg-info active"
+											href="#activity" id="summarylinkReport" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;Report</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Risk
+												Details - <span id="auditLabelId"> </span></a></li>
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<!-- /row Search by date-->
+											<!-- /row Search by date-->
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="card card-outline card-info" id="collapse">
+
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchInherentResidual}" id="reportForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedDateJson"
+																	name="encryptedJson" /><input type="hidden"
+																	th:value="${userOfcId}" id="userOfcId" /> <input
+																	type="hidden" th:value="${ERMDEPARTMENT}"
+																	id="currentDept">
+
+																<div class="row pt-2">
+																	<div class="col-sm-4">
+																		<div class="form-group">
+																			<label for="assessmentDate"> Assessment
+																				Period 1 <code>*</code>
+																			</label> <select class="form-control form-control-sm select2"
+																				data-placeholder="Assessment Date"
+																				name="assessmentDate1" id="assessmentDate1"
+																				style="width: 100%;" required>
+																				<option value=''>Select Assessment Period</option>
+																				<option
+																					th:each="assessmentDate : ${assessmentPeriodList}"
+																					th:value="${assessmentDate}"
+																					th:text="${assessmentDate}"></option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="col-sm-4">
+																		<div class="form-group">
+																			<label for="assessmentDate">Assessment Period
+																				2 <code>*</code>
+																			</label> <select class="form-control form-control-sm select2"
+																				data-placeholder="Assessment Date"
+																				name="assessmentDate2" id="assessmentDate2"
+																				style="width: 100%;" required>
+																				<option value=''>Select Assessment Period</option>
+																				<option
+																					th:each="assessmentDate : ${assessmentPeriodList}"
+																					th:value="${assessmentDate}"
+																					th:text="${assessmentDate}"></option>
+																			</select>
+																		</div>
+																	</div>
+																	<div class="col-sm-4">
+																		<div class="form-group">
+																			<label for="assessmentDate">Select Office
+																				Type</label>
+																			<code>*</code>
+																			<select class="form-control form-control-sm select2"
+																				data-placeholder="Select Office"
+																				name="assessmentDate" id="officeType"
+																				style="width: 100%;" required>
+																				<option value="" selected>Select Office
+																					Type</option>
+																				<option th:value="${selectedOfc}"
+																					th:text="${selectedOfc}"></option>
+
+																				<option th:each="ofc : ${officeMaster}"
+																					th:value="${ofc.officeType}"
+																					th:text="${ofc.officeType}"></option>
+																			</select>
+
+
+																		</div>
+																	</div>
+																	<div class="col-sm-4" id="officeCodeDropDown"
+																		style="display: none">
+																		<div class="form-group">
+
+																			<label for="officeCode">Office Code <code>*</code></label>&nbsp;
+																			<select class="select2 form-control form-control-sm"
+																				name="officeCode" id="officeCode"
+																				data-placeholder="Office Code" style="width: 100%;">
+																				<option value=''>Select Office Code</option>
+																				<option th:value="${userOfcCode}"
+																					th:text="${userOfcCode}" selected></option>
+																			</select>
+																		</div>
+																	</div>
+
+
+																	<div class="col-sm-4">
+																		<div class="form-group">
+																			<label for="assessmentDate">Select Department
+																			</label>
+																			<code>*</code>
+																			<div th:if="${ERMDEPARTMENT == 'ERM'}">
+																				<select class="form-control form-control-sm select2"
+																					name="controlDept" id="selectDept"
+																					data-placeholder="Department" style="width: 100%;">
+																					<option value=''>Select Department</option>
+																					<!-- 																	<option class="text-capitalize" -->
+																					<!-- 																		th:value="LICDEPT0000000000001" -->
+																					<!-- 																		th:text="ACTUARIAL" selected/> -->
+																					<option value="all">All</option>
+																					<option class="text-capitalize"
+																						th:each="deptList : ${deptList}"
+																						th:value="${deptList.deptId}"
+																						th:text="${deptList.deptName}" />
+																				</select>
+																			</div>
+																			<div th:unless="${ERMDEPARTMENT == 'ERM'}">
+																				<select class="select2 form-control form-control-sm"
+																					name="controlDept" id="selectDept"
+																					data-placeholder="Department" style="width: 100%;">
+																					<option class="text-capitalize"
+																						th:value="${userDept}" th:text="${ERMDEPARTMENT}"
+																						selected />
+																				</select>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="col-sm-4">
+																		<label for="search"> &nbsp;</label>
+																		<h3>
+																			<a type="submit" class="btn btn-sm btn-info mt-n1"
+																				id="getReport"> <i class="fas fa-save"
+																				style="padding: 0 7px 0 0px;"></i>Get Report
+																			</a>
+																		</h3>
+																	</div>
+
+
+
+																</div>
+																<!-- /row -->
+															</form>
+														</div>
+														<!-- card-body -->
+
+													</div>
+													<!-- card -->
+												</div>
+												<!-- ./col -->
+											</div>
+											<!-- ./row -->
+											<div class="row float-left">
+												<div class="">
+													<span class='text-bold text-red' id="officeHeader"></span>
+												</div>
+											</div>
+
+
+											<div class="row float-right" id="export-btn"
+												style="display: none">
+												<div class="" id="export-div">
+													<form autocomplete="off" role="form" method="post"
+														th:action="@{/exportRCSAcomparisonReport}" id="export"
+														th:object="${encryptedRequest}">
+														<input type="hidden" id="encryptedJsonExport"
+															name="encryptedJson" /> <span class='text-bold text-red'
+															id="officeHeader"></span> <a
+															class="btn btn-secondary buttons-excel float-right"
+															aria-controls="rcsastmttable"
+															style="background-color: #006400;" type="button"> <span
+															class="exportExcel float-right" title="Export To Excel"
+															id="exportExcel"> <i class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+														</span>
+														</a>
+
+
+													</form>
+												</div>
+
+											</div>
+
+
+
+
+											<div class="card card-tabs card-info card-outline mt-5"
+												id="card-body1">
+												<div class="card-header text-bold text-red "
+													id="cardheaderCorp">
+													<div class="float-left">Corporation View</div>
+												</div>
+
+
+												<div class="card-body">
+													<div class="row table-responsive" id="corpReport">
+														<div class="col-sm-12">
+															<div class="card card-outline card-secondary">
+																<div class="card-body table-responsive">
+
+																	<table id="corpviewTable"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize report-page corpviewTable">
+																		<thead>
+																			<tr>
+																				<!--  <th>Category</th> -->
+																				<th class="text-center" rowspan="2">Assessment
+																					Period</th>
+																				<th class="text-center" rowspan="2">Office Type</th>
+																				<th class="text-center" rowspan="2">Total no of
+																					Risk</th>
+																				<th class="text-center" rowspan="2">Total no of
+																					Risk Assessed</th>
+																				<th id="corpassPeriod1" class="text-center"
+																					colspan="3">Assessment Period 1</th>
+																				<!-- <th class="text-center" rowspan="2"></th> -->
+																				<th id="corpassPeriod2" class="text-center"
+																					colspan="3">Assessment Period 2</th>
+																			</tr>
+																			<tr>
+																				<th class="text-center">Severe</th>
+																				<th class="text-center">Moderate</th>
+																				<th class="text-center">Minor</th>
+																				<th class="text-center">High</th>
+																				<th class="text-center">Medium</th>
+																				<th class="text-center">Low</th>
+																			</tr>
+																		</thead>
+																		<tbody class="registerBodyCorp">
+
+																		</tbody>
+																	</table>
+
+
+																</div>
+																<!-- /card-body -->
+															</div>
+															<!-- /card -->
+														</div>
+														<!-- /col -->
+													</div>
+													<!-- /row -->
+
+													<!-- /. Hidden Register -->
+												</div>
+
+											</div>
+											<div class="card card-tabs card-info card-outline "
+												id="compare-body2">
+
+
+												<div class="card-header text-bold text-red" id="card-header">Compare
+													Risk Assessment</div>
+
+												<div class="card-body">
+													<div class="row table-responsive" id="statmentReport">
+														<div class="col-sm-12">
+															<div class="card card-outline card-secondary">
+																<div class="card-body table-responsive">
+
+																	<table id="riskstmttable"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize report-page">
+																		<thead>
+																			<tr>
+																				<!--  <th>Category</th> -->
+																				<th class="text-center" rowspan="2">Assessment
+																					Period</th>
+																				<th class="text-center" rowspan="2">Department</th>
+																				<th class="text-center" rowspan="2">Total no of
+																					Risk</th>
+																				<th class="text-center" rowspan="2">Total no of
+																					Risk Assessed</th>
+																				<th id="assPeriod1" class="text-center" colspan="3">Assessment
+																					Period 1</th>
+																				<!-- <th class="text-center" rowspan="2"></th> -->
+																				<th id="assPeriod2" class="text-center" colspan="3">Assessment
+																					Period 2</th>
+																			</tr>
+																			<tr>
+																				<th class="text-center">Severe</th>
+																				<th class="text-center">Moderate</th>
+																				<th class="text-center">Minor</th>
+																				<th class="text-center">High</th>
+																				<th class="text-center">Medium</th>
+																				<th class="text-center">Low</th>
+																			</tr>
+																		</thead>
+																		<tbody class="registerBody">
+
+																		</tbody>
+																	</table>
+
+
+																</div>
+																<!-- /card-body -->
+															</div>
+															<!-- /card -->
+														</div>
+														<!-- /col -->
+													</div>
+													<!-- /row -->
+
+													<!-- /. Hidden Register -->
+												</div>
+											</div>
+										</div>
+										<!-- /.tab-content -->
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<!-- <div class="timeline timeline-inverse"> -->
+											<div class="row p-1 m-2" id="riskDetails"
+												style="display: none">
+												<p id="riskHeading" class="text-bold"></p>
+												<div class="col-sm-12">
+													<span id="exportSpanHeader"></span>
+													<table id="riskDetailsTable"
+														class="table table-head-fixed table-bordered table-striped riskDetailsTable">
+														<thead>
+															<tr>
+																<th>Risk Id</th>
+																<th>Risk Description</th>
+																<th>Risk Assessment Status</th>
+															</tr>
+														</thead>
+														<tbody id="riskDetailsTableTbody">
+
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+
+
+											<!-- </div> -->
+											<!-- END timeline item -->
+											<!-- timeline time label -->
+
+											<!-- /.timeline-label -->
+
+											<!-- END timeline item -->
+											<!-- <div>
+													<i class="far fa-clock bg-gray"></i>
+												</div> -->
+										</div>
+									</div>
+								</div>
+							</div>
+							<!-- /.card-body -->
+						</div>
+						<!-- /.card -->
+					</div>
+					<!-- /col -->
+				</div>
+				<!-- /row -->
+		</div>
+		<!-- /container-fluid -->
+
+		<div class="modal fade" id="riskmodal">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h5 class="modal-title">View</h5>
+						<button type="button" class="close text-white"
+							data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- /.col -->
+					<div class="card-body">
+
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="actionPlanId">Statement ID</label>
+									<div class="input-group">
+										<input type="text"
+											class="form-control form-control-sm text-bold"
+											id="parameterId" name="parameterId" readonly>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="recordstatus">Record Status</label>
+									<div class="input-group">
+										<input type="text"
+											class="form-control form-control-sm  text-bold"
+											id="recordstatus" name="recordstatus" readonly>
+
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /row -->
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="riskcategory">Risk Category </label> <input
+										type="text" class="form-control form-control-sm"
+										name="riskcate" id="riskcate" readonly>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="riskcategory">Risk Sub Category </label> <input
+										type="text" class="form-control form-control-sm"
+										name="risksubcate" id="risksubcate" readonly>
+								</div>
+							</div>
+
+						</div>
+						<!-- /.row -->
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="riskstmtname">Statement Name </label>
+									<textarea class="form-control form-control-sm"
+										name="riskstmtname" id="riskstmtname" readonly></textarea>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="datapdept">Department Providing Data </label> <input
+										type="text"
+										class="form-control form-control-sm text-capitalize"
+										name="datapdept" id="datapdept" readonly>
+								</div>
+							</div>
+						</div>
+						<!-- /.row -->
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="riskdescription">Description </label>
+									<textarea class="form-control form-control-sm"
+										name="riskdescription" id="riskdescription" readonly></textarea>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="datapoints">Data Points To Be Considered </label>
+									<textarea class="form-control form-control-sm"
+										name="datapoints" id="datapoints" placeholder="Data Points"
+										readonly></textarea>
+								</div>
+							</div>
+						</div>
+						<!-- /.row -->
+
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="datatype">Data Type </label> <input type="text"
+										class="form-control form-control-sm" name="datatype"
+										id="datatype" readonly>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="department">Department Responsible </label> <input
+										type="text"
+										class="form-control form-control-sm text-capitalize"
+										name="datadept" id="datadept" readonly>
+								</div>
+							</div>
+
+
+						</div>
+						<!-- /.row -->
+
+						<div class="row">
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label for="department">Capture Value Department </label> <input
+										type="text"
+										class="form-control form-control-sm text-capitalize"
+										name="capturedept" id="capturedept" readonly>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label for="frequency">Update Frequency </label> <input
+										type="text" class="form-control form-control-sm"
+										name="frequency" id="frequency" readonly>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label for="criteria">Assessment Criteria </label> <input
+										type="text" class="form-control form-control-sm"
+										name="criteria" id="criteria" readonly>
+								</div>
+							</div>
+							<div class="col-sm-3">
+								<div class="form-group">
+									<label for="threshold">Tolerance Threshold </label> <input
+										type="text" class="form-control form-control-sm"
+										name="threshold" id="threshold"
+										placeholder="Tolerance Threshold" readonly>
+								</div>
+							</div>
+
+						</div>
+						<!-- /.row -->
+						<div class="row" id="fileDiv" style="display: none">
+							<div class="col-sm-12">
+								<div class="card card-outline card-secondary">
+									<div class="card-header">
+										<h3 class="card-title">Document List</h3>
+									</div>
+									<div class="card-body">
+										<table class="table table-bordered table-striped"
+											id="modalFileId">
+											<thead>
+												<tr>
+													<th>File Name</th>
+													<th>File Size</th>
+													<th>Uploaded By</th>
+													<th>Uploaded Date</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="row" id="asrDiv" style="display: none">
+							<div class="col-sm-12 ">
+								<div class="card card-outline card-secondary">
+									<div class="card-header">
+										<h3 class="card-title">Assessment Value Record</h3>
+									</div>
+									<div class="card-body table-responsive">
+										<table class="table table-bordered table-striped"
+											id="capturetbl">
+											<thead>
+												<tr>
+													<th>Department Name</th>
+													<th>Tolerance Threshold</th>
+													<th>Assessment Value</th>
+													<th>Assessment Status</th>
+													<th>Captured By</th>
+													<th>Captured Date</th>
+												</tr>
+											</thead>
+											<tbody></tbody>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<!-- /.row -->
+
+					</div>
+					<!-- /.card-body -->
+					<div class="card-footer">
+						<button class="btn btn-secondary" data-dismiss="modal">
+							<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+						</button>
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- modal-content -->
+			</div>
+			<!-- /modal-dialog -->
+		</div>
+		<!-- /modal -->
+
+
+
+
+		<div class="modal fade" id="controlmodal">
+			<div class="modal-dialog modal-xl">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h5 class="modal-title">View</h5>
+						<button type="button" class="close text-white"
+							data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- /.col -->
+					<div class="card-body">
+
+						<!-- /.row -->
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="controlDept">Department <code>*</code>
+									</label> <input type="text"
+										class="form-control form-control-sm text-capitalize text-bold"
+										id="controlDept" name="controlFunction"
+										placeholder="Department" readonly>
+								</div>
+							</div>
+
+
+							<div class="col-sm-6">
+								<div class="form-group">
+									<label for="controlDept">Status <code>*</code>
+									</label> <input type="text"
+										class="form-control form-control-sm text-capitalize text-bold"
+										id="status" name="status" placeholder="Status" readonly>
+								</div>
+							</div>
+
+						</div>
+						<!-- /.row -->
+
+
+
+
+						<!-- /.row -->
+
+
+
+						<!-- Previous Assessment Matrix calculation Start -->
+						<div class="row table-responsive" id="previousMatrixRow"
+							style="display: none;">
+							<div class="col-sm-12">
+								<div class="card card-outline card-secondary">
+									<div class="card-header">
+										<label> Risk Library Details </label>
+
+									</div>
+
+									<div class="card-body table-responsive">
+										<table id="previousMatrix"
+											class="table table-head-fixed table-bordered table-striped text-capitalize">
+											<thead>
+												<tr>
+
+													<th>Sr No</th>
+													<th>Risk Description</th>
+													<th>Inherent Risk Assessment</th>
+													<th>Residual Risk Assessment</th>
+													<th>Ref Sr No</th>
+													<th>Risk Status</th>
+
+
+												</tr>
+											</thead>
+											<tbody class="previousMatrixBody">
+											</tbody>
+										</table>
+									</div>
+									<!-- /card-body -->
+								</div>
+								<!-- /card -->
+							</div>
+							<!-- /col -->
+						</div>
+						<!-- /row -->
+
+						<!-- Previous Assessment Matrix calculation End -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+						<!-- ./row -->
+					</div>
+					<!-- /.card-body -->
+					<div class="card-footer">
+						<button class="btn btn-secondary" data-dismiss="modal">
+							<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+						</button>
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- modal-content -->
+			</div>
+			<!-- /modal-dialog -->
+		</div>
+		<!-- /modal -->
+
+
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+
+	<!-- Included Footer -->
+	<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/jquery.js}"></script>
+
+	<!-- Developer Added Print JS -->
+	<!-- 	<script th:src="@{/dist/js/jspdf.debug.js}"></script> -->
+	<script th:src="@{/dist/js/html2canvas.js}"></script>
+	<!-- <script th:src="@{/dist/appjs/erm/compareReports.js}"></script> -->
+	<script th:src="@{/dist/appjs/erm/compareRiskReport.js}"></script>
+
+	<script>
+		// Audit trail   
+
+		function viewRiskData(riskdetails) {
+			var currentDept = null;
+			var officeType = null;
+			var deptId = null;
+			var officeCode = null;
+			currentDept = $('#currentDept').val();
+			officeType = $('#officeType').find(":selected").val();
+			deptId = $('#selectDept').val();
+
+			officeCode = $('#officeCode').find(":selected").val();
+			if (officeCode == '') {
+				toastr.error('Please Select Office Code');
+				e.preventDefault();
+			}
+
+			var riskId = riskdetails + '~' + officeType + '~' + deptId + '~'
+					+ officeCode;
+			//alert(riskId);
+		var selectedOfficeType=riskId.split('~')[3].toUpperCase();
+		var selectedAssessmentPeriod=riskId.split('~')[1];
+		var selectedDept=riskId.split('~')[4].toUpperCase();
+		var selectedOfficeCode=riskId.split('~')[5].toUpperCase();
+		var assesmentStatus=riskId.split('~')[0].toUpperCase();
+
+
+			/* var pageValJson = "{\"selectedOfficeType\":" + "\"" + selectedOfficeType
+				+ "\",\"selectedAssessmentPeriod\":\"" + selectedAssessmentPeriod
+				+ "\",\"selectedDept\":\"" + selectedDept
+				+ "\",\"selectedOfficeCode\":\"" + selectedOfficeCode
+				+ "\",\"selectedOfficeCode\":\"" + officeCode
+				+ "\",\"assesmentStatus\":\"" + assesmentStatus
+				+ "\"}"; */
+				
+
+				var pageValJson = "{\"selectedOfficeType\":\""
+						+selectedOfficeType
+						+ "\",\n" + "\"selectedAssessmentPeriod\":\""
+						+ selectedAssessmentPeriod + "\",\n"
+						+ "\"selectedDept\":\""
+						+ selectedDept + "\",\n"
+						+ "\"selectedOfficeCode\":\""
+						+ selectedOfficeCode + "\",\n"
+						+ "\"assesmentStatus\":\""
+						+ assesmentStatus  + "\"}"
+
+		
+
+			document.getElementById('load').style.visibility = "visible";
+			var table =  $("#riskDetailsTable").DataTable();
+			 table.destroy();
+			
+			$.ajax({
+			url: 'getRiskDetails',
+			type: "POST",
+			data: {
+				pageValJson: pageValJson
+			},// important line for thymeleaf http security
+			headers: {
+				"X-CSRF-TOKEN": $(
+					"input[name='_csrf']")
+					.val()
+			},
+			cache: false,
+			// async:true,
+			success: function(response) {
+				setTimeout(
+					function() {
+
+						document.getElementById('load').style.visibility = "hidden";
+
+					}, 1000);
+
+				var jsonResponse = JSON
+					.stringify(response);
+				var obj = JSON.parse(jsonResponse);
+//console.log('obj '+obj);
+$("#riskDetails").css("display","");
+        	//$(".timeline-inverse").empty();
+        	$(".riskDetailsTable > #riskDetailsTableTbody").empty();
+        	$("#riskHeading").text("Risk Library  for Assessment Period "+ selectedAssessmentPeriod +" - "+assesmentStatus);
+        	var color='';
+        	if(assesmentStatus==='SEVERE' || assesmentStatus==='HIGH'){
+        		color='text-bold text-danger';
+        	}else if(assesmentStatus==='MODERATE' || assesmentStatus==='MEDIUM'){
+        		color='text-bold text-warning';
+        	}else if(assesmentStatus==='MINOR' || assesmentStatus==='LOW'){
+        		color='text-bold text-orange';
+        	}
+Object.keys(obj).forEach(
+        function(items) {
+        	
+        	   if (items == 'riskDetails') {
+                   var data = obj[items];
+                   for (const [key, value] of Object.entries(data)) {
+
+                	   console.log('key '+key+' value '+value);
+                	   
+                		$(
+								'<tr><td class="font-weight-bold">'
+										+ key
+										+ '</td><td>'
+										+ value
+										+ '</a></td><td class="'+color+'">'
+										+ assesmentStatus
+										+'</tr>')
+								.appendTo(
+										".riskDetailsTable > #riskDetailsTableTbody");
+                      
+                   }
+        	   }
+        });
+				/* $.each(obj.riskDetails, function(key, obj) {
+				     console.log('key '+key+' obj '+obj);
+				         }); */
+				         $("#riskDetailsTable").DataTable({
+				     		"columnDefs":  [ {
+				     					orderable : false,
+				     				
+				     				} ],
+				     		        "order" : [ 0, "desc" ],
+				     				"responsive" : false,
+				     				"lengthMenu" : [ 10,25, 50, 75, 100 ],
+				     				"autoWidth" : true,
+				     				"searching" : true,
+				     				"fixedHeader" : true,
+				     				 "buttons": ["csv", "excel", "pdf", "print"],
+				     				"buttons": [{
+										 extend: 'excel',
+										 title: 'Risk Statment for Assessment Period '+selectedAssessmentPeriod +' with Assessment Status '+assesmentStatus,
+									 }],
+				     				"language" : {
+				     					"emptyTable" : "No Data Available"
+				     				}
+				     	}).buttons().container().appendTo(
+				     		'#riskDetailsTable_wrapper .col-md-6:eq(0)');
+
+				$("#auditLabelId").text(riskId.split('~')[0].toUpperCase());
+
+				// ajax call
+				$('#timelinelink').css('class', 'border');
+				$('#timelinelink').css('display', '');
+				$('#timelinelink').click();
+
+				
+
+			
+
+			},
+			error: function(xhr, status, error) {
+				console.log(xhr);
+				console.log(status);
+				console.log(error);
+				toastr
+					.success('Some Error Occured');
+			}
+
+			
+			
+
+		});
+
+
+			//console.log(obj);
+		}
+
+		$(document).ready(function() {
+			$("#summarylinkReport").click(function() {
+
+				$('#timelinelink').css('display', 'none');
+			});
+		})
+	</script>
+
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- BS Stepper -->
+<link rel="stylesheet"
+	th:href="@{/plugins/bs-stepper/css/bs-stepper.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Build Logic</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/RuleBuilderSummary}">Rule Builder Summary</a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- /.row -->
+					<div class="row">
+						<form autocomplete="off" role="form" method="post"
+							th:action="@{/createRuleAction}" id="createRuleForm"
+							enctype="multipart/form-data" th:object="${encryptedRequest}"
+							class="col-sm-12">
+							<input type="hidden" id="encryptedJson" name="encryptedJson" />
+							<!-- <input type="hidden" id="userName" name="userName"
+								th:value="${trMaster.userName}" /> -->
+							<div class="col-sm-12">
+								<div class="card card-info">
+									<div class="card-header">
+										<h3 class="card-title text-center">Create Rule</h3>
+									</div>
+									<div class="card-body p-0">
+
+										<div class="bs-stepper">
+											<div class="bs-stepper-header" role="tablist">
+												<!-- your steps here -->
+												<div class="step" data-target="#create-part">
+													<button type="button" class="step-trigger" role="tab"
+														aria-controls="create-part" id="create-part-trigger">
+														<span class="bs-stepper-circle bg-teal">1</span> <span
+															class="bs-stepper-label">Logic Details</span>
+													</button>
+												</div>
+												<div class="line"></div>
+												<div class="step" data-target="#link-dept">
+													<button type="button" class="step-trigger" role="tab"
+														aria-controls="link-dept" id="link-dept-trigger">
+														<span class="bs-stepper-circle bg-teal">2</span> <span
+															class="bs-stepper-label">Query Logic</span>
+													</button>
+												</div>
+												<div class="line"></div>
+												<div class="step" data-target="#link-part">
+													<button type="button" class="step-trigger" role="tab"
+														aria-controls="link-part" id="link-part-trigger">
+														<span class="bs-stepper-circle bg-teal">3</span> <span
+															class="bs-stepper-label">Final View</span>
+													</button>
+												</div>
+											</div>
+											<div class="bs-stepper-content">
+												<!-- your steps content here -->
+												<!-- Add Top Risk -->
+												<div id="create-part" class="content" role="tabpanel"
+													aria-labelledby="create-part-trigger">
+													<div class="row">
+														<div class="col-12">
+															<!-- Main content -->
+															<div class="card card-outline card-info">
+																<div class="card-body">
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="raRecordStatus">Record Status</label>
+																				<div class="input-group">
+																					<input type="text" class="form-control text-bold"
+																						id="recordStatus" name="recordStatus"
+																						th:value="${recordStatus}" readonly>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="ruleId">Rule Id<code>*</code></label>
+																				<div class="input-group">
+																					<input type="text" class="form-control" id="ruleId"
+																						name="ruleId" placeholder="Rule Id">
+																				</div>
+																			</div>
+																		</div>
+
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="priority">Rule Priority<code>*</code></label>
+																				<select class="form-control select2"
+																					data-placeholder="Select Priority" name="priority"
+																					id="priority" style="width: 100%;">
+
+																					<option value=''>Select Priority</option>
+																					<option th:each="priority : ${priorityList}"
+																						th:value="${priority.split('-')[0]}"
+																						th:text="${priority.split('-')[1]}"></option>
+																				</select>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="RuleClassification">Rule
+																					Classification<code>*</code>
+																				</label> <select class="form-control select2"
+																					data-placeholder="Select Classification"
+																					name="RuleClassification" id="RuleClassification"
+																					style="width: 100%;">
+																					<option value=''>Select Classification</option>
+																					<option
+																						th:each="RuleClassification : ${RuleClassification}"
+																						th:value="${RuleClassification}"
+																						th:text="${RuleClassification}"></option>
+																				</select>
+																			</div>
+
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="verticalType">Vertical Sub-Type<code>*</code>
+																				</label> <select class="form-control select2"
+																					data-placeholder="Select Vertical Sub-Type"
+																					name="verticalType" id="verticalType"
+																					style="width: 100%;">
+																					<option value=''>Select Vertical Sub-Type</option>
+																					<option th:each="vertical : ${ruleKeyList}"
+																						th:value="${vertical.split('-')[1]}"
+																						th:text="${vertical.split('-')[0]}"></option>
+																				</select>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="dataSource">DataSource <code>*</code></label>
+																				<select class="form-control select2"
+																					data-placeholder="Select DataSource"
+																					name="dataSource" id="dataSource"
+																					style="width: 100%;">
+																					<option value=''>Select DataSource</option>
+																					<option value='MySql'>MySql</option>
+																					<option value='Oracle'>Oracle</option>
+
+																				</select>
+																			</div>
+																		</div>
+
+																	</div>
+
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="reportType">Query Type<code>*</code></label>
+																				<select class="form-control select2"
+																					data-placeholder="Report Type" name="ruleReport"
+																					id="ruleReport" style="width: 100%;">
+																					<option value=''>Select Query Type</option>
+																					<option th:each="reportType : ${reportTypeList}"
+																						th:value="${reportType.split('-')[1]}"
+																						th:text="${reportType.split('-')[0]}"></option>
+																				</select>
+																			</div>
+
+																		</div>
+																		<div class="col-sm-6" id="hideDiv">
+																			<div class="form-group">
+																				<label for="reportType">Rule Group-Type<code>*</code></label>
+																				<select class="form-control select2"
+																					data-placeholder="Select Group-Type"
+																					name="RuleType" id="RuleType" style="width: 100%;">
+																					<option value=''>Select Group-Type</option>
+																					<option
+																						th:each="RuleDependency : ${RuleDependency}"
+																						th:value="${RuleDependency.split('-')[1]}"
+																						th:text="${RuleDependency.split('-')[0]}"></option>
+																				</select>
+																			</div>
+
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="RuleFrequency">Rule Frequency<code>*</code></label>
+																				<select class="form-control select2"
+																					data-placeholder="Select Frequency"
+																					name="RuleFrequency" id="RuleFrequency"
+																					style="width: 100%;">
+																					<option value=''>Select Frequency</option>
+																					<option value='D'>Daily</option>
+																					<option value='W'>Weekly</option>
+																					<option value='M'>Monthly</option>
+																					<option value='Q'>Quarterly</option>
+																					<option value='Y'>Yearly</option>
+																					<option value='O'>Other</option>
+																				</select>
+																			</div>
+
+																		</div>
+																		<div class="col-sm-6" id="hideNewFrequency">
+																			<div class="form-group">
+																				<label for="NewFrequency">Enter New
+																					Frequency<code>*</code>
+																				</label>
+																				<div class="input-group">
+																					<input type="number" class="form-control"
+																						id="NewFrequency" name="NewFrequency"
+																						placeholder="Enter Days">
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="reportType">Re-check required</label> <select
+																					class="form-control select2"
+																					data-placeholder="recheckRequired"
+																					name="recheckRequired" id="recheckRequired"
+																					style="width: 100%;">
+																					<option value='N'>NO</option>
+																					<option value='Y'>YES</option>
+																				</select>
+																			</div>
+
+																		</div>
+																		<div class="col-sm-6" id="hideDiv2">
+																			<div class="form-group">
+																				<label for="maxAllowed">Maximum Allowed Days
+																					For Compliance<code>*</code>
+																				</label>
+																				<div class="input-group">
+																					<input type="number" class="form-control"
+																						id="maxAllowed" name="maxAllowed"
+																						placeholder="Enter Days">
+																				</div>
+																			</div>
+
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<label for="ruleDescription">Rule
+																					Description<code>*</code>
+																				</label>
+																				<div class="input-group">
+																					<textarea class="form-control"
+																						name="ruleDescription" maxlength="3000"
+																						placeholder="Rule Description"
+																						id="ruleDescription"></textarea>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																	<div class="row">
+																		<div class="col-sm-6 invoice-col">
+																			<label class="col-sm-12" for="button"></label> <a
+																				type="button" class="btn bg-maroon"
+																				onclick="validateFirst();"> <i
+																				class="fas fa-step-forward"
+																				style="padding: 0 7px 0 0px;"></i>Next
+																			</a> <a href="#" data-toggle="modal"
+																				data-whatever="mainTopRiskPage"
+																				data-target="#cancelmodel"><button type="reset"
+																					class="btn btn-warning" title="Cancel">
+																					<i class="fas fa-times"
+																						style="padding: 0 7px 0 0px;"></i>Cancel
+																				</button></a>
+																		</div>
+																	</div>
+																	<!-- /.row -->
+																</div>
+															</div>
+															<!-- /.invoice -->
+														</div>
+														<!-- /.col -->
+													</div>
+													<!-- /.row -->
+												</div>
+												<!-- Link Department -->
+												<div id="link-dept" class="content" role="tabpanel"
+													aria-labelledby="link-dept-trigger">
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card card-outline card-info ">
+																<br>
+																<!-- /.card-header -->
+																<div class="card-body">
+
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<label for="query">Enter your Query<code>*</code></label>
+																				<div class="input-group">
+																					<textarea class="form-control" name="query"
+																						maxlength="3000" placeholder="Enter Rule Query"
+																						id="query" rows="10"></textarea>
+																				</div>
+																			</div>
+																		</div>
+
+																	</div>
+
+																	<div class="row mb-3">
+																		<div class="col-sm-12 ">
+																			<a class="btn bg-teal" id="fetchData"> <i
+																				class="fas fa-pocket"></i>Add Parameters
+																			</a>
+																		</div>
+																	</div>
+																	<div class="card card-outline card-success" id="cordBoarder" style="display: none">
+																		<div class="card-body">
+																			<div class="row mb-3">
+																				<div class="col-sm-6">
+																					<div id="parameterList" style="display: none">
+																						<span><label><b>Parameter
+																									Details:</b></label></span>
+																						<table id="parameterListTable"
+																							class="table table-head-fixed table-bordered table-striped table-condensed">
+																							<thead>
+																								<tr>
+
+																									<th>Parameter Name</th>
+																									<th>Parameter Value</th>
+																								</tr>
+																							</thead>
+																							<tbody id=parameterListTableBody>
+																							</tbody>
+																						</table>
+																					</div>
+																				</div>
+																				<!-- 	</div>
+																<div class="row"> -->
+																				<div class="col-sm-6 referenceDiv">
+																					<div id="returnTypeList" style="display: none">
+																						<label id="tableName"></label>
+																						<table id="returnTypeListTable"
+																							class="table table-head-fixed table-bordered table-striped table-condensed">
+																							<thead>
+																								<tr>
+
+																									<th>Column Name</th>
+																									<th>Referance Column Name</th>
+																								</tr>
+																							</thead>
+																							<tbody>
+																							</tbody>
+																						</table>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+														
+																	<div class="row mb-7" id="getQueryRow"
+																		style="display: none">
+																		<div class="col-sm-12">
+																			<button type="button" class="btn bg-teal"
+																				id="getQuery">
+																				<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>
+																				Get Sql Query
+																			</button>
+																		</div>
+																	</div>
+																	<div class="row mt-3">
+																		<div class="col-sm-12">
+																			<div id="getQueryData"></div>
+																		</div>
+																	</div>
+
+																			<div class="rowcontainer" >
+																		<div class="card card-outline card-success">
+																			<div class="card-body">
+																				<div class="row">
+
+																					<div class="col-sm-5" id='div_1'>
+																						<div class="form-group">
+																							<label for="parameterkey">Threshold Name<code>*</code></label>
+																							<input type="text" placeholder="Parameter Key"
+																								name="paramkey[]"
+																								class="form-group form-control form-control-sm"
+																								id="parameterkey" required> <span
+																								id="validationError"></span>
+																						</div>
+																					</div>
+																					<div class="col-sm-6" id='div_1'>
+																						<div class="form-group">
+																							<label for="parameterValue">Threshold
+																								Value<code>*</code>
+																							</label>
+																							<textarea
+																								class="form-control form-control-sm paramVal"
+																								rows="1" style="overflow: auto"
+																								name="parametervalue" id="parametervalue1"
+																								placeholder="parameter Value" required></textarea>
+
+																						</div>
+																					</div>
+																				</div>
+
+
+
+																				<div class="row adddiv" id="row_0">
+																					<!-- 	dynamic row -->
+																					<div class="test row col-12"></div>
+																				</div>
+
+																				<div class="col-sm-3">
+																					<div class="form-group">
+																						<a class="btn btn-info btn-sm" id="addrow"> <i
+																							class="fas fa-plus" style="padding: 0 7px 0 0px;"></i>Add
+																						</a>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+																<!-- /.card-body -->
+															</div>
+															<a class="btn  bg-maroon" th:onclick="stepper.previous()">
+																<i class="fas fa-step-backward"
+																style="padding: 0 7px 0 0px;"></i>Previous
+															</a>&nbsp;
+															<button type="button" class="btn bg-maroon" id="getData">
+																<i class="fas fa-step-forward"
+																	style="padding: 0 7px 0 0px;"></i>Next
+															</button>
+															&nbsp;
+															<button type="button" class="btn bg-info" id="testQuery">
+																<i class="fas fa-database" style="padding: 0 7px 0 0px;"></i>Test
+																Query
+															</button>
+															&nbsp; <a href="#" data-toggle="modal"
+																data-whatever="mainTopRiskPage"
+																data-target="#cancelmodel"><button type="reset"
+																	class="btn btn-warning" title="Cancel">
+																	<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+																</button></a>
+														</div>
+													</div>
+												</div>
+												<!-- Link KRI -->
+
+												<div id="link-part" class="content" role="tabpanel"
+													aria-labelledby="link-part-trigger">
+													<div class="row">
+														<div class="col-md-12">
+															<div class="card card-outline card-info">
+																<div class="card-body deptclass">
+																	<table id="queryDataTable"
+																		class="table table-head-fixed table-bordered table-striped"
+																		style="display: none">
+																		<thead>
+																			<tr id="headerData">
+																				
+																			</tr>
+																		</thead>
+																		<tbody id="tableBody">
+
+																		</tbody>
+																	</table>
+
+																	<div class="row mt-3">
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<label for="commentList">Select Comment From
+																					Existing<code>*</code>
+																				</label> <select class="form-control select2"
+																					multiple="multiple"
+																					data-placeholder="Select Comment"
+																					name="commentList" id="commentList"
+																					style="width: 100%;">
+																					<option value=''>Select Comment</option>
+																					<option value='Others'>Other</option>
+																					<option th:each="comment : ${comment}"
+																						th:value="${comment}" th:text="${comment}"></option>
+																				</select>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="row mt-3" id="otherblock">
+																		<div class="col-sm-12">
+																			<div class="form-group ">
+																				<label>Comments:<code>*</code></label>
+																				<div class="input-group">
+																					<textarea class="form-control" name="ruleComment"
+																						maxlength="3000" placeholder="Rule Comment"
+																						id="ruleComment0"></textarea>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="col-sm-12">
+																			<div class="addCommentBox "></div>
+																		</div>
+
+
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<a class="btn bg-teal" id="addComment"> <i
+																					class="fas fa-plus" style="padding: 0 7px 0 0px;"></i>
+																					AddMore
+																				</a>
+
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<a class="btn bg-maroon" th:onclick="stepper.previous()">
+														<i class="fas fa-step-backward"
+														style="padding: 0 7px 0 0px;"></i>Previous
+													</a> <a type="submit" class="btn btn-info" id="create"> <i
+														class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+													</a> <a href="#" data-toggle="modal"
+														data-whatever="mainTopRiskPage" data-target="#cancelmodel"><button
+															type="reset" class="btn btn-warning" title="Cancel">
+															<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+														</button></a>
+
+
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /.row -->
+							</div>
+							<!--/. container-fluid -->
+							<!-- /.modal-dialog -->
+							<!-- Confirmation Modal -->
+							<!-- Confirmation Modal -->
+							<div class="modal fade" id="confirmmodal">
+								<div class="modal-dialog modal-fluid">
+									<div class="modal-content">
+										<div class="modal-header bg-info">
+											<h6 class="modal-title">Confirm</h6>
+											<button type="button" class="close text-white"
+												data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+
+										<div class="modal-body">
+											<h5 class="card-title">Are You Sure You Want To Submit
+												This Record?</h5>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary"
+												data-dismiss="modal">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+											</button>
+											<button type="button" onclick="validateForm('create')"
+												class="btn btn-primary target">
+												<i class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Yes
+											</button>
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- Confirm Modal -->
+
+							<!-- Cancel Modal -->
+							<div class="modal fade" id="cancelmodel">
+								<div class="modal-dialog modal-fluid">
+									<div class="modal-content">
+										<div class="modal-header bg-info">
+											<h6 class="modal-title">Confirm</h6>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<!-- form start -->
+										<div class="modal-body">
+											<h5 class="card-title">
+												If you leave this page, all changes will be lost. <br>
+												Press "Ok" to Continue.
+											</h5>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary"
+												data-dismiss="modal">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button>
+											<a class="btn btn-primary target"><i class="fas fa-check"
+												style="padding: 0 7px 0 0px;"></i>Ok </a>
+										</div>
+									</div>
+									<!-- /.modal-content -->
+								</div>
+								<!-- /.modal-dialog -->
+							</div>
+							<!-- /.Cancel Modal -->
+
+
+
+							<input type="hidden" id="tabname" name="tabname" value="">
+							<input type="hidden" id="tableData" name="tableData" value="">
+							<input type="hidden" id="tableHeader" name="tableData" value="">
+						</form>
+					</div>
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- BS-Stepper -->
+	<script th:src="@{/plugins/bs-stepper/js/bs-stepper.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- PAGE PLUGINS -->
+	<script th:src="@{/dist/appjs/erm/ruleBuilder.js}"></script>
+
+</body>
+</html>

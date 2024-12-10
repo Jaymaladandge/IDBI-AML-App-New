@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title sec:authentication="principal.ermTitle"></title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- icheck bootstrap -->
+<link rel="stylesheet"
+	th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+body {
+	margin: 0;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: .875rem !important;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	text-align: left;
+	background-color: #fff;
+}
+
+header {
+	width: 100%;
+	padding: 10px 0 0 15px;
+	display: flex;
+	flex-direction: row;
+}
+
+.login-box, .register-box {
+	width: 420px;
+	margin: 65px auto;
+	margin-bottom: 100px;
+}
+
+.content {
+	display: flex;
+	width: 85%;
+	margin: 120px auto;
+}
+
+hr {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border: 0;
+}
+
+.loginfooter {
+	bottom: 0;
+	position: fixed;
+	background: white;
+	border-top: 1px solid #dee2e6;
+	color: #869099;
+	width: 100%;
+	display: inline-flex;
+	padding: 5px 0 5px 0;
+}
+
+.float-right {
+	float: right !important;
+	text-align: end;
+	padding: 0 10px 0px 0px;
+}
+
+.lic-hands {
+	margin: 0px;
+	background-color: #ffffff;
+	margin-left: 120px;
+	margin-top: 260px;
+	width: 380px;
+	height: 230px;
+}
+
+.right-side-box-firstRow {
+	margin-top: 5px;
+}
+
+.apis-div {
+	margin-left: 60px;
+	margin-top: 25px;
+}
+
+a:hover {
+	cursor: pointer;
+}
+
+#partitioned {
+	padding-left: 15px;
+	letter-spacing: 42px;
+	border: 0;
+	background-image: linear-gradient(to left, black 70%, rgba(255, 255, 255, 0)
+		0%);
+	background-position: bottom;
+	background-size: 50px 1px;
+	background-repeat: repeat-x;
+	background-position-x: 35px;
+	width: 220px;
+}
+
+.custom-btn {
+	width: 170px; /* Set your desired width */
+}
+</style>
+</head>
+<div id="load"></div>
+
+<body
+	style="background: url(dist/img/photo-2.png); background-size: cover;">
+	<div th:insert="/header::roleHeader" style="width: 100%"></div>
+
+	<!--<header>
+	<div class="logo">
+		<img width="10%" height="2%" th:src="@{/dist/img/lic_india_logo.png}" alt="LIC">
+	</div>
+</header>-->
+	<div class="container-lg">
+
+
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="logo_left" style="display: flex; align-items: center;">
+
+
+					<img th:src="@{/dist/img/IDBI-Bank-1.png}" class="lic-hands"
+						alt="APIS"
+						style="width: 400px; height: 100px; margin-right: 30px; margin-left: 120px; margin-top: 200px;">
+				</div>
+
+			</div>
+
+
+			<div class="col-lg-6">
+				<div class="login-box mt-5">
+					<input type="hidden" th:value="*{message}" id="message" />
+					<div class="row text-center mt-n1">
+						<img th:src="@{/login-dist/images/i-aml-logo.svg}"
+							class="img-responsive rounded mx-auto d-block apis-div mt-n4"
+							alt="APIS" style="width: 390px; height: 220px;">
+					</div>
+
+					<div class="lockscreen-logo mt-n2">
+						<!-- <h6 class="text-primary" style="color: #03468e !important;">Enter the One Time Password...</h6> -->
+					</div>
+
+					<div th:if="${otpDto.otpRequestStatus=='02'}" class="text-danger"
+						id="divStatus1">Invalid OTP.</div>
+					<div th:if="${otpDto.otpRequestStatus=='01'}" class="text-danger"
+						id="divStatus2">OTP Expired.</div>
+					<div th:if="${otpDto.otpRequestStatus=='03'}" class="text-danger"
+						id="divStatus3">Office Not Present for the selected
+						Department, Please select other Department and click Resend OTP .</div>
+
+					<form autocomplete="off" role="form" method="post"
+						th:action="@{/validateOtp}" id="otpForm">
+						<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+						<div class="box-body box-lg">
+							<!-- <div class="form-group">
+								Enter the One Time Password...
+							</div> -->
+
+							<div>
+								<input type="hidden" th:value="${otpId}" id="otpId" name="otpId">
+
+
+								<!-- <div class="form-group" th:if="${hrmsFlg}">
+									<label for="department"><h6 class="text-primary"
+											style="color: #03468e !important;">
+											Select Department
+											<code>*</code>
+										</h6> </label> <select class="form-control select2"
+										data-placeholder="Department" name="Department"
+										id="Department" style="width: 100%;">
+										<option value=''>Department</option>
+										<option th:each="dept : ${deptList}" th:value="${dept.deptId}"
+											th:text="${dept.deptName}"></option>
+									</select>
+								</div>
+
+								<div class="form-group" th:unless="${hrmsFlg}">
+									<input type="hidden" id="Department" name="Department"
+										th:value="${deptId}">
+								</div> -->
+
+								<div id="otpMessage" name="otpMessage" class="text-success p-1"></div>
+								<h6 class="text-primary"
+									style="margin-left: 9px; color: #03468e !important;">Enter
+									the One Time Password</h6>
+							</div>
+							<div class="input-group"
+								style="padding-left: 0px; padding-right: 20px;">
+
+								<div class="col-12">
+									<input type="number"
+										style="padding-left: 0px; padding-right: 20px; margin-right: 0px;"
+										class="form-control"
+										onkeypress="if (this.value.length > 6) return false;"
+										id="otpCode" name="otpCode" />
+								</div>
+								<div id="otpMessageNote" name="otpMessageNote"
+									class="text-success" style="margin-left: 10px;"></div>
+								<div class="input-group" style="margin-left: 10px;">
+									<button type="submit" id="validatebtn"
+										class="btn btn-primary btn mt-3  btn-sm">Validate</button>
+									&nbsp;&nbsp;&nbsp;&nbsp;
+									<div class="row">
+										<div class="col">
+											<button type="button" id="resendOtp"
+												class="btn btn-primary btn mt-3  btn-sm">Resend OTP</button>
+										</div>
+									</div>
+								</div>
+								<input type="hidden" style="margin-left: 10px;" id="otpStatus"
+									name="otpStatus" th:value="${otpDto.otpRequestStatus}">
+								<!-- <div th:if="${otpDto.otpRequestStatus!=null}">
+							
+							<button type="button" id="resendOtp" class="btn btn-warning btn mt-3">
+										Resend OTP
+									</button>
+							</div> -->
+
+
+							</div>
+						</div>
+
+						<div class="help-block text-center mt-4"
+							style="margin-right: 65px;">
+							<b>Enter your details to start your session</b> <br> <a
+								th:href="@{/}" class="text-green"> <i
+								class="fas fa-hand-point-left"></i> Back to previous Page
+							</a>
+
+						</div>
+					</form>
+				</div>
+
+
+
+
+			</div>
+
+			<br>
+
+
+			<!-- /. right side -->
+
+
+
+		</div>
+	</div>
+
+
+
+
+
+	<footer class="loginfooter">
+		<div class="col-md-4" style="float: left; padding: 6px 0 0 10px;">
+			© 2022-2023 All rights reserved.</div>
+		<div class="col-md-4"
+			style="float: left; text-align: center; padding: 6px 0 0 10px;">
+			&nbsp;<img class="img-fluid" th:src="@{/dist/img/flag.png}"
+				alt="Proudly Made In India" width="" height=""> &nbsp; Proudly
+			Made In India
+		</div>
+		<div class="float-right col-md-4">
+			Designed &amp; Developed by <img class="img-fluid"
+				th:src="@{/dist/img/intech-logo.png}" alt="Photo" width="100"
+				height="100">
+		</div>
+	</footer>
+
+	<!-- /.login-box -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<script>
+		$(document).ready(function() {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.error(message);
+			}
+		});
+	</script>
+
+	<script>
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+	<script>
+		$(document)
+				.ready(
+						function() {
+							var otpId = $("#otpId").val();
+							var otpStatus = $("#otpStatus").val();
+							if (otpStatus == null || otpStatus == ''
+									|| typeof otpStatus === 'undefined') {
+								//var pageValJson = "{\"otpId\":\"" + otpId+ "\"}";
+								var source = "generateOtp";
+								var pageValJson = "{\"otpSource\":\"" + source
+										+ "\",\n" + "\"otpId\":\"" + otpId
+										+ "\"}";
+
+								document.getElementById('load').style.visibility = "visible";
+
+								// ajax call
+								$
+										.ajax({
+											url : 'otpGeneratorById',
+											type : "POST",
+											data : {
+												pageValJson : pageValJson
+											},// important line for thymeleaf http security
+											headers : {
+												"X-CSRF-TOKEN" : $(
+														"input[name='_csrf']")
+														.val()
+											},
+											cache : false,
+											// async:true,
+											success : function(response) {
+
+												setTimeout(
+														function() {
+															document
+																	.getElementById('interactive');
+															document
+																	.getElementById('load').style.visibility = "hidden";
+														}, 1000);
+
+												var jsonResponse = JSON
+														.stringify(response);
+												var obj = JSON
+														.parse(jsonResponse);
+
+												Object
+														.keys(obj)
+														.forEach(
+																function(items) {
+
+																	var message = "";
+
+																	if (items == 'otpMessage') {
+																		if (obj[items] != null) {
+																			//$("#otpMessage").val((obj[items]));
+																			message = obj[items];
+
+																		}
+
+																	}
+																	/* 	if(items=='emailId'){
+																			message+=obj[items]
+																		
+																		} */
+
+																	$(
+																			"#otpMessage")
+																			.append(
+																					"<span>"
+																							+ message
+																							+ "</span>")
+																	//  (Note: OTP Expires After 5 minutes)
+
+																});
+												$("#otpMessageNote")
+														.append(
+																"<br><span> (Note: OTP Expires After 5 minutes) </span><br>")
+
+											},
+											error : function(xhr, status, error) {
+												console.log(xhr);
+												console.log(status);
+												console.log(error);
+												toastr
+														.success('Some Error Occured');
+											}
+										});
+							}
+
+						});
+	</script>
+	<script>
+		$("#validatebtn")
+				.on(
+						"click",
+						function() {
+							if ($('#otpForm').valid()) {
+								document.getElementById('load').style.visibility = "visible";
+								var jsonString = "{\"otpCode\":\""
+										+ $("#otpCode").val() + "\",\n"
+										+ "\"otpId\":\"" + $("#otpId").val()
+										+ "\",\n" + "\"userDept\":\""
+										+ $("#Department").val() + "\"}"
+
+								//var apString=""
+								//$("#resendOtp").show();
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), jsonString);
+
+								$("#encryptedJson").val(
+										ciphertext + ':~:' + passphrase);
+								$("#otpForm").submit();
+							}
+						});
+
+		$(function() {
+			$('#otpForm')
+					.validate(
+							{
+								rules : {
+									otpCode : {
+										required : true,
+
+									},
+									Department : {
+										required : true,
+									}
+
+								},
+								messages : {
+									otpCode : {
+										required : "Please Enter OTP"
+									},
+									Department : {
+										required : "Please Select Department"
+									},
+								},
+								errorElement : 'span',
+								errorPlacement : function(error, element) {
+									error.addClass('invalid-feedback');
+									element.closest('.form-group')
+											.append(error);
+								},
+								highlight : function(element, errorClass,
+										validClass) {
+									$(element).addClass('is-invalid');
+								},
+								unhighlight : function(element, errorClass,
+										validClass) {
+									$(element).removeClass('is-invalid');
+								},
+								submitHandler : function(form) {
+									//toastr
+									//		.success('Action Plan Created Successfully');
+									document.getElementById('load').style.visibility = "visible";
+									form.submit();
+									// setTimeout( function () { 	
+									//form.submit();
+									//	}, 2000);	
+								}
+							});
+		});
+	</script>
+	<script>
+		$("#resendOtp")
+				.on(
+						"click",
+						function() {
+							var otpId = $("#otpId").val();
+							//var pageValJson = "{\"otpId\":\"" + otpId+ "\"}";
+							var source = "reGenerateOtp";
+							var pageValJson = "{\"otpSource\":\"" + source
+									+ "\",\n" + "\"otpId\":\"" + otpId + "\"}";
+							$("#divStatus1").empty();
+							$("#divStatus2").empty();
+							$("#divStatus3").empty();
+							//$("#resendOtp").hide();
+
+							document.getElementById('load').style.visibility = "visible";
+
+							// ajax call
+							$
+									.ajax({
+										url : 'otpGeneratorById',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+
+											var jsonResponse = JSON
+													.stringify(response);
+											var obj = JSON.parse(jsonResponse);
+											$("#otpMessage").empty();
+											$("#otpMessageNote").empty();
+											Object
+													.keys(obj)
+													.forEach(
+															function(items) {
+																console
+																		.log('items '
+																				+ items);
+																var message = "";
+																console
+																		.log('obj items '
+																				+ obj[items]);
+																if (items == 'otpMessage') {
+																	if (obj[items] != null) {
+																		//$("#otpMessage").val((obj[items]));
+																		message = obj[items];
+
+																	}
+
+																}
+																/* if(items=='emailId'){
+																	message+=obj[items]
+																
+																}
+																 */
+																$("#otpMessage")
+																		.append(
+																				"<span>"
+																						+ message
+																						+ "</span>")
+																//  (Note: OTP Expires After 5 minutes)
+
+															});
+											document.getElementById('load').style.visibility = "hidden";
+											toastr
+													.success('OTP Sent Successfully');
+											$("#otpMessageNote")
+													.append(
+															"<br><span> (Note: OTP Expires After 5 minutes) </span><br>")
+
+										},
+										error : function(xhr, status, error) {
+											console.log(xhr);
+											console.log(status);
+											console.log(error);
+											toastr.error('Some Error Occured');
+										}
+									});
+
+						})
+	</script>
+
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+
+			//Date range picker
+			$('#completionDate').datetimepicker({
+				format : 'DD-MM-YYYY'
+			//format : 'YYYY-MM-DD'
+			});
+		})
+	</script>
+</body>
+
+</html>

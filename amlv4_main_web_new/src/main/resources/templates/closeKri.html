@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title sec:authentication="principal.ermTitle"> </title>
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Select2 -->
+	<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+	<style>
+	.card-info:not(.card-outline) > .card-header {
+		background-color: #044383 !important;
+	}
+	
+	.bg-info {
+		background-color: #044383 !important;
+	}
+	
+	.btn-info {
+		color: #fff;
+		background-color: #044383 !important;
+		border-color: #044383 !important;
+		box-shadow: none;
+	}
+	</style>
+</head>
+
+<body class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0 text-secondary">Key Risk Indicator</h1> </div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Key Risk Indicator - Close</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title">Key Risk Indicator - Close</h3> </div>
+								<!-- /.card-header -->
+								<div class="card-body">
+									<table id="kriTable" class="table table-head-fixed table-bordered table-striped">
+										<thead>
+											<tr>
+												<th>KRI ID</th>
+												<th>KRI Name</th>
+												<th>KRI Description</th>
+												<th>Status</th>
+												<th></th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>01234567890</td>
+												<td>Percentage in variation in net addition (of agents) from target</td>
+												<td>% variation in net addition (of agents) from target</td>
+												<td><span class="badge bg-primary">Added</span></td>
+												<td class="project-actions text-right">
+													<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#editmodal"> <i class="fas fa-window-close">
+                              </i> Close </a>
+												</td>
+											</tr>
+											<tr>
+												<td>01234567891</td>
+												<td>Delay in mission critical projects</td>
+												<td>Delay in mission critical projects</td>
+												<td><span class="badge bg-primary">Added</span></td>
+												<td class="project-actions text-right">
+													<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#editmodal"> <i class="fas fa-window-close">
+                              </i> Close </a>
+												</td>
+											</tr>
+											<tr>
+												<td>01234567891</td>
+												<td>Delay in mission critical projects</td>
+												<td>Delay in mission critical projects</td>
+												<td><span class="badge bg-secondary">Closure</span></td>
+												<td class="project-actions text-right">
+													<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#editmodal"> <i class="fas fa-window-close">
+                              </i> Close </a>
+												</td>
+											</tr>
+											<tr>
+												<td>01234567891</td>
+												<td>Delay in mission critical projects</td>
+												<td>Delay in mission critical projects</td>
+												<td><span class="badge bg-warning">Modified</span></td>
+												<td class="project-actions text-right">
+													<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#editmodal"> <i class="fas fa-window-close">
+                              </i> Close </a>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+				<!-- Edit Modal -->
+				<div class="modal fade" id="editmodal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">KRI ID : 0123456789</h5>
+								<button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
+							</div>
+							<!-- form start -->
+							<form class="form-horizontal" id="frmkri">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="kriname">KRI Name <code>*</code></label>
+												<div class="input-group mb-2">
+													<input type="text" class="form-control form-control-sm" id="kriname" name="kriname" value="Percentage in variation in net addition (of agents) from target" readonly> </div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="briefdescription">Brief Description <code>*</code> </label>
+												<textarea class="form-control form-control-sm" name="briefdescription" id="briefdescription" rows="3" readonly>Percentage in variation in net addition (of agents) from target</textarea>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="ragdatatype">Datatype <code>*</code></label>
+												<select class="form-control select2" name="ragdatatype" id="ragdatatype" style="width: 100%;" disabled>
+													<option value=''>Select</option>
+													<option value='N'>Number</option>
+													<option value='P' selected>Percentage</option>
+													<option value='R'>Range</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-4 pl-5">
+												 <div class="form-group clearfix mt-4">
+													<div class="icheck-primary d-inline">
+                        								<input type="checkbox" id="cbragdatatypeval" name="cbragdatatypeval" disabled>
+                        								<label for="cbragdatatypeval">&nbsp;Is range in percentage?</label>
+                      								</div>
+												</div>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+						  							<label for="red" class="text-red">Red</label>
+						  							<div class="input-group mb-2">
+						  								<input type="text" class="form-control form-control-sm" id="red" name="red" readonly>
+						 							</div>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+						  							<label for="amber" class="text-warning">Amber</label>
+						  							<div class="input-group mb-2">
+						  								<input type="text" class="form-control form-control-sm" id="amber" name="amber" readonly>
+						 							</div>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+						  							<label for="green" class="text-green">Green</label>
+						  							<div class="input-group mb-2">
+						  								<input type="text" class="form-control form-control-sm" id="green" name="green" readonly>
+						 							</div>
+												</div>
+											</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="thresholddescription">Threshold Description <code>*</code> </label>
+												<textarea class="form-control form-control-sm" name="thresholddescription" id="thresholddescription" rows="3" readonly>100% of defined objective can be set as green, 90% as Amber and 80% as red.</textarea>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="datasourcedef">Datasource <code>*</code></label>
+												<select class="form-control select2" name="datasourcedef" id="datasourcedef" style="width: 100%;" disabled>
+													<option value=''>Select</option>
+													<option value='C'>Manual Capture</option>
+													<option value='M' selected>MIS</option>
+													<option value='I'>Core Insurance</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="frequency">Capture Frequency <code>*</code></label>
+												<select class="form-control select2" name="frequency" id="frequency" style="width: 100%;" disabled>
+													<option value=''>Select</option>
+													<option value='D'>Daily</option>
+													<option value='W'>Weekly</option>
+													<option value='F'>Fortnightly</option>
+													<option value='M' selected>Monthly</option>
+													<option value='Q'>Quaterly</option>
+													<option value='H'>Half Yearly</option>
+													<option value='H'>Yearly</option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>File Name</th>
+														<th>File Size</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Functional-requirements.docx</td>
+														<td>49.8005 kb</td>
+														<td class="text-right py-0 align-middle">
+															<div class="btn-group btn-group-sm"> <a href="#" class="btn btn-info"><i class="fas fa-download"></i></a> </div>
+														</td>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>Document Attachment</label>
+												<div class="custom-file">
+													<input type="file" class="custom-file-input input-group-sm" id="customFile">
+													<label class="custom-file-label" for="customFile">Choose file</label>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-12">
+											<table class="table">
+												<thead>
+													<tr>
+														<th>Comment By</th>
+														<th>Department</th>
+														<th>User Role</th>
+														<th>Comments</th>
+														<th>Comment Timestamp</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>Sharath Nair (11020104)</td>
+														<td>Marketing</td>
+														<td>Marketing Head</td>
+														<td>Risk for the zero tolerance to be created in the RAS for Marketing</td>
+														<td>10-12-2020 14:01:00</td>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="comments">Provide your comments <code>*</code></label>
+												<textarea class="form-control form-control-sm" name="comments" id="comments" rows="2"></textarea>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+								</div>
+								<!-- /.card-body -->
+								<div class="card-footer">
+									<button type="submit" class="btn btn-info"><i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit</button>
+									<button type="button" class="btn btn-secondary"><i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel</button>
+								</div>
+								<!-- /.card-footer -->
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- /.modal -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/dkkbrftgatatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script>
+	$(function() {
+		$("#kriTable").DataTable({
+			"responsive": true,
+			"autoWidth": true,
+			"buttons": ["csv", "excel", "pdf", "print"]
+		}).buttons().container().appendTo('#kriTable_wrapper .col-md-6:eq(0)');
+	});
+	</script>
+	<script>
+	$(function() {
+		//Initialize Select2 Elements
+		$('.select2').select2();
+		bsCustomFileInput.init();
+	})
+	</script>
+	<script>
+	$(function() {
+		$.validator.setDefaults({
+			submitHandler: function() {
+				toastr.success('Details submitted sucessfully...')
+				$('#editmodal').modal('hide');
+			}
+		});
+		$('#frmriskapptstmt').validate({
+			rules: {
+				comments: {
+					required: true,
+					minlength: 10,
+					maxlength: 100
+				},
+				riskcategory: {
+					required: true
+				},
+				riskdescription: {
+					required: true,
+					minlength: 10,
+					maxlength: 100
+				},
+				datapoints: {
+					required: true
+				},
+				datatype: {
+					required: true
+				},
+				department: {
+					required: true
+				},
+				frequency: {
+					required: true
+				},
+				riskowner: {
+					required: true
+				},
+				valuecapturer: {
+					required: true
+				},
+			},
+			messages: {
+				comments: {
+					required: "Please provide your comments",
+				},
+				riskcategory: {
+					required: "Please Select a Risk Category",
+				},
+				riskdescription: {
+					required: "Please provide the Risk Appetite Description",
+				},
+				datapoints: {
+					required: "Please provide Data Points",
+				},
+				datatype: {
+					required: "Please Select a Data Type",
+				},
+				department: {
+					required: "Please Select a Department",
+				},
+				frequency: {
+					required: "Please Select a Frequency",
+				},
+				riskowner: {
+					required: "Please Select a Risk Owner",
+				},
+				valuecapturer: {
+					required: "Please Select a Risk Value Capturer",
+				},
+			},
+			errorElement: 'span',
+			errorPlacement: function(error, element) {
+				error.addClass('invalid-feedback');
+				element.closest('.form-group').append(error);
+			},
+			highlight: function(element, errorClass, validClass) {
+				$(element).addClass('is-invalid');
+			},
+			unhighlight: function(element, errorClass, validClass) {
+				$(element).removeClass('is-invalid');
+			}
+		});
+	});
+	</script>
+	<!-- PAGE PLUGINS -->
+</body>
+
+</html>

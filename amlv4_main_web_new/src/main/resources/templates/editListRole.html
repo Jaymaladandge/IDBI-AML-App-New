@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<link rel="stylesheet" th:href="@{/dist/css/erm_style.css}">
+  <!-- DataTables -->
+  <link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+  <style>
+.card-info:not(.card-outline) > .card-header {
+    background-color: #044383 !important;
+}
+.bg-info {
+    background-color: #044383 !important;
+}
+.btn-info {
+    color: #fff;
+    background-color: #044383 !important;
+    border-color: #044383 !important;
+    box-shadow: none;
+}
+
+</style>
+</head>
+<body class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+<div class="wrapper">
+
+<!-- Included header.html -->
+<div th:insert="/header::header"></div>
+  
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-secondary">Role Master</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+			  <li class="breadcrumb-item active">Role Master - Modify</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+		<div class="row">
+          <div class="col-sm-12">	
+			
+			<div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Role Master List - Modify</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-head-fixed table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Role Mater ID</th>
+                    <th>Office Type</th>
+                    <th>Department</th>
+                    <th>Position</th>
+					<th></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>Branch office</td>
+                    <td>Marketing</td>
+                    <td>Manager</td>
+					<td class="project-actions text-right">
+                          <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#editmodal">
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Edit
+                          </a>
+                     </td>
+                  </tr>
+				  <tr>
+                    <td>01234567890</td>
+                    <td>Branch office</td>
+                    <td>Marketing</td>
+                    <td>Manager</td>
+					<td class="project-actions text-right">
+                          <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#editmodal">
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Edit
+                          </a>
+                     </td>
+                  </tr>
+				  <tr>
+                    <td>01234567890</td>
+                    <td>Branch office</td>
+                    <td>Marketing</td>
+                    <td>Manager</td>
+					<td class="project-actions text-right">
+                          <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#editmodal">
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Edit
+                          </a>
+                     </td>
+                  </tr>
+				  <tr>
+                    <td>01234567890</td>
+                    <td>Branch office</td>
+                    <td>Marketing</td>
+                    <td>Manager</td>
+					<td class="project-actions text-right">
+                          <a class="btn btn-info btn-sm" href="#" data-toggle="modal" data-target="#editmodal">
+                              <i class="fas fa-pencil-alt">
+                              </i>
+                              Edit
+                          </a>
+                     </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+		  </div>
+		</div>
+      </div>
+	  <!--/. container-fluid -->
+	  
+	  <!-- Edit Modal -->
+	  <div class="modal fade" id="editmodal">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header bg-info">
+              <h5 class="modal-title">Role Master ID : 0123456789</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+			
+			<form class="form-horizontal" id="frmriskapptstmt">
+                <div class="modal-body">				            
+              <!-- form start -->
+               <form id="" class="form-horizontal" novalidate="novalidate">
+				 <div class="card-body">
+                <div class="row">
+					<div class="col-sm-4">
+						<div class="form-group">
+						<label for="riskcategory">Office Type <code>*</code></label>
+							<select class="form-control select2" name="OfficeType" id="OfficeType" style="width: 100%;">
+								 <option value=''>Select</option>
+								 <option value='L'>Office Type</option>
+								 <option value='M'>Office Type</option>
+								 <option value='H'>Office Type</option>
+							 </select>
+						</div>
+					</div>	
+					<div class="col-sm-4">
+						<div class="form-group">
+						<label for="riskcategory">Department <code>*</code></label>
+							<select class="form-control select2" name="Department" id="Department" style="width: 100%;">
+								 <option value=''>Select</option>
+								 <option value='L'>Department</option>
+								 <option value='M'>Department</option>
+								 <option value='H'>Department</option>
+							 </select>
+						</div>
+					</div>
+					
+					<div class="col-sm-4">
+						<div class="form-group">
+						<label for="riskcategory">Position <code>*</code></label>
+							<select class="form-control select2" name="Position" id="Position" style="width: 100%;">
+								 <option value=''>Select</option>
+								 <option value='L'>Position</option>
+								 <option value='M'>Position</option>
+								 <option value='H'>Position</option>
+							 </select>
+						</div>
+					</div>																
+				</div>
+				
+				</form>
+
+                <div class="card collapsed-card">
+                  <div class="card-header">
+                    <h3 class="card-title">
+                      <label class="check" style="color: #17a2b8;">Admin 1
+                      <input type="checkbox" class="selectall" style="display: contents;">
+                      <span class="w3docs" style=" margin: 0 0 0 0px;"></span>
+                      </label>
+                     </h3>
+
+	                <div class="card-tools">
+	                  <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+	                    <i class="fas fa-plus" style="color: #17a2b8;"></i></button>
+	                  <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+	                    <i class="fas fa-times"></i></button>
+	                </div>
+                </div>
+                <div class="card-body" style="display: none;">
+                  <div class="row">
+                    <div class="col-sm-12" id="checkboxlist">
+                  <div class="col-md-6 menuu_1">
+	                  <label class="check">User Master
+	                    <input type="checkbox" class="checkhour" style="display: contents;">
+	                    <span class="w3docs"></span>
+	                  </label>  
+
+                      <div class="col-md-6" id="checkboxlist_1" style="margin: 17px 0 0 33px;">
+                          <label class="check" style="font-weight: 400;">End Node 1
+                            <input type="checkbox" class="" style="display: contents;">
+                            <span class="w3docs"></span>
+                          </label>
+                          <label class="check" style="font-weight: 400;">End Node 2
+                            <input type="checkbox" class="" style="display: contents;">
+                            <span class="w3docs"></span>
+                          </label>
+                          <label class="check" style="font-weight: 400;">'N' no of End Nodes
+                            <input type="checkbox" class="" style="display: contents;">
+                            <span class="w3docs"></span>
+                          </label>
+                     </div>
+                  
+                   </div>
+
+                   <div class="col-md-6">
+                 	 <div class="col-md-10 menuu_1">
+	                  <label class="check" style="color:#17a2b8">Role Master
+	                    <input type="checkbox"  style="display: contents;">
+	                    <span class="w3docs"></span>
+	                  </label>  
+	                  <div class="col-md-6" style="margin: 17px 0 0 33px;">
+		                  <label class="check" style="font-weight: 400;">End Node 1
+		                    <input type="checkbox" class="" style="display: contents;">
+		                    <span class="w3docs"></span>
+		                  </label>
+		                  <label class="check" style="font-weight: 400;">End Node 2
+		                    <input type="checkbox" class="" style="display: contents;">
+		                    <span class="w3docs"></span>
+		                  </label>
+		                  <label class="check" style="font-weight: 400;">'N' no of sub Menus
+		                    <input type="checkbox" class="" style="display: contents;">
+		                    <span class="w3docs"></span>
+		                  </label>
+	                  </div>                  
+                 	 </div>                  
+                  	</div>
+                  </div>
+                 </div>
+                </div>
+                <!-- /.card-body -->
+                </div>
+
+                <div class="card collapsed-card">
+                <div class="card-header">
+                  <h3 class="card-title">
+                    <label class="check" style="color: #17a2b8;">Admin 2
+                      <input type="checkbox" class="selectall_2" style="display: contents;">
+                      <span class="w3docs" style="margin: 0 0 0 0px;"></span>
+                      </label></h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                    <i class="fas fa-plus" style="color: #17a2b8;"></i></button>
+                  <button type="button" class="btn btn-tool" data-card-widget="remove" data-toggle="tooltip" title="Remove">
+                    <i class="fas fa-times"></i></button>
+                </div>
+                </div>
+                <div class="card-body" style="display: none;">
+                  <div class="row">
+                    <div class="col-md-6" id="checkboxlist_2">
+                  <div class="col-md-10 menuu_1">
+		                  <label class="check">User Master
+		                    <input type="checkbox" class="checkhour" style="display: contents;">
+		                    <span class="w3docs"></span>
+		                  </label>  
+
+                      <div class="col-md-6" id="checkboxlist_1" style="margin: 17px 0 0 33px;">
+                          <label class="check" style="font-weight: 400;">End Node 1
+                            <input type="checkbox" class="" style="display: contents;">
+                            <span class="w3docs"></span>
+                          </label>
+                          <label class="check" style="font-weight: 400;">End Node 2
+                            <input type="checkbox" class="" style="display: contents;">
+                            <span class="w3docs"></span>
+                          </label>
+                          <label class="check" style="font-weight: 400;">'N' no of End Nodes
+                            <input type="checkbox" class="" style="display: contents;">
+                            <span class="w3docs"></span>
+                          </label>
+                      </div>                  
+                   </div>
+                  </div>
+
+                 <div class="col-md-6" id="checkboxlist_2">
+	                  <div class="col-md-10 menuu_1">
+	                  <label class="check">Role Master
+	                    <input type="checkbox" class="" style="display: contents;">
+	                    <span class="w3docs"></span>
+	                  </label>  
+	
+	                 <div class="col-md-6" id="" style="margin: 17px 0 0 33px;">
+	                  <label class="check" style="font-weight: 400;">End Node 1
+	                    <input type="checkbox" class="chkk" style="display: contents;">
+	                    <span class="w3docs"></span>
+	                  </label>
+	                  <label class="check" style="font-weight: 400;">End Node 2
+	                    <input type="checkbox" class="" style="display: contents;">
+	                    <span class="w3docs"></span>
+	                  </label>
+	                  <label class="check" style="font-weight: 400;">'N' no of End Nodes
+	                    <input type="checkbox" class="" style="display: contents;">
+	                    <span class="w3docs"></span>
+	                  </label>
+	                    </div>                  
+	                  </div>                  
+                 </div>                    
+               </div>
+              </div>
+                <!-- /.card-body -->
+              </div>
+              	<div class="row">
+				   <div class="col-sm-12">
+					 <table class="table">
+							<thead>
+							 <tr>
+							  <th>Comment By</th>
+							  <th>Department</th>
+							  <th>User Role</th>
+							  <th>Comments</th>
+							  <th>Comment Timestamp</th>
+							  <th></th>
+							 </tr>
+					       </thead>
+						   <tbody>
+							<tr>
+							  <td>Sharath Nair (11020104)</td>
+							  <td>Marketing</td>
+							  <td>Marketing Head</td>
+							  <td>Risk for the zero tolerance to be created in the RAS for Marketing</td>
+							  <td>10-12-2020 14:01:00</td>
+							</tbody>
+						</table>
+					</div>
+				 </div>
+				<!-- /.row -->
+                 <div class="row">
+                    <div class="col-sm-6">
+                      <!-- textarea -->
+                      <div class="form-group">
+                        <label>Drop Your Comment</label>
+                        <textarea class="form-control" rows="3" placeholder="Enter ..."></textarea>
+                      </div>
+                    </div>
+                   </div> 
+                    
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-info"><i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit</button>
+				  <button type="save" class="btn btn-secondary"><i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel</button>
+                </div>
+                <!-- /.card-footer -->
+              </form>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+	  
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Included Footer -->
+ <div th:insert="/footer::footer"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- jquery-validation -->
+<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+<!-- bs-custom-file-input -->
+<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+<!-- Select2 -->
+<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+<!-- overlayScrollbars -->
+<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- DataTables  & Plugins -->
+<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+<script th:src="@{/plugins/dkkbrftgatatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.js}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "autoWidth": true,
+      "buttons": ["csv", "excel", "pdf", "print"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+
+<script>
+    $('.selectall').on('change', function(e) {
+        var $inputs = $('#checkboxlist input[type=checkbox]');
+        if(e.originalEvent === undefined) {
+            var allChecked = true;
+            $inputs.each(function(){
+                allChecked = allChecked && this.checked;
+            });
+            this.checked = allChecked;
+        } else {
+            $inputs.prop('checked', this.checked);
+        }
+    });
+
+    $('#checkboxlist input[type=checkbox]').on('change', function(){
+        $('.selectall').trigger('change');
+    });
+
+
+$('.checkhour').on('change', function(e) {
+        var $inputs = $('#checkboxlist_1 input[type=checkbox]');
+        if(e.originalEvent === undefined) {
+            var allChecked = true;
+            $inputs.each(function(){
+                allChecked = allChecked && this.checked;
+            });
+            this.checked = allChecked;
+        } else {
+            $inputs.prop('checked', this.checked);
+        }
+    });
+
+    /*$('#checkboxlist input[type=checkbox]').on('change', function(){
+        $('.selectall_2').trigger('change');
+    });
+    */
+
+
+//main menu_2
+
+$('.selectall_2').on('change', function(e) {
+        var $inputs = $('#checkboxlist_2 input[type=checkbox]');
+        if(e.originalEvent === undefined) {
+            var allChecked = true;
+            $inputs.each(function(){
+                allChecked = allChecked && this.checked;
+            });
+            this.checked = allChecked;
+        } else {
+            $inputs.prop('checked', this.checked);
+        }
+    });
+
+    /*$('#checkboxlist_2 input[type=checkbox]').on('change', function(){
+        $('.selectall').trigger('change');
+    });*/
+
+
+$('.checkhour_2').on('change', function(e) {
+        var $inputs = $('#checkboxlist_3 input[type=checkbox]');
+        if(e.originalEvent === undefined) {
+            var allChecked = true;
+            $inputs.each(function(){
+                allChecked = allChecked && this.checked;
+            });
+            this.checked = allChecked;
+        } else {
+            $inputs.prop('checked', this.checked);
+        }
+    });
+
+    /*$('#checkboxlist input[type=checkbox]').on('change', function(){
+        $('.selectall_2').trigger('change');
+    });*/
+
+   
+    var state = false; // desecelted
+
+$('.submit_button').click(function () {
+  
+    $('.chkk').each(function() {
+      if(!state) {
+          this.checked = true;
+        } else {
+          this.checked = false;
+        }
+    });
+    
+    //switch
+    if (state) {
+      state = false;   
+    } else {
+        state = true;
+    }
+    
+});
+
+</script>
+
+	<script>
+  $(function () {
+    //Initialize Select2 Elements
+    $('.select2').select2();
+	
+	bsCustomFileInput.init();
+}) 
+</script>
+
+<!-- PAGE PLUGINS -->
+
+</body>
+</html>

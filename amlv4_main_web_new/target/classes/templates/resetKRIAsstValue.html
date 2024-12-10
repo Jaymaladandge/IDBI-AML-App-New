@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
+	{
+	-webkit-appearance: none;
+	margin: 0;
+}
+</style>
+<!-- <style>
+.fa-edit {
+	text-decoration: none;
+}
+</style> -->
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Reset KRI Assessment</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Reset KRI Assessment</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+
+								<div class="card-body">
+								<input type="hidden"
+											th:value="*{message}" id="message" />
+									<form autocomplete="off" class="form-horizontal" id="resetForm"
+										th:action="@{/resetKriAsst}" method="post"
+										enctype="multipart/form-data" th:object="${encryptedRequest}">
+										<input type="hidden" id="encryptedJson" name="encryptedJson"
+											th:field="*{encryptedJson}" /> <input type="hidden"
+											id="userName" name="userName" th:value="${user.username}" />
+										<input type="hidden" id="asstPeriod" name="asstPeriod"
+											th:value="${assessmentPeriod}" />
+										<div class="card card-info">
+											<div class="card-header">
+												<h3 class="card-title">
+													Reset KRI Value Capture After Verification<span></span>
+												</h3>
+											</div>
+											<div class="card-body" th:if=" ${data} eq 'Y'">
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeType">Select Office Type <code>*</code></label>
+															<select class="select2 text-capitalize" name="officeType"
+																data-placeholder="Office Type" id="officeType"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option th:each="officeNameList : ${officeNameList}"
+																	th:value="${officeNameList.officeType}"
+																	th:text="${officeNameList.officeName}" />
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="riskDept">Select Department <code>*</code></label>
+
+															<select class="select2 text-capitalize" name="Department"
+																id="riskDept" data-placeholder="Select Department"
+																style="width: 100%;">
+																<option value=''>Select Department</option>
+
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeCode">Select Office Code <code>*</code></label>
+															<select
+																class="select2 text-capitalize form-control float-right"
+																name="officeCode" id="officeCode"
+																data-placeholder="Select OfficeCode" style="width: 100%">
+																<option value=''>Select OfficeCode</option>
+
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeCode"></label>
+															<h3>
+																<a type="button" id="fetchDataBtn"
+																	class="btn  btn-sm btn-outline-primary btn-lg p-2">Fetch
+																	Data</a>
+															</h3>
+														</div>
+													</div>
+												</div>
+												<br>
+												<div id="showTable" style="width: 100%;">
+													<div class="row">
+														<div class="col-sm-12">
+															<table id="KRIValueCapturetable" style="width: 100%;"
+																class="table table-head-fixed table-bordered table-striped KRIValueCapturetable">
+																<thead>
+																	<tr>
+																		<th><input type="checkbox" id="checkAll"
+																			class="p-5">&nbsp;&nbsp; Select All</th>
+																		<th>KRI ID</th>
+																		<th>Department Name</th>
+																		<th>KRI Value Description</th>
+																		<th>Assessment Value</th>
+																		<th>Assessment Status</th>
+																	</tr>
+																</thead>
+																<tbody id="tbodyR">
+																</tbody>
+															</table>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="card-footer" id="submitDiv" style="display: none">
+												<div class="form-group">
+													<label for="comment">Provide Your Comment <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="comment" id="comment"
+														placeholder="Provide Your Comments"></textarea>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label>Document Attachment</label>
+														<div class="custom-file">
+															<input type="file"
+																class="custom-file-input input-group-sm" id="customFile"
+																style="display: none;" name="files[]"
+																multiple="multiple" onchange="getFileData(this);" /> <label
+																class="btn bg-gray" for="customFile">Choose file</label>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-12">
+														<table class="table uploadTable" id="filedetails"
+															style="display: none">
+															<thead>
+																<tr>
+																	<th>File Name</th>
+																	<th>File Size</th>
+																	<th>Uploaded Date</th>
+																	<th>Uploaded by</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+															</tbody>
+														</table>
+													</div>
+
+												</div>
+												<a class="btn btn-info" id="update_btn"> <i
+													class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Reset
+													Assessment
+												</a> <a href="#" data-toggle="modal"
+													data-whatever="resetKRIAssessmentValue"
+													data-target="#cancelmodel"><button type="reset"
+														class="btn btn-warning" title="Cancel">
+														<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+													</button></a>
+											</div>
+											<div class="card-body" th:if=" ${data} eq 'N'">
+												<div class="warning">
+													<marquee direction="left">
+														<i> No Active Assessment For This Period. Kindly Start
+															New Assessment </i>
+													</marquee>
+												</div>
+											</div>
+											<div class="card-body" th:if=" ${data} eq 'X'">
+												<div class="warning">
+													<marquee direction="left">
+														<i> You Are Not Authorized For Resetting KRI
+															Assessment Value. Kindly Contact Central Office ERM Team.</i>
+													</marquee>
+												</div>
+											</div>
+										</div>
+									</form>
+								</div>
+								<!-- /.col sm-12 -->
+							</div>
+						</div>
+						<!-- /.row -->
+					</div>
+					<div class="modal fade" id="cancelmodel">
+						<div class="modal-dialog modal-fluid">
+							<div class="modal-content">
+								<div class="modal-header bg-info">
+									<h6 class="modal-title">Confirm</h6>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<!-- form start -->
+								<div class="modal-body">
+									<h5 class="card-title">
+										If you leave this page, all changes will be lost. <br>
+										Press "Ok" to Continue.
+									</h5>
+								</div>
+
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">
+										<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+									</button>
+									<a class="btn btn-primary target"><i class="fas fa-check"
+										style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+								</div>
+
+								<!-- /.Card -->
+
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+
+					<!-- view Modal -->
+					<div class="modal fade" id="kriModal">
+						<div class="modal-dialog modal-xl">
+							<div class="modal-content">
+								<div class="modal-header bg-info">
+									<h5 class="modal-title">View</h5>
+									<button type="button" class="close text-white"
+										data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<div class="card-body">
+
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="actionPlanId">KRI ID</label>
+												<div class="input-group">
+													<input type="text"
+														class="form-control form-control-sm text-bold" id="kriId"
+														name="parameterId" readonly>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">Record Status</label>
+												<div class="input-group">
+													<input type="text"
+														class="form-control form-control-sm text-bold"
+														id="kriStatus" name="kriStatus" readonly>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="kriName">KRI Name</label>
+												<div class="input-group mb-2">
+													<textarea type="text" class="form-control form-control-sm"
+														id="kriName" name="kriName" readonly></textarea>
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="kriDataType">Data Type</label> <input
+													type="text" class="form-control form-control-sm"
+													name="kriDataType" id="kriDataType" readonly>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="kriDataType">KRI Formula</label> <input
+													type="text"
+													class="form-control form-control-sm text-capitalize"
+													name="kriFormula" id="kriFormula" readonly>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="datasourcedef">Data Source</label> <input
+													type="text" class="form-control form-control-sm"
+													name="datasourcedef" id="datasourcedef" readonly>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="frequency">Update Frequency</label> <input
+													type="text" class="form-control form-control-sm"
+													name="frequency" id="frequency" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="thresholddescription">Threshold
+													Description </label>
+												<textarea class="form-control form-control-sm"
+													name="thresholddescription" id="thresholddescription"
+													readonly></textarea>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="frequency">KRI Benchmark</label> <input
+													type="text" class="form-control form-control-sm"
+													name="benchmark" id="kriBenchmark" readonly>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+									<div class="row" id="modalDeptThresDiv" style="display: none">
+										<div class="col-sm-12">
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<h3 class="card-title">Department Linked</h3>
+												</div>
+												<div class="card-body">
+													<table class="table table-bordered"
+														id="deptThresholdDetails" style="width: 100%">
+														<tr>
+															<th>Department</th>
+															<th>KRI Description</th>
+															<th colspan="3">Threshold Details</th>
+														</tr>
+														<tbody>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+
+									</div>
+									<!-- /row -->
+								</div>
+								<!-- /.card-body -->
+								<div class="card-footer">
+									<button class="btn btn-secondary" data-dismiss="modal">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</div>
+								<!-- /.card-footer -->
+
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+					<!-- /.modal -->
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/resetKRIAsstValue.js}"></script>
+
+
+</body>
+</html>

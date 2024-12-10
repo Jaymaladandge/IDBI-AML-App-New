@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Risk Appetite Statement</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/mainRasPage}">Risk
+										Appetite Statement</a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content-header -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Create</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form autocomplete="off" class="form-horizontal"
+									id="frmriskapptstmt" th:action="@{/createActionRAS}"
+									method="post" th:object="${encryptedRequest}"
+									enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:field="*{encryptedJson}" /> <input type="hidden"
+										id="userName" name="userName" th:value="${rasMaster.userName}" />
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtId">Statement ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="raStmtId" name="raStmtId"
+															th:field="${rasMaster.raStmtId}" readonly>
+
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raRecordStatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="raRecordStatus" value="Create"
+															readonly>
+
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raRiskCate">Risk Category <code>*</code></label>
+													<select class="select2" name="raRiskCate" id="raRiskCate"
+														data-placeholder="Risk Category" style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='Solvency'>Solvency</option>
+														<option value='Surplus'>Surplus</option>
+														<option value='Operational Risk'>Operational Risk</option>
+														<option value='Market Risks'>Market Risks</option>
+														<option value='Insurance Risk'>Insurance Risk</option>
+														<option value='Liquidity Risk'>Liquidity Risk</option>
+
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raSubCate">Risk Sub Category </label> <input
+														type="text" class="form-control form-control-sm"
+														id="raSubCate" name="raSubCate"
+														placeholder="Risk Sub Category">
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+										<div class="row">
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtName">Statement Name <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="raStmtName" id="raStmtName"
+														placeholder="Statement Name"></textarea>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raDeptProvidingData">Department
+														Providing Data <code>*</code>
+													</label> <select class="select2" name="raDeptProvidingData"
+														 id="raDeptProvidingData"
+														multiple="multiple"
+														data-placeholder="Department Providing Data"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="deptList : ${deptList}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+
+													</select>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtDescription">Description <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="raStmtDescription" id="raStmtDescription"
+														maxlength="3000" placeholder="Description"></textarea>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtDataPts">Data Points To Be
+														Considered <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="raStmtDataPts" id="raStmtDataPts" maxlength="3000"
+														placeholder="Data Points"></textarea>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raToleranceValueDatatype">Data Type <code>*</code></label>
+													<select class="select2" name="raToleranceValueDatatype"
+														id="raToleranceValueDatatype" data-placeholder="Datatype"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='P'>Percentage</option>
+														<option value='N'>Number</option>
+														<option value='R'>Range</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raResponsibleDept">Department
+														Responsible <code>*</code>
+													</label> <select class="select2" name="raResponsibleDept"
+														 id="raResponsibleDept"
+														multiple="multiple"
+														data-placeholder="Department Responsible"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="deptList : ${deptList}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+
+													</select>
+												</div>
+											</div>
+
+
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raCaptureValueDept">Capture Value Department
+														 <code>*</code>
+													</label> <select class="select2" name="raCaptureValueDept"
+														 id="raCaptureValueDept"
+														data-placeholder="Capture Value Department"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														
+
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raCaptureValueFrequency">Update
+														Frequency <code>*</code>
+													</label> <select class="select2" name="raCaptureValueFrequency"
+														id="raCaptureValueFrequency" data-placeholder="Frequency"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='Y'>Yearly</option>
+														<option value='H'>Half Yearly</option>
+														<option value='Q'>Quarterly</option>
+														<option value='M'>Monthly</option>
+														<option value='F'>Fortnightly</option>
+														<option value='D'>Daily</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raAssessmentCriteria">Assessment
+														Criteria <code>*</code>
+													</label> <select class="select2" name="raAssessmentCriteria"
+														id="raAssessmentCriteria"
+														data-placeholder="Assessment Criteria"
+														style="width: 100%;">
+														<option value='LT'>Less Than Threshold</option>
+														<option value='GT'>Greater Than Threshold</option>
+														<option value='LE'>Less Than Or Equal To
+															Threshold</option>
+														<option value='GE'>Greater Than Or Equal To
+															Threshold</option>
+														<option value='NE'>Not Equal to Threshold</option>
+														<option value='BT'>Between Threshold</option>
+														<option value='NB'>Not Between Threshold</option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group" id="ToleranceThreshold">
+													<label for="raToleranceThreshold">Tolerance
+														Threshold <code>*</code>
+													</label> <input type="number" step="any"
+														class="form-control form-control-sm two-decimals"
+														name="raToleranceThreshold" id="raToleranceThreshold"
+														maxlength="200" placeholder="Tolerance Threshold">
+												</div>
+												<div class="form-group" id="ToleranceThresholdBetweenValue">
+													<label for="raToleranceThreshold">Tolerance
+														Threshold <code>*</code>
+													</label>												
+													<div class="row">
+														<div class="col">
+															<input type="number" step="any"
+														class="form-control form-control-sm two-decimals"
+														name="StartValue" id="StartValue"
+														maxlength="200" placeholder="Minimum Value">
+														</div>
+														<div class="col">
+															<input type="number" step="any"
+														class="form-control form-control-sm two-decimals"
+														name="EndValue" id="EndValue"
+														maxlength="200" placeholder="Maximum Value">
+														</div>
+													</div>
+																											
+												</div>
+
+											</div>
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+											<!-- 	<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display:none;"
+															name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="custom-file-label" for="customFile">Choose
+															file</label>
+													</div>
+												</div>
+											</div> -->
+											<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display:none;"
+															name="files[]" multiple="multiple"
+															onchange="getFileData(this);" />
+															<label
+															class="btn bg-gray" for="customFile">Choose
+															file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table uploadTable" id="filedetails"
+													style="display: none">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Uploaded Date</th>
+															<th>Uploaded by</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+
+										</div>
+										<!-- ./row -->
+									</div>
+
+									<!-- /.card-body -->
+									<div class="card-footer">
+										<!--  <button type="button" id="create" class="btn btn-info">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</button>-->
+										<button type="button" class="btn btn-info" id="createRA"
+											title="CreateRA">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="mainRasPage"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /.card-footer -->
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- Confirmation Modal -->
+	<div class="modal fade" id="confirmmodal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Confirm</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- form start -->
+
+				<div class="card-body">
+					<!-- /.tab-pane -->
+					<div class="tab-pane" id="confirm">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">Are You Sure You Want To Submit
+									This Record?</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+							</button>
+							<button type="button" id="create" name="create" class="btn btn-info">
+								<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+							</button>
+
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cancel Modal -->
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check"
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+				</div>
+
+				<!-- /.Card -->
+
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+	<!-- /.Cancel Modal -->
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/RiskAppetiteCreate.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- PAGE PLUGINS -->
+
+
+
+
+	<script>
+
+ 
+ </script>
+	<script>
+
+
+
+</script>
+
+</body>
+</html>

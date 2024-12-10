@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style type="text/css" media="print">
+  @page { size: landscape; }
+</style>
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Department Wise KRI Assessment Status</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/getDeptTopRiskReport}">Report Summary Page</a></li>
+								<li class="breadcrumb-item active">Department Wise KRI Assessment Status</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">KRI Risk Graphs</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								
+
+
+								<!-- <input type="hidden" name="userName" id="userName"
+										th:value="${userName}" th:name="userName" />  -->
+								<form id="frmkriReport" autocomplete="off"
+									th:action="@{/getKRIWiseReport}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+						<div id="printDivData">
+						<div class="row">
+									<div class="col-md-6 float-left">
+										<input type='button' id='btn' class="btn btn-primary ml-3"
+											value='Print' onclick='PrintDiv();'>
+									</div>
+
+								</div>
+									<div class="card-body" id='DivIdToPrint'>
+										<div class="row p-1">
+
+											<div class="col-sm-5">
+												<div class="form-group">
+													<label for="assessmentDate">Select Assessment
+														Period</label> <select class="form-control select2"
+														data-placeholder="Assessment Date" name="assessmentDate"
+														id="assessmentDate" style="width: 100%;">
+														<option value=''>Select Assessment Period</option>
+
+														<option th:each="assessmentDate : ${assessmentDateList}"
+															th:value="${#strings.arraySplit(assessmentDate, '~')[0]}" th:text="${#strings.arraySplit(assessmentDate, '~')[1]}"></option>
+													</select> <input type="hidden"
+														th:value="${tpRiskDto.assessmentPeriod}"
+														id="assessmentDateTemp">
+
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType">Office Type</label> <select
+														class="form-control select2"
+														data-placeholder="Office Type" name="officeType"
+														id="officeType" style="width: 100%;">
+														<option value=''>Select Office Type</option>
+
+														<option th:each="officeType : ${officeTypeList}"
+															th:value="${officeType.split('~')[1]}"
+															th:text="${officeType.split('~')[0]}"></option>
+													</select> <input type="hidden"
+														th:value="${tpRiskDto.assessmentPeriod}"
+														id="assessmentDateSelected"> <input type="hidden"
+														id="selectedOfficeType" th:value="${officeType}">
+												</div>
+											</div>
+											<div class="col-sm-2 p-2 noprint">
+												<div class="form-group mt-4">
+													<button type="button" id="fetch_data_btn"
+														class="btn btn-block btn-sm btn-outline-primary" name="fetchBtn">Fetch
+														Data</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- PIE CHART -->
+									<div class="row p-1">
+										<div class="col-md-6 float-left">
+											<div class="card-title text-primary m-2 p-1">KRI Wise
+												Status Count</div>
+
+
+
+											<div class="kriPieChart">
+												<canvas id="pieChart"
+													style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+											</div>
+
+
+										</div>
+										<div class="col-md-6 float-left mt-5 print">
+
+
+											<table class="table kriRagTable">
+												<thead>
+													<tr>
+
+														<th scope="col">RAG</th>
+														<th scope="col">Count</th>
+
+													</tr>
+												</thead>
+												<tbody id="kriRagTableTbody">
+
+													<tr th:each="data:${tpRiskCount}">
+														<td><a href="#kriGraphTableRow"
+															th:attr="onclick=|getData('${#strings.arraySplit(data, '-')[0]}')|"><span
+																th:style="${#strings.arraySplit(data, '-')[0]=='Green' ? 'color: #28A745;' : #strings.arraySplit(data, '-')[0]=='Red'?'color: #FF0000;':'color:#FFBF00'}"
+																th:text="${#strings.arraySplit(data, '-')[0]}"
+																class="font-weight-bold"></span></a></td>
+														<td><a href="#kriGraphTableRow"
+															th:attr="onclick=|getData('${#strings.arraySplit(data, '-')[0]}')|">
+																<span th:text="${#strings.arraySplit(data, '-')[1]}"></span>
+														</a></td>
+													<tr>
+
+													</tr>
+												</tbody>
+											</table>
+
+
+
+
+
+
+										</div>
+
+									</div>
+
+									<div class="row m-1 mt-5 p-1" id="kriGraphTableRow">
+										<div class="card-title text-primary m-1 mt-4 p-1"
+											id="kriGraphTablePrint"></div>
+
+										<div class="col-sm-12  m-1 mt-4 p-1">
+
+											<table id="kriGraphTable"
+												class="table table-head-fixed table-bordered table-striped">
+												<thead>
+													<tr>
+														<th>KRI Id</th>
+														<th>KRI Name</th>
+														<th>KRI Threshold Description</th>
+														<th>Assessment Value</th>
+														<th>Assessment Status</th>
+														<th>Office Code</th>
+														<th>Department Name</th>
+
+													</tr>
+												</thead>
+												<tbody id="kriGraphTableTbody">
+
+												</tbody>
+											</table>
+										</div>
+									</div>
+
+</div>
+									<div class="row">
+										<div class="col-md-12">
+											<input type="hidden" name="tpRiskCount" id="tpRiskCount"
+												th:value="${tpRiskCount}" /><input type="hidden"
+												name="greenColour" id="greenColour"
+												th:value="${greenColorVal}" /> <input type="hidden"
+												name="redColour" id="redColour" th:value="${redColorVal}" />
+											<input type="hidden" name="amberColour" id="amberColour"
+												th:value="${amberColorVal}" /> <input type="hidden"
+												id="assessmentPeriodData" th:value="${AssessmentPeriod}">
+
+										</div>
+									</div>
+									
+
+								</form>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer" id="footer"></div>
+
+	</div>
+
+
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/topRiskGraph.js}"></script>
+
+
+	<script type="text/javascript">
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+
+
+
+	<script>
+		function getkriRiskCount(assessmentDate) {
+			$(".kriRagTable > #kriRagTableTbody").empty();
+			
+			
+			
+			var assesmentPeriod =assessmentDate;
+			var officeType=$("#officeType option:selected").text();
+			
+			var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+			+ "\",\n" + "\"capturerOfficeType\":\"" + officeType + "\"}";
+
+			
+			
+			document.getElementById('load').style.visibility = "visible";
+			$
+					.ajax({
+						url : 'getKRIWiseReportByAssessmentId',
+						type : "POST",
+						data : {
+							pageValJson : pageValJson
+						},// important line for thymeleaf http security
+						headers : {
+							"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+						},
+						cache : false,
+						// async:true,
+						success : function(response) {
+							
+
+							setTimeout(
+									function() {
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "hidden";
+									}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+							
+							$(".kriPieChart").empty();
+							Object
+									.keys(obj)
+									.forEach(
+											function(items) {
+												if (items === 'deptIdAndRagCount') {
+													var itemName = items;
+													
+													var topRiskRAGDataCount = obj[itemName];
+													$(
+															"<canvas id='pieChart' style='min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;'></canvas>")
+															.appendTo(
+																	".kriPieChart");
+
+													var labelList;
+													var checkArr;
+													var checkLableArr = [];
+													var dataCountArr = [];
+													var greenColor = '';
+													var redColor = '';
+													var amberColor = '';
+
+													labelList = topRiskRAGDataCount
+															.toString();
+													
+													greenColor = '#28A745';
+													amberColor = '#FFBF00';
+													redColor = '#FF0000';
+													checkArr = labelList
+															.split(',');
+
+													for ( var a in checkArr) {
+														var variable = checkArr[a]
+																.split('-')[0];
+														var count = checkArr[a]
+																.split('-')[1];
+														
+
+														$(
+																'<tr><td>'
+																		+ variable
+																		+ '</td><td><a href="#" class="text-blue" id="'
+																		+variable
+																		+'"  onclick="getData(this.id)">'
+																		+count
+																		+'</a></td></tr>')
+																.appendTo(
+																		".kriRagTable > #kriRagTableTbody");
+														
+														
+														checkLableArr
+																.push(variable
+																		.replaceAll(
+																				'~',
+																				', '));
+														dataCountArr
+																.push(count);
+													}
+													/*PIE CHART*/
+
+													var donutData = {
+
+														labels : checkLableArr,
+
+														datasets : [ {
+															data : dataCountArr,
+															//backgroundColor: ['#00a62a', '#f39c32','#f56954'],
+															backgroundColor : [
+																	greenColor,
+																	amberColor,
+																	redColor ],
+														} ]
+													}
+													var pieChartCanvas = $(
+															'#pieChart')
+															.get(0).getContext(
+																	'2d')
+													var pieData = donutData;
+													var pieOptions = {
+														maintainAspectRatio : false,
+														responsive : true,
+													}
+													//Create pie or douhnut chart
+													// You can switch between pie and douhnut using the method below.
+													new Chart(pieChartCanvas, {
+														type : 'pie',
+														data : pieData,
+														options : pieOptions
+													})
+												}
+												//console.log('items'+items)
+
+												/*PIE CHART*/
+											});
+
+						},
+						error : function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr.success('Some Error Occured');
+						}
+					});
+
+		}
+	</script>
+	<script>
+	$('#fetch_data_btn').click(
+	
+			function() {
+				var assessmentDate = $("#assessmentDate").val();
+				
+				getkriRiskCount(assessmentDate)
+
+			}); 
+	 $(function() {
+		$("#kriGraphTable").DataTable({
+			
+
+			"order" : [ 0, "desc" ],
+			"lengthMenu" : [ 10 ],
+			"searching" : true,
+			"fixedHeader" : true,
+			 "buttons": ["csv", "excel", "pdf", "print"],
+			 buttons: [
+		            {
+		                extend: 'excelHtml5',
+		                title: 'Count Of KRI Status Report'
+		            },
+		            {
+		                extend: 'pdfHtml5',
+		                title: 'Count Of KRI Status Report'
+		            }
+		        ],
+			"language" : {
+				"emptyTable" : "No Data Available"
+			}
+		}).buttons().container().appendTo(
+				'#kriGraphTablePrint');
+	}); 
+	</script>
+	<script>
+function getData(ragStatus) {
+	//alert("test");
+	//alert("rag status "+ragStatus);
+
+	 $("#kriGraphTableRow").show();
+	 //kriGraphTitle
+	//var assesmentPeriod = $("#assessmentPeriodData").val();
+	 var assesmentPeriod=$("#assessmentDate").val();
+	 
+	//alert("assesmentPeriod "+assesmentPeriod)
+	var rag = ragStatus.trim().toUpperCase();
+
+	var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+			+ "\",\n" + "\"kriRagStatus\":\"" + rag + "\"}";
+	
+	
+
+	document.getElementById('load').style.visibility = "visible";
+	// ajax call
+	$
+			.ajax({
+				url : 'kriListByDeptId',
+				type : "POST",
+				data : {
+					pageValJson : pageValJson
+				},// important line for thymeleaf http security
+				headers : {
+					"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+				},
+				cache : false,
+				// async:true,
+				success : function(response) {
+					
+
+					setTimeout(
+							function() {
+								document.getElementById('interactive');
+								document.getElementById('load').style.visibility = "hidden";
+							}, 1000);
+
+					var jsonResponse = JSON.stringify(response);
+					console.log('jsonResponse '+jsonResponse);
+					var obj = JSON.parse(jsonResponse);
+					
+					var kriGraphTable = $('#kriGraphTable').DataTable();
+
+					kriGraphTable.clear().draw();
+					$("#kriGraphTable > #kriGraphTableTbody").empty();
+					
+					//destroy datatable
+					//table.destroy();
+					Object.keys(obj)
+							.forEach(function(items) {
+								
+								if(items=='kriCalDtoDataList'){
+									var itemName = items;
+									var topRiskRAGDataCount = obj[itemName];
+									
+									for (index = 0; index < topRiskRAGDataCount.length; index++) {
+									  
+									   console.log("index "+index);
+									    console.log(topRiskRAGDataCount[index].split("~")[0]);
+									    console.log(topRiskRAGDataCount[index].split("~")[1]);
+									    console.log(topRiskRAGDataCount[index].split("~")[2]);
+									    console.log(topRiskRAGDataCount[index].split("~")[3]);
+									     var tr = $("<tr>"
+												+ "<td>"
+												+ topRiskRAGDataCount[index].split("~")[0]
+												+ "</td>"
+												+ "<td  class='text-capitalize'>"
+												+topRiskRAGDataCount[index].split("~")[1]
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ topRiskRAGDataCount[index].split("~")[2]
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ topRiskRAGDataCount[index].split("~")[3]
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ topRiskRAGDataCount[index].split("~")[4]
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ topRiskRAGDataCount[index].split("~")[5]
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ topRiskRAGDataCount[index].split("~")[6]
+												+ "</td>"
+												+ "</tr>");
+									    kriGraphTable.row.add(tr[0]).draw();  
+								
+									}
+								}
+							
+							
+								
+
+							});
+					
+
+				},
+				error : function(xhr, status, error) {
+					console.log(xhr);
+					console.log(status);
+					console.log(error);
+					toastr.success('Some Error Occured');
+				}
+			});
+
+}
+
+</script>
+	<script>
+
+/* function printDiv() 
+{
+window.print();
+}
+ */
+function PrintDiv() {
+	 
+	 $("#btn").hide();
+	 $("#fetch_data_btn").hide();
+	 $('#kriGraphTable').DataTable().destroy();
+	 $("#kriGraphTable").removeClass("table-bordered");
+	 $("#footer").hide();
+	 
+    var panel = document.getElementById("printDivData");
+   
+    window.print(panel.innerHTML);
+    $("#kriGraphTable").addClass("table-bordered");
+    $("#fetch_data_btn").show();
+    $("#btn").show();
+    $("#footer").show();
+    
+    $("#kriGraphTable").DataTable({
+		"order" : [ 0, "desc" ],
+		"lengthMenu" : [ 10 ],
+		"responsive" : false,
+		"autoWidth" : false,
+		"searching" : true,
+		
+		"fixedHeader" : true,
+		 
+		 buttons: [
+	            {
+	                extend: 'excelHtml5',
+	                title: 'Count Of KRI Status Report'
+	            },
+	            {
+	                extend: 'pdfHtml5',
+	                title: 'Count Of KRI Status Report'
+	            }
+	        ],
+		"language" : {
+			"emptyTable" : "No Data Available"
+		}
+	}).buttons().container().appendTo(
+			'#kriGraphTablePrint'); 
+    
+   
+ }
+
+ $( document ).ready(function() {
+	  $("#kriGraphTableRow").hide();
+	});
+</script>
+	<!-- <script>
+function printDiv() 
+{
+window.print();
+}
+</script> -->
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+
+			//Date range picker
+			$('#completionDate').datetimepicker({
+				format : 'DD-MM-YYYY'
+			//format : 'YYYY-MM-DD'
+			});
+		})
+	</script>
+	<script>
+
+	</script>
+	<script>
+		$(document).ready(function() {
+			$(
+					'#officeType option[value="'
+							+ $("#selectedOfficeType").val() + '"]')
+					.attr("selected", "selected").change();
+			//assessmentDateSelected
+			$(
+					'#assessmentDate option[value="'
+							+ $("#assessmentDateSelected").val() + '"]')
+					.attr("selected", "selected").change();
+			var userOffice=$("#selectedOfficeType").val();
+			//alert(userOffice);
+		
+			if(userOffice==='ZO'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+		}else if(userOffice==='divisional office'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+				$('#officeType option[value="ZO"]').attr("disabled", true);
+			}else if(userOffice==='BO'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+				$('#officeType option[value="ZO"]').attr("disabled", true);
+				$('#officeType option[value="DO"]').attr("disabled", true);
+			}
+			});
+		
+		</script>
+
+</body>
+
+</html>
+

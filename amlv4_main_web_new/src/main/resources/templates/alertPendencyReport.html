@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.viewThresh {
+	visibility: visible;
+	width: 120px;
+	background-color: white;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+	bottom: 2em;
+	left: 75%;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus
+	{
+	background-color: #FCD900 !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Agewise Pendency Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/SelectReportsMainPage}">Reports</a></li>
+								<li class="breadcrumb-item active">Alert Pendency Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Filter Role Id</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<div class="card-body">
+
+									<!-- Filters Start -->
+									<form method="post" th:action="@{/fetchAlertPendencyCount}"
+										th:object="${encryptedRequest}" id="ageReportFrm">
+										<input type="hidden" id="encryptedJson" name="encryptedJson" />
+										<input type="hidden" id="agingRepListHdn"
+											name="agingRepListHdn" /><input type="hidden" id="message"
+											th:value="${msg}" name="message" />
+										<div class="row">
+											<div class="col-sm-2">
+												<div class="form-group">
+													<label for="fdt1"> Select User Role </label> <select
+														class="form-control select2" style="border-radius: 5px;"
+														id="userRole" name="userRole">
+														<option th:value="ALL" th:text="ALL"></option>
+														<option th:each="role: ${currentRoleList}"
+															th:value="${role}" th:text="${role}"></option>
+													</select> <input type="hidden" id="roleIdHidden" name="roleIdHidden"
+														th:value="${roleId}">
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<label for="search"> &nbsp;</label>
+												<h3>
+													<button type="button" class="btn btn-info mt-n1"
+														onclick="getReport" id="getReport">
+														<em class="fas fa-search" style="padding: 0 7px 0 0px;"></em>Search
+													</button>
+												</h3>
+											</div>
+										</div>
+										<span class="float-right"><a onclick="getExport()"
+											class="btn text-white getExportClass"
+											style="margin-right: 5px; background-color: green;"
+											title="Export Report"> <i class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+										</a></span>
+										<table id="alertPendencyListTab"
+											class="table table-head-fixed table-bordered table-striped text-capitalize">
+											<thead>
+												<tr id="alertPenHeadTable" style="text-align: center;">
+													<th>Days</th>
+													<th>Current Role</th>
+													<th>Open</th>
+													<th>Hold</th>
+													<th>Escalate Back</th>
+													<th>Escalate Up</th>
+													<th>Pending STR</th>
+													<th>STR Data Generation Pending</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr th:each="form : ${alertPendencyList}">
+													<td th:id="days" th:text="${form.days}"
+														th:val="${form.days}" style="text-align: center;"></td>
+													<td th:id="currentRole" th:text="${form.currentRole}"
+														th:val="${form.currentRole}" style="text-align: center;"></td>
+													<td class="text-center"><span class="bg-green"
+														style="border-radius: 10px; text-align: center; background-color: #FFBF00">
+															&nbsp;<a th:id="openCnt" th:text="${form.open}" href="#"
+															th:act="${form.currentRole}" th:status="O"
+															th:repType="ALERT" th:val="${form.days}"
+															style="color: white" class=" text-bold fetchPenAlertList"></a>&nbsp;
+													</span></td>
+													<td class="text-center"><span class=".bg-yellow"
+														style="border-radius: 10px; text-align: center; background-color: #FFBF00">
+															&nbsp;<a th:id="holdCnt" th:text="${form.hold}" href="#"
+															th:act="${form.currentRole}" th:status="H"
+															th:repType="ALERT" th:val="${form.days}"
+															style="color: white" class=" text-bold fetchPenAlertList"></a>&nbsp;
+													</span></td>
+													<td class="text-center"><span class="bg-teal"
+														style="border-radius: 10px; text-align: center; background-color: #FFBF00">
+															&nbsp;<a th:id="EscBackCnt"
+															th:text="${form.escalateBack}" href="#"
+															th:act="${form.currentRole}" th:status="E"
+															th:repType="ALERT" th:val="${form.days}"
+															style="color: white" class=" text-bold fetchPenAlertList"></a>&nbsp;
+													</span></td>
+													<td class="text-center"><span class="bg-cyan"
+														style="border-radius: 10px; text-align: center; background-color: #FFBF00">
+															&nbsp;<a th:id="EscUpCnt" th:text="${form.escalateUp}"
+															href="#" th:act="${form.currentRole}" th:status="U"
+															th:repType="ALERT" th:val="${form.days}"
+															style="color: white" class=" text-bold fetchPenAlertList"></a>&nbsp;
+													</span></td>
+													<td class="text-center"><span class="bg-danger"
+														style="border-radius: 10px; text-align: center; background-color: #FFBF00">
+															&nbsp;<a th:id="penStrCnt" th:text="${form.pendingSTR}"
+															href="#" th:act="${form.currentRole}" th:status="P"
+															th:repType="STR" th:val="${form.days}"
+															style="color: white" class=" text-bold fetchPenAlertList"></a>&nbsp;
+													</span></td>
+													<td class="text-center"><span class="bg-secondary"
+														style="border-radius: 10px; text-align: center; background-color: #FFBF00">
+															&nbsp;<a th:id="strDataGenPenCnt"
+															th:text="${form.strDataGenPen}" href="#"
+															th:act="${form.currentRole}" th:status="0"
+															th:repType="STR" th:val="${form.days}"
+															style="color: white" class=" text-bold fetchPenAlertList"></a>&nbsp;
+													</span></td>
+
+												</tr>
+											</tbody>
+										</table>
+										<br>
+										<div id="penAlertList" class="card card-info">
+											<div class="card card-info card-tabs">
+												<div class="card-header">
+													<h3 class="card-title">List Of Pending Alerts()</h3>
+												</div>
+												<!-- /.col -->
+											</div>
+											<div class="card-body">
+
+												<div id="test">
+													<span class="float-right"><a
+														onclick="getAgingReportListExport()"
+														class="btn text-white getExportClass"
+														style="margin-right: 5px; background-color: green;"
+														title="Export Report"> <i class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+													</a></span>
+													<table id="alertTab"
+														class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr style="text-align: center;">
+																<th>Alert Id</th>
+																<th>Alert Agg Val</th>
+																<th>Rule Id</th>
+																<th>Alert Value</th>
+																<th>Alert Status</th>
+																<th>Alert Age</th>
+																<th>User Id</th>
+															</tr>
+														</thead>
+														<tbody id="alertTabbody">
+
+														</tbody>
+													</table>
+												</div>
+												<div id="test1">
+													<span class="float-right"><a
+														onclick="getAgingReportListExport()"
+														class="btn text-white getExportClass"
+														style="margin-right: 5px; background-color: green;"
+														title="Export Report"> <i class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+													</a></span>
+													<table id="strReqTab"
+														class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr style="text-align: center;">
+																<th>Request Id</th>
+																<th>Month</th>
+																<th>Year</th>
+																<th>User Id</th>
+																<th>Role Id</th>
+																<th>Aml Ref No</th>
+																<th>Request Time</th>
+																<th>Request Status</th>
+																<th>Request Age</th>
+															</tr>
+														</thead>
+														<tbody id="strReqTabbody">
+
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+
+									</form>
+
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.8/xlsx.full.min.js"></script>-->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/aml/alertPendencyReport.js}"></script>
+	<script th:src="@{/dist/appjs/aml/xlsx.js}"></script>
+	<script th:src="@{/dist/appjs/aml/fileServer.js}"></script>
+	<script th:src="@{/dist/appjs/aml/xlsxFull.js}"></script>
+	<script>
+		$(function () {
+			$("#alertPendencyListTab").DataTable({
+				"order": [],
+				"columnDefs": []
+				 //"dom": 'Bfrtip'
+                 //"buttons": [ 'copy', 'csv', 'excelHtml5', 'pdf', 'print' ]
+			});
+			
+		});
+	</script>
+
+	<script>
+$("document").ready(function(){
+var selectedRoleId=$("#roleIdHidden").val();
+
+$('#userRole option[value="'+selectedRoleId+'"]').prop("selected","selected").change();
+});
+	</script>
+</body>
+
+</html>

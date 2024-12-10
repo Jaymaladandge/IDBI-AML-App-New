@@ -1,0 +1,342 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+input[type=text].rupee {
+	background-image: url(../oms-web/dist/img/rupee.png);
+	border: 1px solid #aaa;
+	padding: 7px;
+	padding-left: 20px;
+	background-size: 10px 15px;
+	background-repeat: no-repeat;
+	background-position: 8px 6px;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Incident Graphs</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Incident Graphs</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Incident Graphs</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+
+								<form id="frmIncident" th:action="@{/reviewIncident}"
+									method="post">
+									<input type="hidden" th:feild="*{encryptedJson}"
+										id="encryptedJson" name="encryptedJson" /> <input
+										type="hidden" name="incidentDto" id="incidentDto"
+										th:value="${incidentDto}" th:name="incidentDto" />
+										<input type="hidden" id="officeCode" name="officeCode"
+											th:value="${officeCode}" />
+											<input type="hidden" id="userDeptId" name="userDeptId"
+											th:value="${userDeptId}" />
+
+									<div class="card-body ">
+
+										
+
+										<div class="card-body mt-3 card card-secondary card-outline">
+											<div class="row">
+												<div class="col-md-12">
+													<div class="card-header">
+														<div class="row">
+															<div class="col-md-5">
+																<label>Event Category Wise Operational Loss
+																	Impact</label>
+															</div>
+
+															<div class="col-md-3">
+																<div class="form-group">
+																	<select class="text-capitalize select2 eventWise"
+																		name="response" id="response" style="width: 100%;">
+																		<option value='pie'>Pie Chart</option>
+																		<option value='bar'>Bar Chart</option>
+																	</select>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="pieChartRow" id="pieChartRow">
+
+														<div class="card-body">
+
+															<button
+																class="btn float-right downloadPiePdfIM1 text-white"
+																type="button" id="pieChartId" value="pieChart"
+																style="margin-right: 5px; background-color: #3eadcf"
+																title="download Pie Graph">
+																<i class="fas fa-file-pdf"></i>
+															</button>
+
+															<div class="col-md-10">
+																<div id="reportPageIM mt-1" class="report-pageIM">
+																	<div id="chartContainer" class="chart-Container"
+																		style="width: 100%; height: 100%;">
+
+																		<input type="hidden" name="distinctEventList"
+																			id="distinctEventList"
+																			th:value="${distinctEventList}" /> <input
+																			type="hidden" name="countAndValue" id="countAndValue"
+																			th:value="${countAndValue}" th:name="countAndValue" />
+																		<canvas id="mypieChart"
+																			style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+																	</div>
+																</div>
+															</div>
+
+															<div class="col-md-4 float-right">
+																<table id="eventWiseTable"
+																	class="table table-head-fixed table-bordered table-striped">
+																	<thead>
+																		<tr>
+																			<th>Category</th>
+																			<th>Count</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="data:${countAndValue}">
+																			<td><span
+																				th:text="${#strings.arraySplit(data.replace('~',', '), '-')[0]}"></span></td>
+																			<td><span
+																				th:text="${#strings.arraySplit(data, '-')[1]}"></span></td>
+																		<tr>
+																	</tbody>
+																</table>
+															</div>
+
+														</div>
+													</div>
+
+
+													<div class="barChartRow" id="barChartRow"
+														style="display: none">
+														<div class="card-body">
+															<button class="btn float-right downloadPdfIM1 text-white"
+																type="button" id="downloadPdfIM" value="incident"
+																style="margin-right: 5px; background-color: #3eadcf"
+																title="download pdf">
+																<i class="fas fa-file-pdf"></i>
+															</button>
+															<div id="reportPageIM" class="report-pageIM mt-1">
+																<div id="chartContainer" class="chart-Container pt-1"
+																	style="width: 100%; height: 100%; float: left;">
+
+																	<canvas id="mybarChart"
+																		style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+																</div>
+															</div>
+														</div>
+													</div>
+
+
+												</div>
+											</div>
+										</div>
+
+										<!-- PIE CHART END-->
+
+
+									
+
+
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+
+
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/jquery.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<!-- <script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script> -->
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/categorywiseLossImpact.js}"></script>
+	
+
+
+
+
+
+
+
+
+</body>
+
+</html>
+

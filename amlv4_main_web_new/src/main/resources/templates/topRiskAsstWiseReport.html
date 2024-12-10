@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Assessment Wise Trend Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Assessment Wise Trend Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;Report</a></li>
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/getAsstTopRiskReport}" id="reportForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+																	
+																	
+																	 <input type="hidden"
+																	id="message" th:value="${message}" name="message" />
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row">
+																			<div class="form-group">
+																				<label for="assessmentDate">Select
+																					Department</label> <select class="form-control select2"
+																					data-placeholder="Select Department"
+																					name="Department" id="deptId" style="width: 100%;">
+																					<option value=''>Select Department</option>
+																					<option th:each="dept : ${deptList}"
+																						th:value="${dept.deptId}"
+																						th:text="${dept.deptName}"></option>
+																				</select>
+																			</div>
+																			<div class="col-sm-1"></div>
+																			<div class="col-sm-5">
+																				<label for="search"> &nbsp;</label>
+																				<h3>
+																					<a type="submit" class="btn btn-info" id=getReport>
+																						<i class="fas fa-save"
+																						style="padding: 0 7px 0 0px;"></i>Get Report
+																					</a>
+																				</h3>
+																			</div>
+																		</div>
+																	</div>
+																	<!-- /col-sm-12 -->
+																</div>
+																<!-- /row -->
+															</form>
+														</div>
+													</div>
+													<!-- /.card card-outline card-secondary -->
+												</div>
+												<!-- /.col-sm-12 -->
+											</div>
+
+											<div class="row table-responsive" id="statmentReport">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+													<form autocomplete="off" role="form" method="post"
+																th:action="@{/getAsstTopRiskReportExcelExport}" id="exportExcelReport"
+																th:object="${encryptedRequest}">
+															<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" />
+																	<input type="hidden" id="DeptId1"
+																	name="DeptId" th:if="${DeptId != null}" th:value="${DeptId}" /> 
+																	
+																<div class="card-header">
+																<div class="row float-right">
+																<div class="col-sm-12 mt-2">
+																<span ><a
+																	class="btn text-white exportDataBtn" id="exportDataBtn"
+																	style="margin-right: 5px; background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span>
+													</div>
+													</div> 
+													
+													</div>
+														<div class="card-body table-responsive">
+															<!-- <form autocomplete="off" role="form" method="post"
+																th:action="@{/editRAS}" id="editRaForm"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" /><input type="hidden"
+																	name="userRole" id="userRole" th:value="${userRole}"
+																	th:name="clientName" />
+ -->
+
+																<table id="riskstmttable"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize report-page">
+																	<thead>
+																		<tr>
+																			<!--  <th>Category</th> -->
+																			<th>Statement Description</th>
+																			<th>Department</th>
+																			<th th:each="qaList : ${quarterList}"><span
+																				th:text="${qaList.quarterDetails}"></span></th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr th:each="topRisk : ${topRiskList}" th:if="${topRiskList!=null}">
+																			<td th:text="${topRisk.topRiskDescription}"></td>
+																			<td th:text="${topRisk.userDept}"></td>
+																			<!--  <td th:text="${raList.valueList}"></td> -->
+																			<td th:each="raListValue : ${topRisk.valueList}"
+																				th:style="'background-color:'+${raListValue.assessmentColor}">
+																				<span th:text="${raListValue.assessmentStatus}"
+																				class="badge text-white"
+																				th:style="'background-color:'+${raListValue.assessmentColor}"></span>
+																			</td>
+																		</tr>
+																	</tbody>
+																</table>
+
+
+																</div>
+															</form>
+															<!-- /form -->
+															
+														</div>
+														
+														<!-- /card-body -->
+														<!-- </form> -->
+														</div>
+													</div>
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										
+									
+									<!-- /.tab-content -->
+								
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- <script th:src="@{/dist/appjs/erm/topRiskReport.js}"></script> -->
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/js/jspdf.debug.js}"></script>
+	<script th:src="@{/dist/js/html2canvas.js}"></script>
+
+	<script>
+	
+	$(document).ready(function() {
+	
+	
+	$("#riskstmttable").DataTable({
+	
+		//"order": [0, "desc"],
+		"responsive": false,
+		"lengthMenu": [10, 25, 50, 100],
+		"autoWidth": true,
+		"ordering": true,
+		"searching": true,
+		"fixedHeader": true,
+		
+		"language": {
+			"emptyTable": "No Data Available",
+		},
+		
+		
+	})
+
+});
+
+
+//loader
+document.onreadystatechange = function() {
+	var state = document.readyState
+	if (state == 'complete') {
+		document.getElementById('load').style.visibility = "hidden";
+	}
+}
+
+$(function() {
+	//Initialize Select2 Elements
+	$('.select2').select2();
+})
+//Button Click
+$(document).ready(function() {
+		
+
+	//download
+	$(document).on('click', '.downloadfile', function() {
+
+		var fileName = $(this).attr('name');
+		var pageValJson = "{\"fileName\":" + "\"" + fileName + "\"}";
+
+		// ajax call
+		$.ajax({
+			url: 'download',
+			type: "POST",
+			data: {
+				pageValJson: pageValJson
+			},// important line for thymeleaf http security
+			headers: {
+				"X-CSRF-TOKEN": $("input[name='_csrf']").val()
+			},
+			cache: false,
+			// async:true,
+			success: function(response) {
+
+				var blob = new Blob([response], {
+					type: "application/octetstream"
+				});
+
+				//Check the Browser type and download the File.
+				var isIE = false || !!document.documentMode;
+				if (isIE) {
+					window.navigator.msSaveBlob(blob, fileName);
+				} else {
+					var url = window.URL || window.webkitURL;
+					link = url.createObjectURL(blob);
+					var a = $("<a />");
+					a.attr("download", fileName);
+					a.attr("href", link);
+					$("body").append(a);
+					a[0].click();
+					$("body").remove(a);
+				}
+
+			},
+			error: function(xhr, status, error) {
+				console.log(xhr);
+				console.log(status);
+				console.log(error);
+				toastr.error('Some Error Occured');
+			}
+		});
+	});
+
+});
+
+$("#getReport").click(function() {
+	var deptId = $("#deptId option:selected").val();
+	var pageValJson = "{\"userDept\":" + "\"" + deptId + "\"}";
+	var iterationCount = 1000;
+	if(deptId==''){
+		toastr
+		.error('Please Select Department For Proceed');
+		return false;
+	}
+	var keySize = 128;
+	//passPhrase is the key
+	var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+		.toString(CryptoJS.enc.Hex);
+
+	var aesUtil = new AesUtil(keySize, iterationCount);
+
+	var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+		pageValJson);
+	$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+	$("#reportForm").submit();
+});
+
+
+// PDF
+//Print 
+
+
+function downloadPDFWithjsPDF() {
+ //const jsPDF = require('jspdf');
+ var filename = 'Top Risk';
+    const quality = 2 // Higher the better but larger file
+    html2canvas(document.querySelector('#riskstmttable'),
+        { scale: quality }
+    ).then(canvas => {
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        pdf.addImage(canvas.toDataURL('image/jpg'), 'JPG', 0, 0, 300, 298);
+        pdf.save(filename);
+    });
+}
+
+//document.querySelector('#jsPDF').addEventListener('click', downloadPDFWithjsPDF);
+	// Print
+
+	
+	
+	
+$("#exportDataBtn").click(function() {
+	
+	var deptId = $("#DeptId1").val();
+	console.log(deptId);
+	var pageValJson = "{\"userDept\":" + "\"" + deptId + "\"}";
+	console.log(pageValJson)		
+	document.getElementById('load').style.visibility = "disable";
+	var iterationCount = 1000;
+	
+						var keySize = 128;
+						//passPhrase is the key	
+						var passphrase = CryptoJS.lib.WordArray.random(
+								128 / 8).toString(CryptoJS.enc.Hex);
+
+						var aesUtil = new AesUtil(keySize,
+								iterationCount);
+
+						var ciphertext = aesUtil.encrypt(
+								reverseText(passphrase), pageValJson);
+
+						$("#encryptedJsonEdit").val(
+								ciphertext + ':~:' + passphrase);
+								$("#exportExcelReport").submit();
+								document.getElementById('load').style.visibility = "disable";
+
+});
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Risk Library</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/mainRiskSummary}"> Risk Library</a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content-header -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Review Risk Library</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form autocomplete="off" class="form-horizontal"
+									id="frmriskapptstmt" th:action="@{/reviewRisk}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:field="*{encryptedJson}" /> <input type="hidden"
+										id="userName" name="userName" th:value="${userName}" /> <input
+										type="hidden" name="sourceName" id="sourceName"
+										th:value="${sourceName}" th:name="sourceName" /> <input
+										type="hidden" id="riskActionStatus" name="riskActionStatus"
+										th:value="${riskLibMaster.riskActionStatus}" />
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtId">Statement ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="raStmtId" name="raStmtId"
+															th:field="${riskLibMaster.riskId}" readonly>
+
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raRecordStatus">Record Status</label>
+
+													<div class="input-group">
+														<input th:if="${sourceName=='create'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Verification For Creation" readonly>
+														<input th:if="${sourceName=='closeverify'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Verification For Closure" readonly>
+														<input th:if="${sourceName=='action'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Approval For Action Plan Link" readonly>
+														<input th:if="${sourceName=='edit'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Approval For Edit" readonly> <input
+															th:if="${sourceName=='editverify'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Verification For Edit" readonly><input
+															th:if="${sourceName=='close'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Approval For Closure" readonly> <input
+															th:if="${sourceName=='verify'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Approval For Creation" readonly> <input
+															th:if="${sourceName=='verifyvc'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Verification For Value Captured" readonly>
+														<input th:if="${sourceName=='verifyvv'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="raRecordStatus" name="recordstatus"
+															value="Pending Approval For Value Captured" readonly>
+													</div>
+
+
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlDept">Department <code>*</code>
+													</label> <input type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="riskDept" name="riskDept"
+														th:value="${#strings.toLowerCase(riskLibMaster.riskDept)}"
+														readonly>
+
+
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raRiskCate">Function <code>*</code></label><input
+														type="text" class="form-control form-control-sm"
+														id="riskFunction" name="riskFunction"
+														th:field="${riskLibMaster.riskFunction}"
+														placeholder="Function" readonly>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+										<div class="row">
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtName">Risk Name <code>*</code>
+													</label> <input type="text" class="form-control form-control-sm"
+														th:field="${riskLibMaster.riskName}" name="raStmtName"
+														id="riskName" placeholder="Risk Name" readonly>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+
+											<div class="col-sm-12">
+												<label for="officeType">Applicability for Operating
+													Offices <code>*</code>
+												</label>
+												<div class="form-group text-capitalize risk-office-set"
+													id="officetypeCheck">
+
+													<div th:if="${action} =='EDIT' "
+														th:each="controlOffice : ${officeList}" class="form-check">
+														<input class="form-check-input checkboxOffice"
+															type="checkbox" name="checkboxOffice"
+															th:id="${controlOffice}" checked disabled> <label
+															class="form-check-label"
+															th:text="${#strings.toLowerCase(controlOffice)}"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													</div>
+
+													<div th:unless="${action} =='EDIT' "
+														th:each="controlOffice : ${cntrlLib}" class="form-check">
+														<input class="form-check-input checkboxOffice"
+															type="checkbox" name="checkboxOffice"
+															th:if="${controlOffice.flg} == true"
+															th:id="${controlOffice.officeType}" checked disabled>
+
+														<input class="form-check-input checkboxOffice"
+															type="checkbox" name="checkboxOffice"
+															th:if="${controlOffice.flg} == false"
+															th:id="${controlOffice.officeType}" disabled> <label
+															class="form-check-label"
+															th:text="${#strings.toLowerCase(controlOffice.officeType)}"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+													</div>
+
+
+
+												</div>
+											</div>
+
+										</div>
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="raStmtDescription">Risk Description <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="raStmtDescription" id="raStmtDescription"
+														th:field="${riskLibMaster.riskDescription}"
+														maxlength="3000" placeholder="Risk Description" readonly></textarea>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+
+										<!--  row -->
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="raStmtDescription">Root Cause / Trigger
+														<code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														th:field="${riskLibMaster.rootCauseOrTrigger}"
+														name="raStmtDescription" id="rootCause" maxlength="3000"
+														placeholder="Root Cause / Trigger" readonly></textarea>
+												</div>
+											</div>
+
+										</div>
+										<!-- /. row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raToleranceValueDatatype">Impact <code>*</code></label>
+
+													<input type="text" class="form-control form-control-sm"
+														th:field="${riskLibMaster.riskImpact}" name="impact"
+														id="rootCause" placeholder="Impact" readonly>
+
+
+													<!-- 													<select class="select2" name="raToleranceValueDatatype" -->
+													<!-- 														id="impact" data-placeholder="Impact"  -->
+													<!-- 														th:field="${riskLibMaster.rootCauseOrTrigger}" -->
+													<!-- 														style="width: 100%;" disabled> -->
+													<!-- <!-- 														<option  th:each="impact : ${impactList}" th:value="${impact}" ></option> -->
+
+													<!-- 													</select> -->
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtName">Assessment Frequency <code>*</code>
+													</label> <select class="form-control from-control-sm select2"
+														name="riskAssessmentFreq" id="riskAssessmentFreq"
+														th:field="${riskLibMaster.riskAssessmentFreq}"
+														data-placeholder="Frequency" style="width: 100%;" disabled>
+														<option value='Daily'>Daily</option>
+														<option value='Weekly'>Weekly</option>
+														<option value='Fortnightly'>Fortnightly</option>
+														<option value='Monthly'>Monthly</option>
+														<option value='Quarterly'>Quarterly</option>
+														<option value='Half Yearly'>Half Yearly</option>
+														<option value='Yearly'>Yearly</option>
+													</select>
+												</div>
+											</div>
+
+
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raCaptureValueDept">Risk Classification
+														<code>*</code>
+													</label>
+													<!-- <select class="form-control from-control-sm select2"
+														name="riskClassification" id="riskClassification"
+														th:field="${riskLibMaster.riskClassification}"
+														data-placeholder="Risk Classification" multiple="multiple"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="deptList : ${deptList}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+
+													</select> -->
+													<input type="text" class="form-control from-control-sm"
+														name="riskClassification" id="riskClassification"
+														th:field="${riskLibMaster.riskClassification}"
+														data-placeholder="Risk Classification" readonly>
+												</div>
+											</div>
+
+
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raAssessmentCriteria">Sub Risk <code>*</code>
+													</label>
+													<!-- <select class="select2" name="subRisk"
+														th:field="${riskLibMaster.subRiskClassification}"
+														id="subRisk" multiple="multiple"
+														data-placeholder="Sub Risk" style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="deptList : ${deptList}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+
+													</select> -->
+													<input type="text" class="form-control from-control-sm"
+														name="subRisk" id="subRisk"
+														th:field="${riskLibMaster.subRiskClassification}"
+														data-placeholder="Sub Risk" readonly>
+												</div>
+											</div>
+
+										</div>
+
+
+										<!-- /.row -->
+										<!-- Linked Controls -->
+										<div class="row table-responsive">
+											<div class="col-sm-12">
+												<div class="card card-outline card-secondary">
+
+													<div class="card-header">
+														<label> Linked Controls</label>
+
+													</div>
+
+													<div class="card-body table-responsive">
+
+														<table id="controlTable"
+															class="table table-head-fixed table-bordered table-striped text-capitalize">
+															<thead>
+																<tr>
+																	<th></th>
+																	<th>Control ID</th>
+																	<th>Control Function</th>
+																	<th>Control Name</th>
+																	<th>Assessment Frequency</th>
+
+																</tr>
+															</thead>
+															<tbody class="actPlanBody">
+																<tr th:each="controlList : ${linkedControls}">
+
+
+																	<td><input type="checkbox" name="controlid[]"
+																		th:id="${controlList.controlId}"
+																		th:value="${controlList.controlId}" checked disabled></td>
+
+																	<td><a class="text-blue viewControlModal"
+																		data-toggle="modal" href="#"
+																		th:id="${controlList.controlId}"
+																		th:text="${controlList.controlId}"> </a></td>
+																	<td th:text="${controlList.cntrlFunName}"></td>
+																	<td th:text="${controlList.cntrlName}"></td>
+																	<td th:text="${controlList.cntrlAssessmentFreq}"></td>
+
+																</tr>
+
+															</tbody>
+														</table>
+
+
+														<!-- /form -->
+													</div>
+													<!-- /card-body -->
+												</div>
+												<!-- /card -->
+											</div>
+											<!-- /col -->
+										</div>
+										<!-- /row -->
+										<!-- /. Linked Controls -->
+
+
+
+										<!-- /.row -->
+
+										<!-- Send Notification -->
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<div class="alert alert-info1 disabled" role="alert">
+
+														<div class="custom-control custom-switch mt-2">
+
+															<input type="checkbox" class="custom-control-input"
+																th:checked="${sendNotification}" id="customSwitch3"
+																disabled> <label class="custom-control-label"
+																for="customSwitch3"> Send Notification for
+																Capture Risk</label>
+															<div class="invalid-feedback">Example invalid
+																custom file feedback</div>
+														</div>
+
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<!-- /.Send Notification-->
+
+
+										<!-- Risk Assessement -->
+
+
+
+										<div th:if="${riskLibMaster.matrixCalcDto != null}"
+											class="row table-responsive">
+											<div class="col-sm-12">
+												<div class="card card-outline card-secondary">
+
+
+													<div class="card-header">
+														<label> Assessment Details </label>
+
+													</div>
+
+													<input type="hidden"
+														th:value="${riskLibMaster.matrixCalcDto.assessmentDate}"
+														id="assessmentDate" />
+													<div class="card-body table-responsive">
+
+														<table id="controlTable"
+															class="table table-head-fixed table-bordered table-striped text-capitalize">
+															<thead>
+																<tr>
+
+																	<!-- <th>Assessment ID</th> -->
+																	<th>Impact Rating Scale</th>
+																	<th>Likelihood Rating Scale</th>
+																	<th>Inherent Risk Rating</th>
+																	<th>Control Effectiveness</th>
+																	<th>Residual Assessment</th>
+																	<th>Assessment Date</th>
+																	<th>Created By</th>
+
+																</tr>
+															</thead>
+															<tbody class="matrixBody">
+																<tr th:each="matrix : ${riskLibMaster.matrixCalcDto}">
+
+																	<!-- <td th:text="${matrix.matrixId}"></td> -->
+																	<td class="text-capitalize"
+																		th:text="${matrix.impactRatingScale}"></td>
+																	<td class="text-capitalize"
+																		th:text="${matrix.likelihoodRatingScale}"></td>
+																	<td class="text-capitalize"><span
+																		class="badge text-white"
+																		th:style="'background-color:'+${matrix.colorCode}"
+																		th:text="${matrix.assessmentRatingScale}"></span></td>
+																	<td class="text-capitalize"
+																		th:text="${matrix.cntrlEffectiveness}"></td>
+																	<td class="text-capitalize"><span
+																		class="badge text-white"
+																		th:style="'background-color:'+${matrix.residuaColCode}"
+																		th:text="${matrix.residualAss}"></span></td>
+
+																	<td><span id="showAsseDate"></span></td>
+																	<td class="text-capitalize" th:text="${matrix.makerId}"></td>
+
+																</tr>
+
+															</tbody>
+														</table>
+
+
+														<!-- /form -->
+													</div>
+													<!-- /card-body -->
+												</div>
+												<!-- /card -->
+											</div>
+											<!-- /col -->
+										</div>
+										<!-- /row -->
+										<!-- /. Risk Assessment -->
+
+										<div class="row"
+											th:each="actionPlan : ${riskLibMaster.keyMitigationList}">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="raStmtDescription"> Key Mitigation
+														Measures <code>*</code>
+													</label>
+
+													<textarea class="form-control form-control-sm"
+														th:text="${actionPlan.keyMitigationDesc}"
+														name="raStmtDescription" id="rootCause" maxlength="3000"
+														placeholder="Key Mitigation Meassures" readonly></textarea>
+												</div>
+
+											</div>
+
+										</div>
+
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="raStmtDescription"> Control Gaps <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														th:field="${riskLibMaster.controlGaps}"
+														name="raStmtDescription" id="rootCause" maxlength="3000"
+														placeholder="Control Gaps" readonly></textarea>
+												</div>
+											</div>
+
+										</div>
+
+
+										<div class="row">
+											<div class="col-sm-6">
+
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile"><i
+															class="fas fa-folder-open"></i> Choose file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table uploadTable" id="filedetails"
+													th:if="${riskLibMaster.filedetailsList != null}">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Uploaded Date</th>
+															<th>Uploaded by</th>
+															<th></th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+														<tr th:each="mvc : ${riskLibMaster.filedetailsList}">
+															<td th:text="${mvc.fileName}"></td>
+															<td th:text="${mvc.fileSize}"></td>
+															<td th:text="${mvc.uploadTimestamp}"></td>
+															<td th:text="${mvc.uploadedBy}" class="text-capitalize"></td>
+															<td><a th:name='${mvc.fileName}' href="#"
+																class="btn btn-info downloadfile"><i
+																	class="fas fa-download"></i></a></td>
+															<td th:text="${mvc.fileId}"></td>
+
+														</tr>
+													</tbody>
+												</table>
+
+
+											</div>
+
+										</div>
+										<!-- ./row -->
+
+
+
+
+
+									</div>
+
+									<!-- /.card-body -->
+
+									<div class="card-footer">
+										<button type="button" id="approve" class="btn btn-success"
+											name="approve" title="Approve">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+										</button>
+										<button type="button" class="btn bg-red" data-toggle="modal"
+											name="reject" data-target="#commentmodal" title="Reject">
+											<i class="fas fa-circle-notch" style="padding: 0 7px 0 0px;"></i>Reject
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="home"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+										<!-- Audit Trail Button -->
+										<a class="btn btn-secondary text-white viewAuditTrail"
+											title="Audit Trail" data-toggle="modal"> <i
+											class="fab fa-twitch" style="padding: 0 7px 0 0px;"></i>Audit
+											Trail
+										</a>
+									</div>
+
+									<!-- Timeline Modal -->
+									<div class="modal fade" id="timelinemodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Audit Trail</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="timeline">
+														<div class="timeline timeline-inverse" id="row_0"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- Comment Modal -->
+									<div class="modal fade" id="commentmodal">
+										<div class="modal-dialog modal-lg">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Comments</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+
+												<!-- form start -->
+
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="comments">
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<label for="comments">Reason For Rejection <code>*</code></label>
+																	<textarea class="form-control" name="reason"
+																		id="rejectReason" maxlength="3000"
+																		placeholder="Reason For Rejection"></textarea>
+																	<span id="reason-error"></span>
+																</div>
+															</div>
+														</div>
+														<div class="card-footer">
+															<button type="button" name="reject" id="reject"
+																class="btn btn-info">
+																<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+															</button>
+														</div>
+														<!-- /.row -->
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- Cancel Modal -->
+									<div class="modal fade" id="cancelmodel">
+										<div class="modal-dialog modal-fluid">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h6 class="modal-title">Confirm</h6>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="modal-body">
+													<h5 class="card-title">
+														If you leave this page, all changes will be lost. <br>
+														Press "Ok" to Continue.
+													</h5>
+												</div>
+
+												<div class="modal-footer">
+
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+													</button>
+													<a class="btn btn-primary target"><i
+														class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Ok
+													</a>
+
+												</div>
+
+												<!-- /.Card -->
+
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+
+									<!-- Control Modal Start -->
+									<!-- Control Modal Start -->
+									<div class="modal fade" id="controlmodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- /.col -->
+
+
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlId">Control ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="controlId" name="controlId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		value="view" id="recordstatus" name="recordstatus"
+																		readonly>
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlDept">Department <code>*</code>
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	id="controlDept" name="controlFunction"
+																	placeholder="Department" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlFunction">Function <code>*</code></label>
+																<input type="text" class="form-control form-control-sm"
+																	id="controlFunction" name="controlFunction"
+																	placeholder="Function" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlName">Control Name <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="controlName" name="controlName"
+																	placeholder="Control Name" readonly>
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlAssessmentFreq">Assessment
+																	Frequency <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="controlAssessmentFreq" name="controlAssessmentFreq"
+																	placeholder="Control Assessment Frequency" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!--  /. row -->
+													<div class="row">
+														<div class="col-sm-12">
+															<label for="officeType">Office Type <code>*</code></label>
+
+															<div class="office-set"></div>
+														</div>
+													</div>
+
+													<div class="row text-capitalize">
+														<div class="col-sm-12">
+															<div class="office-desc"></div>
+														</div>
+													</div>
+
+													<!-- /.row -->
+													<!-- Loop Control Option End -->
+													<!-- /.row -->
+
+
+
+													<!-- ./row -->
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.row -->
+											</div>
+											<!-- modal-content -->
+										</div>
+										<!-- /modal-dialog -->
+									</div>
+									<!-- /modal -->
+									<!-- Control Modal End -->
+
+
+
+
+
+								</form>
+							</div>
+						</div>
+						<!-- /.card-footer -->
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- Confirmation Modal -->
+	<div class="modal fade" id="confirmmodal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Confirm</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- form start -->
+
+				<div class="card-body">
+					<!-- /.tab-pane -->
+					<div class="tab-pane" id="confirm">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">Are You Sure You Want To Submit
+									This Record?</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+							</button>
+							<button type="button" id="create" name="create"
+								class="btn btn-info">
+								<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+							</button>
+
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cancel Modal -->
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check"
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+				</div>
+
+				<!-- /.Card -->
+
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+	<!-- /.Cancel Modal -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- BS-Stepper -->
+	<script th:src="@{/plugins/bs-stepper/js/bs-stepper.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<!-- PAGE PLUGINS -->
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/actionRisk.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- PAGE PLUGINS -->
+
+</body>
+</html>

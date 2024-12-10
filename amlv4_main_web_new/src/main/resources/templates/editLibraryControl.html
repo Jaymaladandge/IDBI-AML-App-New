@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Control Library</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/mainControlLibrary}">Control Library</a></li>
+								<li class="breadcrumb-item active">Edit</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content-header -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Edit</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form autocomplete="off" class="form-horizontal"
+									id="frmcontrollibrary" th:action="@{/editControlLibraryAction}"
+									method="post" th:object="${encryptedRequest}"
+									enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+									<input type="hidden" id="userName" name="userName"
+										th:value="${control.userName}" />
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlId">Control ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="controlId" name="controlId"
+															th:field="${control.controlId}" readonly>
+
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlStatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold"
+															id="controlStatus" name="controlStatus" value="Edit"
+															readonly>
+
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlDept">Department <code>*</code>
+													</label> <select class="select2 " name="controlDept"
+														id="controlDept" data-placeholder="Department"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="deptListSelected : ${deptListSelected}"
+															th:value="${deptListSelected.deptId}"
+															th:text="${deptListSelected.deptName}" selected />
+														<option th:each="deptList : ${deptList}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlFunction">Function <code>*</code></label>
+													<input type="text" class="form-control form-control-sm"
+														id="controlFunction" name="controlFunction"
+														placeholder="Function"
+														th:value="${control.controlFunction}">
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlName">Control Name <code>*</code>
+													</label> <input type="text" class="form-control form-control-sm"
+														id="controlName" name="controlName"
+														placeholder="Control Name"
+														th:value="${control.controlName}">
+												</div>
+											</div>
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="controlAssessmentFreq">Assessment
+														Frequency <code>*</code>
+													</label> <select class="select2" name="controlAssessmentFreq"
+														id="controlAssessmentFreq" data-placeholder="Frequency"
+														th:field="${control.controlAssessmentFreq}"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='Y'>Yearly</option>
+														<option value='H'>Half Yearly</option>
+														<option value='Q'>Quarterly</option>
+														<option value='M'>Monthly</option>
+														<option value='F'>Fortnightly</option>
+														<option value='D'>Daily</option>
+													</select>
+												</div>
+											</div>
+
+										</div>
+										<!--  /. row -->
+										<div class="row">
+											<div class="col-sm-12">
+												<label for="officeType">Applicability of Operating Office <code>*</code></label>
+												<div class="form-group text-capitalize office-set"
+													id="officetypeCheck">
+													<div th:each="controlOffice : ${control.officeCheckValue}"
+														class="form-check">
+														<!-- 														<input class="form-check-input checkboxOffice" -->
+														<!-- 															type="checkbox" name="checkboxOffice" -->
+														<!-- 															th:id="'check-'+${controlOffice.officeCode}" -->
+														<!-- 															th:checked="${controlOffice.officeFlg}"> <label -->
+														<!-- 															class="form-check-label" -->
+														<!-- 															th:text="${controlOffice.officeValue}"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; -->
+
+
+
+
+														<div th:if="${controlOffice.officeFlg} == true">
+															<input class="form-check-input checkboxOffice"
+																type="checkbox" name="checkboxOffice"
+																th:text="${controlOffice.officeValue}"
+																th:id="'check-'+${controlOffice.officeCode}" checked>
+														</div>
+
+														<div th:if="${controlOffice.officeFlg} == false">
+															<input class="form-check-input checkboxOffice"
+																type="checkbox" name="checkboxOffice"
+																th:text="${controlOffice.officeValue}"
+																th:id="'check-'+${controlOffice.officeCode}">
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</div>
+										<!-- Loop Control Option start-->
+										<div class='office-desc'>
+											<div th:each="controlDesc : ${control.officeDescValue}"
+												class="row text-capitalize">
+												<div class="col-sm-12">
+													<div class="form-group">
+														<label for="controlDescCO"
+															th:text="${controlDesc.officeValue}"> <code>*</code>
+														</label>
+														<textarea class="form-control form-control-sm officeDesc"
+															th:name="${controlDesc.officeCode}"
+															th:id="${controlDesc.officeCode}"
+															th:text="${controlDesc.officeDesc}" maxlength="3000"
+															placeholder="Control Description"
+															th:disabled="${!controlDesc.officeFlg}"
+															th:required="${controlDesc.officeFlg}"></textarea>
+														<span th:if="@{controlDesc.officeFlg=='false'}"> <textarea
+																class="form-control form-control-sm officeDesc"
+																th:name="${controlDesc.officeCode}"
+																th:id="${controlDesc.officeCode}"
+																th:text="${controlDesc.officeDesc}" maxlength="3000"
+																placeholder="Control Description"></textarea>
+														</span>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<!-- Loop Control Option End -->
+										<!-- /.row -->
+
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group text-capitalize">
+													<label for="controlDept">Control Owner <code>*</code>
+													</label> <select class="select2" name="controlOwner"
+														id="controlOwner" multiple="multiple"
+														data-placeholder="Control Owner" style="width: 100%;">
+
+														<option value=''>Select</option>
+
+														<option th:each="controlOwn : ${controlOwner}"
+															th:value="${controlOwn}" th:text="${controlOwn}" selected />
+														<option class="text-capitalize"
+															th:each="deptList : ${deptListMaster}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+													</select>
+
+												</div>
+											</div>
+
+											<div class="col-sm-6">
+												<div class="form-group text-capitalize">
+													<label for="controlDept">Interdepartmental
+														dependencies <code>*</code>
+													</label> <select class="select2" name="interDepartment"
+														id="interDepartment" multiple="multiple"
+														data-placeholder="Interdepartmental Dependencies"
+														style="width: 100%;">
+
+<!-- 													 <input type="text" class="form-control form-control-sm " -->
+<!-- 														th:value="${control.indeparmentDependencies}" -->
+<!-- 														 -->
+<!-- 														id="interDepartment" name="interDepartment"> -->
+
+														<option value=''>Select</option>
+														<option
+															th:each="dependList : ${indeparmentDependenciesList}"
+															th:value="${dependList}" id="interDepartment"
+															th:text="${dependList}" selected />
+
+														<option class="text-capitalize"
+															th:each="deptList : ${deptDtoList}"
+															th:value="${deptList.deptName}"
+															th:text="${deptList.deptName}" />
+													</select>
+
+
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group text-capitalize">
+													<label for="controlDept">Control Gaps <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm "
+														th:value="${control.controlGaps}"
+														th:text="${control.controlGaps}" name="controlGaps"
+														id="controlGaps" maxlength="3000"
+														placeholder="Control Gaps"></textarea>
+
+
+												</div>
+											</div>
+
+										</div>
+
+
+
+
+
+
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<table
+														class="table uploadTable table-head-fixed table-bordered table-striped"
+														id="filedetails" th:if="${control.filedetails != null}">
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size (kb)</th>
+																<th>Uploaded Date</th>
+																<th>Uploaded by</th>
+																<th></th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="mvc : ${control.filedetails}">
+																<td th:text="${mvc.fileName}"></td>
+																<td th:text="${mvc.fileSize}"></td>
+																<td th:text="${mvc.uploadTimestamp}"></td>
+																<td th:text="${mvc.uploadedBy}" class="text-capitalize"></td>
+																<td><a th:name='${mvc.fileName}' href="#"
+																	class="btn btn-info downloadfile"><i
+																		class="fas fa-download"></i></a></td>
+																<td class="project-actions text-right"><a
+																	class="btn btn-danger btn-sm disabled" id="closerow"><i
+																		class="fa fa-window-close"></i></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+										<!-- ./row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="comments">Provide your comments <code>*</code></label>
+													<textarea class="form-control" name="commentControl"
+														maxlength="3000" placeholder="Comments"
+														id="commentControl"></textarea>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<!-- /.card-body -->
+									<div class="card-footer">
+										<button type="button" class="btn btn-info" id="editControl"
+											title="Edit Control">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</button>
+										<a href="#" data-toggle="modal"
+											data-whatever="mainControlLibrary" data-target="#cancelmodel"><button
+												type="reset" class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /.card-footer -->
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- Confirmation Modal -->
+	<div class="modal fade" id="confirmmodal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Confirm</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- form start -->
+
+				<div class="card-body">
+					<!-- /.tab-pane -->
+					<div class="tab-pane" id="confirm">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">Are You Sure You Want To Submit
+									This Record?</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+							</button>
+							<button type="button" id="edit" name="edit" class="btn btn-info">
+								<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+							</button>
+
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-secondary"
+					
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check" 
+					
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+						
+						
+
+				</div>
+
+				<!-- /.Card -->
+
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+	<!-- /.Cancel Modal -->
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/controllibraryedit.js}"></script>
+
+	<!-- PAGE PLUGINS -->
+
+
+
+</body>
+</html>

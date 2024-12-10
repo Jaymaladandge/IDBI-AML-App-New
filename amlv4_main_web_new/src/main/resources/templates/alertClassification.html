@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/dist/img/OMSLOGO.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.thHead {
+	background-color: #4fa9a7 !important;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+}
+
+.alert-warning1 {
+	color: #856404;
+	background-color: #fff3cd;
+	border-color: #ffeeba;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+
+		<div class="wrapper">
+
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="card card-secondary card-outline ml-2 mr-2">
+									<div class="card-body">
+										<input type="hidden" id="aggingValue"
+											th:value="${user.period}">
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="priority">View Alert List</label> <select
+														class="form-control form-control-sm select2 alertClassification"
+														name="priority" id="viewByValue" style="width: 100%;">
+														<option th:each="viewByCategory : ${viewBy}"
+															th:value="${viewByCategory.split('-')[1]}"
+															th:text="${viewByCategory.split('-')[0]}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="priority">Risk Type</label> <select
+														class="form-control form-control-sm select2 alertClassification"
+														data-placeholder="Select Priority" name="priority"
+														id="priority" style="width: 100%;">
+
+														<option value='All'>ALL</option>
+														<option th:each="priority : ${riskList}"
+															th:value="${priority.split('-')[0]}"
+															th:text="${priority.split('-')[1]}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="RuleClassification">Exception
+														Classification </label> <select
+														class="form-control form-control-sm select2 alertClassification"
+														data-placeholder="Select Classification"
+														name="RuleClassification" id="RuleClassification"
+														style="width: 100%;">
+														<option value='All'>ALL</option>
+														<option
+															th:each="RuleClassification : ${classificationList}"
+															th:value="${RuleClassification}"
+															th:text="${RuleClassification}"></option>
+													</select>
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- /.row -->
+						<!-- Main content -->
+						<section class="content">
+							<div class="container-fluid">
+								<div class="row">
+									<div class="col-sm-12">
+										<form class="form-horizontal" id="alertFormSummary"
+											th:action="@{/alertSummary}" method="post">
+											<input type="hidden" id="encryptedJson" name="encryptedJson"
+												th:feild="*{encryptedJson}" /> <input type="hidden"
+												th:value="*{message}" id="message" /> <input type="hidden"
+												th:value="*{userCat}" id="userCat" /> <input type="hidden"
+												th:value="*{period}" id="period" /> <input type="hidden"
+												id="priorityGraph" th:value="${alertDetails.priorityList}">
+											<input type="hidden" id="classificationGraph"
+												th:value="${alertDetails.classificationGraphList}">
+											<!-- TO DO List -->
+											<div class="card card-secondary card-outline ">
+												<div class="card-header text-sm p-2 ">
+													<a type="button" id="viewGraphical"
+														style="background-color: #f37021;"
+														class="btn btn-sm text-white float-right viewTranDetails"
+														title="View Graph"><em
+														class="fas fa-solid fa-chart-pie"></em> View Graph</a>
+												</div>
+												<!-- /.card-header -->
+												<div class="card-body table-responsive">
+													<!-- Rule Based Count -->
+													<div id="ruleBased">
+														<div th:if="${user.userPosition == 'RM Officer'}">
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group row">
+																		<div class="col-sm-3">
+																			<label for="rmList">Relational Managers</label> <select
+																				class="select2" name="rmList" id="rmList"
+																				data-placeholder="Select User" style="width: 100%;">
+																				<option value=''></option>
+																				<option th:each="userList : ${reportingUserList}"
+																					th:value="${userList}" th:text="${userList}" />
+																			</select>
+																		</div>
+
+																	</div>
+																</div>
+
+															</div>
+															<hr>
+														</div>
+														<table id="taskNotification"
+															class="table table-head-fixed table-bordered table-striped">
+															<caption></caption>
+															<thead>
+																<tr>
+																	<th scope="col" class="thHead text-bold text-center ">Exception
+																		ID</th>
+																	<th scope="col" class="thHead text-bold text-center ">Description</th>
+																	<th scope="col" class="thHead text-bold text-center ">Risk
+																		Type</th>
+																	<th scope="col" class="thHead text-bold text-center ">Frequency</th>
+																	<th scope="col" class="thHead text-bold text-center ">TAT</th>
+																	<th scope="col" class="thHead text-bold text-center ">Classification</th>
+																	<th scope="col" class="thHead text-bold text-center ">Count</th>
+																</tr>
+															</thead>
+															<tbody class="ruleBody">
+																<tr th:each="rule : ${ruleList}">
+																	<td><a class="text-blue ruleModalView" href="#"
+																		th:id="${rule.ruleId}" th:text="${rule.ruleId}"> </a></td>
+																	<td th:text="${rule.ruleDesc}" class="text-capitalize"></td>
+																	<td
+																		th:if="${#strings.arraySplit(rule.rulePriority,'~')[0]} eq 'Medium'"><span
+																		class="badge text-black"
+																		th:style="'background-color:'+${#strings.arraySplit(rule.rulePriority,'~')[1]}"
+																		th:text="${#strings.arraySplit(rule.rulePriority,'~')[0]}"></span></td>
+																	<td
+																		th:unless="${#strings.arraySplit(rule.rulePriority,'~')[0]} eq 'Medium'"><span
+																		class="badge text-white"
+																		th:style="'background-color:'+${#strings.arraySplit(rule.rulePriority,'~')[1]}"
+																		th:text="${#strings.arraySplit(rule.rulePriority,'~')[0]}"></span></td>
+																	<td th:text="${rule.ruleFrequency}"
+																		class="text-capitalize"></td>
+																	<td th:if="${rule.ruleTat != 'NA'}"
+																		th:text="${rule.ruleTat+' Day'}"></td>
+																	<td th:if="${rule.ruleTat eq 'NA'}"
+																		th:text="${rule.ruleTat}"></td>
+																	<td th:text="${rule.ruleClassification}"></td>
+																	<td class="text-center text-bold alertSummary"
+																		th:id="'ruleId-'+${rule.ruleId}" name="ruleId"><a
+																		title="Open Exceptions" class="badge badge-danger"
+																		href="#" th:text="${rule.count}"> </a></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+													<!-- /. Rule Based -->
+
+													<!-- Customer Based Count -->
+
+													<div id="customerBasedCount2">
+														<div th:if="${user.userPosition == 'RM Officer'}">
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group row">
+																		<div class="col-sm-3">
+																			<label for="rmList">Relational Managers</label> <select
+																				class="select2" name="rmList3" id="rmList3"
+																				data-placeholder="Select User" style="width: 100%;">
+																				<option value=''></option>
+																				<option th:each="userList : ${reportingUserList}"
+																					th:value="${userList}" th:text="${userList}" />
+																			</select>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<hr>
+														</div>
+														<table id="custNotification2"
+															class="table table-head-fixed table-bordered table-striped">
+															<caption></caption>
+															<thead>
+																<tr>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		ID</th>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		Name</th>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		Open Date</th>
+																	<th scope="col" class="thHead text-bold text-center ">Dealing
+																		Vertical</th>
+																	<th scope="col" class="thHead text-bold text-center ">RM
+																		Name</th>
+																	<th scope="col" class="thHead text-bold text-center ">AGM
+																		Name</th>
+																	<th scope="col" class="thHead text-bold text-center ">DGM
+																		Name</th>
+																	<th scope="col" class="thHead text-bold text-center ">Alert
+																		count</th>
+																</tr>
+															</thead>
+															<tbody class="customerBody2">
+
+															</tbody>
+														</table>
+													</div>
+													<!-- Customer Based Count -->
+
+													<div id="customerBasedCount">
+														<div th:if="${user.userPosition == 'RM Officer'}">
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group row">
+																		<div class="col-sm-3">
+																			<label for="rmList">Relational Managers</label> <select
+																				class="select2" name="rmList3" id="rmList3"
+																				data-placeholder="Select User" style="width: 100%;">
+																				<option value=''></option>
+																				<option th:each="userList : ${reportingUserList}"
+																					th:value="${userList}" th:text="${userList}" />
+																			</select>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<hr>
+														</div>
+														<table id="custNotification"
+															class="table table-head-fixed table-bordered table-striped">
+															<caption></caption>
+															<thead>
+																<tr>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		ID</th>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		Name</th>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		Open Date</th>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		Risk</th>
+																	<th scope="col" class="thHead text-bold text-center ">Alert
+																		count</th>
+																</tr>
+															</thead>
+															<tbody class="customerBody">
+
+															</tbody>
+														</table>
+													</div>
+													<!-- Customer Based Count -->
+													<!-- Account Based -->
+													<div id="accountBased">
+														<div th:if="${user.userPosition == 'RM Officer'}">
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group row">
+																		<div class="col-sm-3">
+																			<label for="rmList">Relational Managers</label> <select
+																				class="select2" name="rmList2" id="rmList2"
+																				data-placeholder="Select User" style="width: 100%;">
+																				<option value=''></option>
+																				<option th:each="userList : ${reportingUserList}"
+																					th:value="${userList}" th:text="${userList}" />
+																			</select>
+																		</div>
+
+																	</div>
+																</div>
+															</div>
+															<hr>
+														</div>
+														<table id="accountBasedtbl"
+															class="table table-head-fixed table-bordered table-striped">
+															<caption></caption>
+															<thead>
+																<tr>
+																	<th scope="col" class="thHead text-bold text-center ">Account
+																		ID</th>
+																	<th scope="col" class="thHead text-bold text-center ">Account
+																		Holder Name</th>
+																	<th scope="col" class="thHead text-bold text-center ">Customer
+																		Account Type</th>
+																	<th scope="col" class="thHead text-bold text-center ">Account
+																		Open Date</th>
+																	<th scope="col" class="thHead text-bold text-center ">Count</th>
+
+																</tr>
+															</thead>
+															<tbody class="accountBody">
+															</tbody>
+														</table>
+													</div>
+												</div>
+												<div class=" card-footer">
+													<a class="btn btn-secondary" th:href="@{/RolePage}"> <em
+														class="fas fa-arrow-circle-left"
+														style="padding: 0 7px 0 0px;"></em> Back
+													</a>
+												</div>
+												<input type="hidden" id="verticalValue"
+													th:value="${user.userPosition}">
+											</div>
+
+										</form>
+									</div>
+								</div>
+
+							</div>
+							<!-- View Account Wise Transaction Details --->
+							<div class="modal fade" id="alertGraphicalView">
+								<div class="modal-dialog modal-md">
+									<div class="modal-content">
+										<div class="modal-header" style="background-color: #00836c;">
+											<h3 class="modal-title text-white">Exception Graphs</h3>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<form class="form-horizontal">
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="graphDropdown">Select Graph</label> <select
+																class="form-control select2" name="priority"
+																id="graphDropdown" style="width: 100%;">
+																<option value="classification">Classification-Wise
+																	Graph</option>
+																<option value="risk">Risk-Wise Graph</option>
+
+															</select>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-12" id="riskWiseGraph">
+														<canvas id="acctDebitChart"
+															style="min-height: 200px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-12" id="classificationWiseGraph">
+														<canvas id="acctCreditChart"
+															style="min-height: 200px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+							<!-- end View Customer Mulcus Modal -->
+							<div class="modal fade" id="ruleModalView">
+								<div class="modal-dialog modal-xl">
+									<div class="modal-content">
+										<div class="modal-header text-white"
+											style="background-color: #00836c;">
+											<h3 class="modal-title">
+												<span id="ruleId"></span>
+											</h3>
+											<button type="button" class="close text-white"
+												data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<!-- form start -->
+										<form class="form-horizontal">
+											<div class="card-body">
+
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="ruleStatus">Status</label> <input type="text"
+																class="form-control form-control-sm text-bold text-capitalize"
+																id="ruleStatus" name="status" placeholder="status"
+																readonly>
+														</div>
+													</div>
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="rulePriority">Risk Type</label> <input
+																type="text"
+																class="form-control form-control-sm text-bold"
+																id="rulePriority" name="rulePriority"
+																placeholder="rulePriority" readonly>
+														</div>
+													</div>
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="ruleType">Turn Around Time</label> <input
+																type="text"
+																class="form-control form-control-sm text-bold text-capitalize"
+																id="ruleType" name="ruleType"
+																placeholder="rule TurnAroundTime" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Classification">Classification</label> <input
+																type="text"
+																class="form-control form-control-sm text-bold"
+																id="Classification" name="status" placeholder="status"
+																readonly>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Frequency">Frequency</label> <input
+																type="text"
+																class="form-control form-control-sm text-bold text-capitalize"
+																id="Frequency" name="status" placeholder="status"
+																readonly>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="DataSource">Vertical Sub-type</label> <input
+																type="text"
+																class="form-control form-control-sm text-bold"
+																id="DataSource" name="status" placeholder="status"
+																readonly>
+														</div>
+													</div>
+
+												</div>
+
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<label for="query">Exception Description</label>
+															<div class="input-group">
+																<textarea class="form-control" name="query"
+																	placeholder="Rule Description" id="Description"
+																	rows="2" readonly></textarea>
+															</div>
+														</div>
+
+													</div>
+													<div class="col-sm-12">
+														<div class="form-group">
+															<label for="query">Audit Concerns</label>
+															<div class="input-group">
+																<textarea class="form-control" name="query"
+																	id="auditConcens" rows="2" readonly></textarea>
+															</div>
+														</div>
+
+													</div>
+													<div class="col-sm-12">
+														<div class="form-group">
+															<label for="query">Suggested Actionable</label>
+															<div class="input-group">
+																<textarea class="form-control" name="query"
+																	id="suggestedAction" rows="2" readonly></textarea>
+															</div>
+														</div>
+
+													</div>
+												</div>
+
+											</div>
+
+											<div class="card-footer">
+												<span class="float-left" aria-hidden="true">
+
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</span>
+											</div>
+											<!-- /.card-footer -->
+										</form>
+									</div>
+								</div>
+							</div>
+							<!-- /.modal -->
+						</section>
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+			</div>
+			<!--/. container-fluid -->
+			<!-- Control Sidebar -->
+			<aside class="control-sidebar control-sidebar-dark">
+				<!-- Control sidebar content goes here -->
+			</aside>
+			<!-- /.control-sidebar -->
+
+			<!-- Included Footer -->
+			<div th:insert="/footer::footer"></div>
+		</div>
+	</div>
+	<!-- /.login-box -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/alertClassification.js}"></script>
+	<script th:src="@{/dist/appjs/erm/viewRuleModel.js}"></script>
+	<script th:src="@{/dist/appjs/erm/home.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script>
+		$(document).ready(function() {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}
+			var userCat = sessionStorage.getItem("userCat");
+			$("#userCat").val(userCat);
+			var period = sessionStorage.getItem("period");
+			$("#period").val(period);
+		});
+	</script>
+
+	<script>
+		$("#rmList")
+				.change(
+						function() {
+
+							var variable = "ruleBased";
+
+							var pageValJson = "{" + "    \"variable\": \""
+									+ variable + "\",\n" + " \"actUserId\":"
+									+ "\"" + $("#rmList").val() + "\"}";
+							console.log(pageValJson);
+							document.getElementById('load').style.visibility = "visible";
+							$
+									.ajax({
+										url : 'fetchselectedRMAlertCount',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										}, // important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+
+													}, 1000);
+
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+
+											console.log(obj);
+
+											$(".ruleBody").empty();
+											$('#taskNotification').dataTable()
+													.fnClearTable();
+											$('#taskNotification').DataTable()
+													.destroy();
+
+											obj.ruleList
+													.forEach(function(item) {
+														const priority = item.rulePriority
+																.split("~");
+
+														$(
+																"<tr>"
+
+																		+ "<td><a class='text-blue' data-toggle='modal' href='#' id='" + item.ruleId + "'>"
+																		+ item.ruleId
+																		+ "</a></td>"
+
+																		+ "<td><span class='text-capitalize'>"
+																		+ item.ruleDesc
+																		+ "</span></td>"
+
+																		+ "<td><span class='badge text-bold text-capitalize' style='background-color:"+priority[1]+"'>"
+																		+ priority[0]
+																		+ "</span></td>"
+
+																		+ "<td><span class='text-capitalize'>"
+																		+ item.ruleFrequency
+																		+ "</span></td>"
+
+																		+ "<td><span class='text-capitalize'>"
+																		+ item.ruleTat
+																		+ " Day"
+																		+ "</span></td>"
+
+																		+ "<td>"
+																		+ item.ruleClassification
+																		+ "</td>"
+
+																		+ "<td class='text-center text-bold text-blue alertSummary' id='ruleId-"
+																		+ item.ruleId
+																		+ "-RM-"
+																		+ $(
+																				"#rmList")
+																				.val()
+																		+ "' name='ruleId'><a href='#'>"
+																		+ item.count
+																		+ "</a></td>"
+
+																		+ "</tr>")
+																.appendTo(
+																		".ruleBody");
+
+													});
+
+											$("#taskNotification")
+													.DataTable(
+															{
+																"columnDefs" : [ {
+																	orderable : false,
+
+																} ],
+
+																"order" : [ 0,
+																		"desc" ],
+																"lengthMenu" : [
+																		20, 40,
+																		60, 80,
+																		100 ],
+																"responsive" : false,
+																"autoWidth" : false,
+																"searching" : true,
+																"fixedHeader" : true,
+																"language" : {
+																	"emptyTable" : "No Data Available"
+																}
+															})
+													.buttons()
+													.container()
+													.appendTo(
+															'#taskNotification_wrapper .col-md-12:eq(0)');
+
+										},
+										error : function(xhr, status, error) {
+
+											toastr.error('Some Error Occured');
+
+										}
+									});
+						});
+	</script>
+	<script>
+		$("#rmList2")
+				.change(
+						function() {
+							var variable = "accountBased";
+							var pageValJson = "{" + "    \"variable\": \""
+									+ variable + "\",\n" + " \"actUserId\":"
+									+ "\"" + $("#rmList2").val() + "\"}";
+							console.log(pageValJson);
+							document.getElementById('load').style.visibility = "visible";
+							$
+									.ajax({
+										url : 'getAccountWiseCount',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										}, // important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+
+													}, 1000);
+
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+
+											console.log(obj);
+
+											$(".accountBody").empty();
+											$('#accountBasedtbl').dataTable()
+													.fnClearTable();
+											$('#accountBasedtbl').DataTable()
+													.destroy();
+
+											obj.amlAcList
+													.forEach(function(item) {
+
+														if (item.custAcNo)
+															$(
+																	"<tr>"
+
+																			+ "<td><a class='text-blue viewModal' data-toggle='modal' href='#' id='" + item.custAcNo + "'>"
+																			+ item.custAcNo
+																			+ "</a></td>"
+
+																			+ "<td><span class='text-capitalize'>"
+																			+ item.acctName
+																			+ "</span></td>"
+
+																			+ "<td><span class='badge badge-warning text-bold text-capitalize'>"
+																			+ item.custAcType
+																			+ "</span></td>"
+
+																			+ "<td><span class='text-capitalize'>"
+																			+ item.schmCode
+																			+ "</span></td>"
+
+																			+ "<td class='text-center text-bold text-blue alertSummary' id='custAcid-"
+																			+ item.custAcNo
+																			+ "-RM-"
+																			+ $(
+																					"#rmList2")
+																					.val()
+																			+ "' name='custAcid'><a href='#'>"
+																			+ item.count
+																			+ "</a></td>"
+
+																			+ "</tr>")
+																	.appendTo(
+																			".accountBody");
+
+													});
+
+											$("#accountBasedtbl")
+													.DataTable(
+															{
+																"columnDefs" : [ {
+																	orderable : false,
+
+																} ],
+
+																"order" : [ 0,
+																		"desc" ],
+																"lengthMenu" : [
+																		20, 40,
+																		60, 80,
+																		100 ],
+																"responsive" : false,
+																"autoWidth" : false,
+																"searching" : true,
+																"fixedHeader" : true,
+																"language" : {
+																	"emptyTable" : "No Data Available"
+																}
+															})
+													.buttons()
+													.container()
+													.appendTo(
+															'#accountBasedtbl_wrapper .col-md-12:eq(0)');
+
+										},
+										error : function(xhr, status, error) {
+
+											toastr.error('Some Error Occured');
+
+										}
+									});
+						});
+	</script>
+
+	<script>
+		$("#rmList3")
+				.change(
+						function() {
+							var variable = "customerBasedCount";
+							var pageValJson = "{" + "    \"variable\": \""
+									+ variable + "\",\n" + " \"actUserId\":"
+									+ "\"" + $("#rmList3").val() + "\"}";
+							console.log(pageValJson);
+							document.getElementById('load').style.visibility = "visible";
+							$
+									.ajax({
+										url : 'getCustomerWiseCount',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										}, // important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+
+													}, 1000);
+
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+
+											console.log(obj);
+
+											$(".customerBody").empty();
+											$('#custNotification').dataTable()
+													.fnClearTable();
+											$('#custNotification').DataTable()
+													.destroy();
+
+											obj.custList
+													.forEach(function(item) {
+
+														if (item.custId)
+															$(
+																	"<tr>"
+
+																			+ "<td><a class='text-blue viewModal' data-toggle='modal' href='#' id='" + item.custId + "'>"
+																			+ item.custId
+																			+ "</a></td>"
+
+																			+ "<td><span class='text-capitalize'>"
+																			+ item.custName
+																			+ "</span></td>"
+
+																			+ "<td><span class='badge badge-success text-bold text-capitalize'>"
+																			+ item.custPanNo
+																			+ "</span></td>"
+
+																			+ "<td><span class='badge badge-warning text-bold text-capitalize'>"
+																			+ item.custTypeCode
+																			+ "</span></td>"
+
+																			+ "<td class='text-center text-bold text-blue alertSummary' id='custId-"
+																			+ item.custId
+																			+ "-RM-"
+																			+ $(
+																					"#rmList3")
+																					.val()
+																			+ "' name='custId'><a href='#'>"
+																			+ item.count
+																			+ "</a></td>"
+
+																			+ "</tr>")
+																	.appendTo(
+																			".customerBody");
+
+													});
+
+											$("#custNotification")
+													.DataTable(
+															{
+																"columnDefs" : [ {
+																	orderable : false,
+
+																} ],
+
+																"order" : [ 0,
+																		"desc" ],
+																"lengthMenu" : [
+																		20, 40,
+																		60, 80,
+																		100 ],
+																"responsive" : false,
+																"autoWidth" : false,
+																"searching" : true,
+																"fixedHeader" : true,
+																"language" : {
+																	"emptyTable" : "No Data Available"
+																}
+															})
+													.buttons()
+													.container()
+													.appendTo(
+															'#custNotification_wrapper .col-md-12:eq(0)');
+										},
+										error : function(xhr, status, error) {
+
+											toastr.error('Some Error Occured');
+
+										}
+									});
+						});
+	</script>
+</body>
+
+</html>

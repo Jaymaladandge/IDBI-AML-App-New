@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" type="image/png" th:href="@{/login-dist/images/pa3.png}" />
+	<title sec:authentication="principal.ermTitle"></title>
+
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Select2 -->
+	<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+	<style>
+		#load {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			opacity: 1;
+		}
+
+		.card-info:not(.card-outline)>.card-header {
+			background-color: #044383 !important;
+		}
+
+		.bg-info {
+			background-color: #044383 !important;
+		}
+
+		.btn-info {
+			color: #fff;
+			background-color: #044383 !important;
+			border-color: #044383 !important;
+			box-shadow: none;
+		}
+
+		.viewThresh {
+			visibility: visible;
+			width: 120px;
+			background-color: white;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px 0;
+			/* Position the tooltip */
+			position: absolute;
+			z-index: 1;
+			bottom: 2em;
+			left: 75%;
+		}
+
+		.nav-pills>li.active>a,
+		.nav-pills>li.active>a:hover,
+		.nav-pills>li.active>a:focus {
+			background-color: #FCD900 !important;
+		}
+	</style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>STR Report Request List</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/SelectReportsMainPage}">Reports</a></li>
+								<li class="breadcrumb-item active">STR Report Request List</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Filter STR</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<div class="card-body">
+
+									<!-- Filters Start -->
+									<form method="post" th:action="@{/showSTRReport}" id="searchAlertId">
+										<input type="hidden" id="encryptedJsonSearch" name="encryptedJson" /><input
+											type="hidden" id="message" th:value="${msg}" name="message" />
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="fdt"> STR Start Date
+													</label>
+													<code>*</code>
+													<input style="border-radius: 5px;" id="fdt"
+														class="form-control select2" type="datetime-local" name="fdt"
+														onchange="convertTo12HourFormat(this.value)" required>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="fdt1"> STR End Date
+													</label>
+													<code>*</code>
+													<input style="border-radius: 5px;" id="fdt1"
+														class="form-control  select2" type="datetime-local" name="fdt1"
+														onchange="convertTo12HourFormat(this.value)" required>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<label for="search"> &nbsp;</label>
+												<h3>
+													<button type="button" class="btn btn-sm btn-info mt-n1"
+														id="getReport">
+														<em class="fas fa-search"
+															style="padding: 0 7px 0 0px;"></em>Search
+													</button>
+												</h3>
+											</div>
+										</div>
+										<!-- ./ Filters End -->
+										<input type="hidden" id="useridHidden" name="useridHidden"
+											th:value="${sessionUserid}" />
+										<input type="hidden" id="userRoleHidden" name="userRoleHidden"
+											th:value="${sessionUserRole}" />
+										<input type="hidden" id="usernameHidden" name="usernamHidden"
+											th:value="${sessionUsername}" />
+										<input type="hidden" id="setTimeOutHidden" name="setTimeOutHidden"
+											th:value="${setTimeOut}" />
+										<table id="alertList"
+											class="table table-head-fixed table-bordered table-striped text-capitalize ">
+											<thead>
+												<tr style="text-align: center;">
+													<th scope="col">EIN</th>
+													<th scope="col">Role</th>
+													<th scope="col">User Name</th>
+													<th scope="col">Status</th>
+													<th scope="col">Start Date</th>
+													<th scope="col">End Date</th>
+
+													<th scope="col">File Name</th>
+													<th scope="col"> </th>
+													<th scope="col"> </th>
+													<th scope="col"> </th>
+													<th scope="col"> </th>
+												</tr>
+											</thead>
+											<tbody id="tbodyTable">
+												<tr th:each="form : ${viewRequest}">
+
+													<td th:text="${form.userId}" style="text-align: center; "> </td>
+													<td th:text="${form.userPosition}" style="text-align: center;">
+													</td>
+													<td style="text-align: center;"><span class="text-capitalize">
+															<span th:text="${#strings.capitalize(form.requestedBy)}"
+																style="text-align: center;"></span>
+														</span></td>
+													<td style="text-align: center;">
+														<span th:if="${form.status=='R'}"
+															class="badge bg-warning">Pending</span>
+														<span th:if="${form.status=='C'}" class="badge bg-success">
+															Completed </span>
+														<span th:if="${form.status=='I'}"
+															class="badge bg-primary">Requested</span>
+													</td>
+													<td th:text="${form.alertStartDate}" style="text-align: center;">
+													</td>
+													<td th:text="${form.alertEndDate}" style="text-align: center;">
+													</td>
+
+													<td th:text="${form.fileName}" style="text-align: center;">
+													</td>
+
+													<td style="text-align: center;"><span th:if="${form.status=='C'}">
+															<a th:id="${'getDownload'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getDownload(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-pink getDownloadClass"
+																title="Download" style="text-align: center;"><i
+																	class="fas fa-download"></i></a></span>
+														<span th:if="${form.status=='R'}"> <a
+																th:id="${'getDownload'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getDownload(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-gray disabled" title="Download"
+																style="text-align: center;"><i
+																	class="fas fa-download"></i></a></span>
+														<span th:if="${form.status=='I'}"> <a
+																th:id="${'getDownload'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getDownload(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-gray disabled" title="Download"
+																style="text-align: center;"><i
+																	class="fas fa-download"></i></a></span>
+														<span th:if="${form.status=='P'}"> <a
+																th:id="${'getDownload'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getDownload(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-gray disabled" title="Download"
+																style="text-align: center;"><i
+																	class="fas fa-download"></i></a></span>
+													</td>
+
+
+													<td style="text-align: center;">
+														<span th:if="${form.status=='C'}">
+															<a th:id="${'getProceed~'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getProceed(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-primary " title="Proceed"
+																style="text-align: center;"><i
+																	class="fas fa-solid fa-glasses"></i></a></span>
+														<span th:if="${form.status=='R'}">
+															<a th:id="${'getProceed~'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getProceed(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-primary disabled" title="Proceed"
+																style="text-align: center;"><i
+																	class="fas fa-solid fa-glasses"></i></a></span>
+														<span th:if="${form.status=='I'}">
+															<a th:id="${'getProceed~'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getProceed(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-primary disabled" title="Proceed"
+																style="text-align: center;"><i
+																	class="fas fa-solid fa-glasses"></i></a></span>
+													</td>
+													<td style="text-align: center;"><span><a id="getRefresh"
+																th:data-requestId="${form.requestId}"
+																onclick="getRefresh(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-success " title="Refresh"><i
+																	class="fas fa-sync-alt"></i></a></span></td>
+													<td style="text-align: center;">
+														<span th:if="${form.status=='R'}">
+															<a th:id="${'getCancels~'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getCancels(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-warning disabled" title="Cancel"
+																disabled="disabled" style="text-align: center;"><i
+																	class="fas fa-times"></i></a>
+														</span>
+														<span th:if="${form.status=='C'}">
+															<a th:id="${'getCancels~'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getCancels(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-warning disabled" title="Cancel"
+																disabled="disabled" style="text-align: center;"><i
+																	class="fas fa-times"></i></a>
+														</span>
+														<span th:if="${form.status=='I'}">
+															<a th:id="${'getCancels~'+form.requestId}"
+																th:data-requestId="${form.requestId}"
+																onclick="getCancels(this.getAttribute('data-requestId'))"
+																class="btn btn-sm bg-warning" title="Cancel"
+																disabled="disabled" style="text-align: center;"><i
+																	class="fas fa-times"></i></a>
+														</span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/aml/StrMisRequest.js}"></script>
+
+	<script>
+		function convertTo12HourFormat(dateTime) {
+			const selectedTime = new Date(dateTime);
+			let hours = selectedTime.getHours();
+			let minutes = selectedTime.getMinutes();
+			let amOrPm = hours >= 12 ? 'PM' : 'AM';
+			if (hours > 12) {
+				hours -= 12;
+			} else if (hours === 0) {
+				hours = 12;
+			}
+			if (minutes < 10) {
+				minutes = '0' + minutes;
+			}
+		}
+	</script>
+</body>
+
+</html>

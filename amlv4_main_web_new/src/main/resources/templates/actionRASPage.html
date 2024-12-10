@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Risk Appetite Statement</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Review</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content-header -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Review</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form class="form-horizontal" id="frmriskapptstmt"
+									th:action="@{/reviewRAS}" method="post">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:feild="*{encryptedJson}" /> 
+										
+										<input type="hidden"
+										id="sourceName" name="sourceName" th:value="*{sourceName}" />
+										
+									<input type="hidden" id="raActionStatus" name="raActionStatus"
+										th:value="${rasMaster.raActionStatus}" /> <input
+										type="hidden" name="clientName" id="clientName"
+										th:value="${userName}" th:name="clientName" />
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtId">Statement ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="raStmtId" name="raStmtId"
+															th:field="${rasMaster.raStmtId}" readonly>
+
+
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="recordstatus">Record Status</label>
+													<div class="input-group">
+														<input th:if="*{sourceName=='create'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Verification For Creation" readonly>
+														<input th:if="*{sourceName=='closeverify'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Verification For Closure" readonly>
+														<input th:if="*{sourceName=='action'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Approval For Action Plan Link" readonly>
+														<input th:if="*{sourceName=='edit'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Approval For Edit" readonly> <input
+															th:if="*{sourceName=='editverify'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Verification For Edit" readonly><input
+															th:if="*{sourceName=='close'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Approval For Closure" readonly> <input
+															th:if="*{sourceName=='verify'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Approval For Creation" readonly> <input
+															th:if="*{sourceName=='verifyvc'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Verification For Value Captured" readonly>
+														<input th:if="*{sourceName=='verifyvv'}" type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordstatus" name="recordstatus"
+															value="Pending Approval For Value Captured" readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raRiskCate">Risk Category </label> <input
+														type="text" class="form-control form-control-sm"
+														id="raRiskCate" name="raRiskCate"
+														th:field="${rasMaster.raRiskCate}" readonly>
+
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raSubCate">Risk Sub Category </label> <input
+														type="text" class="form-control form-control-sm"
+														id="raSubCate" name="raSubCate"
+														th:field="${rasMaster.raSubCate}" readonly>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+										<div class="row">
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtName">Statement Name </label>
+													<textarea class="form-control form-control-sm"
+														name="raStmtName" id="raStmtName"
+														placeholder="Statement Name"
+														th:field="${rasMaster.raStmtName}" readonly></textarea>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raDeptProvidingData">Department
+														Providing Data </label> <input type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="raDeptProvidingData" name="raDeptProvidingData"
+														th:field="${rasMaster.raDeptProvidingData}" readonly>
+
+
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtDescription">Description </label>
+													<textarea class="form-control form-control-sm"
+														name="raStmtDescription" id="raStmtDescription"
+														placeholder="Statement Description"
+														th:field="${rasMaster.raStmtDescription}" readonly></textarea>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raStmtDataPts">Data Points To Be
+														Considered </label>
+													<textarea class="form-control form-control-sm"
+														id="raStmtDataPts" name="raStmtDataPts"
+														th:field="${rasMaster.raStmtDataPts}" readonly></textarea>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raToleranceValueDatatype">Data Type </label> <input
+														type="text" class="form-control form-control-sm"
+														id="raToleranceValueDatatype"
+														name="raToleranceValueDatatype"
+														th:field="${rasMaster.raToleranceValueDatatype}" readonly>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raResponsibleDept">Department
+														Responsible </label> <input type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="raResponsibleDept" name="raResponsibleDept"
+														th:field="${rasMaster.raResponsibleDept}" readonly>
+
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raCaptureValueDept">Capture Value
+														Department </label> <input type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="raCaptureValueDept" name="raCaptureValueDept"
+														th:field="${rasMaster.raCaptureValueDept}" readonly>
+
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raCaptureValueFrequency">Update
+														Frequency </label> <input type="text"
+														class="form-control form-control-sm"
+														id="raCaptureValueFrequency"
+														name="raCaptureValueFrequency"
+														th:field="${rasMaster.raCaptureValueFrequency}" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raAssessmentCriteria">Assessment
+														Criteria </label> <input type="text"
+														th:field="*{rasMaster.raAssessmentCriteria}"
+														class="form-control form-control-sm text-uppercase"
+														id="raAssessmentCriteria" name="raAssessmentCriteria"
+														readonly>
+
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="raToleranceThreshold">Tolerance
+														Threshold </label> <input type="text"
+														class="form-control form-control-sm"
+														id="raToleranceThreshold" name="raToleranceThreshold"
+														th:field="${rasMaster.raToleranceThreshold}" readonly>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<!-- <div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															name="files[]" multiple="multiple"
+															onchange="getFileData(this);"> <label
+															class="custom-file-label" for="customFile">Choose
+															file</label>
+													</div>
+												</div> -->
+
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+
+
+										</div>
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<table
+														class="table uploadTable table-head-fixed table-bordered table-striped"
+														id="filedetails" th:if="${rasMaster.filedetails != null}">
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size (kb)</th>
+																<th>Uploaded Date</th>
+																<th>Uploaded by</th>
+																<th></th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="mvc : ${rasMaster.filedetails}">
+																<td th:text="${mvc.fileName}"></td>
+																<td th:text="${mvc.fileSize}"></td>
+																<td th:text="${mvc.uploadTimestamp}"></td>
+																<td th:text="${mvc.uploadedBy}" class="text-capitalize"></td>
+																<td><a th:name='${mvc.fileName}' href="#"
+																	class="btn btn-info downloadfile"><i
+																		class="fas fa-download"></i></a></td>
+																<td class="project-actions text-right"><a
+																	class="btn btn-danger btn-sm disabled" id="closerow"><i
+																		class="fa fa-window-close"></i></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+										<!-- ./row -->
+										<div class="row"
+											th:if="*{sourceName=='verifyvc' || sourceName=='verifyvv'}">
+
+											<!-- /.card-header -->
+											<div class="col-sm-12">
+												<div class="card card-outline card-secondary">
+													<div class="card-header">
+														<h3 class="card-title">Assessment Value Record</h3>
+													</div>
+													<div class="card-body">
+
+														<table
+															class="table table-head-fixed table-bordered table-striped"
+															id="capturetbl">
+															<thead>
+																<tr>
+																	<th>Update Period</th>
+																	<th>Tolerance Threshold</th>
+																	<th>Assessment Value</th>
+																	<th>Assessment Status</th>
+																	<th>Captured By</th>
+																	<th>Captured Date</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr th:each="mvc : ${rasMaster.mvcDtoList}">
+																	<td th:text="${mvc.assessmentPeriod}"></td>
+																	<td th:text="${mvc.toleranceValue}"></td>
+																	<td th:text="${mvc.assessmentValue}"></td>
+																	<td th:switch="${mvc.assessmentStatus}"><span
+																		th:case="'Above Tolerance'" class="badge bg-danger">Above
+																			Tolerance</span> <span th:case="'Within Tolerance'"
+																		class="badge bg-success">Within Tolerance</span> <span
+																		th:case="'NA'" class="badge bg-success">NA</span></td>
+																	<td th:text="${mvc.captureUserId}"></td>
+																	<td
+																		th:text="${#calendars.format(mvc.captureTime,'dd/MM/yyyy')}"></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<br>
+										<div class="row" th:if="*{sourceName=='action'}">
+											<div class="col-12 table-responsive">
+												<div class="card card-outline card-secondary">
+													<div class="card-header">
+														<h3 class="card-title">Action Plan List</h3>
+													</div>
+													<div class="card-body">
+														<table id="actionplantable"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th>Action Plan ID</th>
+																	<th>Name</th>
+																	<th>Category</th>
+																	<th>Owner</th>
+																	<th>Status</th>
+																	<th>Frequency</th>
+																	<th>Completion(%)</th>
+																	<th>Completion Date</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td><a class="text-blue" href="#"
+																		data-toggle="modal" data-target="#actionmodal">LIC04058921007611</a></td>
+																	<td>Market</td>
+																	<td>Solvency</td>
+																	<td>Marketing</td>
+																	<td><span class="badge bg-success">Open</span></td>
+																	<td>Daily</td>
+																	<td>30%</td>
+																	<td>20/10/2021</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+											<!-- /.col -->
+										</div>
+
+										<!-- /.row -->
+
+									</div>
+
+									<!-- /.card-body -->
+									<div class="card-footer">
+										<button type="button" id="approve" name="approve" class="btn btn-success"
+											title="Approve">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+										</button>
+										<button type="button" class="btn bg-red" data-toggle="modal"
+											data-target="#commentmodal" title="Reject" >
+											<i class="fas fa-circle-notch" style="padding: 0 7px 0 0px;"></i>Reject
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="home"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+										<!-- Audit Trail Button -->
+										<a class="btn btn-secondary text-white viewAuditTrail"
+											title="Audit Trail" data-toggle="modal"> <i
+											class="fab fa-twitch" style="padding: 0 7px 0 0px;"></i>Audit
+											Trail
+										</a>
+									</div>
+
+									<!-- Timeline Modal -->
+									<div class="modal fade" id="timelinemodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Audit Trail</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="timeline">
+														<div class="timeline timeline-inverse" id="row_0"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- Comment Modal -->
+									<div class="modal fade" id="commentmodal">
+										<div class="modal-dialog modal-lg">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Comments</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+
+												<!-- form start -->
+
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="comments">
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<label for="comments">Reason For Rejection <code>*</code></label>
+																	<textarea class="form-control" name="reason"
+																		maxlength="3000" placeholder="Reason For Rejection"
+																		id="reason"></textarea>
+																</div>
+															</div>
+														</div>
+														<div class="card-footer">
+															<button type="button" id="reject" name="reject" class="btn btn-info">
+																<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+															</button>
+														</div>
+														<!-- /.row -->
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- Cancel Modal -->
+									<div class="modal fade" id="cancelmodel">
+										<div class="modal-dialog modal-fluid">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h6 class="modal-title">Confirm</h6>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="modal-body">
+													<h5 class="card-title">
+														If you leave this page, all changes will be lost. <br>
+														Press "Ok" to Continue.
+													</h5>
+												</div>
+
+												<div class="modal-footer">
+
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+													</button>
+													<a class="btn btn-primary target"><i
+														class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Ok
+													</a>
+
+												</div>
+
+												<!-- /.Card -->
+
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+									<!-- Action Plan Modal -->
+									<!-- View Modal -->
+									<div class="modal fade" id="actionmodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Action Plan ID -
+														LIC04058921007612</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<input type="hidden" th:value="*{message}" id="message" />
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="actionPlanId">Action Plan ID</label> <input
+																	type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="actionPlanId" name="actionPlanId"
+																	value="LIC04058921007612" readonly>
+															</div>
+														</div>
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="recordStatus">Record Status</label> <input
+																	type="text"
+																	class="form-control form-control-sm col-4 text-bold"
+																	id="recordStatus" name="recordStatus" value="Open"
+																	readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="actionName">Action Name</label>
+																<div class="input-group mb-2">
+																	<input type="text" class="form-control form-control-sm"
+																		id="actionName" name="actionName"
+																		value="Action Name One" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="actionDescription">Action
+																	Description </label>
+																<textarea class="form-control form-control-sm"
+																	name="actionDescription" id="actionDescription"
+																	rows="3" readonly>Action Description Over here</textarea>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="completionDate">Expected Completion
+																	Date <code>*</code>
+																</label>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="compPercentage">Completion %</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="compPercentage" id="compPercentage" value="70%"
+																	readonly>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="actionOwner">Action Owner</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="actionOwner" id="actionOwner" value="Marketing"
+																	readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="frequency">Action Update Frequency</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="frequency" id="frequency" value="Monthly"
+																	readonly>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Linked Modules</h3>
+																</div>
+																<div class="card-body">
+																	<table
+																		class="table table-head-fixed table-bordered table-striped"
+																		id="linkedModuleTbl">
+																		<thead>
+																			<tr>
+																				<th>Source ID</th>
+																				<th>Source Name</th>
+																				<th>Module Name</th>
+																				<th>Record Status</th>
+																				<th>Assessment Status</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr>
+																				<td>LIC04058921007612</td>
+																				<td>Risk Appetite One</td>
+																				<td>Risk Appetite</td>
+																				<td>Open</td>
+																				<td><span class="badge bg-success">Within
+																						Tolerance</span></td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Action Update</h3>
+																</div>
+																<div class="card-body">
+																	<table
+																		class="table table-head-fixed table-bordered table-striped"
+																		id="updateActionTbl">
+																		<thead>
+																			<tr>
+																				<th>Update Period</th>
+																				<th>Completion %</th>
+																				<th>Updated By</th>
+																				<th>Updated Date</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr>
+																				<td>April - 2021</td>
+																				<td>70</td>
+																				<td>Rohit Singh</td>
+																				<td>30/04/2021</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Revised Dates</h3>
+																</div>
+																<div class="card-body">
+																	<table
+																		class="table table-head-fixed table-bordered table-striped"
+																		id="actionDateTbl">
+																		<thead>
+																			<tr>
+																				<th>Completion Date</th>
+																				<th>Revised Date</th>
+																				<th>Record Create By</th>
+																				<th>Record Date</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr>
+																				<td>20/05/2021</td>
+																				<td>31/05/2021</td>
+																				<td>Rohit Singh</td>
+																				<td>30/04/2021</td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Document List</h3>
+																</div>
+																<div class="card-body">
+																	<table class="table table-bordered table-striped">
+																		<thead>
+																			<tr>
+																				<th>File Name</th>
+																				<th>File Size</th>
+																				<th>Uploaded By</th>
+																				<th>Uploaded Date</th>
+																				<th></th>
+
+																			</tr>
+																		</thead>
+																		<tbody>
+
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+
+														</div>
+													</div>
+													<!-- /.row -->
+
+
+
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button type="button" class="btn btn-secondary text-white"
+														title="timeline" data-toggle="modal"
+														data-target="#timelinemodal">
+														<i class="fab fa-twitch" style="padding: 0 7px 0 0px;"></i>Audit
+														Trail
+													</button>
+													<button class="btn bg-orange" href="#" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.card-footer -->
+								</form>
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+					<!-- /.modal -->
+					</form>
+				</div>
+		</div>
+
+		<!-- /.row -->
+		<!-- /.card-footer -->
+
+	</div>
+	</div>
+	</section>
+	</div>
+
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+
+	<!-- Included Footer -->
+	<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+		})
+	</script>
+	<script>
+	
+		$(function() {
+			$("#capturetbl").DataTable({
+				"responsive" : false,
+				"autoWidth" : false,
+				"searching" : false,
+				"fixedHeader" : true
+			}).buttons().container().appendTo(
+					'#actionplantable_wrapper .col-md-12:eq(0)');
+		});
+
+		$(function() {
+			$("#actionplantable").DataTable({
+				"responsive" : true,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true
+			}).buttons().container().appendTo(
+					'#actionplantable_wrapper .col-md-12:eq(0)');
+		});
+
+		var approveBtn = false;
+		//APPROVE ACTION	
+		$("#approve")
+				.click(
+						function() {
+							approveBtn = true;
+							var	actionName = $(this).attr("name");
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "visible";
+
+							var raStmtId = $("#raStmtId").val();
+							var raActionStatusOld = $("#raActionStatus").val();
+							var raActionStatus = "";
+
+							if ($("#recordstatus").val() == 'Pending Verification For Creation') {
+								raActionStatus = 'VR';
+							} else if ($("#recordstatus").val() == 'Pending Approval For Creation') {
+								raActionStatus = 'AR';
+							} else if ($("#recordstatus").val() == 'Pending Verification For Edit') {
+								raActionStatus = 'EV';
+							} else if ($("#recordstatus").val() == 'Pending Approval For Edit') {
+								raActionStatus = 'EA';
+							} else if ($("#recordstatus").val() == 'Pending Approval For Value Captured') {
+								raActionStatus = 'AR';
+							}
+							 else if ($("#recordstatus").val() == 'Pending Verification For Closure') {
+								raActionStatus = 'XQ';
+							}
+
+							var actionString = "{\n" + "    \"raStmtId\": \""
+									+ $("#raStmtId").val() + "\",\n"
+									+ "    \"sourceName\": \""
+									+ $("#sourceName").val() + "\",\n"
+									+ "    \"raActionStatusOld\": \""
+									+ raActionStatusOld + "\",\n"
+									+"    \"raActionName\":\""+actionName+ "\",\n"
+									+ "    \"raActionStatus\":\""
+									+ raActionStatus + "\"\n" + "}";
+							var iterationCount = 1000;
+							var keySize = 128;
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), actionString);
+							$("#encryptedJson").val(
+									ciphertext + ':~:' + passphrase);
+
+							$('#frmriskapptstmt').submit();
+						});
+
+		$("#reject")
+				.click(
+						function() {
+							if ($('#frmriskapptstmt').valid()) {
+							approveBtn = true;
+							var	actionName = $(this).attr("name");
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "visible";
+
+							var raStmtId = $("#raStmtId").val();
+							var raActionStatusOld = "";
+							var raActionStatus = "";
+							var reasonCheck = $('#reason').val();
+							if (reasonCheck == '') {
+								$('span[id^="reason-error"]').remove();
+								$('#reason').addClass('is-invalid');
+								$('#reason')
+										.after(
+												'<span id="reason-error" class="error invalid-feedback" style="display: inline;">Please provide a Reason</span>');
+							} else if (reasonCheck.length < 10) {
+								$('span[id^="reason-error"]').remove();
+								$('#reason').addClass('is-invalid');
+								$('#reason')
+										.after(
+												'<span id="reason-error" class="error invalid-feedback" style="display: inline;">Reason must be greater than 10 characters</span>');
+							} else {
+								var reason = $('#reason').val().replace(/(\r\n|\n|\r)/gm, "");
+
+								if ($("#recordstatus").val() == 'Pending Verification For Creation') {
+									raActionStatusOld = $("#raActionStatus")
+											.val();
+									raActionStatus = 'ZR';
+								} else if ($("#recordstatus").val() == 'Pending Approval For Creation') {
+									raActionStatusOld = $("#raActionStatus")
+											.val();
+									raActionStatus = 'ZR';
+								} else if ($("#recordstatus").val() == 'Pending Verification For Edit') {
+									raActionStatus = 'EZ';
+									raActionStatusOld = 'ER';
+								} else if ($("#recordstatus").val() == 'Pending Approval For Edit') {
+									raActionStatus = 'EZ';
+									raActionStatusOld = 'EV';
+								} else if ($("#recordstatus").val() == 'Pending Approval For Value Captured') {
+									raActionStatus = 'ZR';
+								}
+								else if ($("#recordstatus").val() == 'Pending Verification For Closure') {
+									raActionStatus = 'XZ';
+								}
+
+								var actionString = "{\n" + "  \"raStmtId\": \""
+										+ $("#raStmtId").val() + "\",\n"
+										+ "    \"sourceName\": \""
+										+ $("#sourceName").val() + "\",\n"
+										+ " \"raActionStatus\":\""
+										+ raActionStatus + "\",\n"
+										+ " \"raActionStatusOld\": \""
+										+ raActionStatusOld + "\",\n"
+										+"    \"raActionName\":\""+actionName+ "\",\n"
+										+ "\"commentDto\":{\"comment\":\""
+										+ reason + "\"}}";
+
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), actionString);
+								$("#encryptedJson").val(
+										ciphertext + ':~:' + passphrase);
+								$('#frmriskapptstmt').submit();
+							}
+							}
+
+						});
+
+		//VALIDATE	
+
+		$(function() {
+
+			$('#frmriskapptstmt')
+					.validate(
+							{
+								rules : {
+									reason : {
+										required : true,
+										minlength : 10,
+										maxlength : 400
+									},
+
+								},
+								messages : {
+									reason : {
+										required : "Please Provide Reason For Rejection",
+									},
+								},
+
+								errorElement : 'span',
+								errorPlacement : function(error, element) {
+									error.addClass('invalid-feedback');
+									element.closest('.form-group')
+											.append(error);
+								},
+								highlight : function(element, errorClass,
+										validClass) {
+									$(element).addClass('is-invalid');
+								},
+								unhighlight : function(element, errorClass,
+										validClass) {
+									$(element).removeClass('is-invalid');
+								},
+
+								submitHandler : function(form) {
+									if (!approveBtn) {
+										toastr
+												.success('Risk Appetite Statement Rejected');
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "visible";
+									}
+									setTimeout(function() {
+										form.submit();
+									}, 2000);
+
+								}
+							});
+		});
+
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+
+		$("#today").text(moment(new Date()).format('DD/MM/YYYY'));
+	</script>
+
+	<!-- File Upload jquery -->
+
+	<script>
+var totalsizeOfUploadFiles = 0;
+function getFileData(input) {
+    var select = $('.uploadTable');
+    for (var i = 0; i < input.files.length; i++) {
+        var filesizeInBytes = input.files[i].size;
+        var filesizeInMB = (filesizeInBytes / (1024)).toFixed(2);
+        var filename = input.files[i].name;
+        var flg = true;
+        
+        var userName = $('#clientName').val();
+        $('.uploadTable tr').each(function() {
+            var fName = $(this).find('td:eq(0)').text();
+            console.log('fName '+fName+' filename '+filename);
+            if (fName == filename) {
+                flg = false;
+            }
+        });
+        if (flg) {
+            select
+                    .append($('<tr id=tr'+i+'><td id=filetd'+i+'>'
+                            + filename
+                            + '</td><td id=filesizetd'+i+'>'
+                            + filesizeInMB
+                            + ' kb</td><td>'
+                            + moment(new Date()).format('DD/MM/YYYY')
+                            + '</td><td class="text-capitalize">'
+                            + userName
+                            + '</td><td class="text-right py-0 align-middle"> - </td><td class="project-actions text-right"><a class="btn btn-danger btn-sm" id="closerow"><i class="fa fa-window-close"></i></a></td></tr>'));
+            totalsizeOfUploadFiles += parseFloat(filesizeInMB);
+        }
+        $('#filedetails').show();
+    }
+}
+$(".uploadTable").on("click", "#closerow", function() {
+   
+    var rowCount = $('.uploadTable tr').length;
+    console.log('row count '+rowCount);
+    if (rowCount == 2) {
+        $('#filedetails').hide();
+    }
+    $(this).closest("tr").remove();
+});
+
+
+$(".two-decimals").change(function(){
+  this.value = parseFloat(this.value).toFixed(2);
+});
+
+//document.querySelector("#raToleranceThreshold").addEventListener("keypress", function (evt) {
+//    if (evt.which != 8 && evt.which != 0 && evt.which < 48 || evt.which > 57)
+ //   {
+ //       evt.preventDefault();
+ //   }
+//});
+
+			$(function() {
+				$("#filedetails").DataTable({
+					"columnDefs" : [ {
+						orderable : false,
+						targets : [ 4, 5 ]
+					} ],
+					"lengthMenu" : [ 5, 10, 25, 50, 75, 100 ],
+					"responsive" : false,
+					"autoWidth" : true,
+					"searching" : false,
+					"fixedHeader" : true,
+					 "language": {
+					      "emptyTable": "No Data Available"
+					    }
+				}).buttons().container().appendTo(
+						'#filedetails_wrapper .col-md-12:eq(0)');
+			});
+//download
+/* $(document).ready(function() {
+			 $(document).on('click', '.downloadfile', function(){
+			
+			 var fileName = $(this).attr('name');
+							var pageValJson = "{\"fileName\":"
+									+ "\"" + fileName + "\"}";
+							//document.getElementById('load').style.visibility = "visible";
+
+							// ajax call
+							$
+									.ajax({
+										url : 'download',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+										
+							
+												var blob = new Blob([response], { type: "application/octetstream" });
+ 
+                    //Check the Browser type and download the File.
+                    var isIE = false || !!document.documentMode;
+                    if (isIE) {
+                        window.navigator.msSaveBlob(blob, fileName);
+                    } else {
+                        var url = window.URL || window.webkitURL;
+                        link = url.createObjectURL(blob);
+                        var a = $("<a />");
+                        a.attr("download", fileName);
+                        a.attr("href", link);
+                        $("body").append(a);
+                        a[0].click();
+                        $("body").remove(a);
+                    }
+
+										},
+										error : function(xhr, status, error) {
+											console.log(xhr);
+											console.log(status);
+											console.log(error);
+											toastr
+													.success('Some Error Occured');
+										}
+									});
+    			});
+
+		}); */
+
+// 0 for null values
+// 8 for backspace 
+// 48-57 for 0-9 numbers
+</script>
+
+	<!-- // File Upload jquery End-->
+
+	<script>
+		// Audit trail   
+		$('.viewAuditTrail')
+				.click(
+						function() {
+
+							var raStmtId = $("#raStmtId").val();
+							var pageValJson = "{\"activityImpactTblKey\":"
+									+ "\"" + raStmtId + "\"}";
+
+							document.getElementById('load').style.visibility = "visible";
+							// ajax call
+							$
+									.ajax({
+										url : 'viewAuditTrail',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+														document
+																.getElementById('contents').style.visibility = "visible";
+													}, 1000);
+
+											var jsonResponse = JSON
+													.stringify(response);
+											var obj = JSON.parse(jsonResponse);
+
+											$(".timeline-inverse").empty();
+
+											if (obj.length > 0) {
+												obj
+													.forEach(function(items) {
+														$(
+																"<p class='test'><div class='time-label'><span class='bg-success'>"
+																		+ items.actDate
+																		+ "</span></div>"
+																		+ "<div><i class='fas fa-comments bg-warning'></i>"
+																		+ "<div class='timeline-item'>"
+																		+ "<h3 class='timeline-header text-capitalize'><a href='#'>"
+																		+ items.userName
+																		+ " "
+																		+ " ("
+																		+ items.userRole
+																		+ ") </a>"
+																		+ items.actionPerformed
+																		+ "</h3>"
+																		+ "<div class='timeline-body'>"
+																		+ items.actionComment
+																		+ "</div>"
+																		+ "</div>"
+																		+ "</div>"
+																		+ "</p>")
+																.appendTo(
+																		".timeline-inverse");
+
+													});
+
+											$(
+													"<div> <i class='far fa-clock bg-gray'></i> </div>")
+													.appendTo(
+															".timeline-inverse");
+											$('#timelinelink').css('class',
+													'border');
+											$('#timelinelink').css('display',
+													'');
+											$('#timelinelink').click();
+											
+											}
+											$('#timelinemodal').modal('show');
+										},
+										error : function(xhr, status, error) {
+											console.log(xhr);
+											console.log(status);
+											console.log(error);
+											toastr
+													.success('Some Error Occured');
+										}
+									});
+						});
+	</script>
+	<script>
+	
+	$('#cancelmodel').on('show.bs.modal', function (event) {
+		  var button = $(event.relatedTarget) 
+		  var recipient = button.data('whatever') 
+		  var modal = $(this)
+		  $('a.target').attr('href', recipient);
+		  
+		})
+	</script>
+	<!-- PAGE PLUGINS -->
+
+</body>
+</html>

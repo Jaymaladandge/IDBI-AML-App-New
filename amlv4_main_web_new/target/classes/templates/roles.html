@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+<!-- Font Awesome -->
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<!-- <link
+	href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+	rel="stylesheet"
+	integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+	crossorigin="anonymous"> -->
+
+<style>
+body {
+	margin: 0;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: .875rem !important;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	text-align: left;
+	background-color: #fff;
+}
+
+a.disabled {
+	pointer-events: none;
+	cursor: default;
+}
+
+header {
+	width: 100%;
+	padding: 10px 0 0 15px;
+}
+
+.login-box, .register-box {
+	width: 80%;
+	margin: 0px auto;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.content {
+	display: flex;
+	width: 100%;
+	margin: 10px auto;
+}
+
+.canvas {
+	width: 100%;
+	object-fit: contain;
+}
+
+/* 	hr {
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			border: 0;
+		} */
+.loginfooter {
+	bottom: 0;
+	position: fixed;
+	background: white;
+	border-top: 1px solid #dee2e6;
+	color: #869099;
+	width: 100%;
+	display: inline-flex;
+	padding: 5px 0 5px 0;
+}
+
+.beforefooter {
+	left: 10px;
+	bottom: 7%;
+	position: fixed;
+	width: 30%;
+	display: inline-flex;
+	text-align: right;
+	font-size: medium;
+	float: right;
+	border: 1px outset black;
+	background-color: lightblue;
+	height: 32px;
+	box-shadow: 1px 1px 10px 10px lightblue;
+}
+
+.float-right {
+	float: right !important;
+	text-align: end;
+	padding: 0 10px 0px 0px;
+}
+
+@media ( min-width : 576px) {
+	.card-columns {
+		column-count: 3;
+	}
+}
+
+@media ( min-width : 768px) {
+	.card-columns {
+		column-count: 3;
+	}
+}
+
+@media ( min-width : 992px) {
+	.card-columns {
+		column-count: 4;
+	}
+}
+
+@media ( min-width : 1200px) {
+	.card-columns {
+		column-count: 5;
+	}
+}
+
+.text-Capitalize {
+	text-transform: capitalize !important;
+}
+
+.table {
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 20px;
+	white-space: nowrap;
+}
+
+.thHead {
+	background-color: #4fa9a7 !important;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+}
+
+#sysTexta:hover {
+	color: red;
+}
+
+/* .container-fluid {
+	background-color: aliceblue;
+} */
+</style>
+</head>
+<div id="load"></div>
+<body
+	style="background: url(dist/img/photo-2.png); background-size: cover;">
+	<div th:insert="/header::roleHeader" style="width: 100%"></div>
+
+
+	<div class="content">
+
+		<div class="container-fluid">
+			<form autocomplete="off" role="form" method="post"
+				th:action="@{/closeCountAction}" id="closeCountForm">
+				<input type="hidden" id="encryptedJsonEdit" name="encryptedJson" />
+				<input type="hidden" id="hiddneDeviceToken" name="hiddneDeviceToken"
+					th:value="${user.deviceToken}" />
+				<div class="login-box">
+
+					<!-- <div class="row">
+						<div class="col-sm-12">
+							<div id="carouselExampleControls" class="carousel slide"
+								data-ride="carousel">
+								<div class="carousel-inner">
+									<div class="carousel-item active">
+										<img class="d-block img-size-100" src="dist/img/tm.jpg"
+											alt="First slide">
+									</div>
+									<div class="carousel-item">
+										<img class="d-block img-size-100" src="dist/img/tm.jpg"
+											alt="Second slide">
+									</div>
+									<div class="carousel-item">
+										<img class="d-block img-size-100" src="dist/img/tm.jpg"
+											alt="Third slide">
+									</div>
+								</div>
+								<a class="carousel-control-prev" href="#carouselExampleControls"
+									role="button" data-slide="prev"> <span
+									class="carousel-control-prev-icon" aria-hidden="true"></span> <span
+									class="sr-only">Previous</span>
+								</a> <a class="carousel-control-next"
+									href="#carouselExampleControls" role="button" data-slide="next">
+									<span class="carousel-control-next-icon" aria-hidden="true"></span>
+									<span class="sr-only">Next</span>
+								</a>
+							</div>
+						</div>
+					</div>
+					<br> -->
+
+					<div class="callout callout-info">
+						<b> Select Module to start your session</b>
+					</div>
+					<hr>
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- <div class="card card-secondary card-outline">
+								<div class="card-body"> -->
+							<!-- Info boxes -->
+
+							<div class="row ">
+								<div class="col-sm-4" th:each="moduleList:${moduleList}">
+									<!-- small box -->
+									<div
+										th:class="${'small-box text-white '+moduleList.moduleColorCode}">
+										<div class="inner">
+											<h4>
+												<span th:text="${moduleList.moduleName}"></span>
+											</h4>
+										</div>
+
+										<a href="#" class="small-box-footer text-white "
+											data-toggle="modal"
+											th:data-target="${'#ReportsModal'+moduleList.moduleCode}"
+											th:id="${'Reports'+moduleList.moduleCode}">Click here to
+											Select Role <i class="fas fa-arrow-circle-right"></i>
+										</a>
+									</div>
+									<!-- </div>
+
+									</div> -->
+
+								</div>
+								<!-- /.col -->
+								<!-- fix for small devices only -->
+								<div class="clearfix hidden-md-up"></div>
+
+							</div>
+							<!-- /.row -->
+						</div>
+					</div>
+
+				</div>
+
+
+				<!--RA model  -->
+				<div class="modal fade " th:each="moduleList:${moduleList}"
+					th:id="${'ReportsModal'+moduleList.moduleCode}">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header bg-primary">
+								<h4 class="modal-title text-white">Select Role</h4>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<div class="modal-body">
+
+								<div class="row" th:each="modules:${selectedroleModuleList}">
+									<div class="col-sm-12"
+										th:if="${modules.key} == ${moduleList.moduleCode}"
+										th:each="roleName:${modules.value}">
+										<ul class="list-group p-2">
+
+											<li
+												class="list-group-item font-weight-bold roleList text-primary roleNameDiv"
+												th:id="${roleName.roleName}+'~'+${modules.key}"
+												th:text="${roleName.roleName}"></li>
+
+										</ul>
+									</div>
+								</div>
+								<div class="row" th:each="modules:${unSelectedroleModuleList}">
+									<div class="col-sm-12"
+										th:if="${modules.key} == ${moduleList.moduleCode}"
+										th:each="roleName:${modules.value}">
+										<ul class="list-group p-2">
+
+											<li
+												class="list-group-item font-weight-bold roleList text-secondary disabled'"
+												th:id="${roleName.roleName}+'~'+${modules.key}"
+												th:text="${roleName.roleName}"></li>
+
+										</ul>
+									</div>
+								</div>
+
+
+							</div>
+							<div class="modal-footer justify-content-between">
+								<button type="button" class="btn  btn-secondary"
+									data-dismiss="modal">Close</button>
+
+							</div>
+						</div>
+
+					</div>
+
+				</div>
+				<!-- ./RA model -->
+			</form>
+		</div>
+
+	</div>
+	<footer class="loginfooter">
+		<div class="col-md-4" style="padding: 6px 0 0 10px;">© 2022-2023
+			All rights reserved.</div>
+		<div class="col-md-4"
+			style="float: left; text-align: center; padding: 6px 0 0 10px;">
+			&nbsp;<img class="img-fluid" src="/aml-v4/dist/img/flag.png"
+				alt="Proudly Made In India" width="" height=""> &nbsp; Proudly
+			Made In India
+		</div>
+		<div class="float-right col-md-4">
+			Designed &amp; Developed by <img class="img-fluid"
+				src="/aml-v4/dist/img/intech-logo.png" alt="Photo" width="100"
+				height="100">
+		</div>
+	</footer>
+	<!-- <div th:insert="/footer::footer"></div> -->
+	<!--RA model  -->
+	<div class="modal fade" th:each="moduleCode:${moduleCodeList}"
+		th:attr="id=${'modal-'+moduleCode}">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-primary">
+					<h4 class="modal-title text-white">Select Role</h4>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+					<div class="row" th:each="modules:${selectedroleModuleList}">
+						<div class="col-sm-12" th:if="${modules.key}==${moduleCode}"
+							th:each="roleName:${modules.value}">
+							<ul class="list-group p-2">
+
+								<li
+									class="list-group-item font-weight-bold roleList text-primary roleNameDiv"
+									th:id="${roleName.roleName}+'~'+${modules.key}"
+									th:text="${roleName.roleName}"></li>
+
+							</ul>
+						</div>
+					</div>
+
+
+
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn  btn-secondary"
+						data-dismiss="modal">Close</button>
+
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="card card-secondary card-outline mt-3"
+		style="display: none;">
+		<input type="hidden" th:value="*{message}" id="message" />
+		<form autocomplete="off" role="form" method="post"
+			th:action="@{/roleAction}" id="roleForm">
+			<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+			<div class="card-body">
+
+				<div class="row">
+					<div class="col-lg-4 col-6" th:each="module:${moduleNameList}">
+						<div th:each="moduleName:${module.value}" class="small-box"
+							th:classappend="${moduleName.moduleColorCode}">
+							<div class="inner">
+								<h4>
+									<span th:text="${moduleName.moduleName}"
+										th:val="${moduleName.moduleName}" class="text-white"></span> <span
+										th:text="${moduleName.moduleName}"
+										th:if="${moduleName.moduleName} == 'System Admin'"
+										id="mdleName" th:val="${moduleName.moduleName}"
+										class="text-white" style="display: none;"></span>
+								</h4>
+							</div>
+							<a href="#" class="small-box-footer" data-toggle="modal"
+								th:attr="data-target='#modal-'+${moduleName.moduleCode}"><span
+								class="text-white">Click here to Select Role<em
+									class="fas fa-arrow-circle-right pl-1"></em></span></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<!-- ./RA model -->
+	<!--Vertical model  -->
+	<div class="modal fade" th:each="role:${roleVerticalList}"
+		th:attr="id=${'modal-'+role.vertical.replace(' ','_')+'-Officer'}">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-primary">
+					<h4 class="modal-title text-white">Select Role</h4>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="row" th:each="roleName:${selectedVerticalRoleMap}">
+					<div class="col-sm-12" th:if="${role.vertical}==${roleName.key}"
+						th:each="roleT:${roleName.value}">
+
+						<ul class="list-group p-2">
+							<li th:if="${!#strings.contains(roleT.roleName, 'Checker')}"
+								class="list-group-item font-weight-bold roleList text-primary TMroleNameDiv"
+								th:id="${roleT.roleName}+'~'+${role.vertical}"
+								th:text="${roleT.roleName}"></li>
+						</ul>
+					</div>
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn  btn-secondary"
+						data-dismiss="modal">Close</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ./-Vertical model -->
+
+	<!--Vertical model  -->
+	<div class="modal fade" th:each="role:${roleVerticalList}"
+		th:attr="id=${'modal-'+role.vertical.replace(' ','_')+'-Checker'}">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header bg-primary">
+					<h4 class="modal-title text-white">Select Role</h4>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="row" th:each="roleName:${selectedVerticalRoleMap}">
+					<div class="col-sm-12" th:if="${role.vertical}==${roleName.key}"
+						th:each="roleT:${roleName.value}">
+
+						<ul class="list-group p-2">
+							<li th:if="${#strings.contains(roleT.roleName, 'Checker')}"
+								class="list-group-item font-weight-bold roleList text-primary TMroleNameDiv"
+								th:id="${roleT.roleName}+'~'+${role.vertical}"
+								th:text="${roleT.roleName}"></li>
+						</ul>
+					</div>
+				</div>
+				<div class="modal-footer justify-content-between">
+					<button type="button" class="btn  btn-secondary"
+						data-dismiss="modal">Close</button>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ./-Vertical model -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/home.js}"></script>
+	<script th:src="@{/dist/appjs/erm/viewmodal.js}"></script>
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+	<script>
+		$(".roleNameDiv2")
+				.click(
+						function() {
+
+							document.getElementById('load').style.visibility = "visible";
+							var url = $(this).attr('id').split("~")[0];
+							var userId = $(this).attr('id').split("~")[1];
+
+							var pageValJson = "{\"roleName\":\"" + roleName
+									+ "\",\n" + "\"moduleCode\":\""
+									+ moduleCode + "\"}";
+
+							var iterationCount = 1000;
+							var keySize = 128;
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), pageValJson);
+
+							$("#encryptedJson").val(
+									ciphertext + ':~:' + passphrase);
+							$("#roleForm").submit();
+
+						});
+	</script>
+	<script>
+		$("#logbtn")
+				.click(
+						function() {
+							username = $("#userName").val();
+							passwd = $("#pass").val();
+
+							var iterationCount = 1000;
+							var keySize = 128;
+
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							//var four = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+							//var salt = CryptoJS.lib.WordArray.random(128/8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							//var ciphertext = aesUtil.encrypt(salt, four, passphrase, username);
+							//var ciphertextpassword = aesUtil.encrypt(salt, four, passphrase, passwd);
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), username);
+							var ciphertextpassword = aesUtil.encrypt(
+									reverseText(passphrase), passwd);
+							$("#username").val(ciphertext);
+							$("#password").val(
+									ciphertextpassword + ':~:' + passphrase);
+
+							$("#loginForm").submit();
+
+						});
+
+		$("#userName").keyup(function(e) {
+			var str = $(this).val();
+			$("#userName").val(str.toUpperCase());
+		})
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+	<script>
+		$(".roleNameDiv")
+				.click(
+						function() {
+
+							document.getElementById('load').style.visibility = "visible";
+							var roleName = $(this).attr('id').split("~")[0];
+							var moduleCode = $(this).attr('id').split("~")[1];
+							sessionStorage.setItem('rolename', roleName);
+							sessionStorage.setItem('moduleCode', moduleCode);
+
+							var pageValJson = "{\"roleName\":\"" + roleName
+									+ "\",\n" + "\"moduleCode\":\""
+									+ moduleCode + "\"}";
+
+							var iterationCount = 1000;
+							var keySize = 128;
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), pageValJson);
+
+							$("#encryptedJson").val(
+									ciphertext + ':~:' + passphrase);
+							$("#roleForm").submit();
+
+						});
+	</script>
+
+
+	<script>
+		$(".TMroleNameDiv")
+				.click(
+						function() {
+							var roleName = $(this).attr('id').split("-")[1];
+							var type = $(this).attr('id').split("-")[2];
+							var vertical = $(this).attr('id').split("-")[0];
+							var period = $(this).attr('id').split("-")[3];
+							var varticalFlg = $(this).attr('id').split("-")[4];
+							//document.getElementById('load').style.visibility = "visible";
+							var moduleCode = '';
+
+							if (vertical != null) {
+
+								if (vertical === 'RBG_Operation') {
+
+									if (roleName === 'null') {
+										roleName = 'RBG Operation Officer';
+									}
+
+								} else if (vertical === 'RBG_Asset') {
+
+									if (roleName === 'null') {
+										roleName = 'RBG Asset Officer';
+									}
+
+								}
+							}
+
+							if (roleName === 'System Admin'
+									|| roleName === 'HO Admin') {
+								moduleCode = 'SA';
+							} else {
+								moduleCode = 'TM';
+							}
+
+							var searchFromDashboard = 'searchFrom';
+							sessionStorage.setItem('rolename', roleName);
+							sessionStorage.setItem('verticalFlg', varticalFlg);
+							sessionStorage.setItem('moduleCode', moduleCode);
+							sessionStorage.setItem('searchFromDashboard',
+									searchFromDashboard);
+							sessionStorage.setItem('userCat', type);
+							sessionStorage.setItem('period', period);
+
+							var pageValJson = "{\"roleName\":\"" + roleName
+									+ "\",\n" + "\"moduleCode\":\""
+									+ moduleCode + "\",\n" + "\"vertical\":\""
+									+ vertical + "\",\n" + "\"verticalFlg\":\""
+									+ varticalFlg + "\",\n"
+									+ "\"searchValue\":\"" + period + "\",\n"
+									+ "\"searchFromDashboard\":\""
+									+ searchFromDashboard + "\"}";
+
+							var iterationCount = 1000;
+							var keySize = 128;
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), pageValJson);
+
+							$("#encryptedJson").val(
+									ciphertext + ':~:' + passphrase);
+
+							$("#roleForm").submit();
+
+						});
+	</script>
+
+</body>
+
+<script>
+	$(".roleList")
+			.hover(
+					function() {
+						//$(this).parentsUntil("a").attr("href","#");
+						$(this)
+								.parent()
+								.wrapInner(
+										'<a href="#" style="text-decoration:none !important;"/>');
+						$(this).addClass("text-white active");
+
+					}, function() {
+						$("a#link").replaceWith($("a#link").text());
+						$(this).removeClass("text-white active");
+					});
+</script>
+<script>
+	$(document).ready(function() {
+		if ($("#auditFlg").val() == false) {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}
+		}
+		$('.select2').select2();
+
+		bsCustomFileInput.init();
+	});
+</script>
+<script>
+	$("#submitBtnSwitchOfc2")
+			.click(
+
+					function(e) {
+
+						if ($('#switchOfcFrm').valid()) {
+							document.getElementById('load').style.visibility = "visible";
+							//Check table data
+
+							var apString = "{\"officeType\":\""
+									+ $("#officeTypeSwitchOffice").val()
+									+ "\",\n" + "\"officeCode\":\""
+									+ $("#officeCodeSo").val() + "\",\n"
+									+ "\"roleName\":\""
+									+ $("#roleNameSo").val() + "\",\n"
+									+ "\"department\":\""
+									+ $("#departmentSo").val() + "\"}"
+
+							//var apString=""
+
+							var iterationCount = 1000;
+							var keySize = 128;
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), apString);
+
+							$("#encryptedJsonModel").val(
+									ciphertext + ':~:' + passphrase);
+
+							$("#switchOfcFrm").submit();
+
+						}
+					});
+	jQuery(document)
+			.ready(
+					function() {
+						$(function() {
+							$('#switchOfcFrm')
+									.validate(
+											{
+												rules : {
+
+													departmentSo : {
+														required : true,
+													},
+													officeTypeSwitchOffice : {
+														required : true,
+
+													},
+													officeCodeSo : {
+														required : true,
+													},
+
+													roleNameSo : {
+														required : true,
+													},
+
+												},
+
+												messages : {
+
+													departmentSo : {
+														required : "Please Select Department"
+													},
+
+													officeTypeSwitchOffice : {
+														required : "Please Select Office Type"
+													},
+
+													officeCodeSo : {
+														required : "Please Select Office Code"
+													},
+													roleNameSo : {
+														required : "Please Select Role Name"
+													},
+
+												},
+												errorElement : 'span',
+												errorPlacement : function(
+														error, element) {
+													error
+															.addClass('invalid-feedback');
+													element.closest(
+															'.form-group')
+															.append(error);
+												},
+												highlight : function(element,
+														errorClass, validClass) {
+													$(element).addClass(
+															'is-invalid');
+												},
+												unhighlight : function(element,
+														errorClass, validClass) {
+													$(element).removeClass(
+															'is-invalid');
+												},
+												submitHandler : function(form) {
+
+													document
+															.getElementById('load').style.visibility = "visible";
+													form.submit();
+
+												}
+											});
+						});
+					});
+</script>
+
+<script>
+	$(".closeCount")
+			.click(
+					function() {
+
+						document.getElementById('load').style.visibility = "visible";
+						var custVertical = $(this).attr('id');
+						var pageValJson = "{\"custVertical\":\"" + custVertical
+								+ "\"}";
+						var iterationCount = 1000;
+						var keySize = 128;
+						//passPhrase is the key
+						var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+								.toString(CryptoJS.enc.Hex);
+
+						var aesUtil = new AesUtil(keySize, iterationCount);
+
+						var ciphertext = aesUtil.encrypt(
+								reverseText(passphrase), pageValJson);
+
+						$("#encryptedJsonEdit").val(
+								ciphertext + ':~:' + passphrase);
+						$("#closeCountForm").submit();
+
+					});
+</script>
+
+<script type="text/javascript">
+	$(function() {
+
+		var currentdate = new Date();
+		var datetime = +currentdate.getDate() + "/"
+				+ (currentdate.getMonth() + 1) + "/"
+				+ currentdate.getFullYear() + "_" + currentdate.getHours()
+				+ ":" + currentdate.getMinutes() + ":"
+				+ currentdate.getSeconds();
+
+		$("#roleValueTable").DataTable({
+			"columnDefs" : [ {
+				orderable : false
+			} ],
+			"order" : [ 0, "desc" ],
+			"responsive" : false,
+			"autoWidth" : true,
+			"searching" : false,
+			"fixedHeader" : true,
+			"language" : {
+				"emptyTable" : "No Data Available"
+			},
+			"buttons" : [ {
+				extend : 'excel',
+				title : 'VerticalWiseCount_' + datetime,
+			} ]
+		}).buttons().container().appendTo(
+				'#roleValueTable_wrapper .col-md-6:eq(0)');
+		$("#miscVertical").DataTable({
+			"columnDefs" : [ {
+				orderable : false
+			} ],
+			"order" : [ 0, "desc" ],
+			"responsive" : false,
+			"autoWidth" : true,
+			"searching" : false,
+			"fixedHeader" : true,
+			"language" : {
+				"emptyTable" : "No Data Available"
+			},
+			"buttons" : [ {
+				extend : 'excel',
+				title : 'VerticalWiseCount_' + datetime,
+			} ]
+		}).buttons().container().appendTo(
+				'#miscVertical_wrapper .col-md-6:eq(0)');
+		$("#otherVertical").DataTable({
+			"columnDefs" : [ {
+				orderable : false
+			} ],
+			"order" : [ 0, "desc" ],
+			"responsive" : false,
+			"autoWidth" : true,
+			"searching" : false,
+			"fixedHeader" : true,
+			"language" : {
+				"emptyTable" : "No Data Available"
+			},
+			"buttons" : [ {
+				extend : 'excel',
+				title : 'VerticalWiseCount_' + datetime,
+			} ]
+		}).buttons().container().appendTo(
+				'#otherVertical_wrapper .col-md-6:eq(0)');
+	});
+
+	var backgroundClr = [ '#ffd700', '#0a0', '#1b458b', '#08f', '#f80', '#a04',
+			'#a52a2a', '#34e5eb' ];
+
+	var list = [];
+	var otherVertList = [];
+	var miscVertList = [];
+	//var list2 = [];
+	var ticksStyle = {
+		fontColor : '#495057',
+		fontStyle : 'bold'
+	}
+
+	/*FETCH BUTTON CLICK FUNCTION*/
+	var list = [];
+	var zoneList = [];
+	var qList = [];
+	var data = [];
+	var $visitorsChart = $('#visitors-chart')
+	var ticksStyle = {
+		fontColor : '#495057',
+		fontStyle : 'bold'
+	}
+	// eslint-disable-next-line no-unused-vars
+	var open = [];
+	var close = [];
+	var escalate = [];
+	var mode = 'index'
+	var intersect = true
+
+	$('#myVertBtn').on('click', function() {
+		$(".otherVertical").hide();
+		$(".miscVertical").hide();
+		$(".myVertical").show();
+	});
+	$('#otherVertBtn').on('click', function() {
+		$(".otherVertical").show();
+		$(".miscVertical").hide();
+		$(".myVertical").hide();
+	});
+	$('#miscVertBtn').on('click', function() {
+		$(".otherVertical").hide();
+		$(".miscVertical").show();
+		$(".myVertical").hide();
+	});
+
+	$(document).ready(
+			function() { 
+				if (localStorage.getItem('deviceToken') != $(
+						'#hiddneDeviceToken').val()) {
+					$('#roleForm').attr('action', 'redirectToMultipleLogin');
+					$("#roleForm").submit();
+				}
+			});
+</script>
+</body>
+</html>

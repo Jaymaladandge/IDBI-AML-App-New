@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#errmsgwarrenty {
+	color: red;
+}
+
+.card-info:not (.card-outline )>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.thresholdTable, th, td {
+	padding: 5px;
+	border: 1px solid #ced4da;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+
+	<!-- Included header.html -->
+	<div th:insert="/header::header"></div>
+
+	<!-- Content Wrapper. Contains page content -->
+	<div class="content-wrapper">
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-6">
+						<h4>Subscription Page</h4>
+					</div>
+					<!-- /.col -->
+					<div class="col-sm-6">
+						<ol class="breadcrumb float-sm-right">
+							<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+							<li class="breadcrumb-item active">Subscribe</li>
+						</ol>
+					</div>
+					<!-- /.col -->
+				</div>
+				<!-- /.row -->
+			</div>
+			<!-- /.container-fluid -->
+		</div>
+		<!-- /.content-header -->
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="card card-info">
+							<div class="card-header">
+								<h3 class="card-title text-center">Upload Your License</h3>
+							</div>
+							<!-- /.card-header -->
+							<!-- form start -->
+							<form autocomplete="off" class="form-horizontal" id="frmlicense"
+								th:action="@{/savelicense}" method="post"
+								enctype="multipart/form-data" th:object="${encryptedRequest}">
+								<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+								<div class="card-body">
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label>License ID</label>
+												<div class="input-group">
+													<input type="text"
+														class="form-control form-control-sm text-bold"
+														id="licenseid" name="licenseid">
+												</div>
+											</div>
+
+										</div>
+
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label></label><label></label>
+												<div class="input-group">
+													<!-- <a th:href="@{/home}" onclick="clear()">I Have License ID</a>
+													<a href="" onclick="clear()">Clear Text</a> -->
+
+													<button type="button" id="fetchLicense"
+														class="btn btn-info" title="Create">
+														<i class="fas fa-" style="padding: 0 7px 0 0px;"></i>I
+														Have License ID
+													</button>
+												</div>
+											</div>
+
+										</div>
+
+									</div>
+									<!-- /.row -->
+									<!-- <div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<button type="button" class="btn btn-info" title="Create"
+													onclick="makeid()">
+													<i class="fas fa-" style="padding: 0 7px 0 0px;"></i>Generate
+													License ID
+												</button>
+													<button type="button" id="fetchLicense" class="btn btn-info"
+													title="Create" onclick="valLicenseId()">
+													<i class="fas fa-" style="padding: 0 7px 0 0px;"></i>I Have
+													License ID
+												</button>
+											</div>
+										</div>
+									</div> -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">Product Name</label>
+												<div class="input-group">
+													<input type="text"
+														class="form-control form-control-sm text-bold"
+														id="productname" name="productname">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">License Upload Date</label>
+												<div class="input-group">
+													<input type="date"
+														class="form-control form-control-sm text-bold"
+														id="licenseUploadDate" name="licenseUploadDate">
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">Activation Date</label>
+												<div class="input-group">
+													<input type="date"
+														class="form-control form-control-sm text-bold"
+														id="activationDate" name="activationDate">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">Warrenty(days)</label>
+												<samp id="errmsgwarrenty"></samp>
+												<div class="input-group">
+													
+													<input type="text"
+														class="form-control form-control-sm text-bold"
+														id="warrenty" name="warrenty">
+												</div>
+											</div>
+										</div>
+
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">AMC Start Date</label>
+												<div class="input-group">
+													<input type="text"
+														class="form-control form-control-sm text-bold"
+														id="amcStartDate" name="amcStartDate">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+
+												<label for="amcFrequency">AMC Frequency</label> <select
+													class="form-control from-control-sm select2"
+													name="amcFrequency" id="amcFrequency" style="width: 100%;"
+													data-placeholder="Frequency">
+													<option value=''>Select AMC Frequency</option>
+													<option value='D'>Daily</option>
+													<option value='W'>Weekly</option>
+													<option value='F'>Fortnightly</option>
+													<option value='M'>Monthly</option>
+													<option value='Q'>Quarterly</option>
+													<option value='H'>Half Yearly</option>
+													<option value='Y'>Yearly</option>
+												</select>
+											</div>
+										</div>
+
+									</div>
+									<!-- /.row -->
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">AMC Expiry Date</label>
+												<div class="input-group">
+													<input type="text"
+														class="form-control form-control-sm text-bold"
+														id="amcExpDate" name="amcExpDate">
+												</div>
+											</div>
+										</div>
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="recordstatus">License Status</label> <select
+													class="form-control from-control-sm select2"
+													name="licenseStatus" id="licenseStatus"
+													style="width: 100%;">
+													<option value=''>Select Status</option>
+													<option value='A'>Active</option>
+													<option value='I'>Inactive</option>
+
+												</select>
+											</div>
+										</div>
+
+									</div>
+									<!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="customFile">Document Attachment</label>
+												<div class="custom-file">
+													<input type="file" class="custom-file-input input-group-sm"
+														id="customFile" style="display: none;" name="files[]"
+														multiple="multiple" onchange="getFileData(this);" /> <label
+														class="btn bg-gray" for="customFile">Choose file</label>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-sm-12">
+											<table class="table table-bordered table-striped uploadTable"
+												id="filedetails" style="display: none">
+												<thead>
+													<tr>
+														<th>File Name</th>
+														<th>File Size</th>
+														<th>Upload Date</th>
+														<th>Upload By</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody>
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<!-- /.row -->
+								</div>
+								<!-- /.card-body -->
+								<div class="card-footer">
+									<button type="button" id="create" class="btn btn-info"
+										title="Create">
+										<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+									</button>
+									<!-- <button type="button" id="cal" class="btn btn-info"
+										title="Create">
+										<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+									</button> -->
+									<a href="#" data-toggle="modal" data-whatever="mainKriPage"
+										data-target="#cancelmodel"><button type="reset"
+											class="btn btn-warning" title="Cancel">
+											<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+										</button></a>
+								</div>
+								<!-- /.card-footer -->
+								<!-- /.card-footer -->
+							</form>
+						</div>
+						<!-- /.card -->
+					</div>
+				</div>
+			</div>
+			<!--/. container-fluid -->
+
+			<!-- Confirmation Modal -->
+			<div class="modal fade" id="confirmmodal">
+				<div class="modal-dialog modal-fluid">
+					<div class="modal-content">
+						<div class="modal-header bg-info">
+							<h6 class="modal-title">Confirm</h6>
+							<button type="button" class="close text-white"
+								data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+
+						<div class="modal-body">
+							<h5 class="card-title">Are You Sure You Want To Submit This
+								Record?</h5>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+							</button>
+							<button type="button" id="submitLicense" name="create"
+								class="btn btn-primary target">
+								<i class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Yes
+							</button>
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- Confirm Modal -->
+
+			<!-- Cancel Modal -->
+			<div class="modal fade" id="cancelmodel">
+				<div class="modal-dialog modal-fluid">
+					<div class="modal-content">
+						<div class="modal-header bg-info">
+							<h6 class="modal-title">Confirm</h6>
+							<button type="button" class="close text-white"
+								data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<!-- form start -->
+						<div class="modal-body">
+							<h5 class="card-title">
+								If you leave this page, all changes will be lost. <br>
+								Press "Ok" to Continue.
+							</h5>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+							</button>
+							<a class="btn btn-primary target"><i class="fas fa-check"
+								style="padding: 0 7px 0 0px;"></i>Ok </a>
+						</div>
+						<!-- /.Card -->
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.Cancel Modal -->
+			<!-- Threshold Modal -->
+			<div class="modal fade" id="thresholdmodel">
+				<div class="modal-dialog modal-fluid">
+					<div class="modal-content">
+						<div class="modal-header bg-info">
+							<h6 class="modal-title">Set Threshold</h6>
+							<button type="button" class="close text-white"
+								data-dismiss="modal" aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<!-- form start -->
+						<div class="modal-body">
+							<h5 class="card-title">
+								If you leave this page, all changes will be lost. <br>
+								Press "Ok" to Continue.
+							</h5>
+						</div>
+
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+							</button>
+							<a class="btn btn-primary target"><i class="fas fa-check"
+								style="padding: 0 7px 0 0px;"></i>Ok </a>
+						</div>
+						<!-- /.Card -->
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.Cancel Modal -->
+
+		</section>
+		<!-- /.content -->
+
+	</div>
+	<!-- /.content-wrapper -->
+
+
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+
+
+	
+	<!-- Included Footer -->
+	<div th:insert="/footer::footer"></div>
+	
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Development JavaScript -->
+	<script th:src="@{/dist/appjs/erm/subscription.js}"></script>
+
+
+</body>
+</html>

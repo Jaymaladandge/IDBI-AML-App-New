@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+		<div class="wrapper">
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+			<div class="content-wrapper">
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Rule Management</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+									<li class="breadcrumb-item active"><a href="#">Rule
+											Management</a></li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<section class="content">
+					<div class="container-fluid">
+						<div class="container-fluid">
+							<div class=" card">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="card-body">
+											<div class="card card-outline card-secondary" id="collapse">
+												<div class="card-header" data-card-widget="collapse">
+													<h3 class="card-title text-bold">Search</h3>
+												</div>
+												<div class="card-body">
+													<form autocomplete="off" role="form" method="post"
+														aria-label="form" th:action="@{/searchRule}"
+														id="searchForm" th:object="${encryptedRequest}">
+														<input type="hidden" id="encryptedJson"
+															name="encryptedJson" /> <input type="hidden"
+															id="message" th:value="${msg}" name="message" /><input
+															type="hidden" id="source" th:value="${source}"
+															name="source" />
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group row">
+																	<label class="col-4">Select Parameter</label> <label
+																		class="col-6">Value</label><span class="col-2"></span>
+																	<select
+																		class="col-sm-4 form-control form-control-sm select2"
+																		name="searchParam" id="searchParam"
+																		data-placeholder="Search Parameter">
+																		<option value=''>Select</option>
+																		<option value='ruleId'>Rule ID</option>
+																		<option value='ruleStatus'>Rule Status</option>
+																		<option value='ruleDesc'>Rule Description</option>
+																	</select> &nbsp;&nbsp;<input type="text"
+																		class="col-4 form-control form-control-sm"
+																		name="searchcriteria" id="searchcriteria"
+																		placeholder="Value">&nbsp; <a
+																		class="btn btn-sm btn-info" href="#"
+																		onclick="searchData()" title="Search"> <em
+																		class="col-2 fas fa-search fa-1x text-black"></em>
+																	</a>
+																</div>
+															</div>
+														</div>
+													</form>
+												</div>
+												<!-- card-body -->
+											</div>
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<input type="hidden" th:value="*{message}" id="message" />
+													<span class="float-right"> <a
+														th:if="${ruleDto.creFlg}"
+														th:href="@{/redirectToCreateRule}" class="btn bg-teal"
+														style="margin-right: 5px;" title="Create workflow"> <em
+															class="fas fa-plus-square"></em>&nbsp;Create
+													</a><a th:unless="${ruleDto.creFlg}"
+														th:href="@{/redirectToCreateRule}"
+														class="btn bg-teal disabled" style="margin-right: 5px;"
+														title="Create workflow"> <em
+															class="fas fa-plus-square"></em>&nbsp;Create
+													</a></span>
+												</div>
+												<div class="card-body table-responsive">
+													<form autocomplete="off" role="form" method="post"
+														th:action="@{/fetchRuleData}" id="ruleForm"
+														th:object="${encryptedRequest}">
+														<input type="hidden" id="encryptedJsonEdit"
+															name="encryptedJson" />
+														<table id="ruleTable"
+															class="table table-sm table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th scope="col">Rule Id</th>
+																	<th scope="col">Rule Description</th>
+																	<th scope="col">Rule Classification</th>
+																	<th scope="col">Rule Indicator</th>
+																	<th scope="col">Rule Status</th>
+																	<th scope="col"></th>
+																	<th scope="col"></th>
+																	<th scope="col"></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr th:each="ruleObj:${ruleDto.ruleList}">
+																	<td><a th:text="${ruleObj.ruleId}"
+																		th:title="${ruleObj.ruleDesc}"
+																		class="text-blue ruleModel" href="#"
+																		th:id="${ruleObj.ruleId}"></a></td>
+																	<td th:text="${ruleObj.ruleDesc}"></td>
+																	<td th:text="${ruleObj.ruleClassification}"></td>
+																	<td th:text="${ruleObj.ruleIndicator}"></td>
+																	<td th:switch="${ruleObj.recordStatus}"><span
+																		th:case="'Y'" class="badge bg-success">Active</span> <span
+																		th:case="'C'" class="badge bg-warning">Pending
+																			For Create Verification</span> <span th:case="'E'"
+																		class="badge bg-warning">Pending For Edit
+																			Verification</span><span th:case="'N'"
+																		class="badge bg-danger">Inactive</span></td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple editRule"
+																			th:if="${ruleObj.editFlg}" title="Edit"
+																			th:id="${ruleObj.ruleId}"> <em
+																				class="fa fa-edit fa-1x text-black"></em>
+																		</a> <a th:unless="${ruleObj.editFlg}"
+																			class="btn btn-sm bg-purple editRule disabled"
+																			title="Edit" th:id="${ruleObj.ruleId}"> <em
+																				class="fa fa-edit fa-1x text-black "></em></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-success verifyRule"
+																			th:if="${ruleObj.verifyFlg}" title="Verify"
+																			th:id="${ruleObj.ruleId}"> <em
+																				class="fa fa-arrow-right fa-1x text-black"></em>
+																		</a> <a th:unless="${ruleObj.verifyFlg}"
+																			class="btn btn-sm bg-success verifyRule disabled"
+																			title="Verify" th:id="${ruleObj.ruleId}"> <em
+																				class="fa fa-arrow-right fa-1x text-black "></em></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span><a
+																			th:id="${ruleObj.ruleId}"
+																			class="btn btn-sm bg-maroon viewAuditModal"
+																			title="Audit Trail"><em class="fab fa-twitch"></em></a></span></td>
+																</tr>
+															</tbody>
+														</table>
+													</form>
+													<!-- /form -->
+												</div>
+												<!-- /card-body -->
+											</div>
+											<div class="modal fade" id="timelinemodal">
+												<div class="modal-dialog modal-xl">
+													<div class="modal-content">
+														<div class="modal-header bg-info">
+															<h5 class="modal-title">Audit Trail</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<!-- form start -->
+														<div class="card-body">
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="timeline">
+																<div class="timeline timeline-inverse" id="row_0"></div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="modal fade" id="viewRuleModel">
+												<div class="modal-dialog modal-xl">
+													<div class="modal-content">
+														<div class="modal-header"
+															style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+															<h5 class="modal-title">
+																Rule ID - <span id="ruleIdLabel"></span>
+															</h5>
+															<button type="button" class="close text-white"
+																data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="card-body">
+
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group">
+																		<label for="ruleDesc_label">Rule Description</label>
+																		<textarea class="form-control form-control-sm"
+																			id="ruleDesc" name="ruleDesc"
+																			placeholder="Rule Description" readonly></textarea>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleFrequency_label">Rule
+																			Frequency</label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleFrequency" name="ruleFrequency" value=""
+																			placeholder="Rule Frequency" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="riskcategory">Rule Classification
+																		</label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleClassification" name="ruleClassification"
+																			value="" placeholder="Rule Classification" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleIndicator_label">Rule
+																			Indicator </label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleIndicator" name="ruleIndicator" value=""
+																			placeholder="Rule Indicator" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleCategory_label">Rule Category</label>
+																		<input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleCategory" name="ruleCategory" value=""
+																			placeholder="Rule Category" readonly>
+																	</div>
+																</div>
+
+															</div>
+
+															<div class="row">
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleImpact_label">Rule Impact</label> <input
+																			type="text" class="form-control form-control-sm"
+																			id="ruleImpact" name="ruleImpact" value=""
+																			placeholder="Rule Impact" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleLikelihood_label">Rule
+																			Likelihood </label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleLikelihood" name="ruleLikelihood" value=""
+																			placeholder="Rule Likelihood" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="inherentRisk_label">Inherent Risk</label>
+																		<input type="text"
+																			class="form-control form-control-sm"
+																			id="inherentRisk" name="inherentRisk" value=""
+																			placeholder="Inherent Risk" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleConstitution_label">Rule
+																			Constitution</label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleConstitution" name="ruleConstitution"
+																			value="" placeholder="Rule Constitution" readonly>
+																	</div>
+																</div>
+
+															</div>
+
+															<div class="row">
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleTrnChannel_label">Rule
+																			Transaction Channel</label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleTrnChannel" name="ruleTrnChannel" value=""
+																			placeholder="Rule Transaction Channel" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleTrnSubChannel_label">Rule
+																			Transaction Sub Channel </label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="ruleTrnSubChannel" name="ruleTrnSubChannel"
+																			value="" placeholder="Rule Trn Sub Channel" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="ruleAggType_label">Rule Aggregate
+																			Type</label> <input type="text"
+																			class="form-control form-control-sm" id="ruleAggType"
+																			name="ruleAggType" value=""
+																			placeholder="Rule Aggregate Type" readonly>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<div class="form-group">
+																		<label for="actionStatus_label">Record Status</label>
+																		<input type="text"
+																			class="form-control form-control-sm"
+																			id="recordStatus" name="recordStatus" value=""
+																			placeholder="Record Status" readonly>
+																	</div>
+																</div>
+															</div>
+															<div class="card card-info bg-cyan p-2 mt-1">
+																<h3 class="card-title">&nbsp; Details for Rule
+																	Threshold</h3>
+															</div>
+															<div class="row" id="ruleThresRow">
+																<div class="col-sm-12 table-responsive">
+																	<div class="card card-outline card-secondary">
+																		<div class="card-header">
+																			<h3 class="card-title">Rule Threshold</h3>
+																		</div>
+																		<div class="card-body">
+																			<table
+																				class="table table-sm table-head-fixed table-bordered table-striped ruleThresDtls "
+																				id="ruleThresDtls" style="width: 100%">
+																				<thead>
+																					<tr>
+																						<th scope="col">Rule Parameter</th>
+																						<th scope="col">Rule Key</th>
+																					</tr>
+																				</thead>
+																				<tbody id="tbodyR">
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="card card-info bg-cyan p-2 mt-1">
+																<h3 class="card-title">&nbsp; Details for Rule Risk
+																	Parameter</h3>
+															</div>
+															<div class="row" id="ruleRiskRow">
+																<div class="col-sm-12 table-responsive">
+																	<div class="card card-outline card-secondary">
+																		<div class="card-header">
+																			<h3 class="card-title">Rule Risk Parameter</h3>
+																		</div>
+																		<div class="card-body">
+																			<table
+																				class="table table-bordered table-sm table-striped  ruleRiskDtls"
+																				id="ruleRiskDtls" style="width: 100%">
+																				<tr>
+																					<th scope="col">Rule Risk Id</th>
+																					<th scope="col">Risk Parameter</th>
+																					<th scope="col">Risk value</th>
+																				</tr>
+																				<tbody id="tbodyRiskR">
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="card-footer">
+																<button type="button" class="btn btn-secondary"
+																	data-dismiss="modal">
+																	<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em>
+																	Back
+																</button>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.card-footer -->
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+			<div th:insert="/footer::footer"></div>
+		</div>
+	</div>
+
+	<!-- REQUIRED SCRIPTS -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/audittrail.js}"></script>
+	<script th:src="@{/dist/appjs/aml/ruleSummary.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ERM</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Workflow Summary</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Workflow Management</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<div class="row">
+												<div class="col-sm-12">
+													<div
+														class="card collapsed-card card-outline card-secondary"
+														id="collapse">
+														<div class="card-header" data-card-widget="collapse">
+															<h3 class="card-title text-bold">Search</h3>
+															<button type="button" class="btn btn-tool float-right"
+																data-toggle="tooltip" title="Collapse">
+																<em class="fas fa-plus" style="color: #007bff;"></em>
+															</button>
+														</div>
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchWorkflowList}" id="searchForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row">
+																			<label class="col-4">Select Workflow</label> <label
+																				class="col-6">Value</label> <label class="col-2">Sort</label>
+																			<select
+																				class="col-4 form-control form-control-sm select2"
+																				name="WorkflowParam" id="WorkflowParam"
+																				data-placeholder="Search Parameter">
+																				<option value=''>Select</option>
+																				<option value='wfGroupId'>Workflow Group ID</option>
+																				<option value='wfModule'>Workflow Module</option>
+																				<option value='wfActionSource'>Workflow
+																					Description</option>
+																				<option value='wfActionDest'>Workflow
+																					Status</option>
+
+																			</select>&nbsp; <input type="text"
+																				class="col-6 form-control form-control-sm"
+																				name="searchcriteria" id="searchcriteria"
+																				placeholder="Value">&nbsp; <a
+																				class="btn btn-sm btn-info" href="#"
+																				onclick="searchData()" title="Search"> <i
+																				class="fas fa-search fa-1x text-black"></i>
+																			</a>
+																		</div>
+																	</div>
+																</div>
+																<!-- /row -->
+															</form>
+														</div>
+														<!-- card-body -->
+													</div>
+													<!-- card -->
+												</div>
+												<!-- ./col -->
+											</div>
+											<!-- ./row -->
+
+											<!-- /row -->
+
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-header">
+															<input type="hidden" th:value="*{message}" id="message" />
+															<span class="float-right"> <a
+																th:href="@{/createWorkflow}" class="btn bg-teal"
+																style="margin-right: 5px;" title="Create workflow">
+																	<i class="fas fa-plus-square"></i>&nbsp;Create
+															</a></span>
+														</div>
+														<div class="card-body table-responsive">
+
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/editWorkflow}" id="editWorkflowForm"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" /> <input type="hidden"
+																	name="wfModule" id="userName"
+																	th:value="${workflow.userName}" th:name="clientName" />
+
+
+																<table id="Workflowtable"
+																	class="table table-head-fixed table-bordered table-striped">
+																	<thead>
+																		<tr>
+
+																			<th>WfGroup ID</th>
+																			<th>Workflow Module</th>
+																			<th>Workflow Description</th>
+																			<th>Status</th>
+																			<th></th>
+																			<th></th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="wfList:${workflow.wfList}">
+
+																			<td><a class="text-blue WorkflowModel"
+																				data-toggle="modal" href="#"
+																				th:id="${wfList.wfGroupId}"
+																				th:text="${wfList.wfGroupId}"></a></td>
+
+																			<td th:text="${wfList.wfModule}"
+																				class="text-capitalize"></td>
+																			<td th:text="${wfList.wfDescription}"
+																				class="text-capitalize"></td>
+
+																			<td th:switch="${wfList.wfStatus}"><span
+																				th:case="'A'" class="badge bg-success">Active</span>
+																				<span th:case="'N'" class="badge bg-warning">In-Active</span>
+																			</td>
+
+																			<td class="project-actions text-center"><span>
+																					<a class="btn btn-sm bg-purple editWorkflow"
+																					title="Edit" th:id="${wfList.wfGroupId}"> <i
+																						class="fa fa-edit fa-1x text-black"></i></a>
+																			</span></td>
+
+																			<td class="project-actions text-center"><span><a
+																					class="btn btn-sm bg-maroon viewAuditTrail"
+																					title="Audit Trail"><i class="fab fa-twitch"></i></a></span></td>
+
+																		</tr>
+
+
+																	</tbody>
+																</table>
+															</form>
+															<!-- /form -->
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse">
+												<!-- timeline time label -->
+												<div class="time-label">
+													<span class="bg-success"> 10 Feb. 2014 </span>
+												</div>
+												<!-- /.timeline-label -->
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 5
+															mins ago</span>
+
+														<h3 class="timeline-header border-0">
+															<a href="#">Rohit Singh</a> approved request
+														</h3>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div class="time-label">
+													<span class="bg-success"> 3 Jan. 2014 </span>
+												</div>
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 27
+															mins ago</span>
+
+														<h3 class="timeline-header">
+															<a href="#">Akshay Mhatre</a> created request
+														</h3>
+
+														<div class="timeline-body">Request created.</div>
+														<div class="timeline-footer">
+															<a href="#" class="btn btn-warning btn-flat btn-sm">View
+																comment</a>
+														</div>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline time label -->
+
+												<!-- /.timeline-label -->
+
+												<!-- END timeline item -->
+												<div>
+													<i class="far fa-clock bg-gray"></i>
+												</div>
+											</div>
+										</div>
+										<!-- /.tab-pane -->
+
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+
+				<!-- View Modal -->
+				<div class="modal fade" id="WorkflowModel">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">
+									Workflow Group ID - <span id="WorkflowIdLabel"></span>
+								</h5>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+							<form class="form-horizontal">
+								<div class="card-body">
+
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="parameter_key">Workflow Module</label> <input
+													type="text" class="form-control form-control-sm"
+													id="WorkflowModule" name="WorkflowModule"
+													placeholder="Workflow Module" readonly>
+											</div>
+										</div>
+
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="parameter_key">Workflow Description</label> <input
+													type="text" class="form-control form-control-sm"
+													id="WorkflowDesc" name="WorkflowDesc"
+													placeholder="Workflow  Description" readonly>
+											</div>
+										</div>
+									</div>
+
+									<div class="callout callout-info">
+										<b> Workflow Actions</b>
+									</div>
+									<!-- <div class="row" id="subViewDiv">
+												
+											
+										
+										</div> -->
+									<div
+										style="overflow-x: auto !important; width: 100% !important;">
+										<table class="table table-bordered table-striped"
+											id="workflowDataTable">
+											<thead>
+												<tr>
+
+													<th>Workflow ID</th>
+													<th>Action ID</th>
+													<th>Action Source</th>
+													<th>Action Destination</th>
+													<th>Action Name</th>
+													<th>Action Department</th>
+													<th>Office Source Type</th>
+													<th>Office Destination Type</th>
+
+
+												</tr>
+											</thead>
+											<tbody id="addBody">
+
+											</tbody>
+										</table>
+									</div>
+
+
+									<div class="card-footer">
+
+										<button class="btn btn-secondary" id="backbtn">
+											<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+										</button>
+									</div>
+									<!-- /.card-footer -->
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- Comment Modal -->
+
+
+
+				<!-- /.modal -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<script>
+	$(document).ready(function() {
+	var message = $('#message').val();
+	if (message != "") {
+		toastr.success(message);
+	}
+	
+	
+	});
+	
+	$('#searchcriteria').keypress(function(e){
+		if ( e.which == 13 ) return false;
+		if ( e.which == 13 ) e.preventDefault();
+		});
+	
+		$(function() {
+			$("#Workflowtable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : [4,5]
+				} ],
+				"order" : [ 0, "desc" ],
+				"responsive" : false,
+				"lengthMenu" : [ 10,25, 50, 75, 100 ],
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true,
+				"buttons": ["csv", "excel", "pdf", "print"],
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo(
+					'#Workflowtable_wrapper .col-md-6:eq(0)');
+		});
+		
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			setTimeout(function() {
+				document.getElementById('load').style.visibility = "hidden";
+			}, 1000);
+		}
+			
+	</script>
+
+	<script>
+	 $('a.WorkflowModel')
+		.click(
+				function() {
+
+					var wfGroupId = $(this).attr('id');
+					//var sourceName="createVerify";
+					
+					var pageValJson = "{\"wfGroupId\":" + "\""+ wfGroupId + "\"}";
+					console.log(pageValJson)
+							document.getElementById('load').style.visibility = "visible";		
+						//	alert(pageValJson);
+									
+	// ajax call
+		$
+			.ajax({
+				url: 'viewWorkflowModelPage',
+				type: "POST",
+				data: {
+					pageValJson: pageValJson
+				},// important line for thymeleaf http security
+
+				headers: {
+					"X-CSRF-TOKEN": $( "input[name='_csrf']").val()
+				},
+				cache: false,
+				// async:true,
+				success: function(response) {
+					setTimeout(
+						function() {
+							document
+								.getElementById('interactive');
+						}, 1000);
+					document.getElementById('load').style.visibility = "hidden";
+					
+					var jsonResponse = JSON
+						.stringify(response);
+					
+					obj = JSON.parse(jsonResponse);
+					
+					$("#WorkflowIdLabel").text(obj.wfGroupId);
+					$("#WorkflowModule").val(obj.wfModule);
+					/* if(obj.wfModule == 'RA'){
+					$("#WorkflowModule").val(obj.wfModule);
+					}
+					else if(obj.wfModule == 'IM'){
+					$("#WorkflowModule").val("INCIDENT MANAGEMENT");
+					}
+					else if(obj.wfModule == 'TP'){
+						$("#WorkflowModule").val("TOP RISK");
+						}
+					else if(obj.wfModule == 'KI'){
+						$("#WorkflowModule").val("KRI");
+						}
+					else if(obj.wfModule == 'RCSA'){
+						$("#WorkflowModule").val("RCSA");
+						}
+					else if(obj.wfModule == 'AP'){
+						$("#WorkflowModule").val("ACTION PLAN");
+						} */
+					
+					$("#WorkflowDesc").val(obj.wfDescription);
+					
+						$('#addBody').empty();
+						$('#workflowDataTable').dataTable().fnClearTable();
+						$('#workflowDataTable').DataTable().destroy();
+				
+					if (obj.actionViewList != null && obj.actionViewList.length > 0) {
+					obj.actionViewList.forEach(function(item) {
+						
+						
+
+						$('#addBody').append(`<tr>
+								<td  class="text-center">
+								${item.wfId}
+								</td>
+								<td  class="text-center">
+								${item.wfActionId}
+								</td>
+								<td  class="text-center">
+								${item.wfActionSource}
+								</td>
+								<td  class="text-center">
+								${item.wfActionDest}
+								</td>
+								<td  class="text-center">
+								${item.wfTitle}
+								</td>
+								<td  class="text-center">
+								${item.wfDeptName}
+								</td>
+								<td  class="text-center">
+								${item.wfOfficeType}
+								</td>
+								<td  class="text-center">
+								${item.wfOfcDest}
+								</td>
+							
+								
+								</tr>`);
+					 
+					}); 
+					}else{
+						toastr
+						.error('Sorry Data Not Available');
+					}
+					
+					$("#workflowDataTable").DataTable({
+						"columnDefs" : [ {
+							orderable : false
+							
+						} ],
+						"order" : [ 0, "desc" ],
+						"responsive" : false,
+						"lengthMenu" : [ 5,25, 50, 75, 100 ],
+						"autoWidth" : true,
+						"searching" : false,
+						"fixedHeader" : true,
+						"buttons": ["csv", "excel", "pdf", "print"],
+						"language" : {
+							"emptyTable" : "No Data Available"
+						}
+					})
+				
+				},
+				error: function(xhr, status, error) {
+					console.log(xhr);
+					toastr
+						.error('Some Error Occured here	');
+				}
+			});
+	$('#WorkflowModel').modal('show');
+				});	
+</script>
+
+
+	<script type="text/javascript">
+	//edit workflow
+	$(".editWorkflow").click(
+			function() {
+				var wfGroupId = $(this).attr('id');
+				//alert("wfGroupId " + wfGroupId);
+				var pageValJson = "{\"wfGroupId\":" + "\"" + wfGroupId
+						+ "\"}";
+					console.log(pageValJson)
+				var iterationCount = 1000;
+				var keySize = 128;
+				//passPhrase is the key
+				var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+						.toString(CryptoJS.enc.Hex);
+				var aesUtil = new AesUtil(keySize, iterationCount);
+				var ciphertext = aesUtil.encrypt(reverseText(passphrase),pageValJson);
+				
+				$("#encryptedJsonEdit").val(ciphertext + ':~:' + passphrase);
+				$("#editWorkflowForm").submit();
+			});
+	</script>
+
+	<script>
+		
+		//search method
+		function searchData() {
+			var searchParam = $('#WorkflowParam').find(":selected").val();
+			var searchValue = $('#searchcriteria').val().toUpperCase();
+			if (searchParam == '') {
+				toastr.info('Please Select Search Parameter For Search');
+			} else if (searchValue == '') {
+				toastr.info('Please Add Some Value For Search');
+			}/*  else {
+				if (searchParam == 'userActiveStatus') {
+					if (searchValue.includes('PENDING APPROVAL')) {
+						searchValue = 'D';
+					} 
+					
+					else {
+						searchValue = searchValue.charAt(0);
+					}
+				} */
+				
+				//var sortValue = $('#sorting').find(":selected").val();
+				var pageValJson = "{\"wfSearchParam\":" + "\"" + searchParam
+						+ "\",\"wfSearchValue\":\"" + searchValue + "\"}";
+						
+						console.log(pageValJson)
+												
+				var iterationCount = 1000;
+				var keySize = 128;
+				//passPhrase is the key
+				var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+						.toString(CryptoJS.enc.Hex);
+				var aesUtil = new AesUtil(keySize, iterationCount);
+				var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+						pageValJson);
+				$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+				$("#searchForm").submit();
+			}
+		
+		</script>
+
+	<script type="text/javascript">
+		/* 
+		 var seen = {};
+		$('table tr').each(function() {
+		  var txt = $(this).attr('id');
+		  if (seen[txt])
+			  
+		    $(this).next().remove();
+		  else
+		    seen[txt] = true;
+		});  */
+		
+	 	function removeDuplicateRows($table){
+		    function getVisibleRowText($row){
+		        return $row.find('td:visible').text();
+		    }
+		    
+		    $table.find('tr').each(function(index, row){
+		        var $row = $(row);
+		    
+		        $row.nextAll('tr').each(function(index, next){
+		            var $next = $(next);
+		            console.log(getVisibleRowText($row), getVisibleRowText($next))
+		            if(getVisibleRowText($next) == getVisibleRowText($row))
+		                $next.remove();
+		        })
+		    });
+		}
+
+		removeDuplicateRows($('table')); 
+
+
+	
+		
+		</script>
+
+</body>
+</html>

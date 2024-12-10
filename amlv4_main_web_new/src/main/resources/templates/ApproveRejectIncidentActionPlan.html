@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus
+	{
+	background-color: #FCD900 !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Action Plan Approval</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Action Plan Approval</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<!-- form -->
+							<!-- <form class="form-horizontal" id="frmActionPlan"> -->
+							<input type="hidden" th:value="*{message}" id="message" />
+							<div class="card card-tabs">
+								<!-- <div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul">&nbsp;</i>List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white">&nbsp;</i>Audit
+												Trail - <span id="auditLabelId"></span></a></li>
+									</ul>
+								</div> -->
+								<!-- /.card-header -->
+								<div class="card-body">
+
+								<form autocomplete="off" role="form" method="post"
+									th:action="@{/ActionPlanIncidentAction}"
+									id="incidentActionForm" th:object="${encryptedRequest}">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-body">
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="moduleName">Module Name</label>
+																		<div class="input-group mb-2">
+																			<input type="text"
+																				class="form-control form-control-sm col-8 text-bold text-capitalize"
+																				id="moduleName" th:value="${moduleName}" readonly>
+																				
+																		</div>
+																	</div>
+																</div>
+
+
+
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<div class="form-group">
+																			<label for="sourceId">Source ID</label>
+																			<div class="input-group mb-2">
+																				<input type="text"
+																					class="form-control form-control-sm col-8 text-bold text-capitalize"
+																					id="sourceId" th:value="${sourceId}" readonly>
+																					
+																			</div>
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+															<!-- ./row -->
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="departmentName">Department Name</label>
+																		<div class="input-group mb-2">
+																			<input type="text"
+																				class="form-control form-control-sm col-8 text-bold  text-capitalize"
+																				id="departmentName" th:value="${deptName}" th:name="${deptId}" readonly> 
+																				
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="moduleName">Source Name</label>
+																		<div class="input-group mb-2">
+																			<input type="text"
+																				class="form-control form-control-sm col-8 text-bold text-capitalize"
+																				id="sourceName" name="sourceName" th:value="${sourceName}" readonly>
+																				
+																		</div>
+																	</div>
+																</div>
+															</div>
+
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- ./col -->
+											</div>
+											<!-- ./row -->
+											<!-- <form autocomplete="off" role="form" method="post"
+												th:action="@{/createActionPlan}" id="createAPForm"
+												th:object="${encryptedRequest}"> -->
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+
+														<div class="card-body table-responsive">
+															
+																<table id="actionPlanDataTbl"
+																	class="table table-head-fixed table-bordered table-striped"
+																	th:object="${actionList}">
+																	<thead>
+																		<tr>
+																			<th>Action Plan ID</th>
+																			<th>Action Name</th>
+																			<th>Action Description</th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="actionList : ${actionList}"
+																			th:id="${actionList.actionId}">
+																			
+																				
+																			<td th:id="${actionList.actionId}"
+																				th:text="${actionList.actionId}">
+																			</td>
+																			<td	th:text="${#strings.capitalize(actionList.actionName)}"></td>
+																			<td th:text="${actionList.actionDescription}"></td>	
+
+																		</tr>
+																	</tbody>
+																</table>
+
+														</div>
+														<!-- card-body -->
+													</div>
+													<!-- card -->
+												</div>
+												<!-- /.col -->
+											</div>
+											<!-- /.row -->
+											
+											<div class="card-footer">
+										<button type="button" id="approve" name="approve" class="btn btn-success" title="Approve">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+										</button>
+										<button type="button" class="btn bg-red" data-toggle="modal"
+											data-target="#commentmodal" title="Reject" id="reject" name="reject">
+											<i class="fas fa-circle-notch" style="padding: 0 7px 0 0px;"></i>Reject
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="home"
+											data-target="#cancelmodel"><button type="reset" class="btn btn-warning"
+												title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+										<!-- Audit Trail Button -->
+										<!-- <a class="btn btn-secondary text-white viewAuditTrail" title="Audit Trail"
+											data-toggle="modal"> <i class="fab fa-twitch"
+												style="padding: 0 7px 0 0px;"></i>Audit
+											Trail
+										</a> -->
+									</div>	
+											
+
+										</div>
+									</div>
+									<!-- /.tab-content -->
+									
+									</form>
+									
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+							<!-- </form> -->
+							<!-- /form -->
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+
+
+
+				<!-- View Modal -->
+				<div class="modal fade" id="viewActionModal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">
+									Action Plan ID - <span id="actionIdLabel"></span>
+								</h5>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+							<form class="form-horizontal">
+								<div class="card-body">
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="actionPlanId">Action Plan ID</label> <input
+													type="text"
+													class="form-control form-control-sm  text-bold actionPlanId"
+													id="actionPlanId" value="" name="actionPlanId" readonly>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="recordStatus">Record Status</label> <input
+													type="text"
+													class="form-control form-control-sm col-4 text-bold actionplanrecordStatus"
+													id="recordStatus" name="recordStatus" readonly>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="actionName">Action Name</label>
+												<div class="input-group mb-2">
+													<input type="text"
+														class="form-control form-control-sm actionPlanName text-capitalize"
+														id="actionName" name="actionName" readonly>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="actionDescription">Action Description </label>
+												<textarea
+													class="form-control form-control-sm actionPlanDescription text-capitalize"
+													name="actionDescription" id="actionDescription" rows="3"
+													readonly></textarea>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="completionDate">Expected Completion Date
+												</label><input type="text"
+													class="form-control form-control-sm completionDate "
+													name="completionDate" id="completionDate" value="" readonly>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="compPercentage">Completion %</label> <input
+													type="text"
+													class="form-control form-control-sm compPercentage"
+													name="compPercentage" id="compPercentage" value="" readonly>
+											</div>
+										</div>
+									</div>
+
+									<div class="row">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="actionOwner">Action Owner</label> <input
+													type="text"
+													class="form-control form-control-sm  actionOwner text-capitalize"
+													name="actionOwner" id="actionOwner" value="" readonly>
+											</div>
+										</div>
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="frequency">Action Update Frequency</label> <input
+													type="text"
+													class="form-control form-control-sm frequency text-capitalize"
+													name="frequency" id="frequency" value="Monthly" readonly>
+											</div>
+										</div>
+									</div>
+
+									<div class="row" id="asrDiv" style="display: none">
+										<div class="col-sm-12 ">
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<h3 class="card-title">Linked Modules</h3>
+												</div>
+												<div class="card-body">
+													<table
+														class="table table-head-fixed table-bordered table-striped"
+														id="linkedModuleTbl">
+														<thead>
+															<tr>
+																<th>Source ID</th>
+																<th>Source Name</th>
+																<th>Module Name</th>
+																<th>Record Status</th>
+																<th>Assessment Status</th>
+															</tr>
+														</thead>
+														<tbody>
+
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row" id="updateDiv" style="display: none">
+										<div class="col-sm-12 ">
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<h3 class="card-title">Action Update</h3>
+												</div>
+												<div class="card-body">
+													<table
+														class="table table-head-fixed table-bordered table-striped"
+														id="updateActionTbl">
+														<thead>
+															<tr>
+																<th>Update Period</th>
+																<th>Completion %</th>
+																<th>Updated By</th>
+																<th>Updated Date</th>
+															</tr>
+														</thead>
+														<tbody>
+
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row" id="recordDateDiv" style="display: none">
+										<div class="col-sm-12 ">
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<h3 class="card-title">Revised Dates</h3>
+												</div>
+												<div class="card-body">
+													<table
+														class="table table-head-fixed table-bordered table-striped"
+														id="actionDateTbl">
+														<thead>
+															<tr>
+																<th>Completion Date</th>
+																<th>Revised Date</th>
+																<th>Record Create By</th>
+																<th>Record Date</th>
+															</tr>
+														</thead>
+
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+									<div class="row" id="fileRow" style="display: none">
+										<div class="col-sm-12">
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<h3 class="card-title">Document List</h3>
+												</div>
+												<div class="card-body">
+													<table class="table table-bordered table-striped"
+														id="fileDetails">
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size</th>
+																<th>Uploaded By</th>
+																<th>Uploaded Date</th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+									</div>
+									<!-- /.row -->
+
+
+
+								</div>
+								<!-- /.card-body -->
+								<div class="card-footer">
+
+									<button class="btn btn-secondary" id="backbtn">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</div>
+								<!-- /.card-footer -->
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- /.modal -->
+				<!-- /.modal -->
+				<!-- Link Action Plan Modal -->
+				<div class="modal fade" id="linkActionModal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<form autocomplete="off" role="form" method="post"
+								th:action="@{/linkActionPlan}" id="linkActionForm"
+								th:object="${encryptedRequest}">
+								<input type="hidden" id="encryptedJsonLink" name="encryptedJson" />
+								<div class="modal-header bg-info">
+									<h5 class="modal-title">Link Action Plan</h5>
+									<button type="button" class="close text-white"
+										data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<!-- form start -->
+								<div class="card-body table-responsive">
+									<div class="row">
+										<div class="col-sm-12">
+											<table
+												class="table table-head-fixed table-bordered table-striped linkActionTab">
+												<thead>
+													<tr>
+														<th>Action Plan ID</th>
+														<th>Action Name</th>
+														<th>Status</th>
+														<th>Completion Date</th>
+														<th>Revised Date</th>
+														<th>Completion</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody></tbody>
+											</table>
+										</div>
+									</div>
+									<!-- /.row -->
+								</div>
+								<div class="card-footer">
+									<a class="btn btn-info" id="linkAp"> <i class="fas fa-save"
+										style="padding: 0 7px 0 0px;"></i>Submit
+									</a>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+				<!-- /.end Link Action Plan modal -->
+				<!-- Timeline Modal -->
+				
+
+				<!-- Close Modal -->
+			<div class="modal fade" id="closemodal">
+					<form autocomplete="off" role="form" method="post"
+						th:action="@{/closeActionPlan}" id="apForm"
+						th:object="${encryptedRequest}">
+						<input type="hidden" id="encryptedJsonClose" name="encryptedJson" />
+						<div class="modal-dialog modal-lg">
+							<div class="modal-content">
+								<div class="modal-header bg-info">
+									<h5 class="modal-title">Closure Comment -</h5>
+									<h5 class="modal-title" id="actId"></h5>
+									<button type="button" class="close text-white"
+										data-dismiss="modal" aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+
+								<!-- form start -->
+
+								<div class="card-body">
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="comments">Reason For Closure </label>
+												<textarea class="form-control" name="reason"
+													maxlength="3000" placeholder="Reason For Closure"
+													id="reason"></textarea>
+											</div>
+										</div>
+									</div>
+									<!-- /.row -->
+
+								</div>
+								<div class="card-footer">
+									<!-- <button type="button" id="closeApBtn" class="btn btn-info closeAP"> <i
+										class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+									</button> -->
+									<a class="btn btn-info" id="closeApBtn"> <i
+											class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</a> 
+								</div>
+							</div>
+						</div>
+
+						<input type="hidden" id="apData" name="apData" value="">
+					</form>
+				</div>
+
+				<!-- /.modal -->
+
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	
+	<script th:src="@{/dist/appjs/erm/ApproveRejectIncident.js}"></script>
+	
+	
+	//table-script
+	<script>
+		$(function() {
+			$("#actionPlanDataTbl").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : [ 6, 7, 8 ]
+				} ],
+				"responsive" : false,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true
+			}).buttons().container().appendTo(
+					'#actionPlanDataTbl_wrapper .col-sm-6:eq(0)');
+		});
+
+		//Linked Module-table
+		/* $(function() {
+			$("#linkedModuleTbl").DataTable({
+				"responsive" : false,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true
+			}).buttons().container().appendTo(
+					'#linkedModuleTbl_wrapper .col-sm-12:eq(0)');
+		});
+
+		//Action Update-table
+		$(function() {
+			$("#actionDateTbl").DataTable({
+				"responsive" : false,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true
+			}).buttons().container().appendTo(
+					'#actionDateTbl_wrapper .col-sm-12:eq(0)');
+		});
+
+		//Action Update-table
+		$(function() {
+			$("#updateActionTbl").DataTable({
+				"responsive" : false,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true
+			}).buttons().container().appendTo(
+					'#updateActionTbl_wrapper .col-sm-12:eq(0)');
+		});
+		 */
+	</script>
+
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+		});
+	</script>
+	<script>
+		//Button Click
+		$(document).ready(function() {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}
+
+			$("a .fa-tools").click(function() {
+				$('#actionplanlink').css('class', 'border');
+				$('#actionplanlink').css('display', '');
+				$('#actionplanlink').click();
+			});
+
+			$("a .fa-twitch").click(function() {
+				$('#timelinelink').css('class', 'border');
+				$('#timelinelink').css('display', '');
+				$('#timelinelink').click();
+			});
+
+			$("#summarylink").click(function() {
+				$('#actionplanlink').css('display', 'none');
+				$('#timelinelink').css('display', 'none');
+			});
+
+			$("#actionplanlink").click(function() {
+				$('#timelinelink').css('display', 'none');
+			});
+
+			//download
+			$(document).on('click', '.downloadfile', function() {
+
+				var fileName = $(this).attr('name');
+				var pageValJson = "{\"fileName\":" + "\"" + fileName + "\"}";
+				//document.getElementById('load').style.visibility = "visible";
+
+				// ajax call
+				$.ajax({
+					url : 'download',
+					type : "POST",
+					data : {
+						pageValJson : pageValJson
+					},// important line for thymeleaf http security
+					headers : {
+						"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+					},
+					cache : false,
+					// async:true,
+					success : function(response) {
+
+						var blob = new Blob([ response ], {
+							type : "application/octetstream"
+						});
+
+						//Check the Browser type and download the File.
+						var isIE = false || !!document.documentMode;
+						if (isIE) {
+							window.navigator.msSaveBlob(blob, fileName);
+						} else {
+							var url = window.URL || window.webkitURL;
+							link = url.createObjectURL(blob);
+							var a = $("<a />");
+							a.attr("download", fileName);
+							a.attr("href", link);
+							$("body").append(a);
+							a[0].click();
+							$("body").remove(a);
+						}
+
+					},
+					error : function(xhr, status, error) {
+
+						toastr.success('Some Error Occured');
+					}
+				});
+			});
+
+		});
+	</script>
+	<script type="text/javascript">
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			setTimeout(function() {
+				document.getElementById('load').style.visibility = "hidden";
+			}, 1000);
+		}
+	</script>
+	<script>
+		//search method
+		function searchData() {
+
+			var searchParam = $('#dimension').find(":selected").val();
+			var searchValue = $('#searchcriteria').val();
+			var sortValue = $('#sorting').find(":selected").val();
+			var pageValJson = "{\"searchParam\":" + "\"" + searchParam
+					+ "\",\"searchValue\":\"" + searchValue
+					+ "\",\"sortValue\":\"" + sortValue + "\"}";
+
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(128 / 8).toString(
+					CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize, iterationCount);
+			var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+					pageValJson);
+			$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+
+			$("#searchForm").submit();
+
+		}
+	</script>
+	<script type="text/javascript">
+		function linkAction() {
+			var deptId = $('#departmentName').attr('name');
+			$('input[name="actionId"]:checked')
+					.each(
+							function() {
+								var id = this.value;
+								$('#' + id)
+										.each(
+												function() {
+													var name = $(this).find(
+															"td").eq(2).html();
+													var status = $(this).find(
+															"td").eq(3).find(
+															"span").text();
+													var completionDate = $(this)
+															.find("td").eq(4)
+															.html();
+													var revisedDate = $(this)
+															.find("td").eq(5)
+															.html();
+													var Completion = $(this)
+															.find("td").eq(6)
+															.html();
+													$('.linkActionTab tr:last')
+															.after(
+																	'<tr id='+id+'><td>'
+																			+ id
+																			+ '</td><td>'
+																			+ name
+																			+ '</td><td>'
+																			+ status
+																			+ '</td><td>'
+																			+ completionDate
+																			+ '</td><td>'
+																			+ revisedDate
+																			+ '</td><td>'
+																			+ Completion
+																			+ '</td><td ><a class="btn btn-danger btn-sm" id="closerow">'
+																			+ '<i class="fas fa-window-close"></i></a></td></tr>');
+												});
+
+							});
+			var seen = {};
+			$('.linkActionTab tr').each(function() {
+				var txt = $(this).text();
+				if (seen[txt])
+					$(this).remove();
+				else
+					seen[txt] = true;
+			});
+			$('#linkActionModal').modal('show');
+		}
+		
+		$(".linkActionTab").on("click", "#closerow", function() {
+			$(this).closest("tr").remove();
+		});
+		$("#linkAp")
+				.click(
+						function() {
+							var flg = false;
+							var jsonObj = [];
+							var deptId = $('#departmentName').attr('name');
+							var sourceId = $('#sourceId').val();
+							$('.linkActionTab tr').each(function() {
+								var id = this.id;
+								flg = true;
+								item = {}
+								item["actionId"] = id;
+								item["deptLinkId"] = deptId;
+								if (!id == "") {
+									jsonObj.push(item);
+								}
+							});
+							if (flg) {
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+								var pageValJson = "{\"actionPlanList\":"
+										+ JSON.stringify(jsonObj) + ",\n"
+										+ "\"sourceId\":\"" + sourceId
+										+ "\",\n" + "\"deptId\":\"" + deptId
+										+ "\"\n" + "}";
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), pageValJson);
+								$("#encryptedJsonLink").val(
+										ciphertext + ':~:' + passphrase);
+								$("#linkActionForm").submit();
+							} else {
+								toastr
+										.error('Please select atlease one Action plan to link');
+							}
+
+						});
+	</script>
+	<script>
+		$("#createActionPlanBtn").click(function() {
+
+			$("#createAPForm").submit();
+		});
+	</script>
+
+	<script>
+		$('backbtn').click(function() {
+			window.history.back();
+		});
+
+		$('a.viewActionPlanModal')
+				.click(
+						function() {
+
+							var actionId = $(this).attr('id');
+
+							var pageValJson = "{\"actionId\":" + "\""
+									+ actionId + "\"}";
+							document.getElementById('load').style.visibility = "visible";
+
+							// Linked Module Table
+							var linkModTblCount = 0;
+
+							linkModTblCount = $('#linkedModuleTbl tr').length;
+
+							if (linkModTblCount > 1) {
+								var i = 1;
+								while (i < linkModTblCount) {
+									$('#row_id').remove();
+									i++;
+								}
+
+							}
+
+							// Update Action Table
+							var updateActTblCount = 0;
+
+							updateActTblCount = $('#updateActionTbl tr').length;
+
+							if (updateActTblCount > 1) {
+								//$(".odd").remove();
+								var i = 1;
+								while (i < updateActTblCount) {
+									$('#row_id').remove();
+									i++;
+								}
+							}
+
+							// Modal Fields Table
+							var modalFileIdCount = 0;
+
+							modalFileIdCount = $('#actionDateTbl tr').length;
+
+							if (modalFileIdCount > 1) {
+								//$(".odd").remove();
+								var i = 1;
+								while (i < modalFileIdCount) {
+									$('#row_id').remove();
+									i++;
+								}
+							}
+
+							// File Master Table
+							var fileDetailsCount = 0;
+
+							fileDetailsCount = $('#fileDetails tr').length;
+
+							if (fileDetailsCount > 1) {
+								var i = 1;
+								while (i < fileDetailsCount) {
+									$('#row_id').remove();
+									i++;
+								}
+							}
+
+							// ajax call
+							$
+									.ajax({
+										url : 'viewActionPlanModal',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+														document
+																.getElementById('contents').style.visibility = "visible";
+													}, 1000);
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+
+											$("#actionIdLabel").text(
+													obj.actionPlanId);
+
+											$(".actionPlanId").val(
+													obj.actionPlanId);
+
+											$(".actionPlanName").val(
+													obj.actionName);
+
+											$('.actionplanrecordStatus').val(
+													obj.recordStatus);
+											$('.actionPlanDescription').val(
+													obj.actionDesc);
+
+											$('.completionDate').val(
+													obj.expDate);
+													
+											
+											
+											$('.compPercentage').val(
+													obj.comPercentage);
+											$('.actionOwner').val(
+													obj.actionOwner);
+											$('.frequency').val(
+													obj.actionUpdateFrequency);
+
+											if (obj.linkedModules.length > 0) {
+												obj.linkedModules
+														.forEach(function(item) {
+															$(
+																	'#linkedModuleTbl tr:last')
+																	.after(
+																			'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+																					+ item.sourceId
+																					+ '</td><td>'
+																					+ item.sourceName
+																					+ '</td><td>'
+																					+ item.moduleName
+																					+ '</td><td><span class="badge bg-success">'
+
+																					+ item.recStatus
+																					+ '</span></td><td><span class="badge bg-success">'
+																					+ item.asstStatus
+																					+ '</span></td></tr>');
+														});
+
+												var seen = {};
+
+												$('#linkedModuleTbl tr')
+														.each(
+																function() {
+																	var txt = $(
+																			this)
+																			.text();
+																	if (seen[txt])
+																		$(this)
+																				.remove();
+																	else
+																		seen[txt] = true;
+																});
+
+												$('#asrDiv').show();
+											}
+
+											if (obj.actionUpdatesList.length > 0) {
+												obj.actionUpdatesList
+														.forEach(function(item) {
+															$(
+																	'#updateActionTbl tr:last')
+																	.after(
+																			'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+																					+ item.updatePeriod
+																					+ '</td><td>'
+																					+ item.completionPerEntry
+																					+ '</td><td><span class="text-capitalize">'
+																					+ item.updatedBy
+																					+ '</span></td><td>'
+
+																					+ item.updatedDate
+																					+ '</td></tr>');
+														});
+												$('#updateDiv').show();
+											}
+
+											//  updates 
+											//if (obj.revisedDateList.length > 0) {
+											//	obj.revisedDateList
+											//			.forEach(function(item) {
+											//				$(
+											//						'#actionDateTbl tr:last')
+											//						.after(
+											//								'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+											//										+ item.completionDate
+											//										+ '</td><td>'
+											//										+ item.revisedDate
+											//										+ '</td><td>'
+											//										+ item.recordCreatedBy
+											//										+ '</td><td>'
+											//										+ item.recordDate
+											//										+ '</td><td>></tr>');
+											//			});
+											//	$('#recordDateDiv').show();
+											//}
+
+											//file
+											if (obj.documentList.length > 0) {
+												obj.documentList
+														.forEach(function(item) {
+															$(
+																	'#fileDetails tr:last')
+																	.after(
+																			'<tr role="row" class="odd" id="row_id"><td class="sorting_1">'
+																					+ item.fileName
+																					+ '</td><td>'
+																					+ item.fileSize
+																					+ '</td><td><span class="text-capitalize">'
+																					+ item.uploadedBy
+																					+ '<span></td><td>'
+																					+ item.uploadedDate
+																					+ '</td><td><div class="btn-group btn-group-sm">'
+																					+ '<a name='+item.fileName+' class="btn btn-info downloadfile"><i '
+																					+' class="fas fa-download"></i></a>'
+																					+ '</div></td></tr>');
+														});
+												$('#fileRow').show();
+											}
+
+										},
+										error : function(xhr, status, error) {
+											toastr.error('Some Error Occured');
+										}
+									});
+							$('#viewActionModal').modal('show');
+						});
+	</script>
+	<script>
+		$(document).ready(
+				function() {
+					jQuery(window).on(
+							'beforeunload',
+							function() {
+								localStorage.setItem("moduleId1",
+										$('#sourceId').val());
+								localStorage.setItem("moduleName1", $(
+										'#sourceName').val());
+							});
+
+					jQuery(window).on(
+							'load',
+							function() {
+								var moduleId = localStorage
+										.getItem("moduleId1");
+								var moduleName = localStorage
+										.getItem("moduleName1");
+								var sourceIdTemp = $('#sourceId').val();
+								var sourceNameTemp = $('#sourceName').val();
+
+								if (sourceIdTemp == null
+										|| sourceIdTemp == undefined
+										|| sourceIdTemp == "") {
+									if (moduleId !== null) {
+										$('#sourceId').val(moduleId)
+										$('#sourceIdHidden').val(moduleId)
+									}
+								}
+								;
+
+								if (sourceNameTemp == null
+										|| sourceNameTemp == undefined
+										|| sourceNameTemp == "") {
+									if (moduleName !== null) {
+										$('#sourceName').val(moduleName)
+										$('#sourceNameHidden').val(moduleName)
+									}
+									;
+								}
+								;
+
+							});
+				});
+	</script>
+
+	<script>
+		// Audit trail   
+		$('a.viewAuditTrail')
+				.click(
+						function() {
+							var userId = $(this).attr('id');
+							var pageValJson = "{\"activityImpactTblKey\":"
+									+ "\"" + userId.trim() + "\"}";
+							document.getElementById('load').style.visibility = "visible";
+
+							$("#auditLabelId").text(userId);
+
+							// ajax call
+							$
+									.ajax({
+										url : 'viewAuditTrail',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+														document
+																.getElementById('contents').style.visibility = "visible";
+													}, 1000);
+
+											var jsonResponse = JSON
+													.stringify(response);
+											var obj = JSON.parse(jsonResponse);
+											$(".timeline-inverse").empty();
+											obj
+													.forEach(function(items) {
+														$(
+																"<p class='test'><div class='time-label'><span class='bg-success'>"
+																		+ items.actDate
+																		+ "</span></div>"
+																		+ "<div><i class='fas fa-comments bg-warning'></i>"
+																		+ "<div class='timeline-item'>"
+																		+ "<h3 class='timeline-header text-capitalize'><a href='#'>"
+																		+ items.userName
+																		+ " "
+																		+ " ("
+																		+ items.userRole
+																		+ ") </a>"
+																		+ items.actionPerformed
+																		+ "</h3>"
+																		+ "<div class='timeline-body'>"
+																		+ items.actionComment
+																		+ "</div>"
+																		+ "</div>"
+																		+ "</div>"
+																		+ "</p>")
+																.appendTo(
+																		".timeline-inverse");
+
+													});
+
+											$(
+													"<div> <i class='far fa-clock bg-gray'></i> </div>")
+													.appendTo(
+															".timeline-inverse");
+											$('#timelinelink').css('class',
+													'border');
+											$('#timelinelink').css('display',
+													'');
+											$('#timelinelink').click();
+
+										},
+										error : function(xhr, status, error) {
+
+											toastr
+													.success('Some Error Occured');
+										}
+									});
+						});
+	</script>
+	<script>
+		$(".editActionPlan").click(
+				function() {
+					var actionId = $(this).attr('id');
+					var pageValJson = "{\"actionId\":" + "\"" + actionId
+							+ "\"}";
+				
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+							.toString(CryptoJS.enc.Hex);
+					var aesUtil = new AesUtil(keySize, iterationCount);
+					var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+							pageValJson);
+					$("#encryptedJsonEdit")
+							.val(ciphertext + ':~:' + passphrase);
+					$("#editActionForm").submit();
+				});
+	</script>
+	<script>
+	$(document).ready(function() {
+	$("#closeApBtn").click(function() {
+		
+		
+		var actId = $("#actId").html();
+		var reason = $('#reason').val();
+		var action = "AX";
+		if (reason == '') {
+			$('span[id^="reason-error"]').remove();
+			$('#reason').addClass('is-invalid');
+			$('#reason')
+					.after(
+							'<span id="reason-error" class="error invalid-feedback" style="display: inline;">Please provide a Reason</span>');
+		} else if (reason.length < 10) {
+			$('span[id^="reason-error"]').remove();
+			$('#reason').addClass('is-invalid');
+			$('#reason')
+					.after(
+							'<span id="reason-error" class="error invalid-feedback" style="display: inline;">Reason must be greater than 10 characters</span>');
+		} else {
+			$('span[id^="reason-error"]').remove();
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(
+					128 / 8).toString(CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize,
+					iterationCount);
+			var pageValJson = "{\"actionId\":" + "\""
+					+ actId + "\",\"actionActStatus\":\""
+					+ action
+					+ "\",\"commentDto\":{\"comment\":\""
+					+ reason + "\"}}";
+			var ciphertext = aesUtil.encrypt(
+					reverseText(passphrase), pageValJson);
+			$("#encryptedJsonClose").val(
+					ciphertext + ':~:' + passphrase);
+			$("#apForm").submit();
+		}
+	})
+	});
+
+	</script>
+	<script>
+	$('a.closemodal').click(function() {
+	$('#actId').text($(this).attr('id'));
+		$('#closemodal').modal('show');
+	});
+	
+	
+	</script>
+
+</body>
+</html>

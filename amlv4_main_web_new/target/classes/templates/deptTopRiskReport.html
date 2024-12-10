@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header" id="headerData"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Top Risk</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Top Risk Graphs</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid">
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Top Risk Graphs</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+
+								<form id="frmTpRiskGraph"
+									th:action="@{/getDeptTopRiskReportPage}" method="post">
+									<input type="hidden" th:feild="*{encryptedJson}"
+										id="encryptedJson" name="encryptedJson" />
+
+									<!-- <input type="button" id="downloadpdf" class="downloadpdf" value="Download PDF"> -->
+									<div class="card-body">
+										<div class="row" id="printRow">
+											<div class="col-md-6 float-left">
+												<input type='button' id='btn' class="btn btn-primary"
+													value='Print' onclick='printDiv();'>
+											</div>
+
+										</div>
+										<div class="row pt-2">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="assessmentDate">Assessment
+														Period</label> <select class="form-control select2"
+														data-placeholder="Assessment Date" name="assessmentDate"
+														id="assessmentDate" style="width: 100%;">
+														<option value=''>Select Assessment Period</option>
+
+														<option th:each="assessmentDate : ${assessmentDateList}"
+															th:value="${#strings.arraySplit(assessmentDate, '~')[0]}" th:text="${#strings.arraySplit(assessmentDate, '~')[1]}"></option>
+													</select>
+
+
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType">Office Type</label>
+													<select class="form-control select2"
+														data-placeholder="Office Type" name="officeType"
+														id="officeType" style="width: 100%;">
+														<option value=''>Select Office Type</option>
+														
+														<option th:each="officeType : ${officeTypeList}"
+															th:value="${officeType.split('~')[1]}"
+															th:text="${officeType.split('~')[0]}"></option>
+													</select>
+											<input type="hidden" th:value="${tpRiskDto.assessmentPeriod}" id="assessmentDateSelected">
+											<input type="hidden" id="selectedOfficeType" th:value="${officeType}">
+											<input type="hidden" id="userOffice" th:value="${userOffice}">
+												</div>
+											</div>
+											<div class="col-sm-2 p-2">
+											<div class="form-group mt-4 fetchButton" id="fetchButton">
+    <button type="button" id="fetch_data_btn"
+													class="btn btn-block btn-sm btn-outline-primary">Fetch
+													Data</button>
+											</div>
+										</div>
+										</div>
+
+										<div class="row" th:if="${coperateList!=null}">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<table class="table table-bordered"
+														th:if="${#lists.size(coperateList)>0}">
+														<thead>
+															<tr>
+
+																<th scope="col">Start Date</th>
+																<th scope="col">End Date</th>
+																<th scope="col">Corporation Status</th>
+																<th scope="col">Dept Sum Value</th>
+															</tr>
+														</thead>
+														<tbody>
+
+															<tr th:each="data:${coperateList}">
+																<td><span
+																	th:text="${#strings.arraySplit(data, '~')[2]}"></span></td>
+																<td><span
+																	th:text="${#strings.arraySplit(data, '~')[3]}"></span></td>
+																<td><span
+																	th:style="${#strings.arraySplit(data, '~')[1]=='green' ? 'color: #28A745;' : #strings.arraySplit(data, '~')[1]=='red'?'color: #FF0000;':'color:#FFBF00'}"
+																	th:text="${#strings.arraySplit(data, '~')[1]}"
+																	class="text-capitalize font-weight-bold"></span></td>
+																<td><span
+																	th:text="${#strings.arraySplit(data, '~')[0]}"></span></td>
+															<tr>
+
+															</tr>
+														</tbody>
+													</table>
+
+
+												</div>
+											</div>
+										</div>
+										<div class="row" style="display: none">
+											<div class="col-6">
+												<div class="card-title text-primary m-2 p-1">
+													Assessment Period : <span id="assessmentPeriod"
+														th:text="${tpRiskDto.assessmentPeriod}"></span> <span
+														id="assessmentPeriodTemp"
+														th:text="${tpRiskDto.assessmentPeriod}"></span>
+												</div>
+											</div>
+										</div>
+
+										<!-- PIE CHART -->
+
+										<div class="row p-1">
+											<div class="col-md-6 float-left">
+												<div class="card-title text-primary m-2 p-1">
+
+													Department Wise Status</div>
+												<canvas id="pieChart"
+													style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+
+
+
+											</div>
+											<div class="col-md-6 float-left mt-5">
+
+
+
+												<table class="table">
+													<thead>
+														<tr>
+
+															<th scope="col">RAG Status</th>
+															<th scope="col">Dept Count</th>
+
+														</tr>
+													</thead>
+													<tbody>
+
+														<tr th:each="data:${tpRiskCount}">
+															<td><a href="#topRiskGraphTableRow"
+																th:attr="onclick=|getData('${#strings.arraySplit(data, '-')[0]}')|"><span
+																	th:style="${#strings.arraySplit(data, '-')[0]=='Green' ? 'color: #28A745;' : #strings.arraySplit(data, '-')[0]=='Red'?'color: #FF0000;':'color:#FFBF00'}"
+																	th:text="${#strings.arraySplit(data, '-')[0]}"
+																	class="font-weight-bold"></span></a></td>
+															<td><a href="#topRiskGraphTableRow"
+																th:attr="onclick=|getData('${#strings.arraySplit(data, '-')[0]}')|"
+																class="p-1"> <span
+																	th:text="${#strings.arraySplit(data, '-')[1]}"></span>
+															</a></td>
+														<tr>
+
+														</tr>
+													</tbody>
+												</table>
+											</div>
+
+										</div>
+										<div class="row  mt-1" id="topRiskGraphTableRow"
+											style="display: none">
+											<div class="card-title text-primary  mt-4">Department
+												Wise Status List</div>
+											<div class="col-sm-12 topRiskGraphTable">
+											<div class="card-title text-primary" id="topRiskGraphTitle"></div>
+											
+												<!-- 	<span class="topRiskGraphTablePrint p-0 m-0"></span> -->
+												<table id="topRiskGraphTable"
+													class="table table-head-fixed table-bordered table-striped">
+													<thead>
+														<tr>
+
+															<th>Department Name</th>
+															<th>Department Weightage</th>
+															<th>Department Status</th>
+															<th>Office Code</th>
+
+														</tr>
+													</thead>
+													<tbody>
+
+													</tbody>
+												</table>
+
+											</div>
+										</div>
+
+										<!-- PIE CHART END-->
+										<div class="row" id="topRiskRagCount">
+
+											<div class="col-md-6    mt-5  float-left">
+												<div class="card-title text-primary m-1  p-1"
+													style="display: none" id="topRiskRagTitle">
+													Top Risk Status For Department <span id="tpCountDeptId"></span>
+												</div>
+
+												<table class="table topRiskRagTable mt-5"
+													id="topRiskRagTable" style="display: none">
+													<thead>
+														<tr>
+
+															<th scope="col">Top Risk RAG</th>
+															<th scope="col">Count</th>
+
+														</tr>
+													</thead>
+													<tbody id="topRiskRagTableTbody">
+													</tbody>
+												</table>
+											</div>
+											<div class="col-md-6   mt-4 float-left topRiskRAGPieChart"></div>
+										</div>
+										<div class="row p-1 m-2" id="topRiskDetailsTableRow"
+											style="display: none">
+
+											<div class="col-sm-12  m-1 mt-4 p-1  topRiskDetailsTable">
+												<div class="card-title text-primary" id="topRiskRagTitle1"></div>
+
+
+												<table id="topRiskDetailsTable"
+													class="table table-head-fixed table-bordered table-striped">
+													<thead>
+														<tr>
+															<th>Top Risk Id</th>
+															<th>Top Risk Description</th>
+															<th>Top Risk Theme</th>
+															<th>Top Risk Weightage</th>
+															<th>Office Code</th>
+														</tr>
+													</thead>
+													<tbody>
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="row " id="kriRAGPieChart">
+
+											<div class="col-md-6 float-left kriRAGPieChart   mt-4"></div>
+											<div class="col-md-6 float-left  mt-4 ">
+												<div class="card-title text-primary " style="display: none"
+													id="topRiskRagTitle">KRI Status Count</div>
+												<span class='card-title text-primary' id="kriRAGPieChart1"
+													style="display: none">KRI Status Count For Top Risk
+													Id<span id='tpId'></span>
+												</span>
+												<table class="table kriRagTable" id="kriRagTable"
+													style="display: none">
+
+													<thead>
+														<tr>
+
+															<th scope="col">KRI RAG</th>
+															<th scope="col">Count</th>
+
+														</tr>
+													</thead>
+													<tbody id="kriRagTableTbody">
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="row p-1 m-2" id="kriDetailsTableRow"
+											style="display: none">
+
+											<div class="col-sm-12  m-1 mt-4 p-1 kriDetailsTable">
+												<div class="card-title text-primary" id="kriRagTitle"></div>
+												<!-- <span class="kriDetailsTablePrint p-0 m-0"></span> -->
+												<table id="kriDetailsTable"
+													class="table table-head-fixed table-bordered table-striped">
+													<thead>
+														<tr>
+															<th>KRI Id</th>
+															<th>KRI Name</th>
+															<th>KRI Threshold Description</th>
+															<th>Assessment Value</th>
+															<th>Assessment Status</th>
+															<th>Office Code</th>
+														</tr>
+													</thead>
+													<tbody>
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-md-12">
+												<input type="hidden" name="tpRiskCount" id="tpRiskCount"
+													th:value="${tpRiskCount}" /> <input type="hidden"
+													name="tpRiskCount" id="tpRiskCount"
+													th:value="${tpRiskCount}" /> <input type="hidden"
+													name="greenColour" id="greenColour"
+													th:value="${greenColorVal}" /> <input type="hidden"
+													name="redColour" id="redColour" th:value="${redColorVal}" />
+												<input type="hidden" name="amberColour" id="amberColour"
+													th:value="${amberColorVal}" />
+
+											</div>
+										</div>
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer" id="footerData"></div>
+
+	</div>
+
+
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/js/jspdf.debug.js}"></script>
+	<script th:src="@{/dist/js/html2canvas.js}"></script>
+
+
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/topRiskGraph.js}"></script>
+
+	<script>
+	var pagging_flg=true;
+		$(function() {
+			$("#topRiskGraphTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : []
+				} ],
+
+				"order" : [ 0, "asc" ],
+				"lengthMenu" : [ 10 ],
+				"paging" : false,
+				"responsive" : false,
+				"autoWidth" : false,
+				"searching" : true,
+				"fixedHeader" : true,
+				"buttons" : [ "csv", "excel", "pdf", "print" ],
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo('#topRiskGraphTitle');
+			//.buttons().container().appendTo('.topRiskGraphTablePrint');
+		});
+		//topRiskDetailsTable
+		$(function() {
+			$("#topRiskDetailsTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : []
+				} ],
+
+				"order" : [ 0, "desc" ],
+				"lengthMenu" : [ 10 ],
+				"paging" : true,
+				"responsive" : false,
+				"autoWidth" : false,
+				"searching" : true,
+				"fixedHeader" : true,
+				"buttons" : [ "csv", "excel", "pdf", "print" ],
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo('#topRiskRagTitle1');
+			//.buttons().container().appendTo('#topRiskRagTitle');
+		});
+		//kriDetailsTableRow
+		$(function() {
+			$("#kriDetailsTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : []
+				} ],
+
+				"order" : [ 0, "desc" ],
+				"lengthMenu" : [ 10 ],
+				"responsive" : false,
+				"autoWidth" : false,
+				"paging" : true,
+				"searching" : true,
+				"fixedHeader" : true,
+				"buttons" : [ "csv", "excel", "pdf", "print" ],
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo('#kriRagTitle');
+		});
+
+		function getData(ragStatus) {
+
+			$('#topRiskRagCount').hide();
+			$('#topRiskDetailsTableRow').hide();
+			$("#kriDetailsTableRow").hide();
+			$("#topRiskGraphTableRow").css("display", "");
+			$("#kriDetailsTableRow").hide();
+			var assesmentPeriod = $("#assessmentPeriod").text();
+			var rag = ragStatus.trim().toUpperCase();
+			var officeType=$("#officeType").val();
+			/* var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"ragStatus\":\"" + rag + "\"}"; */
+
+			var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+							+ "\",\n" + "\"ragStatus\":\"" + rag
+							+ "\",\n" + "\"officeType\":\"" + officeType + "\"}";
+							//alert(pageValJson);
+
+			document.getElementById('load').style.visibility = "visible";
+			// ajax call
+			$
+					.ajax({
+						url : 'topRiskGraphByDepartment',
+						type : "POST",
+						data : {
+							pageValJson : pageValJson
+						},// important line for thymeleaf http security
+						headers : {
+							"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+						},
+						cache : false,
+						// async:true,
+						success : function(response) {
+
+							setTimeout(
+									function() {
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "hidden";
+									}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+							var topRiskTableData = $('#topRiskGraphTable')
+									.DataTable();
+
+							topRiskTableData.clear().draw();
+							$(".topRiskRagTable > #topRiskRagTableTbody")
+									.empty();
+
+							//destroy datatable
+							//table.destroy();
+							obj
+									.forEach(function(items) {
+
+										var deptDetails = items.topRiskDeptId
+												+ "~" + items.deptName;
+										var ragColor = ''
+
+										if (items.deptRagStatus === 'GREEN') {
+											ragColor = '#28A745';
+										} else if (items.deptRagStatus === 'RED') {
+											ragColor = '#FF0000';
+										} else {
+											ragColor = '#FFBF00';
+										}
+										console.log(ragColor);
+
+										var tr = $("<tr>"
+												+ "<td class='text-capitalize'><a href='#topRiskRagTitle' class='text-blue' id='"
+												+ deptDetails
+												+ "' onclick='getTopRiskCount(this.id)'>"
+												+ items.deptName
+												+ "</a></td>"
+												+ "<td class='text-capitalize'>"
+												+ items.deptWeightage
+												+ "</td>"
+												+ "<td class='text-capitalize' class='ragColor'><span id='"
+												+ ragColor
+												+"' style='color:"
+												+ragColor
+												+"' class='font-weight-bold'>"
+												+ items.deptRagStatus
+												+ "</span></td>"
+												+ "<td class='text-capitalize'>"
+												+ items.officeCode + "</td>"
+												+ "</tr>");
+
+										topRiskTableData.row.add(tr[0]).draw();
+
+									});
+
+						},
+						error : function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr.success('Some Error Occured');
+						}
+					});
+
+		}
+	</script>
+	<script>
+		function getTopRiskCount(deptId) {
+
+			$('#topRiskRagCount').show();
+			$('#topRiskDetailsTableRow').hide();
+			$('#kriRAGPieChart').hide();
+			$('#kriRAGPieChart1').hide();
+			$(".topRiskRagTable > #topRiskRagTableTbody").empty();
+			//topRiskRagTable
+			$("#topRiskRagTable").css("display", "");
+			$("#tpCountDeptId").text(" (" + deptId.split("~")[1] + ")")
+			$("#topRiskRagTitle").css("display", "");
+			$("#kriDetailsTableRow").hide();
+
+			var assesmentPeriod = $("#assessmentPeriod").text();
+			var deptIdTemp = deptId.split("~")[0];
+			var officeType=$("#officeType").val();
+
+			/* var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"topRiskDeptId\":\"" + deptIdTemp + "\"}"; */
+					
+					var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"topRiskDeptId\":\"" + deptIdTemp
+					+ "\",\n" + "\"officeType\":\"" + officeType + "\"}";
+//alert(pageValJson);
+			document.getElementById('load').style.visibility = "visible";
+			$
+					.ajax({
+						url : 'topRiskGraphDataByDeptId',
+						type : "POST",
+						data : {
+							pageValJson : pageValJson
+						},// important line for thymeleaf http security
+						headers : {
+							"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+						},
+						cache : false,
+						// async:true,
+						success : function(response) {
+
+							setTimeout(
+									function() {
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "hidden";
+									}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+
+							$(".topRiskRAGPieChart").empty();
+							Object
+									.keys(obj)
+									.forEach(
+											function(items) {
+												if (items === 'deptIdAndRagCount') {
+													var itemName = items;
+
+													var topRiskRAGDataCount = obj[itemName];
+													$(
+															"<canvas id='pieChartTopRiskRAG' style='min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;'></canvas>")
+															.appendTo(
+																	".topRiskRAGPieChart");
+
+													var labelList;
+													var checkArr;
+													var checkLableArr = [];
+													var dataCountArr = [];
+													var greenColor = '';
+													var redColor = '';
+													var amberColor = '';
+
+													labelList = topRiskRAGDataCount
+															.toString();
+
+													greenColor = '#28A745';
+													amberColor = '#FFBF00';
+													redColor = '#FF0000';
+													checkArr = labelList
+															.split(',');
+
+													for ( var a in checkArr) {
+														var variable = checkArr[a]
+																.split('-')[0];
+														var count = checkArr[a]
+																.split('-')[1];
+														var deptDetails = variable
+																+ '~'
+																+ deptIdTemp
+
+														console
+																.log('deptDetails'
+																		+ deptDetails);
+
+														$(
+																'<tr><td id="'+variable+'Tp" class="font-weight-bold"><a href="#topRiskDetailsTableRow" class="'
+																		+ variable
+																		+ 'Tp"  id="'
+																		+ deptDetails
+																		+ '" onclick="getTopRiskDetails(this.id)">'
+																		+ variable
+																		+ '</td><td><a href="#topRiskDetailsTableRow" class="text-blue" id="'
+																		+ deptDetails
+																		+ '" onclick="getTopRiskDetails(this.id)">'
+																		+ count
+																		+ '</a></td></tr>')
+																.appendTo(
+																		".topRiskRagTable > #topRiskRagTableTbody");
+
+														checkLableArr
+																.push(variable
+																		.replaceAll(
+																				'~',
+																				', '));
+														dataCountArr
+																.push(count);
+
+														if (variable === "Green") {
+															$(".GreenTp").css(
+																	"color",
+																	greenColor);
+
+														}
+														if (variable === "Amber") {
+															$(".AmberTp").css(
+																	"color",
+																	amberColor);
+														}
+														if (variable === "Red") {
+															$(".RedTp").css(
+																	"color",
+																	redColor);
+														}
+													}
+
+													/*PIE CHART*/
+
+													var donutData = {
+
+														labels : checkLableArr,
+
+														datasets : [ {
+															data : dataCountArr,
+															//backgroundColor: ['#00a62a', '#f39c32','#f56954'],
+															backgroundColor : [
+																	greenColor,
+																	amberColor,
+																	redColor ],
+														} ]
+													}
+													var pieChartCanvas = $(
+															'#pieChartTopRiskRAG')
+															.get(0).getContext(
+																	'2d')
+													var pieData = donutData;
+													var pieOptions = {
+														maintainAspectRatio : false,
+														responsive : true,
+													}
+													//Create pie or douhnut chart
+													// You can switch between pie and douhnut using the method below.
+													new Chart(pieChartCanvas, {
+														type : 'pie',
+														data : pieData,
+														options : pieOptions
+													})
+												}
+												//console.log('items'+items)
+
+												/*PIE CHART*/
+											});
+
+						},
+						error : function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr.success('Some Error Occured');
+						}
+					});
+
+		}
+	</script>
+	<script>
+		function getTopRiskDetails(topRiskList) {
+
+			console.log('topRiskList ' + topRiskList);
+			$('#topRiskDetailsTableRow').show();
+			$('#kriRAGPieChart').hide();
+			$('#kriRAGPieChart1').hide();
+			$("#kriDetailsTableRow").hide();
+			
+			$("#topRiskDetailsTableRow").css("display", "");
+			var assesmentPeriod = $("#assessmentPeriod").text();
+			var topRiskRagStatus = topRiskList.split('~')[0].trim()
+					.toUpperCase().toString();
+			var deptId = topRiskList.split('~')[1].trim().toString();
+			var officeType=$("#officeType").val();
+
+			var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"topRiskRagStatus\":\"" + topRiskRagStatus
+					+ "\",\n" + "\"officeType\":\"" + officeType
+					+ "\",\n" + "\"topRiskDeptId\":\"" + deptId + "\"}";
+					//alert(pageValJson);
+
+			document.getElementById('load').style.visibility = "visible";
+			// ajax call
+			$
+					.ajax({
+						url : 'topRiskListByDeptId',
+						type : "POST",
+						data : {
+							pageValJson : pageValJson
+						},// important line for thymeleaf http security
+						headers : {
+							"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+						},
+						cache : false,
+						// async:true,
+						success : function(response) {
+
+							setTimeout(
+									function() {
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "hidden";
+									}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+							var topRiskTableData = $('#topRiskDetailsTable')
+									.DataTable();
+
+							topRiskTableData.clear().draw();
+
+							//destroy datatableS
+							//table.destroy();
+							obj
+									.forEach(function(items) {
+
+										var deptDetails = items.topRiskId + "~"
+												+ deptId;
+
+										var tr = $("<tr>"
+												+ "<td><a href='#kriRagTableTbody' class='text-blue' id='"
+												+ deptDetails
+												+ "' onclick='getKriRagCount(this.id)'>"
+												+ items.topRiskId
+												+ "</a></td>"
+												+ "<td class='text-capitalize'>"
+												+ items.topRiskDescription
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.topRiskTheme
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.topRiskWeightage
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.officeCode + "</td>"
+												+ "</tr>");
+
+										topRiskTableData.row.add(tr[0]).draw();
+
+									});
+
+						},
+						error : function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr.success('Some Error Occured');
+						}
+					});
+		}
+	</script>
+	<script type="text/javascript">
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+
+	<script>
+		function getKriRagCount(topriskId) {
+
+			$('#kriRAGPieChart').show();
+			$('#kriRAGPieChart1').show();
+			$("#tpId").text("(" + topriskId.split("~")[0] + ")");
+			$(".kriRagTable > #kriRagTableTbody").empty();
+
+			$("#kriRagTable").css("display", "");
+
+			var assesmentPeriod = $("#assessmentPeriod").text();
+			topriskId.split("~")[0];
+			topriskId.split("~")[1];
+			var officeType=$("#officeType").val();
+
+			var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"topRiskId\":\"" + topriskId.split("~")[0]
+			+ "\",\n" + "\"officeType\":\"" + officeType
+					+ "\",\n" + "\"topRiskDeptId\":\""
+					+ topriskId.split('~')[1] + "\"}";
+					//alert(pageValJson);
+
+			document.getElementById('load').style.visibility = "visible";
+			$
+					.ajax({
+						url : 'kriRagCountByTopRiskId',
+						type : "POST",
+						data : {
+							pageValJson : pageValJson
+						},// important line for thymeleaf http security
+						headers : {
+							"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+						},
+						cache : false,
+						// async:true,
+						success : function(response) {
+
+							setTimeout(
+									function() {
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "hidden";
+									}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+
+							$(".kriRAGPieChart").empty();
+							Object
+									.keys(obj)
+									.forEach(
+											function(items) {
+												if (items === 'deptIdAndRagCount') {
+													var itemName = items;
+
+													var kriRAGDataCount = obj[itemName];
+													$(
+															"<div class='card-title text-primary m-2 p-1' id='kriRagTitle'>KRI Status Count</div>"
+																	+ "<canvas id='pieChartkriRAG' style='min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;'></canvas>")
+															.appendTo(
+																	".kriRAGPieChart");
+
+													var labelList;
+													var checkArr;
+													var checkLableArr = [];
+													var dataCountArr = [];
+													var greenColor = '';
+													var redColor = '';
+													var amberColor = '';
+
+													labelList = kriRAGDataCount
+															.toString();
+
+													//#32CD32
+													greenColor = '#28A745';
+													amberColor = '#FFBF00';
+													redColor = '#FF0000';
+													checkArr = labelList
+															.split(',');
+
+													for ( var a in checkArr) {
+														var variable = checkArr[a]
+																.split('-')[0];
+														var count = checkArr[a]
+																.split('-')[1];
+														var deptDetails = variable
+																+ '~'
+																+ topriskId
+																		.split("~")[0]
+																+ '~'
+																+ topriskId
+																		.split('~')[1]
+														console
+																.log('deptDetails '
+																		+ deptDetails);
+
+														$(
+																'<tr><td class="font-weight-bold"><a href="#kriDetailsTable" class="'
+																		+ variable
+																		+ 'Kri" id="'
+																		+ deptDetails
+																		+ '" onclick="getKriDetails(this.id)">'
+																		+ variable
+																		+ '</td><td><a href="#kriDetailsTable" class="text-blue" id="'
+																		+ deptDetails
+																		+ '" onclick="getKriDetails(this.id)">'
+																		+ count
+																		+ '</a></td></tr>')
+																.appendTo(
+																		".kriRagTable > #kriRagTableTbody");
+
+														checkLableArr
+																.push(variable
+																		.replaceAll(
+																				'~',
+																				', '));
+														dataCountArr
+																.push(count);
+														if (variable === "Green") {
+															$(".GreenKri").css(
+																	"color",
+																	greenColor);
+
+														}
+														if (variable === "Amber") {
+															$(".AmberKri").css(
+																	"color",
+																	amberColor);
+														}
+														if (variable === "Red") {
+															$(".RedKri").css(
+																	"color",
+																	redColor);
+														}
+													}
+													/*PIE CHART*/
+
+													var donutData = {
+
+														labels : checkLableArr,
+
+														datasets : [ {
+															data : dataCountArr,
+															//backgroundColor: ['#00a62a', '#f39c32','#f56954'],
+															backgroundColor : [
+																	greenColor,
+																	amberColor,
+																	redColor ],
+														} ]
+													}
+													var pieChartCanvas = $(
+															'#pieChartkriRAG')
+															.get(0).getContext(
+																	'2d')
+													var pieData = donutData;
+													var pieOptions = {
+														maintainAspectRatio : false,
+														responsive : true,
+													}
+													//Create pie or douhnut chart
+													// You can switch between pie and douhnut using the method below.
+													new Chart(pieChartCanvas, {
+														type : 'pie',
+														data : pieData,
+														options : pieOptions
+													})
+												}
+												//console.log('items'+items)
+
+												/*PIE CHART*/
+											});
+
+						},
+						error : function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr.success('Some Error Occured');
+						}
+					});
+
+		}
+	</script>
+	<script>
+		$(document).ready(function() {
+			$("#assessmentPeriod").hide();
+
+		})
+	</script>
+	<script>
+		function getKriDetails(ragStatus) {
+			$("#kriDetailsTableRow").css("display", "");
+			$("#kriRagTitle").css("display", "");
+			$("#kriDetailsTableRow").show();
+			var assesmentPeriod = $("#assessmentPeriod").text();
+			var rag = ragStatus.split("~")[0].trim().toUpperCase();
+			var topriskId = ragStatus.split("~")[1].trim().toUpperCase();
+			var deptId = ragStatus.split("~")[2].trim().toUpperCase();
+			var officeType=$("#officeType").val();
+			var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"kriRagStatus\":\"" + rag + "\",\n"
+					+ "\"topRiskId\":\"" + topriskId + "\",\n"
+					+ "\"officeType\":\"" + officeType + "\",\n"
+					+ "\"topRiskDeptId\":\"" + deptId + "\"}";
+
+			document.getElementById('load').style.visibility = "visible";
+			// ajax call
+			$
+					.ajax({
+						url : 'kriDetailsByRAG',
+						type : "POST",
+						data : {
+							pageValJson : pageValJson
+						},// important line for thymeleaf http security
+						headers : {
+							"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+						},
+						cache : false,
+						// async:true,
+						success : function(response) {
+
+							setTimeout(
+									function() {
+										document.getElementById('interactive');
+										document.getElementById('load').style.visibility = "hidden";
+									}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+							var topRiskTableData = $('#kriDetailsTable')
+									.DataTable();
+
+							topRiskTableData.clear().draw();
+
+							//destroy datatable
+							//table.destroy();
+							obj
+									.forEach(function(items) {
+
+										var deptDetails = items.topRiskId;
+
+										var tr = $("<tr>"
+												+ "<td>"
+												+ items.kriId
+												+ "</td>"
+												+ "<td  class='text-capitalize'>"
+												+ items.kriName
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.kriThresoldDescription
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.assessmentValue
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.assessmentStatus
+												+ "</td>"
+												+ "<td class='text-capitalize'>"
+												+ items.officeCode + "</td>"
+												+ "</tr>");
+
+										topRiskTableData.row.add(tr[0]).draw();
+
+									});
+
+						},
+						error : function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr.success('Some Error Occured');
+						}
+					});
+		}
+	</script>
+
+
+	
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+
+			//Date range picker
+			$('#completionDate').datetimepicker({
+				format : 'DD-MM-YYYY'
+			//format : 'YYYY-MM-DD'
+			});
+		})
+	</script>
+	<script>
+	$('#fetch_data_btn').click(
+				function() {
+					var assesmentPeriod = $("#assessmentDate").val();
+					var officeType=$("#officeType").val();
+					
+					var reportString = "{\"assessmentPeriod\":\"" + assesmentPeriod
+					+ "\",\n" + "\"officeType\":\"" + officeType + "\"}";
+
+					/* var reportString = "{\"assessmentPeriod\":\""
+							+ assessmentDate + "\"}"; */
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+							.toString(CryptoJS.enc.Hex);
+
+					var aesUtil = new AesUtil(keySize, iterationCount);
+
+					var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+							reportString);
+
+					$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+					$("#frmTpRiskGraph").submit();
+
+				});
+	</script>
+	<script>
+		$(document).ready(function() {
+			$(
+					'#officeType option[value="'
+							+ $("#selectedOfficeType").val() + '"]')
+					.attr("selected", "selected").change();
+			//assessmentDateSelected
+			$(
+					'#assessmentDate option[value="'
+							+ $("#assessmentDateSelected").val() + '"]')
+					.attr("selected", "selected").change();
+			var userOffice=$("#userOffice").val();
+			//alert(userOffice);
+		
+			if(userOffice==='ZO'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+		}else if(userOffice==='divisional office'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+				$('#officeType option[value="ZO"]').attr("disabled", true);
+			}else if(userOffice==='BO'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+				$('#officeType option[value="ZO"]').attr("disabled", true);
+				$('#officeType option[value="DO"]').attr("disabled", true);
+			}
+			});
+		
+		</script>
+		<script>
+		function printDiv() {
+			//pagging_flg=false;
+			$("#topRiskGraphTitle").hide();
+			$(".dataTables_filter").hide();
+			$("#topRiskRagTitle1").hide();
+			$("#kriRagTitle").hide();
+			 $("#footer").hide();
+			 $('#topRiskGraphTable').DataTable().destroy();
+			 $("#topRiskGraphTable").removeClass("table-bordered");
+			 $('#topRiskDetailsTable').DataTable().destroy();
+			 $("#kriDetailsTable").removeClass("table-bordered");
+			 $('#kriDetailsTable').DataTable().destroy();
+			 $("#kriDetailsTable").removeClass("table-bordered");
+			 $("#headerData").hide();
+			  $("#footerData").hide();
+			  $("#printRow").hide();
+			 $("#fetchButton").hide();
+			
+			window.print();
+			  $("#topRiskDetailsTable").addClass("table-bordered");
+			  $("#kriDetailsTable").addClass("table-bordered");
+			  $("#kriDetailsTable").addClass("table-bordered");
+			$("#topRiskGraphTitle").show();
+			$(".dataTables_filter").show();
+			$("#topRiskRagTitle1").show();
+			$("#kriRagTitle").show();
+			 $("#footer").show();
+			 $("#headerData").show();
+			   $("#footerData").show();
+			   $("#printRow").show();
+			   $("#fetchButton").show();
+			 
+			 $(function() {
+					$("#topRiskGraphTable").DataTable({
+						"columnDefs" : [ {
+							orderable : false,
+							targets : []
+						} ],
+
+						"order" : [ 0, "asc" ],
+						"lengthMenu" : [ 10 ],
+						"paging" : false,
+						"responsive" : false,
+						"autoWidth" : false,
+						"searching" : true,
+						"fixedHeader" : true,
+						"buttons" : [ "csv", "excel", "pdf", "print" ],
+						"language" : {
+							"emptyTable" : "No Data Available"
+						}
+					}).buttons().container().appendTo('#topRiskGraphTitle');
+					//.buttons().container().appendTo('.topRiskGraphTablePrint');
+				});
+				//topRiskDetailsTable
+				$(function() {
+					$("#topRiskDetailsTable").DataTable({
+						"columnDefs" : [ {
+							orderable : false,
+							targets : []
+						} ],
+
+						"order" : [ 0, "desc" ],
+						"lengthMenu" : [ 10 ],
+						"paging" : true,
+						"responsive" : false,
+						"autoWidth" : false,
+						"searching" : true,
+						"fixedHeader" : true,
+						"buttons" : [ "csv", "excel", "pdf", "print" ],
+						"language" : {
+							"emptyTable" : "No Data Available"
+						}
+					}).buttons().container().appendTo('#topRiskRagTitle1');
+					//.buttons().container().appendTo('#topRiskRagTitle');
+				});
+				//kriDetailsTableRow
+				$(function() {
+					$("#kriDetailsTable").DataTable({
+						"columnDefs" : [ {
+							orderable : false,
+							targets : []
+						} ],
+
+						"order" : [ 0, "desc" ],
+						"lengthMenu" : [ 10 ],
+						"responsive" : false,
+						"autoWidth" : false,
+						"paging" : true,
+						"searching" : true,
+						"fixedHeader" : true,
+						"buttons" : [ "csv", "excel", "pdf", "print" ],
+						"language" : {
+							"emptyTable" : "No Data Available"
+						}
+					}).buttons().container().appendTo('#kriRagTitle');
+				});
+
+
+			//pagging_flg=true;
+		}
+	</script>
+
+</body>
+
+</html>
+

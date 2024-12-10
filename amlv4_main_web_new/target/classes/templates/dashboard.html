@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" type="image/png" th:href="@{/login-dist/images/pa3.png}" />
+	<title sec:authentication="principal.ermTitle"></title>
+
+	<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+	<!--<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">-->
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Select2 -->
+	<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+	
+	<link rel="stylesheet" th:href="@{/plugins/Ionicons/css/ionicons.min.css}">
+
+	<style>
+		#load {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			opacity: 1;
+		}
+
+		.card-info:not(.card-outline)>.card-header {
+			background-color: #044383 !important;
+		}
+
+		.bg-info {
+			background-color: #044383 !important;
+		}
+
+		.btn-info {
+			color: #fff;
+			background-color: #044383 !important;
+			border-color: #044383 !important;
+			box-shadow: none;
+		}
+
+		.viewThresh {
+			visibility: visible;
+			width: 120px;
+			background-color: white;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px 0;
+			/* Position the tooltip */
+			position: absolute;
+			z-index: 1;
+			bottom: 2em;
+			left: 75%;
+		}
+
+		.nav-pills>li.active>a,
+		.nav-pills>li.active>a:hover,
+		.nav-pills>li.active>a:focus {
+			background-color: #FCD900 !important;
+		}
+		
+		#tripleBarChart {
+		  height: 100%;
+		  width: 100%;
+		  min-height: 150px;
+		}
+		 
+		.zc-ref {
+		  display: none;
+		}
+	</style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+	
+	<input type="hidden" id="openCount" th:value="${dashDto.openCount}" />
+	<input type="hidden" id="holdCount" th:value="${dashDto.holdCount}" />
+	<input type="hidden" id="escalatedBackCount" th:value="${dashDto.escalatedBackCount}" />
+	<input type="hidden" id="reopenCount" th:value="${dashDto.reopenCount}" />
+	<input type="hidden" id="suspCount" th:value="${dashDto.suspCount}" />
+	<input type="hidden" id="nonsuspCount" th:value="${dashDto.nonsuspCount}" />
+	
+	<input type="hidden" id="lessThan2Days" th:value="${dashDto.lessThan2Days}" />
+	<input type="hidden" id="less5Great2Days" th:value="${dashDto.less5Great2Days}" />
+	<input type="hidden" id="less10Great5Days" th:value="${dashDto.less10Great5Days}" />
+	<input type="hidden" id="greatThan10Days" th:value="${dashDto.greatThan10Days}" />
+	
+	<input type="hidden" id="lessThan2DaysL1" th:value="${dashDto.lessThan2DaysL1}" />
+	<input type="hidden" id="less5Great2DaysL1" th:value="${dashDto.less5Great2DaysL1}" />
+	<input type="hidden" id="less10Great5DaysL1" th:value="${dashDto.less10Great5DaysL1}" />
+	<input type="hidden" id="greatThan10DaysL1" th:value="${dashDto.greatThan10DaysL1}" />
+	
+	<input type="hidden" id="lessThan2DaysL2" th:value="${dashDto.lessThan2DaysL2}" />
+	<input type="hidden" id="less5Great2DaysL2" th:value="${dashDto.less5Great2DaysL2}" />
+	<input type="hidden" id="less10Great5DaysL2" th:value="${dashDto.less10Great5DaysL2}" />
+	<input type="hidden" id="greatThan10DaysL2" th:value="${dashDto.greatThan10DaysL2}" />
+	
+	<input type="hidden" id="lessThan2DaysL3" th:value="${dashDto.lessThan2DaysL3}" />
+	<input type="hidden" id="less5Great2DaysL3" th:value="${dashDto.less5Great2DaysL3}" />
+	<input type="hidden" id="less10Great5DaysL3" th:value="${dashDto.less10Great5DaysL3}" />
+	<input type="hidden" id="greatThan10DaysL3" th:value="${dashDto.greatThan10DaysL3}" />
+	
+	<input type="hidden" id="suspActionCount" th:value="${dashDto.suspActionCount}" />
+	<input type="hidden" id="nonsuspActionCount" th:value="${dashDto.nonsuspActionCount}" />
+	<input type="hidden" id="strActionCount" th:value="${dashDto.strActionCount}" />
+	<input type="hidden" id="markActionCount" th:value="${dashDto.markActionCount}" />
+	<input type="hidden" id="heldActionCount" th:value="${dashDto.heldActionCount}" />
+	<input type="hidden" id="roleId" th:value="${dashDto.roleId}" />
+	
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Dashboard</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Dashboard</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			
+<section class="content">
+	<div class="container-fluid">
+				
+	<div class="row">
+        <div class="col-md-4 col-sm-6 col-xsf-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-red"><i class="ion ion-ios-gear-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Open</span>
+              <span class="info-box-number" th:text="${dashDto.openCount}"></span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- fix for small devices only -->
+        <div class="clearfix visible-sm-block"></div>
+
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-green"><i class="ion ion-ios-gear-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">Today's Action</span>
+              <span class="info-box-number" th:text="${dashDto.actionCount}"></span>
+            </div>
+            <!-- /.info-box-content -->
+          </div>
+          <!-- /.info-box -->
+        </div>
+        
+        <div class="col-md-4 col-sm-6 col-xs-12">
+          <div class="info-box">
+            <span class="info-box-icon bg-blue"><i class="ion ion-ios-gear-outline"></i></span>
+
+            <div class="info-box-content">
+              <span class="info-box-text">STR Pending</span>
+              <span class="info-box-number" th:text="${dashDto.strPendingCount}"></span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    <div class="card">
+    <div class="card-header">
+    	<h3 class="card-title"><b>Pendency With User</b></h3>
+    </div>
+    <div class="card-body">
+    <div class="row" th:if="${dashDto.roleId} == 'Analyst'">
+      <div class="col-md-6">
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <table class="table table-striped">
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>Status</th>
+                  <th style="width: 40px">Count</th>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>Held</td>
+                  <td><span class="badge bg-red" th:text="${dashDto.holdCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Escalated Back</td>
+                  <td><span class="badge bg-blue" th:text="${dashDto.escalatedBackCount}"></span></td>
+                </tr>
+              </table>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+		        <canvas id="myPendPieChart" style="width:100%;max-width:700px"></canvas>          
+		</div>
+     </div>
+     <div class="row" th:if="${dashDto.roleId} != 'Analyst'">
+      <div class="col-md-6">
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <table class="table table-striped">
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>Status</th>
+                  <th style="width: 40px">Count</th>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>Suspicious</td>
+                  <td><span class="badge bg-red" th:text="${dashDto.suspCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Non Suspicious</td>
+                  <td><span class="badge bg-blue" th:text="${dashDto.nonsuspCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Held</td>
+                  <td><span class="badge bg-red" th:text="${dashDto.holdCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Escalated Back</td>
+                  <td><span class="badge bg-blue" th:text="${dashDto.escalatedBackCount}"></span></td>
+                </tr>
+              </table>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+		        <canvas id="myPendPieChart2" style="width:100%;max-width:700px"></canvas>          
+		</div>
+     </div>
+     </div>
+     </div>
+     
+    <div class="card">
+    <div class="card-header">
+    	<h3 class="card-title"><b>Today's User Activity</b></h3>
+    </div>
+    <div class="card-body">
+    <div class="row">
+    
+    <div class="col-md-6">
+		   <canvas id="myActionPieChart" style="width:100%;max-width:700px"></canvas>          
+	</div>
+    
+      <div class="col-md-6">
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <table class="table table-striped">
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>Action</th>
+                  <th style="width: 40px">Count</th>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>Suspicious</td>
+                  <td><span class="badge bg-red" th:text="${dashDto.suspActionCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>Non Suspicious</td>
+                  <td><span class="badge bg-green" th:text="${dashDto.nonsuspActionCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>Held</td>
+                  <td><span class="badge bg-blue" th:text="${dashDto.heldActionCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>Actioned STR</td>
+                  <td><span class="badge bg-yellow" th:text="${dashDto.strActionCount}"></span></td>
+                </tr>
+                <tr>
+                  <td>5.</td>
+                  <td>Mark Customer</td>
+                  <td><span class="badge bg-orange" th:text="${dashDto.markActionCount}"></span></td>
+                </tr>
+              </table>
+            </div>
+        </div>
+     </div>
+     </div>
+	</div>	
+	<div class="card">
+	 <div class="card-header">
+    	<h3 class="card-title"><b>Agewise Pendency Data</b></h3>
+    </div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-6">
+			       	<canvas id="myBarChart" style="width:100%;max-width:700px"></canvas>        
+			</div>
+			<div class="col-md-6">
+			       	<div id='tripleBarChart'><a class="zc-ref" href="https://www.zingchart.com/">Charts by ZingChart</a></div>  
+			</div>
+	    </div>
+	</div>
+	</div>		
+	<!-- <div class="card">
+	 <div class="card-header">
+    	<h3 class="card-title"><b>Agewise Pendency Data</b></h3>
+    </div>
+	<div class="card-body">
+		<div class="row">
+			<div class="col-md-6">
+			       	<div id='tripleBarChart'><a class="zc-ref" href="https://www.zingchart.com/">Charts by ZingChart</a></div>  
+			</div>
+			<div class="col-md-6">
+			       	<div id="chartContainer" style="height: 300px; width: 100%;"></div>          
+			</div>
+	    </div>
+	</div>
+	</div> -->
+	</div>
+</section>
+</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/aml/misData.js}"></script>
+	<script th:src="@{/plugins/bower_components/Flot/jquery.flot.js}"></script>
+	<script th:src="@{/plugins/bower_components/Flot/jquery.flot.resize.js}"></script>
+	<script th:src="@{/plugins/bower_components/Flot/jquery.flot.pie.js}"></script>
+	<script th:src="@{/plugins/bower_components/Flot/jquery.flot.categories.js}"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+	<script src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+	<script nonce="undefined" src="https://cdn.zingchart.com/zingchart.min.js"></script>
+	
+
+<script>
+
+var lessThan2Days = $("#lessThan2Days").val();
+var less5Great2Days = $("#less5Great2Days").val();
+var less10Great5Days = $("#less10Great5Days").val();
+var greatThan10Days = $("#greatThan10Days").val();
+
+const xValues = ["<2", ">2 And <5", ">5 And <10", ">10"];
+const yValues = [lessThan2Days, less5Great2Days, less10Great5Days, greatThan10Days];
+const barColors = ["green", "blue","orange","red"];
+
+new Chart("myBarChart", {
+  type: "bar",
+  data: {
+    labels: xValues,
+    datasets: [{
+      backgroundColor: barColors,
+      data: yValues
+    }]
+  },
+  options: {
+    legend: {display: false},
+    title: {
+      display: true,
+      text: ""
+    }
+  }
+});
+</script>	
+
+<script>
+var openCount = $("#openCount").val();
+var holdCount = $("#holdCount").val();
+var escalatedBackCount = $("#escalatedBackCount").val();
+var reopenCount = $("#reopenCount").val();
+
+const xValuesPie = ["Held", "Escalated Back"];
+const yValuesPie = [holdCount, escalatedBackCount];
+const barColorsPie = [
+  "red",
+  "blue"//,
+  //"#2b5797",
+  //"#e8c3b9"
+];
+
+new Chart("myPendPieChart", {
+  type: "pie",
+  data: {
+    labels: xValuesPie,
+    datasets: [{
+      backgroundColor: barColorsPie,
+      data: yValuesPie
+    }]
+  }/* ,
+  options: {
+    title: {
+      display: true,
+      text: ""
+    }
+  } */
+});
+</script>
+
+<script>
+var suspCount = $("#suspCount").val();
+var nonsuspCount = $("#nonsuspCount").val();
+var escalatedBackCount2 = $("#escalatedBackCount").val();
+var holdCount2 = $("#holdCount").val();
+
+const xValuesPie2 = ["Suspicious", "Non Suspicious","Held", "Escalated Back"];
+const yValuesPie2 = [suspCount, nonsuspCount, holdCount2, escalatedBackCount2];
+const barColorsPie2 = [
+  "red",
+  "blue",
+  "green",
+  "yellow"
+];
+
+new Chart("myPendPieChart2", {
+  type: "pie",
+  data: {
+    labels: xValuesPie2,
+    datasets: [{
+      backgroundColor: barColorsPie2,
+      data: yValuesPie2
+    }]
+  }/* ,
+  options: {
+    title: {
+      display: true,
+      text: ""
+    }
+  } */
+});
+</script>
+
+<script>
+var suspActionCount = $("#suspActionCount").val();
+var nonsuspActionCount = $("#nonsuspActionCount").val();
+var strActionCount = $("#strActionCount").val();
+var markActionCount = $("#markActionCount").val();
+var heldActionCount = $("#heldActionCount").val();
+
+const xValuesActionPie = ["Suspicious", "Non Suspicious", "Held", "Reported STR", "Mark Customer"];
+const yValuesActionPie = [suspActionCount, nonsuspActionCount, heldActionCount, strActionCount, markActionCount];
+const barColorsActionPie = [
+  "red",
+  "green",
+  "blue",
+  "yellow",
+  "orange"
+];
+
+new Chart("myActionPieChart", {
+  type: "pie",
+  data: {
+    labels: xValuesActionPie,
+    datasets: [{
+      backgroundColor: barColorsActionPie,
+      data: yValuesActionPie
+    }]
+  }/* ,
+  options: {
+    title: {
+      display: true,
+      text: ""
+    }
+  } */
+});
+</script>
+
+<script type="text/javascript">
+window.onload = function () {
+	
+	var lessThan2DaysL1 = parseInt($("#lessThan2DaysL1").val());
+	var less5Great2DaysL1 = parseInt($("#less5Great2DaysL1").val());
+	var less10Great5DaysL1 = parseInt($("#less10Great5DaysL1").val());
+	var greatThan10DaysL1 = parseInt($("#greatThan10DaysL1").val());
+	
+	var lessThan2DaysL2 = parseInt($("#lessThan2DaysL2").val());
+	var less5Great2DaysL2 = parseInt($("#less5Great2DaysL2").val());
+	var less10Great5DaysL2 = parseInt($("#less10Great5DaysL2").val());
+	var greatThan10DaysL2 = parseInt($("#greatThan10DaysL2").val());
+	
+	var lessThan2DaysL3 = parseInt($("#lessThan2DaysL3").val());
+	var less5Great2DaysL3 = parseInt($("#less5Great2DaysL3").val());
+	var less10Great5DaysL3 = parseInt($("#less10Great5DaysL3").val());
+	var greatThan10DaysL3 = parseInt($("#greatThan10DaysL3").val());
+	
+	
+var chart = new CanvasJS.Chart("chartContainer", {
+	
+	animationEnabled: true,
+	/* title:{
+		text: "Olympic Medals of all Times (till 2016 Olympics)"
+	}, */
+	axisY: {
+		title: "Medals",
+		includeZero: true
+	},
+	legend: {
+		cursor:"pointer",
+		itemclick : toggleDataSeries
+	},
+	toolTip: {
+		shared: true,
+		content: toolTipFormatter
+	},
+	data: [{
+		type: "bar",
+		showInLegend: true,
+		name: "Analyst",
+		color: "gold",
+		dataPoints: [
+			{ y: lessThan2DaysL1, label: "<2" },
+			{ y: less5Great2DaysL1, label: ">2 And <5" },
+			{ y: less10Great5DaysL1, label: ">5 And <10" },
+			{ y: greatThan10DaysL1, label: ">10" }
+		]
+	},
+	{
+		type: "bar",
+		showInLegend: true,
+		name: "Reviewer",
+		color: "silver",
+		dataPoints: [
+			{ y: lessThan2DaysL2, label: "<2" },
+			{ y: less5Great2DaysL2, label: ">2 And <5" },
+			{ y: less10Great5DaysL2, label: ">5 And <10" },
+			{ y: greatThan10DaysL2, label: ">10" }
+		]
+	},
+	{
+		type: "bar",
+		showInLegend: true,
+		name: "Verifier",
+		color: "#A57164",
+		dataPoints: [
+			{ y: lessThan2DaysL3, label: "<2" },
+			{ y: less5Great2DaysL3, label: ">2 And <5" },
+			{ y: less10Great5DaysL3, label: ">5 And <10" },
+			{ y: greatThan10DaysL3, label: ">10" }
+		]
+	}]
+});
+chart.render();
+
+function toolTipFormatter(e) {
+	var str = "";
+	var total = 0 ;
+	var str3;
+	var str2 ;
+	for (var i = 0; i < e.entries.length; i++){
+		var str1 = "<span style= \"color:"+e.entries[i].dataSeries.color + "\">" + e.entries[i].dataSeries.name + "</span>: <strong>"+  e.entries[i].dataPoint.y + "</strong> <br/>" ;
+		total = e.entries[i].dataPoint.y + total;
+		str = str.concat(str1);
+	}
+	str2 = "<strong>" + e.entries[0].dataPoint.label + "</strong> <br/>";
+	str3 = "<span style = \"color:Tomato\">Total: </span><strong>" + total + "</strong><br/>";
+	return (str2.concat(str)).concat(str3);
+}
+
+function toggleDataSeries(e) {
+	if (typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+		e.dataSeries.visible = false;
+	}
+	else {
+		e.dataSeries.visible = true;
+	}
+	chart.render();
+}
+
+}
+</script>
+
+<script type="text/javascript">
+var lessThan2DaysL1 = parseInt($("#lessThan2DaysL1").val());
+var less5Great2DaysL1 = parseInt($("#less5Great2DaysL1").val());
+var less10Great5DaysL1 = parseInt($("#less10Great5DaysL1").val());
+var greatThan10DaysL1 = parseInt($("#greatThan10DaysL1").val());
+
+var lessThan2DaysL2 = parseInt($("#lessThan2DaysL2").val());
+var less5Great2DaysL2 = parseInt($("#less5Great2DaysL2").val());
+var less10Great5DaysL2 = parseInt($("#less10Great5DaysL2").val());
+var greatThan10DaysL2 = parseInt($("#greatThan10DaysL2").val());
+
+var lessThan2DaysL3 = parseInt($("#lessThan2DaysL3").val());
+var less5Great2DaysL3 = parseInt($("#less5Great2DaysL3").val());
+var less10Great5DaysL3 = parseInt($("#less10Great5DaysL3").val());
+var greatThan10DaysL3 = parseInt($("#greatThan10DaysL3").val());
+
+var myConfig = {
+		  "graphset": [{
+		    "type": "bar",
+		    "background-color": "white",
+		    "title": {
+		      //"text": "Tech Giant Quarterly Revenue",
+		      //"font-color": "#7E7E7E",
+		      //"backgroundColor": "none",
+		      //"font-size": "22px",
+		      //"alpha": 1,
+		      //"adjust-layout": true,
+		    },
+		    "plotarea": {
+		      "margin": "dynamic"
+		    },
+		    "legend": {
+		      "layout": "x3",
+		      "overflow": "page",
+		      "alpha": 0.05,
+		      "shadow": false,
+		      "align": "center",
+		      "adjust-layout": true,
+		      "marker": {
+		        "type": "circle",
+		        "border-color": "none",
+		        "size": "10px"
+		      },
+		      "border-width": 0,
+		      "maxItems": 3,
+		      "toggle-action": "hide",
+		      "pageOn": {
+		        "backgroundColor": "#000",
+		        "size": "10px",
+		        "alpha": 0.65
+		      },
+		      "pageOff": {
+		        "backgroundColor": "#7E7E7E",
+		        "size": "10px",
+		        "alpha": 0.65
+		      },
+		      "pageStatus": {
+		        "color": "black"
+		      }
+		    },
+		    "plot": {
+		      "bars-space-left": 0.15,
+		      "bars-space-right": 0.15,
+		      "animation": {
+		        "effect": "ANIMATION_SLIDE_BOTTOM",
+		        "sequence": 0,
+		        "speed": 800,
+		        "delay": 800
+		      }
+		    },
+		    "scale-y": {
+		      "line-color": "#7E7E7E",
+		      "item": {
+		        "font-color": "#7e7e7e"
+		      },
+		      //"values": "0:60:10",
+		      "guide": {
+		        "visible": true
+		      },
+		      "label": {
+		        "text": "Alert Count",
+		        "font-family": "arial",
+		        "bold": true,
+		        "font-size": "14px",
+		        "font-color": "#7E7E7E",
+		      },
+		    },
+		    "scaleX": {
+		      "values": [
+		        "<2",
+		        ">2 And <5",
+		        ">5 And <10",
+		        ">10"
+		      ],
+		      "placement": "default",
+		      "tick": {
+		        "size": 58,
+		        "placement": "cross"
+		      },
+		      "itemsOverlap": true,
+		      "item": {
+		        "offsetY": -55
+		      }
+		    },
+		    /* "scaleX2": {
+		      "values": ["2013", "2014"],
+		      "placement": "default",
+		      "tick": {
+		        "size": 20,
+		      },
+		      "item": {
+		        "offsetY": -15
+		      }
+		    }, */
+		    "tooltip": {
+		      "visible": false
+		    },
+		    "crosshair-x": {
+		      "line-width": "100%",
+		      "alpha": 0.18,
+		      "plot-label": {
+		        "header-text": "%kv"
+		      }
+		    },
+		    "series": [{
+		        "values": [
+		          lessThan2DaysL1,
+		          less5Great2DaysL1,
+		          less10Great5DaysL1,
+		          greatThan10DaysL1
+		        ],
+		        "alpha": 0.95,
+		        "borderRadiusTopLeft": 7,
+		        "background-color": "purple",
+		        "text": "Analyst",
+		      },
+		      {
+		        "values": [
+		          lessThan2DaysL2,
+		          less5Great2DaysL2,
+		          less10Great5DaysL2,
+		          greatThan10DaysL2
+		        ],
+		        "borderRadiusTopLeft": 7,
+		        "alpha": 0.95,
+		        "background-color": "orange",
+		        "text": "Reviewer"
+		      },
+		      {
+		        "values": [
+		          lessThan2DaysL3,
+		          less5Great2DaysL3,
+		          less10Great5DaysL3,
+		          greatThan10DaysL3
+		        ],
+		        "alpha": 0.95,
+		        "borderRadiusTopLeft": 7,
+		        "background-color": "teal",
+		        "text": "Verifier"
+		      },
+		      /* {
+		        "values": [
+		          18.53,
+		          24.52,
+		          20.4,
+		          23.38
+		        ],
+		        "borderRadiusTopLeft": 7,
+		        "alpha": 0.95,
+		        "background-color": "red",
+		        "text": "Microsoft"
+		      },
+		      {
+		        "values": [
+		          17.09,
+		          25.59,
+		          19.74,
+		          19.34
+		        ],
+		        "borderRadiusTopLeft": 7,
+		        "alpha": 0.95,
+		        "background-color": "blue",
+		        "text": "Amazon"
+		      },
+		      {
+		        "values": [
+		          2.31,
+		          2.36,
+		          2.42,
+		          2.52
+		        ],
+		        "borderRadiusTopLeft": 7,
+		        "alpha": 0.95,
+		        "background-color": "green",
+		        "text": "Cognizant"
+		      } */
+		    ]
+		  }]
+		};
+		 
+		zingchart.render({
+		  id: 'tripleBarChart',
+		  data: myConfig,
+		  height: '100%',
+		  width: '100%'
+		});
+</script>
+	
+</body>
+
+</html>

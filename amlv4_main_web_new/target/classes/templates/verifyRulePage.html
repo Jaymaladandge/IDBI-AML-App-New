@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+/* #load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+} */
+textarea {
+	overflow: hidden
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Rule Verification Page</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/mainActionPlan}">Action
+										Plan</a></li>
+								<li class="breadcrumb-item active">Verify</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-outline card-info">
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="verifyRule" method="post" th:action="@{/verifyRule}"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+									<input type="hidden" name="sourceName" id="sourceName"
+										th:value="${sourceName}" th:name="sourceName" /><input
+										type="hidden" id="oldActionStatus" name="oldActionStatus"
+										th:value="${oldActionStatus}" /><input type="hidden"
+										id="userRole" name="userRole" th:value="${user.userPosition}" />
+
+									<div class="card-body">
+										<div class="card card-success">
+											<div class="card-header">
+												<h3 class="card-title text-center">Rule Details</h3>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="ruleId">Rule ID</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold text-capitalize"
+																	id="ruleId" name="ruleId" th:value="${ruleDto.ruleId}"
+																	readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="raRecordStatus">Record Status</label>
+
+															<div class="input-group">
+																<input th:if="${sourceName=='create'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Verification For Creation" readonly>
+																<input th:if="${sourceName=='createverify'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Approval For Creation" readonly>
+																<input th:if="${sourceName=='closeverify'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Verification For Closure" readonly>
+																<input th:if="${sourceName=='action'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Approval For Action Plan Link" readonly>
+																<input th:if="${sourceName=='edit'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Verification For Edit" readonly>
+																<input th:if="${sourceName=='editverify'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Approval For Edit" readonly><input
+																	th:if="${sourceName=='close'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Approval For Closure" readonly>
+																<input th:if="${sourceName=='verify'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Approval For Creation" readonly>
+																<input th:if="${sourceName=='verifyvc'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Verification For Value Captured"
+																	readonly> <input
+																	th:if="${sourceName=='verifyvv'}" type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="ruleRecordStatus" name="ruleRecordStatus"
+																	value="Pending Approval For Value Captured" readonly>
+															</div>
+
+
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Priority">Rule Priority</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize "
+																	id="Priority" name="Priority"
+																	th:value="${ruleDto.rulePriorityValue}" readonly>
+															</div>
+														</div>
+													</div>
+
+												</div>
+												<!-- /.row -->
+												<div class="row">
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Frequency">Rule Frequency</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize"
+																	id="Frequency" name="Frequency"
+																	th:value="${ruleDto.ruleFrequencyValue}" readonly>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="queryType">Query Type</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold text-capitalize"
+																	id="queryType" name="queryType"
+																	th:value="${ruleDto.ruleTypeValue}" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Dependancy">Rule Dependency</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize"
+																	id="Dependancy" name="Dependancy"
+																	th:value="${ruleDto.ruleDependancyValue}" readonly>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.row -->
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Classification">Rule Classification</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize"
+																	id="Classification" name="Classification"
+																	th:value="${ruleDto.ruleClassification}" readonly>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="DataSource">Rule DataSource</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold text-capitalize"
+																	id="DataSource" name="DataSource"
+																	th:value="${ruleDto.dataSource}" readonly>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Priority">Vertical Type</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize "
+																	id="verticalTypevalue" name="Priority"
+																	th:value="${ruleDto.verticalTypevalue}" readonly>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.row -->
+												<div class="row">
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Frequency">Rule Re-check Required
+																Flag</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize"
+																	id="Frequency" name="Frequency"
+																	th:value="${ruleDto.recheckRequiredValue}" readonly>
+															</div>
+														</div>
+													</div>
+
+													<div class="col-sm-4">
+														<div class="form-group">
+															<label for="Priority">Max Allowed Days</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold text-capitalize "
+																	id="verticalTypevalue" name="Priority"
+																	th:value="${ruleDto.maxAllowDays}" readonly>
+															</div>
+														</div>
+													</div>
+
+												</div>
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<label for="ruleDescription">Rule Description</label>
+															<div class="input-group">
+																<textarea class="form-control" name="ruleDescription"
+																	maxlength="3000" placeholder="Rule Description"
+																	id="ruleDescription" rows="4"
+																	th:text="${ruleDto.ruleDesc}" disabled></textarea>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="card card-success">
+											<div class="card-header">
+												<h3 class="card-title text-center">Rule Query Details</h3>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															
+															<div class="input-group">
+																<textarea class="form-control" name="Query"
+																	maxlength="3000" placeholder="Rule Query" id="Query"
+																	rows="4" th:text="${ruleDto.userEnteredQuery}" disabled></textarea>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="card card-success">
+													<div class="card-header">
+														<h5>Threshold Values Table</h5>
+													</div>
+													<div class="card-body table-responsive">
+														<table id="ruleThresholdTable"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th>Threshold Name</th>
+																	<th>Threshold Value</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr
+																	th:each="thresholdValue : ${ruleDto.valueParamDtoList}">
+																	<td
+																		th:text="${thresholdValue.paramName}"></td>
+																	<td
+																		th:text="${thresholdValue.paramValue}"></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="card card-success">
+													<div class="card-header">
+														<h5>Parameter Values Table</h5>
+													</div>
+													<div class="card-body table-responsive">
+														<table id="ruleParameterTable"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th>Column Name</th>
+																	<th>Column Value</th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr
+																	th:each="thresholdValue : ${#strings.arraySplit(ruleDto.ruleThreshold, ',')}">
+																	<td
+																		th:text="${#strings.arraySplit(thresholdValue, '~')[0]}"></td>
+																	<td
+																		th:text="${#strings.arraySplit(thresholdValue, '~')[1]}"></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<!-- <div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="ruleDescription">Rule Executable Query</label>
+													<div class="input-group">
+														<textarea class="form-control" name="ExecutableQuery"
+															maxlength="3000" placeholder="Rule Executable Query"
+															id="ExecutableQuery" rows="4"
+															th:text="${ruleDto.ruleQuery}" disabled></textarea>
+													</div>
+												</div>
+											</div>
+										</div> -->
+										<!-- /.row -->
+										<!-- <div class="row"
+											th:each="comment,iter :${ruleDto.commentList}">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="comment">Rule Comment</label>
+													<div class="input-group">
+														<textarea class="form-control" name="ExecutableQuery"
+															maxlength="3000" placeholder="Rule comment" id="comment"
+															rows="2" th:text="${comment}" disabled></textarea>
+													</div>
+												</div>
+											</div>
+										</div> -->
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-12">
+												<input type="hidden" id="username" th:value="${userName}">
+											</div>
+										</div>
+									</div>
+
+									<!-- /.card-body -->
+
+
+
+									<div class="card-footer">
+										<button th:if="${sourceName=='create'}" type="button"
+											id="Verify" class="btn btn-success" name="Verify"
+											title="Verify">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Verify
+										</button>
+										<button th:if="${sourceName=='edit'}" type="button"
+											id="Verify" class="btn btn-success" name="Verify"
+											title="Verify">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Verify
+										</button>
+										<button th:if="${sourceName=='createverify'}" type="button"
+											id="Approve" class="btn btn-success" name="Approve"
+											title="Approve">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+										</button>
+										<button th:if="${sourceName=='editverify'}" type="button"
+											id="Approve" class="btn btn-success" name="Approve"
+											title="Approve">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+										</button>
+										<button type="button" class="btn bg-red" data-toggle="modal"
+											name="reject" data-target="#commentmodal" title="Reject">
+											<i class="fas fa-circle-notch" style="padding: 0 7px 0 0px;"></i>Reject
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="home"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+										<!-- Audit Trail Button -->
+										<a class="btn btn-secondary text-white viewAuditTrail"
+											title="Audit Trail" data-toggle="modal"> <i
+											class="fab fa-twitch" style="padding: 0 7px 0 0px;"></i>Audit
+											Trail
+										</a>
+									</div>
+									<!-- /.card-footer -->
+									<!-- Timeline Modal -->
+									<div class="modal fade" id="timelinemodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Audit Trail</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="timeline">
+														<div class="timeline timeline-inverse" id="row_0"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- Comment Modal -->
+									<div class="modal fade" id="commentmodal">
+										<div class="modal-dialog modal-lg">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Comments</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+
+												<!-- form start -->
+
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="comments">
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<label for="comments">Reason For Rejection <code>*</code></label>
+																	<textarea class="form-control" name="reason"
+																		id="rejectReason" maxlength="3000"
+																		placeholder="Reason For Rejection"></textarea>
+																	<span id="reason-error"></span>
+																</div>
+															</div>
+														</div>
+														<div class="card-footer">
+															<button type="button" name="reject" id="reject"
+																class="btn btn-info">
+																<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+															</button>
+														</div>
+														<!-- /.row -->
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/ruleVerification.js}"></script>
+
+</body>
+</html>

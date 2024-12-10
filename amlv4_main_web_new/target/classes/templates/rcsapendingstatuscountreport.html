@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>RCSA Value Capture Pending Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/SelectReportsMainPage}">Report</a></li>
+								<li class="breadcrumb-item active">RCSA Value Capture
+									Pending Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-12">
+
+
+							<form id="rcsaReportForm" autocomplete="off"
+								th:action="@{/FetchRcsaPendencyReport}" method="post"
+								th:object="${encryptedRequest}" enctype="multipart/form-data">
+								<input type="hidden" id="encryptedJson" name="encryptedJson"
+									th:field="*{encryptedJson}" /> <input type="hidden"
+									id="userName" th:field="${user.username}" name="userName" />
+								<div class="card card-info">
+									<div class="card-header">
+										<h3 class="card-title">RCSA Value Capture Pending Report
+										</h3>
+									</div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType">Select Office Type <code>*</code></label>
+													<select class="select2 text-capitalize" name="officeType"
+														data-placeholder="Select Office Type" id="officeType"
+														style="width: 100%;">
+														<option value=''>Select Office Type</option>
+														<option th:each="officeNameList : ${nftDto.officeDtoList}"
+															th:value="${officeNameList.officeType}"
+															th:text="${officeNameList.officeName}" />
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div th:if="${user.userDeptName == 'ERM'}">
+													<div class="form-group">
+														<label for="riskDept">Select Department <code>*</code></label>
+
+														<select class="select2 text-capitalize" name="Department"
+															id="riskDept" data-placeholder="Select Department"
+															style="width: 100%;">
+															<option value=''>Select Department</option>
+
+														</select>
+													</div>
+												</div>
+												<div th:if="${user.userDeptName != 'ERM'}">
+													<div class="form-group">
+														<label for="riskDept">Department Name <code>*</code></label>
+
+														<div class="input-group">
+															<input type="Text"
+																class="form-control form-control-sm other-input"
+																id="riskDept" name="riskDept"
+																th:value="${user.userDeptName}" readonly>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeCode">Select Office Code <code>*</code></label>
+													<select
+														class="select2 text-capitalize form-control float-right"
+														name="officeCode" id="officeCode"
+														data-placeholder="Select OfficeCode" style="width: 100%">
+														<option value=''>Select OfficeCode</option>
+
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeCode">Select Creation Period <code>*</code></label>
+													<select
+														class="select2 text-capitalize form-control float-right"
+														name="creationPeriod" id="creationPeriod"
+														data-placeholder="Select CreationPeriod "
+														style="width: 100%">
+														<option value=''>Select CreationPeriod</option>
+														<option th:each="bizzList : ${nftDto.bizzDtoList}"
+															th:value="${bizzList.recordId}"
+															th:text="${bizzList.creationPeriod}" />
+													</select>
+												</div>
+											</div>
+											<div class="col-sm-2 mt-2">
+												<div class="form-group">
+													<button type="button"
+														class="btn btn-block btn-sm btn-info mt-4" id="fetch">Get
+														Report</button>
+												</div>
+											</div>
+											<div class="col-sm-2 mt-2">
+												<div class="form-group">
+													<button type="button"
+														class="btn btn-block btn-sm btn-outline-primary mt-4"
+														id="reload">Clear</button>
+												</div>
+											</div>
+
+
+										</div>
+
+
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="card card-outline card-secondary">
+													<div class="card-header">
+
+														<h3 class="card-title text-bold">RCSA Value Capture
+															Pending Report <span id="officeHeader"></span></h3>
+														<div class="row float-right">
+															<div class="col-sm-12 mt-2">
+																<span><a class="btn text-white exportDataBtn"
+																	id="exportDataBtn"
+																	style="margin-right: 5px; background-color: #006400;"
+																	title="Export Report"> <i class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span>
+															</div>
+														</div>
+
+													</div>
+													<div class="card-body  ">
+
+														<table id="reporttable"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th>Department</th>
+																	<th>Notification Date</th>
+																	<th>Pending</th>
+																	<th>Pending For Verification</th>
+																	<th>Close</th>
+																	<!-- <th></th> -->
+																</tr>
+
+															</thead>
+															<tbody  id="reporttableTbody">
+
+
+															</tbody>
+														</table>
+<table id="sumCount"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th></th>
+																	
+																	<th>Pending</th>
+																	<th>Pending For Verification</th>
+																	<th>Close</th>
+																	<!-- <th></th> -->
+																</tr>
+
+															</thead>
+															<tbody>
+
+
+															</tbody>
+														</table>
+
+													</div>
+												</div>
+
+											</div>
+											<!-- /.col -->
+										</div>
+										<!-- /.row -->
+
+									</div>
+									<!-- /.tab-pane -->
+
+									<div class="tab-pane" id="timeline">
+
+										<!-- The timeline -->
+										<div class="timeline timeline-inverse"></div>
+
+									</div>
+								</div>
+							</form>
+
+							<!-- /.tab-content -->
+						</div>
+						<!-- /.card-body -->
+					</div>
+				</div>
+				<!-- /.card -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+
+
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+	<!-- pendingNTFCount -->
+	<script th:src="@{/dist/appjs/erm/pendingNTFCount.js}"></script>
+</body>
+
+</html>
+

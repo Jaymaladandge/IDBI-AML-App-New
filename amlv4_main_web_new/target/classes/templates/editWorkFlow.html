@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+  #load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Workflow Management</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/WorkflowSummary}">Workflow</a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div>
+									<b><span class="help-block text-red" id="spanNotifyMsg"></span></b>
+								</div>
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Edit</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form autocomplete="off" class="form-horizontal"
+									id="frmWorkflow" th:action="@{/editWorkflowAction}"
+									th:object="${encryptedRequest}" method="post"
+									enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:field="*{encryptedJson}" /> <input type="hidden"
+										id="userName" th:field="${wfDistinct.userName}" name="userName" />
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="wfGroupId">Workflow ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold" id="wfGroupId"
+															name="wfGroupId" th:field="${wfDistinct.wfGroupId}" readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="WorkflowStatus">Workflow Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="WorkflowStatus" name="WorkflowStatus" value="Edit" readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group text-capitalize">
+													<label for="workflowmodule">Workflow Module <code>*</code></label>
+													<input type="text"
+															class="form-control form-control-sm text-bold" id="workflowmodule"
+															name="workflowmodule" th:field="${wfDistinctmodule.wfModule}" th:value="${wfDistinctmodule.wfModule}" readonly>
+													<!-- <select class="select2" name="workflowmodule"
+														id="workflowmodule" data-placeholder="Select Module"
+														style="width: 100%" readonly>
+														<option
+															th:text="${wfDistinct.wfModule}"></option>
+														
+													</select> -->
+												</div>
+											</div>
+
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="WorkflowName">Workflow Description <code>*</code>
+													</label>
+													<textarea type="text" class="form-control form-control-sm"
+														id="WorkflowName" name="WorkflowName" th:field="${wfDistinct.wfDescription}"
+														placeholder="Workflow Description"></textarea>
+
+												</div>
+											</div>
+										</div>
+
+										<div class="callout callout-info">
+											<b>Workflow Actions</b>
+										</div>
+
+										<!--  divadd Section Start -->
+										
+										
+										<!--  divadd Section Start -->
+										<div class="card card-secondary card-outline">
+										<div style="overflow-x: auto !important;width:100% !important;">
+										
+										<table id="WorkflowTable"  class="table" >
+															<thead>
+																<tr>
+																	<th><label for="ModuleName">SourceRole</label></th>
+																	<th><label for="ActionName">Workflow Action</label></th>
+																	<th><label for="workflowDept">Department</label></th>
+																	<th><label for="Officetype">Office Source</label></th>
+																	<th><label for="Officetype">Office Destination</label></th>
+																	<th><label for="DestRoleId">DestinationRole</label></th>
+																	<th></th>
+																	
+																</tr>
+															</thead>
+															<tbody >
+															 <tr th:each="wfData,iter :${wfData}" >
+															 
+															 <td class="row-index " th:id="row +${iter.index}">
+															 <select class="select2 " name="SourceRoleId"
+															th:id="${'SourceRoleId_'+iter.index}" data-placeholder="Select Role"
+															style="width: 100%" required>
+															 <option  th:text="${wfData.wfActionSource}"></option>
+															<option class="text-capitalize"	th:each="role:${roleList}" 
+																th:value="${role.roleName}"
+																th:text="${role.roleName}" />
+														</select>
+															 </td>
+															 
+															 <td class="row-index" th:id="row +${iter.index}" >
+															<select class="select2" name="ActionName"
+														th:id="${'ActionName_'+iter.index}" data-placeholder="Select Module"
+														style="width: 100%" required>
+														<option th:value="${wfData.wfCurrentAction}" th:text="${wfData.wfTitle}"></option>
+														<option class="text-capitalize"
+															th:each="ActionList : ${ActionList}"
+															th:value="${ActionList.codeValue}"
+															th:text="${ActionList.codeValueDesc}" />
+													</select>
+															 </td>
+															 
+															 <td class="row-index" th:id="row +${iter.index}">
+															 <select class="select2" name="workflowDept"
+															th:id="${'workflowDept_'+iter.index}" data-placeholder="Select Department"
+															style="width: 100%" required>
+															<option th:text="${wfData.wfDeptName}"></option>
+															<option value='All'>All</option>
+															<option class="text-capitalize"
+																th:each="deptList : ${deptList}"
+																th:value="${deptList.deptName}"
+																th:text="${deptList.deptName}" />
+														</select>
+															 </td>
+															 
+															 <td class="row-index" th:id="row +${iter.index}">
+															<select class="select2" name="Officetype" th:id="${'Officetype_'+iter.index}"
+															data-placeholder="Office type" style="width: 100%;" required>
+															<option th:value="${wfData.wfOfficeType}" th:switch="${wfData.wfOfficeType}" >
+																		<span th:case="'DO'" >DIVISIONAL OFFICE</span>
+																		<span th:case="'CO'" >CENTRAL OFFICE</span>
+																		<span th:case="'ZO'" >ZONAL OFFICE</span>
+																		<span th:case="'BO'" >BRANCH OFFICE</span></option>
+															<option
+																th:each="officeName : ${cntrlLib.workflowOfficetypeList}"
+																th:value="${officeName.codeValue}"
+																th:text="${officeName.codeValueDesc}" />
+														</select>
+															 </td>
+															 
+															  <td class="row-index" th:id="row +${iter.index}">
+															<select class="select2" name="Officetype" th:id="${'OfficeDest_'+iter.index}"
+															data-placeholder="Office Destination" style="width: 100%;" required>
+															<option th:value="${wfData.wfOfcDest}" th:switch="${wfData.wfOfcDest}" >
+																		<span th:case="'DO'" >DIVISIONAL OFFICE</span>
+																		<span th:case="'CO'" >CENTRAL OFFICE</span>
+																		<span th:case="'ZO'" >ZONAL OFFICE</span>
+																		<span th:case="'BO'" >BRANCH OFFICE</span></option>
+															<option
+																th:each="officeName : ${cntrlLib.workflowOfficetypeList}"
+																th:value="${officeName.codeValue}"
+																th:text="${officeName.codeValueDesc}" />
+														</select>
+															 </td>
+															 
+															 <td class="row-index" th:id="row +${iter.index}">
+															 <select class="select2" name="DestRoleId" th:id="${'DestRoleId_'+iter.index}"
+															data-placeholder="Select Role" style="width: 100%;" required>
+															<option th:text="${wfData.wfActionDest}"></option>
+															<option value="SYSTEM">NA</option>
+															<option class="text-capitalize"
+																th:each="role:${roleList}" 
+																th:value="${role.roleName}"
+																th:text="${role.roleName}" />
+														</select>
+															 </td>
+															 
+															 <td class="row-index" th:id="row +${iter.index}">
+															  <label hidden
+																th:id="${'DestRoleId_'+iter.index}" th:text="${wfData.wfActionId}" name="userName" />
+															 </td>
+																	
+															</tr>
+																
+															</tbody>
+														</table>
+														</div>
+														</div>
+										
+										<!--  /.  id="divadd" closed -->
+										<!-- /.card-body -->
+										<div class="card-footer">
+											<button type="button" class="btn btn-info"
+												id="create" name="submitworkflow"
+												title="Create Workflow">
+												<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+											</button>
+											
+											<a href="#" data-toggle="modal" data-whatever="WorkflowSummary"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+										</div>
+									</div>
+								</form>
+
+							</div>
+
+						</div>
+
+					</div>
+
+
+
+
+				</div>
+				<div class="modal fade" id="confirmmodal">
+					<div class="modal-dialog modal-fluid">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h6 class="modal-title">Confirm</h6>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+
+							<div class="modal-body">
+								<h5 class="card-title">Are You Sure You Want To Submit This
+									Record?</h5>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">
+									<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+								</button>
+								<button type="button" id="submitworkflow" name="create"
+									class="btn btn-primary target">
+									<i class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Yes
+								</button>
+							</div>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- Confirm Modal -->
+				
+				
+				<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+			</section>
+
+		</div>
+
+	</div>
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- workflow -->
+	<script th:src="@{/dist/appjs/erm/editWorkflow.js}"></script>
+
+	<!-- bs-custom-file-input -->
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+</body>
+</html>

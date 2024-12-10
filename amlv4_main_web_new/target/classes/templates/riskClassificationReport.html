@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script th:src="@{/plugins/moment/moment.min.js}"></script>
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
+	{
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.col-background {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Residual Risk Classification Report - (RCSA)</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active"><span
+									th:text="${report_title}"></span></li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylinkReport" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;Report</a></li>
+									</ul>
+								</div>
+
+
+
+								<form id="fetchClassificationReport" autocomplete="off"
+									th:action="${report} == 'inherent' ? @{/riskClassificationInherentReport} : @{/riskClassificationReport}"
+									method="post" th:object="${encryptedRequest}">
+									<input type="hidden" id="report" name="inherent"
+										th:value="${report}" /> <input type="hidden"
+										id="encryptedJsonReg" name="encryptedJson" /> <input
+										type="hidden" id="userDeptName" name="userDeptName"
+										th:value="${userDeptName}" /> <input type="hidden"
+										id="registerOBJ" th:value="${registerObj}"> <input
+										type="hidden" id="assessmentPeriod1"
+										th:value="${assessmentPeriod1}"> <input type="hidden"
+										id="assessmentPeriod2" th:value="${assessmentPeriod2}">
+
+									<div class="card-body">
+
+										<!-- /row Search by date-->
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="card card-outline card-secondary" id="collapse">
+
+
+
+													<div class="card-body">
+
+														<input type="hidden" th:value="${userOfcId}"
+															id="userOfcId" /> <input type="hidden"
+															th:value="${ERMDEPARTMENT}" id="currentDept"> <input
+															type="hidden" id="searchParam" th:value="${searchParam}" />
+
+
+
+
+														<div class="row pt-2">
+
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="assessmentDate">Assessment Period 1</label>
+																	<select class="form-control form-control-sm select2"
+																		data-placeholder="Assessment Date"
+																		name="assessmentDate2" id="assessmentDate"
+																		style="width: 100%;" required>
+																		<option value=''>Select Assessment Period</option>
+
+
+
+
+																		<option
+																			th:each="assessmentDate : ${assessmentPeriodList}"
+																			th:value="${assessmentDate}"
+																			th:text="${assessmentDate}"></option>
+																	</select>
+
+
+																</div>
+
+															</div>
+
+
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="assessmentDate">Assessment Period 2</label>
+																	<select class="form-control form-control-sm select2"
+																		data-placeholder="Assessment Date"
+																		name="assessmentDate2" id="assessmentDate2"
+																		style="width: 100%;" required>
+																		<option value=''>Select Assessment Period</option>
+
+
+
+
+																		<option
+																			th:each="assessmentDate : ${assessmentPeriodList}"
+																			th:value="${assessmentDate}"
+																			th:text="${assessmentDate}"></option>
+																	</select>
+
+
+																</div>
+
+															</div>
+
+
+
+
+															<div class="col-sm-4">
+																<div class="form-group">
+																	<label for="assessmentDate">Select Office Type</label>
+																	<code>*</code>
+																	<select class="form-control form-control-sm select2"
+																		data-placeholder="Select Office" name="assessmentDate"
+																		id="officeType" style="width: 100%;" required>
+																		<option value="" selected>Select Office Type</option>
+																		<option th:value="${selectedOfc}"
+																			th:text="${selectedOfc}"></option>
+
+																		<option th:each="ofc : ${officeMaster}"
+																			th:value="${ofc.officeType}"
+																			th:text="${ofc.officeType}"></option>
+																	</select>
+
+
+																</div>
+															</div>
+
+															<div class="col-sm-4">
+																<div class="form-group">
+
+																	<label for="assessmentDate">Select Department </label>
+																	<code>*</code>
+																	<div th:if="${ERMDEPARTMENT == 'ERM'}">
+
+																		<select class="form-control form-control-sm select2"
+																			name="controlDept" id="selectDept"
+																			data-placeholder="Department" style="width: 100%;">
+																			<option value=''>Select Department</option>
+																			<!-- 																	<option class="text-capitalize" -->
+																			<!-- 																		th:value="LICDEPT0000000000001" -->
+																			<!-- 																		th:text="ACTUARIAL" selected/> -->
+																			<!-- <option value="all">All</option> -->
+																			<!-- <option class="text-capitalize"
+																				th:each="deptList : ${deptList}"
+																				th:value="${deptList.deptId}"
+																				th:text="${deptList.deptName}" /> -->
+																		</select>
+																	</div>
+
+																	<div th:unless="${ERMDEPARTMENT == 'ERM'}">
+
+																		<select class="select2 form-control form-control-sm"
+																			name="controlDept" id="selectDept"
+																			data-placeholder="Department" style="width: 100%;">
+																			<option class="text-capitalize"
+																				th:value="${userDept}" th:text="${ERMDEPARTMENT}"
+																				selected />
+																		</select>
+																	</div>
+
+
+
+																</div>
+															</div>
+
+
+
+
+															<div class="col-sm-4" id="officeCodeDropDown"
+																style="display: none">
+																<div class="form-group">
+
+																	<label for="officeCode">Office Code <code>*</code></label>&nbsp;
+																	<select class="select2 form-control form-control-sm"
+																		name="officeCode" id="officeCode"
+																		data-placeholder="Office Code" style="width: 100%;">
+																		<option value=''>Select Office Code</option>
+																		<option th:value="${userOfcCode}"
+																			th:text="${userOfcCode}" selected></option>
+																	</select>
+																</div>
+															</div>
+
+
+															<div class="col-sm-4">
+																<label for="search"> &nbsp;</label>
+																<h3>
+																	<a type="submit" class="btn btn-sm btn-info mt-n1"
+																		id=getReport1> <i class="fas fa-save"
+																		style="padding: 0 7px 0 0px;"></i>Get Report
+																	</a>
+																</h3>
+															</div>
+
+														</div>
+
+													</div>
+
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</form>
+
+
+
+								<div class="row table-responsive mt-2"
+									th:if="${corporationList != null}">
+
+									<div class="col-sm-12 ">
+										<div class="card card-outline card-secondary ml-3">
+											<div class="card-header">
+												<span id="themeerror"></span> <span
+													class='float-left text-bold text-red' th:text="${report_title}"> </span> <span id="themeerror"></span>
+												<span id="officeHeading"
+													class='float-left text-bold text-red'
+													th:if="${officeNameAndCode!=null}"
+													th:text="${officeNameAndCode}"></span>
+												<form autocomplete="off" role="form" method="post"
+												th:action="${report} == 'inherent' ? @{/exportClassificationInherentReport} : @{/exportClassificationReport}"
+													 id="export"
+													th:object="${encryptedRequest}">
+													<input type="hidden" id="encryptedJsonExport"
+														name="encryptedJson" th:value="${exportClassficationView}" />
+
+													<input type="hidden" id="riskIndexJson"
+														th:value="${exportClassficationView}" name="riskIndexJson" />
+
+
+													<span class="float-right"><a
+														class="btn text-white export"
+														style="margin-right: 5px; background-color: #006400;"
+														title="Export Risk Classification Report"> <i
+															class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+													</a></span>
+												</form>
+
+
+
+
+
+											</div>
+
+											<div class="card-body table-responsive">
+												<!-- 												th:if="${ERMDEPARTMENT =='ERM'}"> -->
+												<table id="orgTable"
+													class="table table-head-fixed table-bordered table-striped text-capitalize">
+													<thead>
+														<tr>
+															<th rowspan="2">Sr No.</th>
+															<th rowspan="2">Office Type</th>
+															<th rowspan="2">Risk Classification</th>
+															<th rowspan="2">Count</th>
+
+
+
+
+															<th colspan="4"><span class="curHigh"
+																th:text="${currentAssPeriod1}"> </span></th>
+
+
+
+
+															<th colspan="4"><span class="prevLow"
+																th:text="${previousAssPeriod1}"></span></th>
+														</tr>
+
+
+
+														<tr>
+															<th class="text-center">Total Number of Risk
+																Assessed</th>
+															<th class="text-center" th:text="${high}"></th>
+															<th class="text-center" th:text="${medium}"></th>
+															<th class="text-center" th:text="${low}"></th>
+															<th class="text-center">Total Number of Risk
+																Assessed</th>
+															<th class="text-center" th:text="${high}"></th>
+															<th class="text-center" th:text="${medium}"></th>
+															<th class="text-center" th:text="${low}"></th>
+														</tr>
+
+													</thead>
+													<tbody class="organisationalView">
+														<!-- 														<tr th:each="org : ${corporationList}"> -->
+														<!-- 															<td th:text="${org.srNo}"></td> -->
+														<!-- 															<td th:text="${org.corporationalOfc}"></td> -->
+
+														<!-- 															<td th:text="${org.corporationalTotalNoRisk}"></td> -->
+
+														<!-- 															<td></td> -->
+
+														<!-- 														</tr> -->
+
+
+														<div th:remove="tag" th:each="org : ${corporationList}"
+															th:with="articleCount=${org.riskCatDtoList.size()}">
+															<tr>
+																<td class="text-right" th:text="${org.srNo}"
+																	th:rowspan="${org.riskCatDtoList.size()}"></td>
+																<td th:text="${org.corporationalOfc}"
+																	th:rowspan="${org.riskCatDtoList.size()}"></td>
+
+																<td
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].riskClassification}:''"></td>
+																<td class="text-right"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].classificationCount}:''"></td>
+
+																<!-- High -->
+																<td class="text-center"
+																	th:rowspan="${org.riskCatDtoList.size()}"><a
+																	class="text-blue text-bold text-center "
+																	th:text="${org.riskCatDtoList[0].currentRiskCount}">
+																</a></td>
+
+																<td class="text-right text-bold text-red"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].currHigh}:''"></td>
+
+																<td class="text-right text-bold text-orange"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].currMedium}:''"></td>
+
+																<td class="text-right text-bold text-green"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].currLow}:''"></td>
+
+
+
+																<!-- /.High -->
+
+																<td class="text-right"
+																	th:rowspan="${org.riskCatDtoList.size()}"><a
+																	class="text-blue text-bold text-center "
+																	th:text="${org.riskCatDtoList[0].prviousRiskCount}">
+																</a></td>
+
+																<td class="text-right text-bold text-red"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].prevHigh}:''"></td>
+
+																<!-- Medium -->
+
+
+																<td class="text-right text-bold text-orange"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].prevMedium}:''"></td>
+
+																<!-- /.Medium -->
+																<!-- Low -->
+																<td class="text-right text-bold text-green"
+																	th:text="${articleCount>0}?${org.riskCatDtoList[0].prevLow}:''"></td>
+																<!-- /. Low -->
+
+															</tr>
+
+															<tr th:each="article,stats:${org.riskCatDtoList}"
+																th:if="${!stats.first}">
+																<td th:text="${article.riskClassification}"></td>
+																<td class="text-right"
+																	th:text="${article.classificationCount}"></td>
+
+																<td class="text-right text-bold text-red"
+																	th:text="${article.currHigh}"></td>
+																<td class="text-right text-bold text-orange"
+																	th:text="${article.currMedium}"></td>
+																<td class="text-right text-bold text-green"
+																	th:text="${article.currLow}"></td>
+
+
+																<td class="text-right text-bold text-red"
+																	th:text="${article.prevHigh}"></td>
+																<td class="text-right text-bold text-orange"
+																	th:text="${article.prevMedium}"></td>
+																<td class="text-right text-bold text-green"
+																	th:text="${article.prevLow}"></td>
+
+															</tr>
+
+
+
+
+														</div>
+
+
+
+
+
+													</tbody>
+												</table>
+
+											</div>
+										</div>
+									</div>
+								</div>
+
+
+
+
+
+								<div class="row table-responsive mt-2"
+									th:if="${registerList != null}">
+									<div class="col-sm-12 ">
+										<div class="card card-outline card-secondary ml-3">
+
+
+											<div class="card-body table-responsive">
+												<div></div>
+
+												<form autocomplete="off" role="form" method="post"
+													th:action="@{/riskData}" id="registerForm"
+													th:object="${encryptedRequest}">
+
+
+
+													<!-- 													<input type="hidden" id="kReg" -->
+													<!-- 														name="encryptedJson" /><input type="hidden" -->
+													<!-- 														name="userRole" id="userRole" th:value="${userRole}" -->
+													<!-- 														th:name="clientName" /> -->
+
+													<table id="controlTable2"
+														class="table table-head-fixed table-bordered table-striped text-capitalize">
+														<thead>
+
+															<tr>
+																<th rowspan="2">Sr No.</th>
+																<th rowspan="2">Department</th>
+																<!-- 																<th rowspan="2">Total No Of Risk</th> -->
+																<th rowspan="2">Risk Classification</th>
+																<th rowspan="2">Count</th>
+
+																<th colspan="4"><span id="curHigh"
+																	th:text="${currentAssPeriod1}"> Current </span></th>
+
+
+
+																<th colspan="4"><span id="prevHigh"
+																	th:text="${previousAssPeriod1}">Previous </span></th>
+
+
+
+															</tr>
+
+
+
+															<tr>
+
+
+																<th class="text-center">Total Number of Risk
+																	Assessed</th>
+																<th class="text-center" th:text="${high}"></th>
+																<th class="text-center" th:text="${medium}"></th>
+																<th class="text-center" th:text="${low}"></th>
+																<th class="text-center">Total Number of Risk
+																	Assessed</th>
+																<th class="text-center" th:text="${high}"></th>
+																<th class="text-center" th:text="${medium}"></th>
+																<th class="text-center" th:text="${low}"></th>
+
+
+															</tr>
+
+														</thead>
+
+
+
+														<tbody class="registerBody">
+															<div th:remove="tag"
+																th:each="risksList : ${registerList}"
+																th:with="articleCount=${risksList.riskCatDtoListForDept.size()}">
+																<tr>
+																	<td class="text-right" th:text="${risksList.srNo}"
+																		th:rowspan="${risksList.riskCatDtoListForDept.size()}"></td>
+																	<td th:text="${risksList.deptName}"
+																		th:rowspan="${risksList.riskCatDtoListForDept.size()}"></td>
+
+																	<td
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].riskClassification}:''"></td>
+																	<td class="text-right"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].classificationCount}:''"></td>
+
+																	<!-- High -->
+																	<td class="text-right"
+																		th:rowspan="${risksList.riskCatDtoListForDept.size()}"><a
+																		class="text-blue viewRisk" data-toggle="modal"
+																		href="#" th:id="${risksList.deptId}"
+																		th:text="${risksList.riskCatDtoListForDept[0].currentRiskCount}">
+																	</a></td>
+
+																	<td class="text-right text-red"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].currHigh}:''"></td>
+
+																	<td class="text-right text-orange"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].currMedium}:''"></td>
+
+																	<td class="text-right text-green"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].currLow}:''"></td>
+
+
+
+																	<!-- /.High -->
+
+																	<td class="text-right"
+																		th:rowspan="${risksList.riskCatDtoListForDept.size()}"><a
+																		class="text-blue viewRisk" data-toggle="modal"
+																		href="#" th:id="${risksList.deptId}"
+																		th:text="${risksList.riskCatDtoListForDept[0].prviousRiskCount}">
+																	</a></td>
+
+																	<td class="text-right  text-red"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].prevHigh}:''"></td>
+
+																	<!-- Medium -->
+
+
+																	<td class="text-right text-orange"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].prevMedium}:''"></td>
+
+																	<!-- /.Medium -->
+																	<!-- Low -->
+																	<td class="text-right text-green"
+																		th:text="${articleCount>0}?${risksList.riskCatDtoListForDept[0].prevLow}:''"></td>
+																	<!-- /. Low -->
+
+																</tr>
+
+																<tr
+																	th:each="article,stats:${risksList.riskCatDtoListForDept}"
+																	th:if="${!stats.first}">
+																	<td th:text="${article.riskClassification}"></td>
+																	<td class="text-right"
+																		th:text="${article.classificationCount}"></td>
+
+																	<td class="text-right text-red"
+																		th:text="${article.currHigh}"></td>
+																	<td class="text-right text-orange"
+																		th:text="${article.currMedium}"></td>
+																	<td class="text-right text-green"
+																		th:text="${article.currLow}"></td>
+
+
+																	<td class="text-right text-red"
+																		th:text="${article.prevHigh}"></td>
+																	<td class="text-right text-orange"
+																		th:text="${article.prevMedium}"></td>
+																	<td class="text-right text-green"
+																		th:text="${article.prevLow}"></td>
+
+																</tr>
+
+
+															</div>
+														</tbody>
+													</table>
+
+
+
+
+													<table id="hiddenTable" style="display: none"
+														class="table table-head-fixed table-bordered table-striped text-capitalize mt-4">
+														<tr>
+															<th>Sr No.</th>
+															<th>Department</th>
+															<th>Total No Of Risk</th>
+															<th>Risk Classification</th>
+															<th>Count</th>
+
+															<th>Current High</th>
+															<th>Current Medium</th>
+															<th>Current Low</th>
+															<th>Previous High</th>
+															<th>Previous Medium</th>
+															<th>Previous Low</th>
+														</tr>
+														<!-- 														<tbody class="riskClassificationBody"> -->
+														<!-- 															<tr th:each="risksCategory : ${riskCategoryList}"> -->
+														<!-- 																<td th:text="${risksCategory.srNo}"></td> -->
+														<!-- 																<td th:text="${risksCategory.deptName}"></td> -->
+														<!-- 																<td th:text="${risksCategory.totalNo}"></td> -->
+														<!-- 																<td th:text="${risksCategory.riskClassification}"></td> -->
+														<!-- 																<td th:text="${risksCategory.classificationCount}"></td> -->
+
+														<!-- 																<td th:text="${risksCategory.currHigh}"></td> -->
+														<!-- 																<td th:text="${risksCategory.currMedium}"></td> -->
+														<!-- 																<td th:text="${risksCategory.currLow}"></td> -->
+														<!-- 																<td th:text="${risksCategory.prevHigh}"></td> -->
+														<!-- 																<td th:text="${risksCategory.prevMedium}"></td> -->
+														<!-- 																<td th:text="${risksCategory.prevLow}"></td> -->
+														<!-- 															</tr> -->
+														<!-- 														</tbody> -->
+
+													</table>
+
+												</form>
+												<!-- /form -->
+											</div>
+											<!-- /card-body -->
+										</div>
+										<!-- /card -->
+									</div>
+									<!-- /col -->
+								</div>
+								<!-- /row -->
+
+
+
+
+
+
+								<div class="modal fade" id="controlmodal">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h5 class="modal-title">View</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<!-- /.col -->
+											<div class="card-body">
+
+												<!-- /.row -->
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="controlDept">Department <code>*</code>
+															</label> <input type="text"
+																class="form-control form-control-sm text-capitalize text-bold"
+																id="controlDept" name="controlFunction"
+																placeholder="Department" readonly>
+														</div>
+													</div>
+
+
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="controlDept">Status <code>*</code>
+															</label> <input type="text"
+																class="form-control form-control-sm text-capitalize text-bold"
+																id="status" name="status" placeholder="Status" readonly>
+														</div>
+													</div>
+
+												</div>
+												<!-- /.row -->
+
+
+
+
+												<!-- /.row -->
+
+
+
+												<!-- Previous Assessment Matrix calculation Start -->
+												<div class="row table-responsive" id="previousMatrixRow"
+													style="display: none;">
+													<div class="col-sm-12">
+														<div class="card card-outline card-secondary">
+															<div class="card-header">
+																<label> Risk Library Details </label>
+
+															</div>
+
+															<div class="card-body table-responsive">
+																<table id="previousMatrix"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+																	<thead>
+																		<tr>
+
+																			<th>Sr No</th>
+																			<th>Risk Description</th>
+																			<th>Risk Classification</th>
+																			<th>Risk Status</th>
+
+
+																		</tr>
+																	</thead>
+																	<tbody class="previousMatrixBody">
+																	</tbody>
+																</table>
+															</div>
+															<!-- /card-body -->
+														</div>
+														<!-- /card -->
+													</div>
+													<!-- /col -->
+												</div>
+												<!-- /row -->
+
+												<!-- Previous Assessment Matrix calculation End -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+												<!-- ./row -->
+											</div>
+											<!-- /.card-body -->
+											<div class="card-footer">
+												<button class="btn btn-secondary" data-dismiss="modal">
+													<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+												</button>
+											</div>
+											<!-- /.row -->
+										</div>
+										<!-- modal-content -->
+									</div>
+									<!-- /modal-dialog -->
+								</div>
+								<!-- /modal -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+							</div>
+
+
+							<!-- /.card-body -->
+
+
+
+							<!-- /.col sm-12 -->
+						</div>
+					</div>
+					<!-- /.row -->
+				</div>
+		</div>
+		<!-- /.container-fluid -->
+		</section>
+		<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+	<!-- Included Footer -->
+	<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/riskClassificationCount.js}"></script>
+
+	<!-- PAGE PLUGINS -->
+	<script>
+		
+	</script>
+
+	<script>
+		
+	</script>
+
+
+</body>
+</html>

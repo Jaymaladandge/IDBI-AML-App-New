@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Key Mitigation Count</h1>
+						</div>
+							<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Key Mitigation Page</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;Report</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+										
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+										<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeType">Select Office Type <code>*</code></label>
+															<select class="select2 text-capitalize" name="officeType"
+																data-placeholder="Office Type" id="officeType"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option th:each="officeNameList : ${officeNameList}"
+																	th:value="${officeNameList.officeType}"
+																	th:text="${officeNameList.officeName}" />
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div th:if="${user.userDeptName == 'ERM'}">
+															<div class="form-group">
+																<label for="riskDept">Select Department <code>*</code></label>
+
+																<select class="select2 text-capitalize"
+																	name="Department" id="riskDept"
+																	data-placeholder="Select Department"
+																	style="width: 100%;">
+																	<option value=''>Select Department</option>
+
+																</select>
+															</div>
+														</div>
+														<div th:if="${user.userDeptName != 'ERM'}">
+															<div class="form-group">
+																<label for="riskDept">Department Name <code>*</code></label>
+
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm other-input"
+																		id="riskDept1" name="riskDept1"
+																		th:value="${user.userDeptName}" readonly>
+																		
+																</div>
+																<input type="hidden"
+																		class="form-control form-control-sm other-input"
+																		id="riskDept" name="riskDept"
+																		th:value="${user.getUserDept}" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeCode">Select Office Code <code>*</code></label>
+															<select
+																class="select2 text-capitalize form-control float-right"
+																name="officeCode" id="officeCode"
+																data-placeholder="Select OfficeCode" style="width: 100%">
+																<option value=''>Select OfficeCode</option>
+
+															</select>
+														</div>
+													</div>
+													<div class="col-sm-3">
+																<div class="form-group">
+																	<label for="assessmentDate">Assessment Period </label>
+																	<select class="form-control form-control-sm select2"
+																		data-placeholder="Assessment Date"
+																		name="assessmentDate" id="assessmentDate"
+																		style="width: 100%;" required>
+																		<option value=''>Select Assessment Period</option>
+
+
+
+
+																		<option
+																			th:each="assessmentDate : ${assessmentPeriodList}"
+																			th:value="${assessmentDate}"
+																			th:text="${assessmentDate}"></option>
+																	</select>
+
+
+																</div>
+
+															</div>
+														<div class="col-sm-12 mt-4">
+															<div class="form-group mt-2">
+												<span><a type="button" id="fetchDataBtn"
+															class="btn  btn-sm btn-outline-primary btn-lg p-2">Fetch
+															Data</a></span>
+															<span class="float-right"><a
+																	class="btn text-white exportDataBtn" id="exportDataBtn"
+																	style="background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span>
+											</div>
+														<!-- 	<span class="float-right"><a
+																	class="btn text-white exportDataBtn" id="exportDataBtn"
+																	style="background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span> -->
+												</div>
+	
+												</div>
+											
+											<!-- ./row -->
+
+											<!-- /row -->
+
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														
+														<div class="card-body table-responsive">
+															
+																<form autocomplete="off" role="form" method="post"
+																th:action="@{/keyMitigationReportExport}" id="keyMitigationReportExport"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" /><input type="hidden"
+																	name="userRole" id="userRole" th:value="${userRole}"
+																	th:name="clientName" />
+<span  class='float-left text-bold text-red'> Key Mitigation Report </span>
+<span id="officeHeading" class='float-left text-bold text-red pl-2'></span>
+<br><br>
+															<table id="keyMitigationReportTable"
+															class="table table-head-fixed table-bordered table-striped keyMitigationReportTable">
+															<thead>
+																<tr>
+
+																	<td>Department Name</td>
+																	<td>Medium Risk Count</td>
+																	<td>High Risk Count</td>
+																	<td>Action Plan Count</td>
+																	<td>Implementation Count</td>
+																	<td>Not Due</td>
+																	<td>Pending Less Than 6 Month</td>
+																	<td>Pending More Than 6 Month</td>
+																</tr>
+															</thead>
+															<tbody id="tbodyR">
+														<!-- 	<tr th:each="kmtList:${keyMitigationDtoList}">
+																<td th:text="${kmtList.deptName}"></td>
+																<td th:text="${kmtList.actionIdCount}"></td>
+																<td th:text="${kmtList.implementedCount}"></td>
+																<td th:text="${kmtList.notDue}"></td>
+																<td th:text="${kmtList.pendingLessThan6Mon}"></td>
+																<td th:text="${kmtList.pendingGreaterThan6Mon}"></td></tr> -->
+																
+															</tbody>
+														</table>
+															</form>
+															<!-- /form -->
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse">
+												<!-- timeline time label -->
+												<div class="time-label">
+													<span class="bg-success"> 10 Feb. 2014 </span>
+												</div>
+												<!-- /.timeline-label -->
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 5
+															mins ago</span>
+
+														<h3 class="timeline-header border-0">
+															<a href="#">Rohit Singh</a> approved request
+														</h3>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div class="time-label">
+													<span class="bg-success"> 3 Jan. 2014 </span>
+												</div>
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 27
+															mins ago</span>
+
+														<h3 class="timeline-header">
+															<a href="#">Akshay Mhatre</a> created request
+														</h3>
+
+														<div class="timeline-body">Request created.</div>
+														<div class="timeline-footer">
+															<a href="#" class="btn btn-warning btn-flat btn-sm">View
+																comment</a>
+														</div>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline time label -->
+
+												<!-- /.timeline-label -->
+
+												<!-- END timeline item -->
+												<div>
+													<i class="far fa-clock bg-gray"></i>
+												</div>
+											</div>
+										</div>
+										<!-- /.tab-pane -->
+
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+
+
+				<!-- /modal -->
+				<!-- Timeline Modal -->
+				<div class="modal fade" id="timelinemodal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">Audit Trail</h5>
+
+								<!-- 								<button type="button" class="close text-white" -->
+								<!-- 									data-dismiss="modal" aria-label="Close"> -->
+								<!-- 									<span aria-hidden="true">&times;</span> -->
+								<!-- 								</button> -->
+							</div>
+
+							<!-- form start -->
+							<div class="card-body">
+								<!-- /.tab-pane -->
+								<div class="tab-pane" id="timeline">
+
+									<!-- The timeline -->
+									<div class="timeline timeline-inverse">
+										<div class="time-label">
+											<span class="bg-success"> 10 May 2021 </span>
+										</div>
+
+										<!-- timeline item -->
+										<div>
+											<i class="fas fa-comments bg-warning"></i>
+
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 27
+													mins ago</span>
+
+												<h3 class="timeline-header">
+													<a href="#">Akshay Mhatre</a> approved the record.
+												</h3>
+
+												<div class="timeline-body">User Verified Successfully.</div>
+
+											</div>
+										</div>
+										<!-- END timeline item -->
+										<div>
+											<i class="far fa-clock bg-gray"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card-footer">
+								<span class="float-left" aria-hidden="true">
+
+									<button class="btn btn-secondary" data-dismiss="modal">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</span>
+							</div>
+							<!-- /.card-footer -->
+						</div>
+					</div>
+				</div>
+				<!-- /.modal -->
+				<!-- View Modal -->
+				<div class="modal fade" id="viewUserModel">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">
+									USER ID - <span id="userIdLabel"></span>
+								</h5>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- Comment Modal -->
+				
+
+
+				<!-- /.modal -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<script>
+	document.onreadystatechange = function() {
+		var state = document.readyState
+		if (state == 'interactive') {
+		} else if (state == 'complete') {
+			setTimeout(
+					function() {
+						document.getElementById('interactive');
+						document.getElementById('load').style.visibility = "hidden";
+					}, 1000);
+		}
+	}
+	$("#keyMitigationReportTable").DataTable({
+		"columnDefs" : [ {
+			orderable : false,
+		} ],
+		"order" : [ 0, "desc" ],
+		"responsive" : false,
+		"lengthMenu" : [ 10,25, 50, 75, 100 ],
+		"autoWidth" : true,
+		"searching" : true,
+		"fixedHeader" : true,
+		 "buttons": ["csv", "excel", "pdf", "print"],
+		"language" : {
+			"emptyTable" : "No Data Available"
+		}
+	}).buttons().container().appendTo(
+			'#keyMitigationReport_wrapper .col-md-6:eq(0)');
+	$(function() {
+		//Initialize Select2 Elements
+		$('.select2').select2();
+		bsCustomFileInput.init();
+	});
+	 $(function() {
+		
+		 
+		 $("#officeType").change(function () {
+			 var userOffice=$("#officeType").val();
+			 var pageValJson = "{\"officeType\":" + "\""+ userOffice + "\"}";
+			 var userOfficeText = $("#officeType option:selected").text();
+
+		
+			document.getElementById('load').style.visibility = "visible";
+				
+				// ajax call
+				$
+					.ajax({
+						url: 'DeptRiskOfficeWise',
+						type: "POST",
+						data: {
+							pageValJson: pageValJson
+						},// important line for thymeleaf http security
+
+						headers: {
+							"X-CSRF-TOKEN": $( "input[name='_csrf']").val()
+						},
+						cache: false,
+						// async:true,
+						success: function(response) {
+							setTimeout(
+								function() {
+									document
+										.getElementById('load').style.visibility = "hidden";
+								}, 1000);
+							
+							var jsonResponse = JSON
+								.stringify(response);
+							
+							obj = JSON.parse(jsonResponse);
+							
+						
+							if(obj.deptList != null){
+							$("#riskDept").empty();
+							$("<option />", {
+									val: "",
+									text: "Select Department"
+								}).appendTo($("#riskDept"));
+							$("<option />", {
+								val: "ALL",
+								text: "ALL"
+							}).appendTo($("#riskDept"));
+							obj.deptList.forEach(function(items) {
+								
+
+								$("<option />", {
+									val: items.deptId,
+									text: items.deptName
+								}).appendTo($("#riskDept"));
+
+
+							});
+							}
+							if(obj.officeCodeList != null){
+							$("#officeCode").empty();
+							/*$("<option />", {
+									val: "",
+									text: "Select Department"
+								}).appendTo($("#officeCode"));*/
+							obj.officeCodeList.forEach(function(items) {
+								
+
+								$("<option />", {
+									val: items.officeCode,
+									text: items.officeCode
+								}).appendTo($("#officeCode"));
+
+
+							});
+							}
+							$('.select2').select2();
+							
+				},
+				error: function(xhr, status, error) {
+					console.log(xhr);
+					toastr
+						.error('Some Error Occured here	');
+				}
+			
+		});
+	 });
+	 
+	 }); 
+	 
+	 $("#fetchDataBtn").click(function() {
+			var selectedValue = "";
+			var statusValue = "";
+			var pageValJson = "";
+			if ($("#officeType").val() === "") {
+				toastr.error("Please Select Office Type");
+			} else {
+				var selectedValue = $('#officeType :selected').val();
+			}
+			if ($('#assessmentDate').find(":selected").val() === "") {
+				toastr.error("Please Select Assessment Period");
+			}
+			if ($("#riskDept").val() === "") {
+				toastr.error("Please Select Department");
+			}
+			if (selectedValue != null && selectedValue != "") {
+				if($("#riskDept").val() != "" && $("#riskDept").val() !=null){
+					if($('#assessmentDate').find(":selected").val()!="" && $('#assessmentDate').find(":selected").val()!=null){
+				
+				pageValJson = "{\n"
+							+ "    \"selectedOfficeType\": \"" + selectedValue + "\",\n"
+							+ "    \"selectedOfcCode\": \"" + $("#officeCode").val() + "\",\n"
+							+ "    \"selectedAssessmentPeriod\": \"" + $('#assessmentDate').find(":selected").val() + "\",\n"
+							+ "    \"selectedDeptId\": \"" + $("#riskDept").val()+ "\"\n"
+							+ "}";
+							
+
+					document.getElementById('load').style.visibility = "visible";
+					$.ajax({
+						url: "keyMitigationReportCount",
+						type: "POST",
+						data: {
+							pageValJson: pageValJson
+						},// important line for thymeleaf http security
+						headers: {
+							"X-CSRF-TOKEN": $("input[name='_csrf']").val()
+						},
+						cache: false,
+						// async:true,
+						success: function(response) {
+							setTimeout(
+								function() {
+									document
+										.getElementById('interactive');
+									document
+										.getElementById('load').style.visibility = "hidden";
+								}, 1000);
+
+							var jsonResponse = JSON.stringify(response);
+							var obj = JSON.parse(jsonResponse);
+							var dataList = obj.keyMitigationList;
+							$(".keyMitigationReportTable > #tbodyR").empty();
+							$('#keyMitigationReportTable').dataTable().fnClearTable();
+							$('#keyMitigationReportTable').DataTable().destroy();
+
+
+							dataList.forEach(function(items) {
+								$("<tr><td>"
+									+ items.deptName
+									+ "</td><td>"
+									+ items.mediumRiskCount
+									+ "</td><td>"
+									+ items.highRiskCount
+									+ "</td><td>"
+									+ items.actionIdCount
+									+ "</td><td>"
+									+ items.implementedCount
+									+ "</td>"
+									+ "</td><td>"
+									+ items.notDue
+									+ "</td><td>"
+									+ items.pendingLessThan6Mon
+									+ "</td><td>"
+									+ items.pendingGreaterThan6Mon
+									+ "</td>"
+									+ "</tr>").appendTo(".keyMitigationReportTable");
+
+							});
+							$("#keyMitigationReportTable").DataTable({
+								"columnDefs": [{
+									orderable: false
+									//targets: [6]
+								}],
+								"order" : [ 0, "asc" ],
+								"responsive": true,
+								"autoWidth": true,
+								"searching": true,
+								"fixedHeader": true,
+								"language": {
+									"emptyTable": "No Data Available"
+								},
+								
+							}).buttons().container().appendTo(
+								'#KRIValueCapturetable_wrapper .col-sm-12:eq(0)');
+							$("#officeHeading").text($('#officeType option:selected').text()+' - '+$("#officeCode").val());
+						}, error: function(xhr, status, error) {
+							console.log(xhr);
+							console.log(status);
+							console.log(error);
+							toastr
+								.success('Some Error Occured');
+						}
+					});
+				}
+
+			}
+			}
+		});
+	 
+	 $("#exportDataBtn").click(function() {
+			
+		 var selectedValue = "";
+			var statusValue = "";
+			var pageValJson = "";
+			if ($("#officeType").val() === "") {
+				toastr.error("Please Select Office Type");
+			} else {
+				var selectedValue = $('#officeType :selected').val();
+			}
+			if ($('#assessmentDate').find(":selected").val() === "") {
+				toastr.error("Please Select Assessment Period");
+			}
+			if ($("#riskDept").val() === "") {
+				toastr.error("Please Select Department");
+			}
+			if (selectedValue != null && selectedValue != "") {
+				if($("#riskDept").val() != "" && $("#riskDept").val() !=null){
+					if($('#assessmentDate').find(":selected").val()!="" && $('#assessmentDate').find(":selected").val()!=null){
+				
+				pageValJson = "{\n"
+							+ "    \"selectedOfficeType\": \"" + selectedValue + "\",\n"
+							+ "    \"selectedOfcCode\": \"" + $("#officeCode").val() + "\",\n"
+							+ "    \"selectedAssessmentPeriod\": \"" + $('#assessmentDate').find(":selected").val() + "\",\n"
+							+ "    \"selectedDeptId\": \"" + $("#riskDept").val()+ "\"\n"
+							+ "}";
+
+					document.getElementById('load').style.visibility = "disable";
+		                            var iterationCount = 1000;
+										var keySize = 128;
+										//passPhrase is the key
+										var passphrase = CryptoJS.lib.WordArray.random(
+												128 / 8).toString(CryptoJS.enc.Hex);
+
+										var aesUtil = new AesUtil(keySize,
+												iterationCount);
+
+										var ciphertext = aesUtil.encrypt(
+												reverseText(passphrase), pageValJson);
+
+										$("#encryptedJson").val(
+												ciphertext + ':~:' + passphrase);
+												$("#keyMitigationReportExport").submit();
+												document.getElementById('load').style.visibility = "disable";
+				}
+
+				}
+			}
+		});
+
+	</script>
+</body>
+</html>

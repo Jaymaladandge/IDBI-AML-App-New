@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Department Trend Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Department Trend Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info  card-tabs">
+								<div class="card-header">
+									<h3 class="card-title">Department Trend Graph With
+										Assessment Period</h3>
+								</div>
+								<!-- /.col -->
+								<div class="card-body card-outline">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class=" card-outline ">
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/getdeptTrendReport}" id="reportForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+																<input type="hidden" id="Assest1" name="Assest1" th:value="${Assest1}" />	
+																<input type="hidden" id="Assest2" name="Assest2" th:value="${Assest2}" />	
+																<input type="hidden" id="DeptId1" name="DeptId" th:value="${DeptId}"/>	
+																	
+																	 <input type="hidden"
+																	id="message" th:value="${message}" name="message" />
+																<div class="row">
+																	<div class="form-group col-sm-6">
+																		<label for="assessmentDate">Select Assessment
+																			Period 1 <code>*</code>
+																		</label> <select class="form-control select2"
+																			data-placeholder="Select Assessment Period"
+																			name="Department" id="asstMent1" style="width: 100%;">
+																			<option value=''>Select Assessment</option>
+																			
+																			<option th:each="asst : ${asstList}"
+																				th:value="${asst.asstPeriod}"
+																				th:text="${asst.asstPeriod}"></option>
+																		</select>
+																	</div>
+																	<div class="form-group col-sm-6">
+																		<label for="assessmentDate">Select Assessment
+																			Period 2 <code>*</code>
+																		</label> <select class="form-control select2"
+																			data-placeholder="Select Assessment Period"
+																			name="Department" id="asstMent2" style="width: 100%;">
+																			<option value=''>Select Assessment</option>
+																			
+																			<!-- <option th:each="asst : ${asstList}"
+																				th:value="${asst.asstPeriod}"
+																				th:text="${asst.asstPeriod}"></option> -->
+																		</select>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="form-group  col-sm-6">
+																		<label for="assessmentDate">Select Department
+																			<code>*</code>
+																		</label> <select class="form-control select2"
+																			data-placeholder="Select Department"
+																			name="Department" id="deptId" style="width: 100%;">
+																			<option value=''>Select Department</option>
+																			
+																			<option th:each="dept : ${deptList}"
+																				th:value="${dept.deptId}" th:text="${dept.deptName}"></option>
+																		</select>
+																	</div>
+																	<div class="form-group  col-sm-6">
+																		<label for="search"> &nbsp;</label>
+																		<h3>
+																			<a type="submit" class="btn btn-info" id=getReport>
+																				<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Get
+																				Report
+																			</a>
+																		</h3>
+																	</div>
+																</div>
+															</form>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row table-responsive" id="statmentReport" th:if="${flg} eq 'true'">
+											<form autocomplete="off" role="form" method="post"
+																th:action="@{/getdeptTrendReportExcelExport}" id="exportExcelReport"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" /> 
+											
+											
+												<div class="col-sm-12">
+												
+												<div class="card card-outline card-secondary">
+												<div class="card-header">
+												<div class="row float-right">
+												<div class="col-sm-12 mt-2">
+												<span ><a
+																	class="btn text-white exportDataBtn" id="exportDataBtn"
+																	style="margin-right: 5px; background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span>
+												</div>
+												</div> 
+													
+													</div>
+													
+													
+														<div class="card-body table-responsive">
+												
+														
+														
+														
+															<table id="reportTable"
+																class="table table-head-fixed table-bordered table-striped text-capitalize report-page">
+																<thead>
+																	<tr>
+																		<th>DepartmentName</th>
+																		<th th:text="${reportData.asstPeriod}"></th>
+																		<th th:text="${reportData.asstPeriodComp}"></th>
+																		<th>Trend</th>
+																	</tr>
+																</thead>
+																<tbody>
+
+																	<tr th:each="trtDto : ${reportData.trendResult}">
+																		<td th:text="${trtDto.deptName}" class="text-bold"></td>
+																		<td><span th:text="${trtDto.asstPeriod1Result}+'('+${trtDto.result1}+')'"
+																			class="badge text-white "
+																			th:style="'background-color:'+${trtDto.result1BgColor}"></span>
+																		</td>
+																		<td><span th:text="${trtDto.asstPeriod2Result}+'('+${trtDto.result2}+')'"
+																			class="badge text-white "
+																			th:style="'background-color:'+${trtDto.result2BgColor}"></span>
+																		</td>
+																		<td th:text="${trtDto.trend}"></td>
+																	</tr>
+																</tbody>
+															</table>
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												</form>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/topRiskReport.js}"></script>
+</body>
+</html>

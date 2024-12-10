@@ -1,0 +1,27 @@
+available-product-list:
+  configurations: 
+    -
+    
+      productName: Transaction Montoring
+      productCode: TM
+      productURL: https://localhost:8084/aml-v4/loginPage
+      productActiveStatus: A
+      productImageName: transaction-monitoring.jpg
+      productDesc: Find New Detections Automatically and Put New Risks Into Context. Get a 200% Increase in Productive Alerts & Limit Your Exposure Before Transactions Happen.
+    -
+    
+      productName: Regulatory Reports
+      productCode: RR
+      productURL: #
+      productActiveStatus: D
+      productImageName: regulatory-report.jpg
+      productDesc: Create data requests here reguested by FUI without any manual intervention and generate the data from system to submit it to reporting system.
+    -
+   
+      productName: Name Screening
+      productCode: TM
+      productURL: #
+      productActiveStatus: D
+      productImageName: name-screening.jpg
+      productDesc: Search efficiently and quickly for a person's name or personal information in system related to financial risk.
+   

@@ -1,0 +1,2843 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+		<div class="wrapper">
+
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Notification Closure Dashboard</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item active"><a href="#">Notification
+											Closure Dashboard</a></li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+						<div class="row">
+							<div class="col-sm-12">
+								
+
+									<!-- TO DO List -->
+									<div class="card card-tabs card-info card-outline">
+										<div class="card-header p-2 border-bottom-0">
+
+
+											<ul class="nav nav-tabs">
+
+												<li class="nav-item"><a
+													class="nav-link card-title text-blue text-bold active  task-notification"
+													href="#activity" id="summarylink" data-toggle="tab"> <i
+														class="fa fa-tasks mr-1 mt-2"></i> Task Notification
+												</a></li>
+
+
+
+											</ul>
+
+										</div>
+
+
+
+										<!-- /.card-header -->
+										<div class="card-body">
+
+											<!-- /. Analysis -->
+
+
+											<div class="tab-content" id="task-tab">
+												<div class="active tab-pane">
+													<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchNtf}" id="searchForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJsonFilter"
+																	name="encryptedJson" />
+																	<label for="filterData">Filter Data </label>
+													<div class="row mb-5">
+
+														<div class="col-sm-3">
+
+													
+															<div class="form-group">
+																<label for="ntfOfficeType">Select Office Type </label> <select
+																	class="select2 form-control form-control-sm"
+																	data-placeholder="Office Type" name="ntfOfficeType"
+																	id="ntfOfficeType" style="width: 100%;">
+																	<option value="">Select Office Type</option>
+																	<option value="ALL">ALL</option>
+																	<option th:each="officeType : ${officeTypeList}"
+																		th:value="${officeType.split('~')[0]}"
+																		th:text="${officeType.split('~')[1]}"></option>
+																</select> <input type="hidden" id="userOfficeTypeTemp"
+																	th:value="${officeTypeTemp}">
+															</div>
+															
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="department">Select Department</label> <select
+																	class="form-control select2 form-control-sm"
+																	data-placeholder="Department" name="department"
+																	id="department" style="width: 100%;">
+																	<option value=''>Select Department</option>
+
+																
+																</select>
+<input type="hidden" id="deptIdTemp"
+																	th:value="${deptIdTemp}">
+
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="zone">Select Office Code</label> <select
+																	class="form-control select2 form-control-sm"
+																	data-placeholder="office Code" name="officeCode"
+																	id="officeCode" style="width: 100%;">
+																	<option value=''>Select Office Code</option>
+
+																</select><input type="hidden" id="officeCodeTemp"
+																	th:value="${officeCodeTemp}">
+
+
+															</div>
+														</div>
+														<div class="col-sm-2 p-2">
+															<div class="form-group mt-4">
+																<button type="button" id="fetch_data_btn"
+																	class="btn btn-block btn-sm btn-outline-primary">Fetch
+																	Data</button>
+															</div>
+														</div>
+														
+													</div>
+</form>
+													<div class="row ml-2 mr-2 mt-n3">
+														<table class="table table-striped">
+															<tr class="rounded-circle">
+																<th>Open Notification <span
+																	style="border-radius: 70px; color: white; text-align: center; background-color: #FFBF00"
+																	id="openStatus"> &nbsp;&nbsp;&nbsp;<b><label
+																			th:text="${openNtfCount}"></label> </b>&nbsp;&nbsp;
+																</span></th>
+																<th>Pending for Verification Notification <span
+																	style="border-radius: 70px; color: white; text-align: center; background-color: #008000"
+																	id="pendingVerification"> &nbsp;&nbsp;&nbsp;<b><label
+																			th:text="${pendingVerficationNtfCount}"></label> </b>&nbsp;&nbsp;
+																</span></th>
+																<th>Pending for Approval Notification<span
+																	style="border-radius: 70px; color: white; text-align: center; background-color: Red"
+																	id="pendingApproval"> &nbsp;&nbsp;&nbsp;<label
+																		th:text="${pendingApprovalNtfCount}"></label>
+																		&nbsp;&nbsp;
+																</span></th>
+															</tr>
+														</table>
+													</div>
+
+
+<form class="form-horizontal" id="ntfForm"
+									th:action="@{/ntfAction}" method="post">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:feild="*{encryptedJson}" /> <input type="hidden"
+										th:value="*{message}" id="message" />
+<input type="checkbox" id="checkAll" class="p-5">&nbsp;&nbsp;<b>Select  All</b>
+													<table id="taskNotification"
+														class="table table-head-fixed table-bordered table-striped">
+														<thead>
+															<tr>
+																<th>Select</th>
+																<th>Source Id</th>
+																<th>Source Name</th>
+																<th>Assigned Date</th>
+																<th>Target Date</th>
+																<th>Task</th>
+																<th>Office Types</th>
+																<th>Office Code</th>
+
+
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="dashBoardList : ${dashBoardList}">
+																<td><input type="checkbox"
+																	th:id="${dashBoardList.notificationId}"
+																	th:value="${dashBoardList.notificationId}"
+																	name="select_ntf[]"></td>
+																<td><a class="text-blue viewModal"
+																	data-toggle="modal" href="#"
+																	th:id="${dashBoardList.sourceId}+'~'+${dashBoardList.sourceName}+'~'+${dashBoardList.tasks}"
+																	th:text="${dashBoardList.sourceId}"> </a></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.sourceName}"></td>
+																<td th:text="${dashBoardList.assignDate}"></td>
+																<td th:text="${dashBoardList.targetDate}"></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.taskName}"></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.officeTypeCode}"></td>
+																<td class="text-capitalize"
+																	th:text="${dashBoardList.officeCode}"></td>
+
+
+															</tr>
+														</tbody>
+													</table>
+													<a class="btn btn-info" id="close_btn"> <i
+														class="fas fa-times-circle" style="padding: 0 7px 0 0px;"></i>Close
+														Notification
+													</a> <a href="#" data-toggle="modal" data-whatever="home"
+														data-target="#cancelmodel"><button type="reset"
+															class="btn btn-warning" title="Cancel">
+															<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+														</button></a>
+														</form>
+												</div>
+											</div>
+
+											<div class="modal fade" id="cancelmodel">
+												<div class="modal-dialog modal-fluid">
+													<div class="modal-content">
+														<div class="modal-header bg-info">
+															<h6 class="modal-title">Confirm</h6>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<!-- form start -->
+														<div class="modal-body">
+															<h5 class="card-title">
+																If you leave this page, all changes will be lost. <br>
+																Press "Ok" to Continue.
+															</h5>
+														</div>
+
+														<div class="modal-footer">
+
+															<button type="button" class="btn btn-secondary"
+																data-dismiss="modal">
+																<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+															</button>
+															<a class="btn btn-primary target"><i
+																class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Ok
+															</a>
+
+														</div>
+
+														<!-- /.Card -->
+
+													</div>
+													<!-- /.modal-content -->
+												</div>
+												<!-- /.modal-dialog -->
+											</div>
+
+
+
+										</div>
+									</div>
+
+									<div class="modal fade" id="riskmodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- /.col -->
+												<div class="card-body">
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="actionPlanId">Statement ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="parameterId" name="parameterId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		id="recordstatus" name="recordstatus" readonly>
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskcategory">Risk Category </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="riskcate" id="riskcate" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskcategory">Risk Sub Category </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="risksubcate" id="risksubcate" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskstmtname">Statement Name </label>
+																<textarea class="form-control form-control-sm"
+																	name="riskstmtname" id="riskstmtname" readonly></textarea>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="datapdept">Department Providing Data
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="datapdept" id="datapdept" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskdescription">Description </label>
+																<textarea class="form-control form-control-sm"
+																	name="riskdescription" id="riskdescription" readonly></textarea>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="datapoints">Data Points To Be
+																	Considered </label>
+																<textarea class="form-control form-control-sm"
+																	name="datapoints" id="datapoints"
+																	placeholder="Data Points" readonly></textarea>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="datatype">Data Type </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="datatype" id="datatype" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="department">Department Responsible </label>
+																<input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="datadept" id="datadept" readonly>
+															</div>
+														</div>
+
+
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="department">Capture Value Department
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="capturedept" id="capturedept" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="frequency">Update Frequency </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="frequency" id="frequency" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="criteria">Assessment Criteria </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="criteria" id="criteria" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="threshold">Tolerance Threshold </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="threshold" id="threshold"
+																	placeholder="Tolerance Threshold" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!-- /.row -->
+													<div class="row" id="asrDiv" style="display: none">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Assessment Value Record</h3>
+																</div>
+																<div class="card-body table-responsive">
+																	<table class="table table-bordered table-striped"
+																		id="capturetbl">
+																		<thead>
+																			<tr>
+																				<th>Department Name</th>
+																				<th>Tolerance Threshold</th>
+																				<th>Assessment Value</th>
+																				<th>Assessment Status</th>
+																				<th>Captured By</th>
+																				<th>Captured Date</th>
+																			</tr>
+																		</thead>
+																		<tbody></tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<!-- /.row -->
+
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.row -->
+											</div>
+											<!-- modal-content -->
+										</div>
+										<!-- /modal-dialog -->
+									</div>
+									<!-- /modal -->
+
+									<!-- Control Modal Start -->
+
+									<!-- /. Control Modal End -->
+
+
+
+									<!-- View Modal -->
+									<div class="modal fade" id="kriModal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="card-body">
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="actionPlanId">KRI ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="kriId" name="parameterId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="kriStatus" name="kriStatus" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="kriName">KRI Name</label>
+																<div class="input-group mb-2">
+																	<textarea type="text"
+																		class="form-control form-control-sm" id="kriName"
+																		name="kriName" readonly></textarea>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="kriDataType">Data Type</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="kriDataType" id="kriDataType" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="kriDataType">KRI Formula</label> <input
+																	type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="kriFormula" id="kriFormula" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="datasourcedef">Data Source</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="datasourcedef" id="datasourcedef" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="frequency">Update Frequency</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="frequency" id="frequency" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="thresholddescription">Threshold
+																	Description </label>
+																<textarea class="form-control form-control-sm"
+																	name="thresholddescription" id="thresholddescription"
+																	readonly></textarea>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="frequency">KRI Benchmark</label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="benchmark" id="kriBenchmark" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row" id="modalDeptThresDiv"
+														style="display: none">
+														<div class="col-sm-12">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Department Linked</h3>
+																</div>
+																<div class="card-body">
+																	<table class="table table-bordered"
+																		id="deptThresholdDetails" style="width: 100%">
+																		<tr>
+																			<th>Department</th>
+																			<th>KRI Description</th>
+																			<th colspan="3">Threshold Details</th>
+																		</tr>
+																		<tbody>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+
+														</div>
+
+													</div>
+													<!-- /row -->
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.card-footer -->
+
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+									<!-- /.modal -->
+									<!-- View Top Risk Modal -->
+									<div class="modal fade" id="viewTopRiskmodal">
+										<div class=" modal-dialog modal-lg">
+											<div class=" modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View Top Risk</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="raStmtId">Top Risk ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id=topRiskId name="paramId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		id="topRiskStatus" name="recordstatus" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="Theme">Theme</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-capitalize"
+																		id="theme" name="theme" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<label for="topRiskDescription">Description </label>
+																<textarea class="form-control form-control-sm" rows="3"
+																	name="desc" id="desc" readonly></textarea>
+															</div>
+														</div>
+													</div>
+													<div id="modalDeptDiv"></div>
+												</div>
+												<div class="modal-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end View Top Risk Modal -->
+									<!-- View Benchmark Modal -->
+									<div class="modal fade" id="viewBenchmarkmodal">
+										<div class=" modal-dialog modal-lg">
+											<div class=" card modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View Benchmark</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="bmId">Statement ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold" id=bmId
+																		name="paramId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="bmRecordStatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="bmRecordStatus" name="recordStatus" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="bmName">Name</label> <input
+																	class="form-control form-control-sm text-capitalize"
+																	type="text" name="bmNameM" id="bmNameM" readonly />
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<div class="form-group">
+																	<label for="bmDatatype">Benchmark Datatype</label> <input
+																		type="text" name="bmDatatypeM"
+																		class="form-control form-control-sm two-decimals"
+																		id="bmDatatypeM" readonly />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="bmDescription">Benchmark Description<code>*</code>
+																</label>
+																<textarea class="form-control form-control-sm"
+																	name="bmDescriptionM" id="bmDescriptionM" rows="3"
+																	placeholder="Benchmark Description" maxlength="3000"
+																	style="overflow: auto;" readonly></textarea>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="bmAssessmentPeriod">Benchmark Value
+																	Capture Frequency</label> <input type="text"
+																	name="bmAssessmentPeriodM"
+																	class="form-control form-control-sm"
+																	id="bmAssessmentPeriodM" readonly />
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="applicableOffice">Applicable Office<code>*</code>
+																</label>
+																<div class="form-check ofcName"></div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end View Benchmark Modal -->
+
+
+
+
+
+									<!-- View Incident Modal -->
+									<div class="modal fade" id="viewIncidentmodal">
+										<div class=" modal-dialog modal-lg">
+											<div class=" card modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View Incident Details</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+
+													<input type="hidden" id="incidentDto" name="incidentDto"
+														th:value="${incidentDto}" /> <input type="hidden"
+														id="incidentRemediationLinkDto"
+														name="incidentRemediationLinkDto"
+														th:value="${incidentRemediationLinkDto}" />
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="incidentId">Statement ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="incidentIdM" name="incidentIdM" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="incidentStatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		id="incidentStatusM" name="incidentStatusM" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="incidentName">Name</label> <input
+																	class="form-control form-control-sm text-capitalize"
+																	type="text" name="incidentName"
+																	placeholder="Incident Name" id="incidentNameM" readonly />
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="incidentReportingPerson">Incident
+																	Reporting Person</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	id="incidentReportingPersonM"
+																	name="incidentReportingPersonM" readonly>
+															</div>
+														</div>
+
+													</div>
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<div class="form-group">
+																	<label for="incidentDescription">Description</label> <input
+																		type="text" name="incidentDescriptionM"
+																		class="form-control form-control-sm"
+																		id="incidentDescriptionM" readonly />
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="OperatingOfcLocation">Operating
+																	Office Location</label> <input type="text"
+																	class="form-control form-control-sm"
+																	id="operatingOfcLocationM" name="operatingOfcLocationM"
+																	readonly>
+
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="department">Department</label> <input
+																	type="text" class="form-control form-control-sm"
+																	id="departmentM" name="departmentM" readonly>
+															</div>
+														</div>
+
+													</div>
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="incidentIdentificationDate">Incident
+																	Identification Date</label>
+																<div class="input-group date"
+																	data-target-input="nearest">
+																	<input type="text" class="form-control text-bold"
+																		id="incidentIdentificationDateM"
+																		name="incidentIdentificationDateM"
+																		placeholder="Identification Date"
+																		data-target="#incidentIdentificationDate" readonly />
+																	<div class="input-group-append"
+																		data-target="#incidentIdentificationDateM"
+																		data-toggle="datetimepicker">
+																		<div class="input-group-text">
+																			<i class="fa fa-calendar"></i>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="incidentRecordDate">Incident Record
+																	Date</label>
+																<div class="input-group date"
+																	data-target-input="nearest">
+																	<input type="text" class="form-control text-bold"
+																		id="incidentRecordDateM" name="incidentRecordDate"
+																		readonly />
+																	<div class="input-group-append"
+																		data-target="#incidentRecordDateM"
+																		data-toggle="datetimepicker">
+																		<div class="input-group-text">
+																			<i class="fa fa-calendar"></i>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="assessedImpactValue">Assessed Impact
+																	in terms of Value</label>
+																<div class="input-group">
+																	<input
+																		class="form-control form-control-sm  text-bold rupee"
+																		type="text" name="assessedImpactValueM"
+																		id="assessedImpactValueM" readonly />
+																</div>
+																<div id="showWordAmt" class="showWordAmt text-green"></div>
+															</div>
+														</div>
+
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-12">
+															<table th:if="${previousLinkedIncidentlist != null}"
+																class="table table-head-fixed table-bordered table-striped listView"
+																id="incidentdetails">
+																<thead>
+																	<tr>
+																		<th>Incident Id</th>
+																		<th>Incident Name</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr th:each="mvc : ${previousLinkedIncidentlist}">
+																		<td class="text-bold" th:text="${mvc.incidentId}"></td>
+																		<td class="text-bold" th:text="${mvc.incidentName}"></td>
+
+																	</tr>
+
+																</tbody>
+															</table>
+														</div>
+
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="incidentTypeDiv">
+																<div class="form-group">
+																	<label for="incidentType">Incident Type</label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="incidentTypeM" id="incidentTypeM"
+																		readonly />
+																</div>
+															</div>
+
+														</div>
+														<div class="col-sm-6">
+															<div class="incidentImpactLevelDiv">
+																<div class="form-group">
+																	<label for="incidentImpactLevel">Incident
+																		Impact Level </label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="incidentImpactLevelM"
+																		id="incidentImpactLevelM" readonly />
+																</div>
+															</div>
+														</div>
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="primaryLossEventDiv">
+																<div class="form-group">
+																	<label for="primaryLossEvent">Primary Loss
+																		Event Category </label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="primaryLossEventM"
+																		id="primaryLossEventM" readonly />
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="secondaryLossEventDiv">
+																<div class="form-group">
+																	<label for="secondaryLossEvent">Secondary Loss
+																		Event Category </label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="secondaryLossEventM"
+																		id="secondaryLossEventM" readonly />
+																</div>
+															</div>
+														</div>
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="recoverableValueDiv">
+																<div class="form-group">
+																	<label for="recoverableValue">Recoverable Value
+																	</label> <input
+																		class="form-control form-control-sm text-bold rupee"
+																		type="text" name="recoverableValueM"
+																		id="recoverableValueM" readonly />
+
+																	<div id="showRecvrAmt" class="showWordsAmt text-green"></div>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="recoveryStatusDiv">
+																<div class="form-group">
+																	<label for="recoveryStatus">Recovery Status</label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="recoveryStatusM"
+																		id="recoveryStatusM" readonly />
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="additionalBusinessUnitDiv">
+																<div class="form-group">
+																	<label for="additionalBusinessUnit">Additional
+																		Department Affected</label> <input type="text"
+																		class="form-control form-control-sm text-capitalize text-bold"
+																		id="additionalBusinessUnitM"
+																		name="additionalBusinessUnitM" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div id="remediateDiv">
+														<div class="card card-info bg-info p-2">
+															<h3 class="card-title">&nbsp; Remediation Details</h3>
+														</div>
+
+														<div class="row">
+
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="rootCauseIncident">Root Cause Of
+																		Incident </label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="rootCauseIncident"
+																		id="rootCauseIncidentM" readonly />
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="rootCauseType">Root Cause Type </label> <input
+																		class="form-control form-control-sm text-bold"
+																		type="text" name="rootCauseType" id="rootCauseTypeM"
+																		readonly />
+																</div>
+															</div>
+														</div>
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<label for="rootCauseDescription">Description
+																		Of Root Cause </label>
+																	<textarea
+																		class="form-control form-control-sm text-bold"
+																		name="rootCauseDescription" id="rootCauseDescriptionM"
+																		rows="3" maxlength="3000"
+																		placeholder="Description Of Root Cause" readonly></textarea>
+
+																</div>
+															</div>
+														</div>
+
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="grossLossRemediation">Gross Loss of
+																		Incident </label> <input
+																		class="form-control form-control-sm text-bold rupee"
+																		type="text" name="grossLossRemediation"
+																		id="grossLossRemediationM" readonly />
+
+																	<div id="grossLossRemediationW"
+																		class="showWordAmt text-green"></div>
+																</div>
+															</div>
+
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="netLossRemediation">Net Loss of
+																		Incident </label> <input
+																		class="form-control form-control-sm text-bold rupee"
+																		type="text" name="netLossRemediation"
+																		id="netLossRemediationM" readonly />
+
+																	<div id="netLossRemediationW"
+																		class="showWordAmt text-green"></div>
+																</div>
+															</div>
+
+														</div>
+
+														<div class="card card-info bg-info p-2">
+															<h3 class="card-title">&nbsp; Gross Loss Details</h3>
+														</div>
+
+														<div class="row">
+															<div class="col-sm-12">
+																<table
+																	class="table grossLossTable table-bordered table-striped"
+																	id="grossLossTable">
+																	<!--  th:if="${incidentDto.filedetails != null}" -->
+																	<thead>
+																		<tr>
+																			<th>Date Of Loss</th>
+																			<th>Description Of Loss</th>
+																			<th>Loss Amount</th>
+																		</tr>
+																	</thead>
+																	<tbody id="tbodyR">
+
+																	</tbody>
+																</table>
+															</div>
+														</div>
+														<div class="card card-info bg-info p-2">
+															<h3 class="card-title">&nbsp; Recovery Loss Details</h3>
+														</div>
+
+														<div class="row">
+															<div class="col-sm-12">
+																<table
+																	class="table recoveryLossTable table-bordered table-striped"
+																	id="recoveryLossTable">
+																	<!--  th:if="${incidentDto.filedetails != null}" -->
+																	<thead>
+																		<tr>
+																			<th>Date Of Recovery</th>
+																			<th>Description Of Recovery</th>
+																			<th>Recovery Amount</th>
+
+																		</tr>
+																	</thead>
+																	<tbody id="tbodyT">
+
+																	</tbody>
+																</table>
+															</div>
+
+														</div>
+
+													</div>
+
+
+													<div id="closureDiv">
+
+														<div class="card card-info bg-info p-2">
+															<h3 class="card-title">&nbsp; Closure Details</h3>
+														</div>
+
+														<div class="row">
+															<div class="col-sm-6">
+
+																<div class="form-group">
+																	<label for="businessSegment">Business Segment </label>
+																	<input class="form-control form-control-sm text-bold"
+																		type="text" name="businessSegment"
+																		id="businessSegmentM" readonly />
+
+																</div>
+
+															</div>
+														</div>
+
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="riskInRiskRegister">Details Of Risk
+																		Added In Risk Register </label> <input
+																		class="form-control form-control-sm" type="text"
+																		name="riskInRiskRegister"
+																		placeholder="Details Of Risk Added In Risk Register"
+																		id="riskInRiskRegisterM" readonly />
+																</div>
+															</div>
+
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="controlInRiskRegister">Details Of
+																		Control Added In Risk Register </label> <input
+																		class="form-control form-control-sm" type="text"
+																		name="controlInRiskRegister"
+																		placeholder="Details Of Control Added In Risk Register"
+																		id="controlInRiskRegisterM" readonly />
+																</div>
+															</div>
+
+														</div>
+
+
+
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="card-header">
+																	<div class="card">
+																		<h3 class="card-title text-bold">Checklist for
+																			fraud cases</h3>
+																	</div>
+																	<div class="card-body">
+																		<table
+																			class="table checklistView table-bordered table-striped"
+																			id="checklistView">
+																			<!--  th:if="${incidentDto.filedetails != null}" -->
+																			<thead>
+																				<tr>
+																					<th style="width: 10px">#</th>
+																					<th>Checklist Item</th>
+																					<th>Response</th>
+
+																				</tr>
+																			</thead>
+																			<tbody id="tbodyC">
+
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<label for="closureReason">Reason for Closure </label>
+																	<textarea class="form-control form-control-sm"
+																		name="closureReasonM" id="closureReasonM" rows="3"
+																		maxlength="3000" placeholder="Reason for Closure"
+																		disabled></textarea>
+
+																</div>
+															</div>
+
+														</div>
+													</div>
+
+
+													<div class="row table-responsive">
+														<div class="col-sm-12">
+															<div class="form-group">
+																<table
+																	class="table uploadTable table-head-fixed table-bordered table-striped"
+																	id="filedetails">
+																	<thead>
+																		<tr>
+																			<th>File Name</th>
+																			<th>File Size</th>
+																			<th>Uploaded Date</th>
+																			<th>Uploaded by</th>
+																			<th></th>
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<!-- end View Incident Modal -->
+
+
+
+
+
+
+
+									<div class="modal fade" id="controlmodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- /.col -->
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlId">Risk ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="controlId" name="controlId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		id="controlRecordstatus" name="recordstatus" value=""
+																		readonly>
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlDept">Department <code>*</code>
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	id="controlDept" name="controlFunction"
+																	placeholder="Department" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlFunction">Function <code>*</code></label>
+																<input type="text" class="form-control form-control-sm"
+																	id="controlFunction" name="controlFunction"
+																	placeholder="Function" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlName">Risk Name <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="controlName" name="controlName"
+																	placeholder="Control Name" readonly>
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlAssessmentFreq">Assessment
+																	Frequency <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="controlAssessmentFreq" name="controlAssessmentFreq"
+																	placeholder="Control Assessment Frequency" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!--  /. row -->
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="office-set"></div>
+														</div>
+													</div>
+
+													<div class="row text-capitalize">
+														<div class="col-sm-12">
+															<div class="office-desc"></div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row" id="asrDiv" style="display: none">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Linked Controls</h3>
+																</div>
+																<div class="card-body">
+																	<table
+																		class="table table-head-fixed table-bordered table-striped"
+																		id="linkedModuleTbl">
+																		<thead>
+																			<tr>
+
+																				<th>Control ID</th>
+																				<th>Control Function</th>
+																				<th>Control Name</th>
+																				<th>Assessment Frequency</th>
+
+																			</tr>
+																		</thead>
+																		<tbody>
+
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.row -->
+											</div>
+											<!-- modal-content -->
+										</div>
+										<!-- /modal-dialog -->
+									</div>
+									<!-- /modal -->
+
+									<!-- Control Modal -->
+
+									<!-- Control Modal Starts -->
+									<div class="modal fade" id="controlLibrarymodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- /.col -->
+
+
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlId">Control ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="controlModelId" name="controlId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		value="view" id="recordstatus" name="recordstatus"
+																		readonly>
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlDept">Department <code>*</code>
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	id="controlModelDept" name="controlFunction"
+																	placeholder="Department" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlFunction">Function <code>*</code></label>
+																<input type="text" class="form-control form-control-sm"
+																	id="controlModelFunction" name="controlFunction"
+																	placeholder="Function" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlName">Control Name <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="controlModelName" name="controlName"
+																	placeholder="Control Name" readonly>
+															</div>
+														</div>
+
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="controlAssessmentFreq">Assessment
+																	Frequency <code>*</code>
+																</label> <input type="text" class="form-control form-control-sm"
+																	id="controlModelAssessmentFreq"
+																	name="controlAssessmentFreq"
+																	placeholder="Control Assessment Frequency" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!--  /. row -->
+													<div class="row">
+														<div class="col-sm-12">
+															<label for="officeType">Office Type <code>*</code></label>
+
+															<div class="office-set"></div>
+														</div>
+													</div>
+
+													<div class="row text-capitalize">
+														<div class="col-sm-12">
+															<div class="office-desc"></div>
+														</div>
+													</div>
+													<!--  	<div class="row">
+										<div class="col-sm-12">
+												<label for="officeType">Office Type <code>*</code></label>
+												<div class="form-group text-capitalize" id="officetypeCheck">
+													<div th:each="controlOffice : ${control.officeCheckValue}" class="form-check">
+														<input  class="form-check-input checkboxOffice" type="checkbox" th:name="${controlOffice.officeValue}" th:id="'check-'+${controlOffice.officeCode}" th:checked="${controlOffice.officeFlg}" disabled>
+                          								<label class="form-check-label" th:text="${controlOffice.officeValue}"></label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          							</div>
+                          							
+												</div>
+											</div>
+									</div> -->
+													<!-- Loop Control Option start-->
+													<!--  	<div th:each="controlDesc : ${control.officeDescValue}" class="row text-capitalize">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="controlDescCO" th:text="${controlDesc.officeValue}"> <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm officeDesc"
+														th:name="${controlDesc.officeCode}"  th:id="${controlDesc.officeCode}" th:text="${controlDesc.officeDesc}"
+														maxlength="3000" placeholder="Control Description" readonly></textarea>
+												</div>
+											</div>
+										</div> -->
+													<!-- /.row -->
+													<!-- Loop Control Option End -->
+													<!-- /.row -->
+
+
+
+													<!-- ./row -->
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.row -->
+											</div>
+											<!-- modal-content -->
+										</div>
+										<!-- /modal-dialog -->
+									</div>
+									<!-- /modal -->
+									<!-- /. Control Modal -->
+
+									<!-- View Role Modal -->
+									<div class="modal fade" id="viewRolemodal">
+										<div class=" modal-dialog modal-lg">
+											<div class=" card modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View Role</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body">
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="roleId">Role ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id=roleId name="roleId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="statusFlg">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		id="statusFlgM" name="statusFlgM" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="roleName">Role Name</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-capitalize"
+																		id="roleNameM" name="roleNameM" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="roleCategory">Role Category </label> <input
+																	class="form-control form-control-sm"
+																	name="roleCategoryM" id="roleCategoryM" readonly />
+															</div>
+														</div>
+													</div>
+													<div class="row" id="accordion">
+														<div class="col-sm-12">
+															<div class="card card-primary">
+																<div class="card-header">
+																	<a class=" w-100" data-toggle="collapse"
+																		href="#collapseOne"> Selected Menus For Role : </a>
+																</div>
+																<div id="collapseOne" class="collapse show"
+																	data-parent="#accordion">
+																	<div class="card-body">
+																		<div class="row" id="viewMenuDiv">
+																			<ul class="control  menu_list  col-sm-12"
+																				id="menuList">
+																				<li class="text-capitalize col-sm-5 has-treeview"></li>
+																			</ul>
+																		</div>
+																	</div>
+																	<!-- /.card-body -->
+																</div>
+
+															</div>
+															<!-- /.card -->
+
+														</div>
+													</div>
+												</div>
+												<div class="modal-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end View Role Modal -->
+
+
+
+									<!-- Menu Model -->
+
+									<div class="modal fade" id="menumodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- /.col -->
+												<div class="card-body">
+
+
+													<!-- /row -->
+
+
+													<!-- /.row -->
+
+													<!-- /.row -->
+													<div class="row" id="menuDiv" style="display: none">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Submenu Details</h3>
+																</div>
+																<div class="card-body table-responsive">
+																	<table class="table table-bordered table-striped"
+																		id="capturetbl">
+																		<thead>
+																			<tr>
+																				<th>Submenu Name</th>
+																				<th>Submenu Status</th>
+																				<th>Submenu Type</th>
+																				<th>Submenu Path</th>
+																				<th>Submenu Order</th>
+
+																			</tr>
+																		</thead>
+																		<tbody></tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<!-- Menu Model End -->
+
+
+
+										<!-- Send Information Notification -->
+
+										<div class="modal fade" id="sendNotificationModal">
+											<div class="modal-dialog modal-l">
+												<div class="modal-content">
+													<div class="modal-header bg-teal">
+														<h5 class="modal-title">Send Notification</h5>
+														<button type="button" class="close text-white"
+															data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<!-- /.col -->
+													<div class="card-body">
+
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group">
+																	<label for="raCaptureValueDept"> To <code>*</code>
+																	</label> <input type="text" class="form-control"
+																		name="srNoTemp" id="srNoTemp" placeholder="SRNO">
+
+																	<div class="spinner-border text-success mt-2"
+																		style="display: none" id="small-spinner" role="status">
+																		<span class="sr-only">Loading...</span>
+																	</div>
+
+																	<p class="text-red mt-1" id="tempEmailId"
+																		style="display: none">
+																		<font id="emailid"></font>
+																	</p>
+
+
+
+
+																	<!-- 																<button type="button" id="fetch_data_btn" -->
+																	<!-- 																	class="btn btn-block btn-sm btn-outline-primary mt-4">Fetch -->
+																	<!-- 																	Data</button> -->
+
+
+
+																</div>
+
+
+															</div>
+
+														</div>
+
+														<div class="row" style="display: none">
+															<div class="col-sm-12 ">
+																<div class="form-group">
+																	<input type="hidden" id="ntfTitleDesc" /> <input
+																		type="hidden" id="ofcCode" />
+																</div>
+															</div>
+														</div>
+
+
+														<div class="row">
+															<div class="col-sm-12 ">
+																<div class="form-group float-right">
+																	<button type="submit"
+																		class="btn btn-primary sendNotification">
+																		<i class="far fa-envelope"></i> Send
+																	</button>
+
+																</div>
+															</div>
+
+														</div>
+
+
+													</div>
+												</div>
+											</div>
+
+											<!-- Menu Model End -->
+
+											<!-- /.card-body -->
+										</div>
+
+										<!-- /. Send Information Notification -->
+
+
+
+										<!-- /.card-body -->
+									</div>
+									<!-- /.card -->
+								<!-- </form> -->
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!--/. container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+
+			<!-- Control Sidebar -->
+			<aside class="control-sidebar control-sidebar-dark">
+				<!-- Control sidebar content goes here -->
+			</aside>
+			<!-- /.control-sidebar -->
+
+			<!-- Included Footer -->
+			<div th:insert="/footer::footer"></div>
+		</div>
+		<!-- ./wrapper -->
+
+		<!-- REQUIRED SCRIPTS -->
+		<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+		<!-- Bootstrap -->
+		<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+		<!-- jquery-validation -->
+		<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+		<script
+			th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+		<!-- bs-custom-file-input -->
+		<script
+			th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+		<!-- Select2 -->
+		<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+		<!-- Toastr -->
+		<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+		<!-- overlayScrollbars -->
+		<script
+			th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+		<!-- AdminLTE App -->
+		<script th:src="@{/dist/js/adminlte.js}"></script>
+		<!-- DataTables  & Plugins -->
+		<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+		<script
+			th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+		<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+		<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+		<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+		<script th:src="@{/plugins/moment/moment.min.js}"></script>
+		<!-- Crypto JS JavaScript -->
+		<!-- Crypto JS JavaScript -->
+		<script th:src="@{/dist/appjs/aes.js}"></script>
+		<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+		<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+		<script th:src="@{/dist/appjs/app.js}"></script>
+		<script th:src="@{/dist/appjs/erm/header.js}"></script>
+		<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+		<!-- Developer Added JS -->
+		<script th:src="@{/dist/appjs/erm/dashboard.js}"></script>
+		<script th:src="@{/dist/appjs/erm/home.js}"></script>
+		<script th:src="@{/dist/appjs/erm/viewmodal.js}"></script>
+		<!-- Developer Added Print JS -->
+		<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+		<!-- REQUIRED SCRIPTS -->
+		<script type="text/javascript">
+			document.onreadystatechange = function() {
+				var state = document.readyState
+				if (state == 'interactive') {
+					//document.getElementById('contents').style.visibility = "hidden";
+				} else if (state == 'complete') {
+					setTimeout(
+							function() {
+								document.getElementById('interactive');
+								document.getElementById('load').style.visibility = "hidden";
+								//document.getElementById('contents').style.visibility = "visible";
+							}, 1000);
+				}
+			}
+		</script>
+		<script>
+			//message display
+
+			$(function() {
+				$("#taskNotification").DataTable({
+					"columnDefs" : [ {
+						orderable : false,
+						targets : [ 0 ]
+					} ],
+
+					"order" : [ 1, "desc" ],
+					"lengthMenu" : [ 20, 40, 60, 80, 100 ],
+					"responsive" : false,
+					"autoWidth" : false,
+					"searching" : true,
+					"fixedHeader" : true,
+					"language" : {
+						"emptyTable" : "No Data Available"
+					}
+				}).buttons().container().appendTo(
+						'#actionplantable_wrapper .col-md-12:eq(0)');
+			});
+		</script>
+		<script>
+			$(document).ready(function() {
+				var message = $('#message').val();
+				if (message != "") {
+					toastr.success(message);
+				}
+				$("#summarylink").click(function() {
+
+					$('#task-tab').css('display', '');
+					$('#info-tab').css('display', 'none');
+					$('#graph-tab').css('display', 'none');
+				});
+
+				//	$("#actionplanlink").click(function() {
+				//		$('#task-tab').css('display', 'none');
+				//		$('#info-tab').css('display', '');
+				//		$('#graph-tab').css('display', 'none');
+				//	});
+
+				$("#graphLink").click(function() {
+					$('#task-tab').css('display', 'none');
+					$('#info-tab').css('display', 'none');
+					$('#graph-tab').css('display', '');
+
+				});
+
+			});
+
+			// view Information Notification   
+			$('#actionplanlink')
+					.click(
+							function() {
+								var tempString = "Fetch";
+
+								var pageValJson = "{\"ntfActionStatus\":"
+										+ "\"" + tempString + "\"}";
+
+								document.getElementById('loader2').style.visibility = "visible";
+
+								$('#task-tab').css('display', 'none');
+								$('#info-tab').css('display', '');
+								$('#graph-tab').css('display', 'none');
+
+								// ajax call
+								$
+										.ajax({
+											url : 'viewInfoNotification',
+											type : "POST",
+											data : {
+												pageValJson : pageValJson
+											},// important line for thymeleaf http security
+											headers : {
+												"X-CSRF-TOKEN" : $(
+														"input[name='_csrf']")
+														.val()
+											},
+											cache : false,
+											// async:true,
+											success : function(response) {
+												setTimeout(
+														function() {
+															document
+																	.getElementById('interactive');
+
+															document
+																	.getElementById('contents').style.visibility = "visible";
+														}, 1000);
+
+												document
+														.getElementById('loader2').style.visibility = "hidden";
+
+												var jsonResponse = JSON
+														.stringify(response);
+												var obj = JSON
+														.parse(jsonResponse);
+
+												$(".tempAlert").empty();
+												obj
+														.forEach(function(items) {
+															$(
+																	"<div class='alert alert-info1 text-capitalize' role='alert'> <strong>"
+																			+ items.ntfTitle
+																			+ "</strong>"
+
+																			//+ "<span class='float-right dashboard ' aria-hidden='true'>"
+																			//+ "<a class='text-blue viewNotification' id='"
+																				//+ items.ntfModuleId
+																				//+ "~"
+																				//+ items.ntfModule
+																				//+ "'><i class='fas fa-eye'></i></a> <a class='text-blue shareNotification' id='shareNotification-"
+																				//+ items.ntfId
+																				//+ "'> <i class='fas fa-share ml-2'></i></a></span>"
+
+																			+ "</div>")
+																	.appendTo(
+																			".tempAlert");
+
+														});
+
+												$('#task-tab').css('display',
+														'none');
+												$('#info-tab').css('display',
+														'');
+												$('#graph-tab').css('display',
+														'none');
+
+												$('#tempAlert').show();
+
+											},
+											error : function(xhr, status, error) {
+												console.log(xhr);
+												console.log(status);
+												console.log(error);
+												toastr
+														.success('Some Error Occured');
+											}
+										});
+							});
+
+			$(".tempAlert").on("click", "a.shareNotification", function() {
+				var id = this.id;
+				var split_id = id.split("-");
+				$('#ntfTitleDesc').val(split_id[1]);
+				$('#sendNotificationModal').modal('show');
+			});
+		</script>
+
+
+
+
+		<script>
+			$(document).ready(
+					function() {
+						var userOffice = $("#userOffice").val();
+
+						if (userOffice === 'zonal office') {
+							$('#officetype option[value="central office"]')
+									.attr("disabled", true);
+						} else if (userOffice === 'divisional office') {
+							$('#officetype option[value="central office"]')
+									.attr("disabled", true);
+							$('#officetype option[value="zonal office"]').attr(
+									"disabled", true);
+						} else if (userOffice === 'branch office') {
+							$('#officetype option[value="central office"]')
+									.attr("disabled", true);
+							$('#officetype option[value="zonal office"]').attr(
+									"disabled", true);
+							$('#officetype option[value="divisional office"]')
+									.attr("disabled", true);
+						}
+					});
+		</script>
+
+		<script>
+			$("#close_btn")
+					.click(
+							function(e) {
+
+								var ntf_list = [];
+								var checkboxSelectValidation = false;
+								$.each($("input[name='select_ntf[]']:checked"),
+										function() {
+											ntf_list.push($(this).val());
+
+										});
+
+								var apString = "{\"ntfId\":\"" + ntf_list
+										+ "\"}";
+								// alert(apString);
+
+								if ($("input[name='select_ntf[]']:checked").length <= 0) {
+
+									checkboxSelectValidation = true;
+									toastr.error("Select atleast one Checkbox");
+								}
+								if (checkboxSelectValidation) {
+									document.getElementById('load').style.visibility = "hidden";
+									e.preventDefault();
+								}
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), apString);
+
+								$("#encryptedJson").val(
+										ciphertext + ':~:' + passphrase);
+
+								if (checkboxSelectValidation === false) {
+									$("#ntfForm").submit();
+								}
+
+							});
+		</script>
+
+		<!-- <script>
+			$('#ntfOfficeType')
+					.on(
+							'change',
+							function() {
+
+								var officeType = $("#ntfOfficeType").val()
+								var pageValJson = "{\"officeType\":" + "\""
+										+ officeType + "\"}";
+
+								document.getElementById('load').style.visibility = "visible";
+
+								// ajax call
+								$
+										.ajax({
+											url : 'viewDashBoardByOffice',
+											type : "POST",
+											data : {
+												pageValJson : pageValJson
+											},// important line for thymeleaf http security
+											headers : {
+												"X-CSRF-TOKEN" : $(
+														"input[name='_csrf']")
+														.val()
+											},
+											cache : false,
+											// async:true,
+											success : function(response) {
+												setTimeout(
+														function() {
+															document
+																	.getElementById('interactive');
+															document
+																	.getElementById('load').style.visibility = "hidden";
+														}, 1000);
+
+												var jsonResponse = JSON
+														.stringify(response);
+												var obj = JSON
+														.parse(jsonResponse);
+												var dashboardTableData = $(
+														'#taskNotification')
+														.DataTable();
+
+												dashboardTableData.clear()
+														.draw();
+
+												//destroy datatable
+												//table.destroy();
+												obj
+														.forEach(function(items) {
+															console.log(items);
+															var modelid = items.sourceId
+																	+ '~'
+																	+ items.sourceName
+																	+ '~'
+																	+ items.tasks;
+															var tr = $("<tr>"
+																	+ "<td><input type='checkbox' id='"+items.notificationId+"' value='"+items.notificationId+"' name='select_ntf[]'></td>"
+																	+ "<td><a class='text-blue' data-toggle='modal'  id='"
+																	+ modelid
+																	+ "' onclick='viewModalFunc(this.id)' href='#'>"
+																	+ items.sourceId
+																	+ "</a></td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.sourceName
+																	+ "</td>"
+																	+ "<td>"
+																	+ items.assignDate
+																	+ "</td>"
+																	+ "<td>"
+																	+ items.targetDate
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.taskName
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.officeTypeCode
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.officeCode
+																	+ "</td>"
+																	+ "</tr>");
+
+															dashboardTableData.row
+																	.add(tr[0])
+																	.draw();
+
+														});
+
+											},
+											error : function(xhr, status, error) {
+												console.log(xhr);
+												console.log(status);
+												console.log(error);
+												toastr
+														.success('Some Error Occured');
+											}
+										});
+							});
+		</script> -->
+		<script>
+			$('#cancelmodel').on('show.bs.modal', function(event) {
+				var button = $(event.relatedTarget)
+				var recipient = button.data('whatever')
+				//var recipient = $('#datasource').val()
+				var modal = $(this)
+				$('a.target').attr('href', recipient);
+
+			})
+		</script>
+
+		<script>
+			$("#openStatus").click(function() {
+				
+				getStatusData("open");
+			})
+			$("#pendingVerification").click(function() {
+				
+				getStatusData("pendingVerification");
+			})
+			$("#pendingApproval").click(function() {
+				
+				getStatusData("pendingApproval");
+			})
+		</script>
+		<script>
+			function getStatusData(status) {
+			
+						var officeType = $("#ntfOfficeType").val()
+						var deptId = $("#department").val();
+						var officeCode = $("#officeCode").val();
+						var ntfStatus = status;
+
+						var pageValJson = "{\"officeType\":\""
+								+ officeType + "\",\n"
+								+ "\"deptId\":\"" + deptId + "\",\n"
+								+ "\"ntfStatus\":\"" + ntfStatus
+								+ "\",\n" + "\"officeCode\":\""
+								+ officeCode + "\"}";
+				document.getElementById('load').style.visibility = "visible";
+				$
+						.ajax({
+							url : 'getNtfClose',
+							type : "POST",
+							data : {
+								pageValJson : pageValJson
+							},// important line for thymeleaf http security
+							headers : {
+								"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+							},
+							cache : false,
+							// async:true,
+							success : function(response) {
+								setTimeout(
+										function() {
+											document
+													.getElementById('interactive');
+											document.getElementById('load').style.visibility = "hidden";
+										}, 1000);
+
+								var jsonResponse = JSON.stringify(response);
+								var obj = JSON.parse(jsonResponse);
+								var dashboardTableData = $('#taskNotification')
+										.DataTable();
+
+								dashboardTableData.clear().draw();
+
+								//destroy datatable
+								//table.destroy();
+								obj
+										.forEach(function(items) {
+											console.log(items);
+											var modelid = items.sourceId + '~'
+													+ items.sourceName + '~'
+													+ items.tasks;
+											var tr = $("<tr>"
+													+ "<td><input type='checkbox' id='"+items.notificationId+"' value='"+items.notificationId+"' name='select_ntf[]'></td>"
+													+ "<td><a class='text-blue' data-toggle='modal'  id='"
+													+ modelid
+													+ "' onclick='viewModalFunc(this.id)' href='#'>"
+													+ items.sourceId
+													+ "</a></td>"
+													+ "<td class='text-capitalize'>"
+													+ items.sourceName
+													+ "</td>"
+													+ "<td>"
+													+ items.assignDate
+													+ "</td>"
+													+ "<td>"
+													+ items.targetDate
+													+ "</td>"
+													+ "<td class='text-capitalize'>"
+													+ items.taskName
+													+ "</td>"
+													+ "<td class='text-capitalize'>"
+													+ items.officeTypeCode
+													+ "</td>"
+													+ "<td class='text-capitalize'>"
+													+ items.officeCode
+													+ "</td>" + "</tr>");
+
+											dashboardTableData.row.add(tr[0])
+													.draw();
+
+										});
+
+							},
+							error : function(xhr, status, error) {
+								console.log(xhr);
+								console.log(status);
+								console.log(error);
+								toastr.success('Some Error Occured');
+							}
+						});
+
+			}
+		</script>
+
+		<!-- <script>
+			$('#ntfOfficeType')
+					.on(
+							'change',
+							function() {
+
+								var officeType = $("#ntfOfficeType").val()
+								var pageValJson = "{\"officeType\":" + "\""
+										+ officeType + "\"}";
+
+								document.getElementById('load').style.visibility = "visible";
+
+								// ajax call
+								$
+										.ajax({
+											url : 'viewDashBoardByOffice',
+											type : "POST",
+											data : {
+												pageValJson : pageValJson
+											},// important line for thymeleaf http security
+											headers : {
+												"X-CSRF-TOKEN" : $(
+														"input[name='_csrf']")
+														.val()
+											},
+											cache : false,
+											// async:true,
+											success : function(response) {
+												setTimeout(
+														function() {
+															document
+																	.getElementById('interactive');
+															document
+																	.getElementById('load').style.visibility = "hidden";
+														}, 1000);
+
+												var jsonResponse = JSON
+														.stringify(response);
+												var obj = JSON
+														.parse(jsonResponse);
+												var dashboardTableData = $(
+														'#taskNotification')
+														.DataTable();
+
+												dashboardTableData.clear()
+														.draw();
+
+												//destroy datatable
+												//table.destroy();
+												obj
+														.forEach(function(items) {
+															console.log(items);
+															var modelid = items.sourceId
+																	+ '~'
+																	+ items.sourceName
+																	+ '~'
+																	+ items.tasks;
+															var tr = $("<tr>"
+																	+ "<td><input type='checkbox' id='"+items.notificationId+"' value='"+items.notificationId+"' name='select_ntf[]'></td>"
+																	+ "<td><a class='text-blue' data-toggle='modal'  id='"
+																	+ modelid
+																	+ "' onclick='viewModalFunc(this.id)' href='#'>"
+																	+ items.sourceId
+																	+ "</a></td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.sourceName
+																	+ "</td>"
+																	+ "<td>"
+																	+ items.assignDate
+																	+ "</td>"
+																	+ "<td>"
+																	+ items.targetDate
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.taskName
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.officeTypeCode
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.officeCode
+																	+ "</td>"
+																	+ "</tr>");
+
+															dashboardTableData.row
+																	.add(tr[0])
+																	.draw();
+
+														});
+
+											},
+											error : function(xhr, status, error) {
+												console.log(xhr);
+												console.log(status);
+												console.log(error);
+												toastr
+														.success('Some Error Occured');
+											}
+										});
+							});
+		</script> -->
+
+		<script>
+			$(document)
+					.ready(
+							function() {
+								
+								$(
+										'#ntfOfficeType option[value="'
+												+ $("#userOfficeTypeTemp")
+														.val() + '"]').attr(
+										"selected", "selected").change();
+							});
+
+			$('#ntfOfficeType')
+					.on(
+							'change',
+							function() {
+
+								var officeType = $("#ntfOfficeType").val()
+								var pageValJson = "{\"officeType\":" + "\""
+										+ officeType + "\"}";
+
+								document.getElementById('load').style.visibility = "visible";
+
+								// ajax call
+								$
+										.ajax({
+											url : 'getDeptAndOfficeCodeByOfficeType',
+											type : "POST",
+											data : {
+												pageValJson : pageValJson
+											},// important line for thymeleaf http security
+											headers : {
+												"X-CSRF-TOKEN" : $(
+														"input[name='_csrf']")
+														.val()
+											},
+											cache : false,
+											// async:true,
+											success : function(response) {
+												setTimeout(
+														function() {
+															document
+																	.getElementById('interactive');
+															document
+																	.getElementById('load').style.visibility = "hidden";
+														}, 1000);
+
+												var jsonResponse = JSON
+														.stringify(response);
+												var obj = JSON
+														.parse(jsonResponse);
+
+												//clear Drop-Down List of 
+
+												$("#officeCode").empty();
+												$("<option />", {
+													val : "",
+													text : "Select Office Code"
+												}).appendTo($("#officeCode"));
+												$("<option />", {
+													val : "All",
+													text : "All"
+												}).appendTo($("#officeCode"));
+												obj.officeCodeList
+														.forEach(function(items) {
+															console.log(items);
+
+															$("<option />", {
+																val : items,
+																text : items
+															})
+																	.appendTo(
+																			$("#officeCode"));
+
+														});
+
+												$("#department").empty();
+												$(
+														"<option />",
+														{
+															val : "",
+															text : "Select Department Type"
+														}).appendTo(
+														$("#department"));
+												obj.deptList
+														.forEach(function(items) {
+															console.log(items);
+
+															$(
+																	"<option />",
+																	{
+																		val : items
+																				.split('~')[0],
+																		text : items
+																				.split('~')[1]
+																	})
+																	.appendTo(
+																			$("#department"));
+
+														});
+												$(
+														'#department option[value="'
+																+ $("#deptIdTemp")
+																		.val() + '"]').attr(
+														"selected", "selected").change();
+												$(
+														'#officeCode option[value="'
+																+ $("#officeCodeTemp")
+																		.val() + '"]').attr(
+														"selected", "selected").change();
+												
+											},
+											error : function(xhr, status, error) {
+												console.log(xhr);
+												console.log(status);
+												console.log(error);
+												toastr
+														.success('Some Error Occured');
+											}
+										});
+							});
+		
+		
+		
+		</script>
+		<!-- <script>
+			$('#fetch_data_btn')
+					.click(
+							function() {
+
+								var officeType = $("#ntfOfficeType").val()
+								var deptId = $("#department").val();
+								var officeCode = $("#officeCode").val();
+								var ntfStatus = "open";
+
+								var pageValJson = "{\"officeType\":\""
+										+ officeType + "\",\n"
+										+ "\"deptId\":\"" + deptId + "\",\n"
+										+ "\"ntfStatus\":\"" + ntfStatus
+										+ "\",\n" + "\"officeCode\":\""
+										+ officeCode + "\"}";
+
+								document.getElementById('load').style.visibility = "visible";
+
+								// ajax call
+								$
+										.ajax({
+											url : 'getNtfClose',
+											type : "POST",
+											data : {
+												pageValJson : pageValJson
+											},// important line for thymeleaf http security
+											headers : {
+												"X-CSRF-TOKEN" : $(
+														"input[name='_csrf']")
+														.val()
+											},
+											cache : false,
+											// async:true,
+											success : function(response) {
+												setTimeout(
+														function() {
+															document
+																	.getElementById('interactive');
+															document
+																	.getElementById('load').style.visibility = "hidden";
+														}, 1000);
+
+												var jsonResponse = JSON
+														.stringify(response);
+												var obj = JSON
+														.parse(jsonResponse);
+												var dashboardTableData = $(
+														'#taskNotification')
+														.DataTable();
+
+												dashboardTableData.clear()
+														.draw();
+
+												//destroy datatable
+												//table.destroy();
+												obj
+														.forEach(function(items) {
+															console.log(items);
+
+															var modelid = items.sourceId
+																	+ '~'
+																	+ items.sourceName
+																	+ '~'
+																	+ items.tasks;
+															var tr = $("<tr>"
+																	+ "<td><input type='checkbox' id='"+items.notificationId+"' value='"+items.notificationId+"' name='select_ntf[]'></td>"
+																	+ "<td><a class='text-blue' data-toggle='modal'  id='"
+																	+ modelid
+																	+ "' onclick='viewModalFunc(this.id)' href='#'>"
+																	+ items.sourceId
+																	+ "</a></td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.sourceName
+																	+ "</td>"
+																	+ "<td>"
+																	+ items.assignDate
+																	+ "</td>"
+																	+ "<td>"
+																	+ items.targetDate
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.taskName
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.officeTypeCode
+																	+ "</td>"
+																	+ "<td class='text-capitalize'>"
+																	+ items.officeCode
+																	+ "</td>"
+																	+ "</tr>");
+
+															dashboardTableData.row
+																	.add(tr[0])
+																	.draw();
+
+														});
+
+											},
+											error : function(xhr, status, error) {
+												console.log(xhr);
+												console.log(status);
+												console.log(error);
+												toastr
+														.success('Some Error Occured');
+											}
+										});
+							});
+		</script> -->
+		<script>
+			$('#fetch_data_btn')
+					.click(
+							function() {
+
+								var officeType = $("#ntfOfficeType").val()
+								var deptId = $("#department").val();
+								var officeCode = $("#officeCode").val();
+								var ntfStatus = "open";
+								var errFlag = false;
+
+								var pageValJson = "{\"officeType\":\""
+										+ officeType + "\",\n"
+										+ "\"deptId\":\"" + deptId + "\",\n"
+										+ "\"ntfStatus\":\"" + ntfStatus
+										+ "\",\n" + "\"officeCode\":\""
+										+ officeCode + "\"}";
+										
+									if(officeType==null || officeType===''){
+										toastr
+										.error('Office Type cannot be Blank');
+										errFlag=true;
+									}
+									if(deptId==null || deptId===''){
+										toastr
+										.error('Department  cannot be Blank');
+										errFlag=true;
+									}
+									if(officeCode==null||officeCode===''){
+										toastr
+										.error('office code  cannot be Blank');
+										errFlag=true;
+									}
+									if (errFlag) {
+										document.getElementById('load').style.visibility = "hidden";
+										e.preventDefault();
+									}
+
+										var iterationCount = 1000;
+										var keySize = 128;
+										//passPhrase is the key
+										var passphrase = CryptoJS.lib.WordArray.random(
+												128 / 8).toString(CryptoJS.enc.Hex);
+
+										var aesUtil = new AesUtil(keySize,
+												iterationCount);
+
+										var ciphertext = aesUtil.encrypt(
+												reverseText(passphrase), pageValJson);
+										
+
+										$("#encryptedJsonFilter").val(
+												ciphertext + ':~:' + passphrase);
+										$("#searchForm").submit();
+
+								// ajax call
+							
+							});
+		</script>
+		<script>
+		$("#checkAll").click(function() {
+			
+			$('input:checkbox').not(this).prop('checked', this.checked);
+		});
+		</script>
+		
+	</div>
+
+</body>
+</html>

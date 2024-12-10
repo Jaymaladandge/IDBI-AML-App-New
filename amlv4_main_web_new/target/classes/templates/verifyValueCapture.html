@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
+	{
+	-webkit-appearance: none;
+	margin: 0;
+}
+</style>
+<!-- <style>
+.fa-edit {
+	text-decoration: none;
+}
+</style> -->
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Kri Value Capture Verification</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Kri Value Capture
+									Verification</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+
+								<div class="card-body">
+								
+									<form id="frmpendingKRIVCReport" autocomplete="off"
+										th:action="@{/verifyValueCaptureExport}" method="post"
+										th:object="${encryptedRequest}">
+
+										<input type="hidden" id="encryptedJsonEdit" name="encryptedJsonEdit" />
+								<div class="row">
+												
+												<div class="col-sm-12 mb-2">
+												
+															<span class="float-right"><a
+																	class="btn text-white exportDataBtn" id="exportDataBtn"
+																	style="background-color: #006400;"
+																	title="Export Report"> <i
+																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+																</a></span>
+												</div>
+												</div>
+												</form>
+								
+
+									<form id="frmKriVcVerification" autocomplete="off"
+										th:action="@{/kriVcVerification}" method="post"
+										th:object="${encryptedRequest}">
+
+										<input type="hidden" id="encryptedJson" name="encryptedJson" />
+										<input type="hidden" id="userDept" name="userDept"
+											th:value="${mvcDto.deptId}" />
+											
+										<div class="card card-info">
+											<div class="card-header">
+												<h3 class="card-title">View/Edit Kri Captured Values</h3>
+											</div>
+											<div class="card-body">
+												<input type="checkbox" id="checkAll" class="p-5">&nbsp;&nbsp;<b>Select  All</b>
+												<div id="showTable" style="width: 100%;">
+												<div class="row">
+														<div class="col-sm-12">
+															<div class="card-body">
+																<input type="hidden" id="sourceId"
+																	th:value="${sourceId}">
+
+																<table id="kriVcVerificationtable" style="width: 100%;"
+																	class="table table-head-fixed table-bordered table-striped kriVcVerificationtable">
+																	<thead>
+																		<tr>
+																			<th>Sr. No</th>
+																			<th>Select</th>
+																			<!-- <th>Module Id</th> -->
+																				<th>Module Description</th>
+																			<th>Assessment Value</th>
+																			<th>Captured By</th>
+																			<th>Captured Time</th>
+																			<th>Assessment Period</th>
+
+																		</tr>
+																	</thead>
+																	<tbody id="tbodyR">
+																		<tr th:each="mvcDtoData:${mvcDto.mvcDtoList}">
+																			<td th:text="${mvcDtoData.srNo}"></td>
+																			<td class="center"><input type="checkbox"
+																				name="moduleValueId" id="moduleValueId"
+																				th:moduleId="${mvcDtoData.moduleId}"
+																				th:value="${mvcDtoData.moduleValueId+'~'+mvcDtoData.assessmentValue}"></td>
+																			<!-- <td th:id="${mvcDtoData.moduleId}"
+																				th:text="${mvcDtoData.moduleId}"></td> -->
+																				<td th:id="${mvcDtoData.assessmentDesc}"
+																				th:text="${mvcDtoData.assessmentDesc}"></td>
+																			<td>
+																				<div class='form-group input-group'>
+																					<input type='number'
+																						th:id="${mvcDtoData.moduleValueId}"
+																						th:value="${mvcDtoData.assessmentValue}"
+																						class='form-control' name="assessmentValue"
+																						disabled /> <a href='#tbodyR'
+																						class='input-group-addon editBtn bg-primary'
+																						data-th-attr="data-custom-value=${mvcDtoData.moduleValueId}"><i
+																						class="form-control fas fa-edit bg-primary"></i></a>
+																				</div>
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${mvcDtoData.captureUserId}"></td>
+																			<td
+																				th:text="${#calendars.format(mvcDtoData.captureTime,'dd-MM-yyyy HH:mm')}"></td>
+																				<td
+																				th:text="${mvcDtoData.assessmentPeriod}"></td>
+
+																		</tr>
+																	</tbody>
+																</table>
+
+
+															</div>
+
+														</div>
+													</div>
+												</div>
+
+
+											</div>
+
+										</div>
+										<!-- /.card-body -->
+										<div class="card-footer">
+											<a class="btn btn-info" id="update_btn"> <i
+												class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+											</a> <a href="#" data-toggle="modal"
+												data-whatever="verifyValueCapture"
+												data-target="#cancelmodel"><button type="reset"
+													class="btn btn-warning" title="Cancel">
+													<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+												</button></a>
+										</div>
+
+									</form>
+								</div>
+								<!-- /.col sm-12 -->
+							</div>
+						</div>
+						<!-- /.row -->
+					</div>
+					<div class="modal fade" id="cancelmodel">
+						<div class="modal-dialog modal-fluid">
+							<div class="modal-content">
+								<div class="modal-header bg-info">
+									<h6 class="modal-title">Confirm</h6>
+									<button type="button" class="close" data-dismiss="modal"
+										aria-label="Close">
+										<span aria-hidden="true">&times;</span>
+									</button>
+								</div>
+								<!-- form start -->
+								<div class="modal-body">
+									<h5 class="card-title">
+										If you leave this page, all changes will be lost. <br>
+										Press "Ok" to Continue.
+									</h5>
+								</div>
+
+								<div class="modal-footer">
+
+									<button type="button" class="btn btn-secondary"
+										data-dismiss="modal">
+										<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+									</button>
+									<a class="btn btn-primary target"><i class="fas fa-check"
+										style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+								</div>
+
+								<!-- /.Card -->
+
+							</div>
+							<!-- /.modal-content -->
+						</div>
+						<!-- /.modal-dialog -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/kriValueCaptureVerification.js}"></script>
+	
+
+</body>
+</html>

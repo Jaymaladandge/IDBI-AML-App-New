@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>RCSA - Residual Assessment</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">RCSA - Residual
+									Assessment</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid">
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+
+								<div class="card-header d-print-none">
+									<h3 class="card-title">RCSA - Residual Assessment Pie
+										Chart</h3>
+								</div>
+
+								<div class="card-body d-none d-print-block mt-4">
+
+									<div class="licImage ">
+										<img src="/oms-web/dist/img/lic-logo.jpg"
+											alt="LIC INDIA LOGO Large" class="brand-image-xl logo-xl"
+											style="width: 100px;">
+
+
+									</div>
+
+									<div class="row mt-4">
+										<div class="col-md-6">
+
+											<b> RCSA - Residual Assessment Pie Chart </b>
+										</div>
+									</div>
+
+								</div>
+								<!-- /.col -->
+
+
+								<form id="frmRiskGraph"
+									th:action="@{/getDeptWiseRiskReportPage}" method="post">
+									<input type="hidden" th:feild="*{encryptedJson}"
+										id="encryptedJson" name="encryptedJson" />
+
+									<!-- <input type="hidden" name="userName" id="userName"
+										th:value="${userName}" th:name="userName" />  -->
+									<div class="card-body card-secondary card-outline">
+
+										<input type="hidden" name="pieData" id="pieData"
+											th:value="${pieData}" /> <input type="hidden"
+											name="greenColour" id="greenColour"
+											th:value="${greenColorVal}" /> <input type="hidden"
+											name="redColour" id="redColour" th:value="${redColorVal}" />
+										<input type="hidden" name="amberColour" id="amberColour"
+											th:value="${amberColorVal}" /> <input type="hidden"
+											id="ermIdFlgTemp" name="ermIdFlgTemp" th:value="${ermIdFlg}">
+
+
+										<!-- <div class="row">
+												<div class="col-md-6 float-right">
+													<input type='button' id='btn' class="btn btn-primary"
+														value='Print' onclick='printDiv();'>
+												</div>
+
+											</div> -->
+
+
+
+
+
+
+										<div class="col-sm-12">
+
+											<div class="card card-outline card-secondary"
+												id="collapseOne">
+												<div class="card-header">
+													<h3 class="card-title text-bold">Search</h3>
+													<!-- 														<button type="button" -->
+													<!-- 															class="btn btn-tool float-right collapseBtn" -->
+													<!-- 															data-target="#collapseOne" aria-expanded="true" -->
+													<!-- 															aria-controls="collapseOne" data-toggle="tooltip" -->
+													<!-- 															title="Collapse"> -->
+													<!-- 															<em class="fas fa-plus" style="color: #007bff;"></em> -->
+													<!-- 														</button> -->
+												</div>
+
+
+
+												<div class="card-body">
+
+													<div class="row">
+
+
+
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="assessmentDate">Select Office Type</label>
+																<code>*</code>
+																<select class="form-control  select2"
+																	data-placeholder="Select Office" name="officeType"
+																	id="officeType" style="width: 100%;" required>
+																	<option value="" selected>Select Office Type</option>
+																	<!-- <option th:value="${selectedOfc}"
+																			th:text="${selectedOfc}"></option> -->
+
+																	<option
+																		th:each="officeNameList : ${riskDto.officeDtoList}"
+																		th:value="${officeNameList.officeType}"
+																		th:text="${officeNameList.officeName}" />
+																</select>
+
+
+															</div>
+														</div>
+
+
+														<!-- My Department Code -->
+														<div class="col-sm-4">
+															<div th:if="${user.userDeptName == 'ERM'}">
+																<div class="form-group">
+																	<label for="riskDept">Select Department <code>*</code></label>
+
+																	<select class="select2 form-control " name="Department"
+																		id="riskDept" data-placeholder="Department"
+																		style="width: 100%;">
+																		<option value=''>Select Department</option>
+
+																	</select>
+																</div>
+
+															</div>
+
+
+
+															<div th:if="${user.userDeptName != 'ERM'}">
+																<div class="form-group">
+																	<label for="assessmentDate">Select Department </label>
+																	<code>*</code>
+																	<div class="input-group">
+																		<input type="Text" class="form-control  other-input"
+																			id="riskDept" name="Department"
+																			th:value="${user.userDeptName}" readonly>
+																	</div>
+																</div>
+															</div>
+														</div>
+														<!-- /. My Department Code -->
+
+
+
+
+
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="officeCode">Select Office Code <code>*</code></label>
+																<select
+																	class="select2 text-capitalize form-control float-right"
+																	name="officeCode" id="officeCode"
+																	data-placeholder="Select OfficeCode"
+																	style="width: 100%">
+																	<option value=''>Select OfficeCode</option>
+
+																</select>
+															</div>
+														</div>
+													</div>
+
+
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="officeCode">Select Creation Period <code>*</code>
+																</label> <select
+																	class="select2 text-capitalize form-control float-right"
+																	name="creationPeriod" id="creationPeriod"
+																	data-placeholder="Select CreationPeriod "
+																	style="width: 100%">
+																	<option value=''>Select CreationPeriod</option>
+																	<option th:each="bizzList : ${riskDto.bizzDtoList}"
+																		th:value="${bizzList.creationPeriod}"
+																		th:text="${bizzList.creationPeriod}" />
+																</select>
+															</div>
+														</div>
+
+														<div class="col-sm-5">
+															<label for="search"> &nbsp;</label>
+															<h3>
+																<a type="submit" class="btn btn-sm btn-info mt-n1"
+																	id="getReport"> <i class="fas fa-save"
+																	style="padding: 0 7px 0 0px;"></i>Get Records
+																</a>
+															</h3>
+
+
+														</div>
+
+
+													</div>
+
+
+
+
+
+												</div>
+
+											</div>
+
+										</div>
+
+
+
+										<div class="card card-outline card-info" id="hiddenDiv" style="display:none;">
+											<div class=" card-header">
+												<h3 class="card-title text-bold">RCSA - Residual Assessment Pie Chart <span id="officeNameTemp"  th:text="${officeName}"></span></h3>
+												<div class="row float-right">
+													<button
+														class="btn  downloadPiePdfRegister text-white ra-bar-graph"
+														type="button" id="downloadPie" value="Download PDF"
+														style="margin-right: 15px; background-color: #cc0000"
+														title="Print">
+														<i class="fas fa-file-pdf"></i>&nbsp;&nbsp;Print
+													</button>
+												</div>
+
+
+											</div>
+
+											<div class="card-body">
+												<div class="row mt-5">
+													<div class="col-md-6 float-left " id="risk-app-chart">
+
+														<div id="pieChartID">
+															<!-- 	<div class="card-title text-primary m-2 p-1">
+
+													Department Wise Status  <span class="text-capitalize" th:text="${departmentName}"></span></div> -->
+															<canvas id="pieChart"
+																style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+														</div>
+
+
+													</div>
+													<div class="col-md-6 float-left mt-5">
+
+
+
+														<table class="table">
+															<thead>
+																<tr>
+
+																	<th scope="col">Risk Residual Status</th>
+																	<th scope="col">Count</th>
+
+																</tr>
+															</thead>
+															<tbody>
+
+																<!-- 															<tr th:each="data:${pieData}"> -->
+																<!-- 																<td><span -->
+																<!-- 																	th:style="${#strings.arraySplit(data, '-')[0]=='Low' ? 'color: #28A745;' : #strings.arraySplit(data, '-')[0]=='Medium'?'color: #FFBF00;':'color:#FF0000'}" -->
+																<!-- 																	th:text="${#strings.arraySplit(data, '-')[0]}"></span></td> -->
+																<!-- 																<td><span -->
+																<!-- 																	th:text="${#strings.arraySplit(data, '-')[1]}"></span> -->
+																<!-- 																	</a></td> -->
+																<!-- 															<tr> -->
+
+
+
+
+																<tr>
+																	<td class="text-bold text-green">Low</td>
+																	<td class="text-bold text-blue"><span id="low"></span></td>
+
+
+																</tr>
+
+																<tr>
+																	<td class="text-bold text-orange">Medium</td>
+																	<td class="text-bold text-blue"><span id="medium"></span></td>
+
+																</tr>
+
+																<tr>
+																	<td class="text-bold text-red">High</td>
+																	<td class="text-bold text-blue"><span id="high"></span></td>
+																</tr>
+
+															</tbody>
+														</table>
+
+
+
+
+
+
+													</div>
+												</div>
+
+											</div>
+										</div>
+
+
+
+
+
+
+
+										<!-- /.card-body-->
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+	<script th:src="@{/dist/appjs/erm/rcsaPieGraph.js}"></script>
+	<!-- Graph JS -->
+	<script>
+
+	
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+
+			//Date range picker
+			$('#completionDate').datetimepicker({
+				format : 'DD-MM-YYYY'
+			//format : 'YYYY-MM-DD'
+			});
+		})
+	</script>
+	<script type="text/javascript">
+		
+	</script>
+	<script>
+	
+
+	</script>
+	<script>
+	
+		
+	</script>
+
+</body>
+</html>
+

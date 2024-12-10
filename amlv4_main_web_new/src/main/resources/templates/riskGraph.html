@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+</style>
+
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+		<div class="wrapper">
+
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				<!-- Content Header (Page header) -->
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1>Risk Appetite Graph Report</h1>
+							</div>
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+									<li class="breadcrumb-item active">Risk Appetite Graph
+										Report</li>
+								</ol>
+							</div>
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<!-- /.content-header -->
+
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<form class="form-horizontal" id="homeForm"
+									th:action="@{/homeAction}" method="post">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:feild="*{encryptedJson}" /> <input type="hidden"
+										th:value="*{message}" id="message" />
+									<!-- TO DO List -->
+									<div class="card card-tabs card-info card-outline">
+
+
+
+
+
+										<!-- Analysis -->
+										<div class="tab-content" id="graph-tab">
+											<div class="active tab-pane ">
+
+
+<!-- 												<img src="/oms-web/dist/img/LIC LOGO.jpeg" -->
+<!-- 													alt="LIC INDIA LOGO Large" id="img1" class="brand-image-xl logo-xl" -->
+<!-- 													style="margin: 0 0 0 56px; width: 100px;"> -->
+													
+
+												<!-- Graph Container -->
+												<div class="row">
+													<div class="col-sm-12 ">
+
+														<!-- Main Graph Content -->
+
+														<div class="card-body table-responsive">
+
+															<!--  Loader -->
+															<div id="myloader" class="d-flex justify-content-center">
+																<img id="loading-image"
+																	src="../aml-v4/dist/img/loader.gif"
+																	style="display: none;" />
+															</div>
+															<!-- /. Loader -->
+
+
+
+															<input type="hidden" id="withinToleranceCount"
+																th:value="${riskDto.withinTolerance}"> <input
+																type="hidden" id="aboveToleranceCount"
+																th:value="${riskDto.aboveTolerance}"> <input
+																type="hidden" id="withinTolreanceList"
+																th:value="${riskDto.withinToleranceList}"> <input
+																type="hidden" id="aboveToleranceList"
+																th:value="${riskDto.aboveToleranceList}">
+																 <input
+																type="hidden" id="quarterList"
+																th:value="${riskDto.quater1}">
+															<div class="row" id="riskAppetite-data">
+
+																<!-- /.col -->
+
+																<!--  Graph -->
+																<div class="col-sm-4">
+																	<div class="card card-info ">
+																		<div class="card-body">
+																			<button
+																				class="btn float-left downloadPiePdf text-white ra-bar-graph"
+																				type="button" id="pieChartId" value="pieChart"
+																				style="margin-right: 5px; background-color: #3eadcf"
+																				title="download Pie Graph">
+																				<i class="fas fa-file-pdf"></i>
+																			</button>
+
+																			<div id="reportPage" class="report-page">
+																				<div id="chartContainer" class="chart-Container"
+																					style="width: 100%; height: 100%; float: left;">
+																					<canvas id="donutChartRiskAppitite"
+																						style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+																				</div>
+																			</div>
+
+
+																		</div>
+																	</div>
+																</div>
+																<!-- /. Graph end -->
+
+																<!-- 2nd Graph -->
+																<div class="col-sm-8">
+																	<div class="card card-info ">
+																		<div class="card-body">
+
+																			<button class="btn float-left downloadPdf text-white"
+																				type="button" id="downloadPdf" value="Print"
+																				style="margin-right: 5px; background-color: #3eadcf"
+																				title="download pdf">
+																				<i class="fas fa-file-pdf"></i>
+																			</button>
+
+																			<select style="width: 65px;" id="risk_dropdown"
+																				class="form-control form-control-sm float-right risk-appe-queue">
+																				<option value="4" selected>Q4</option>
+																				<option value="5">Q5</option>
+																				<option value="6">Q6</option>
+																				<option value="7">Q7</option>
+																				<option value="8">Q8</option>
+																			</select>
+
+
+
+																			<div class="chart mt-5" id="risk-app-chart">
+
+																				<div id="reportPage" class="report-page"
+																					style="text-align: center; width: 615px;">
+																					<div id="chartContainer" class="chart-Container"
+																						style="width: 100%; height: 100%; float: center;">
+																						<canvas id="barChart" class="barchart"
+																							style="min-height: 250px; height: 100%; max-height: 100%;"></canvas>
+																					</div>
+																				</div>
+
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<!-- /.2nd Graph end -->
+
+
+															</div>
+
+
+
+
+
+
+
+
+														</div>
+
+
+
+
+
+														<!-- /. Main Graph Content End -->
+													</div>
+												</div>
+
+												<!-- /. Graph Container End -->
+												<div class="row"></div>
+
+											</div>
+										</div>
+										<!-- /. Analysis -->
+
+
+
+
+										<!-- /.card-header -->
+
+									</div>
+
+
+
+
+
+
+
+									<!-- /.card -->
+								</form>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!--/. container-fluid -->
+				</section>
+				<!-- /.content -->
+			</div>
+			<!-- /.content-wrapper -->
+
+			<!-- Control Sidebar -->
+			<aside class="control-sidebar control-sidebar-dark">
+				<!-- Control sidebar content goes here -->
+			</aside>
+			<!-- /.control-sidebar -->
+
+			<!-- Included Footer -->
+			<div th:insert="/footer::footer"></div>
+		</div>
+		<!-- ./wrapper -->
+
+		<!-- REQUIRED SCRIPTS -->
+		<!-- jQuery -->
+		<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+		<!-- Bootstrap -->
+		<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+		<!-- jquery-validation -->
+		<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+		<script
+			th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+		<!-- bs-custom-file-input -->
+		<script
+			th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+		<!-- Select2 -->
+		<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+		<!-- Toastr -->
+		<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+		<!-- overlayScrollbars -->
+		<script
+			th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+		<!-- AdminLTE App -->
+		<script th:src="@{/dist/js/adminlte.js}"></script>
+		<!-- DataTables  & Plugins -->
+		<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+		<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+		<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+		<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+		<script
+			th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+		<!-- Crypto JS JavaScript -->
+		<!-- Crypto JS JavaScript -->
+		<script th:src="@{/dist/appjs/aes.js}"></script>
+		<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+		<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+		<script th:src="@{/dist/appjs/app.js}"></script>
+		<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+		<!-- ChartJS -->
+		<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+		<!-- uPlot -->
+		<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+		<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+		<!-- Developer Added JS -->
+		<script th:src="@{/dist/appjs/erm/dashboard.js}"></script>
+		<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+		<!-- Developer Added Print JS -->
+		<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+		<!-- REQUIRED SCRIPTS -->
+		<script type="text/javascript">
+			document.onreadystatechange = function() {
+				var state = document.readyState
+				if (state == 'interactive') {
+					document.getElementById('contents').style.visibility = "hidden";
+				} else if (state == 'complete') {
+					setTimeout(
+							function() {
+					document.getElementById('interactive');
+					document.getElementById('load').style.visibility = "hidden";
+					document.getElementById('contents').style.visibility = "visible";
+							 }, 1000); 
+				}
+			}
+		</script>
+		<script>
+			//message display
+
+			$('.tasknotification').click(
+					function() {
+
+						var notifyInfo = $(this).attr('id');
+
+						var notifyArray = notifyInfo.split('~');
+						var pageValJson;
+						var url;
+						if (notifyArray[1] == 'RISK APPETITE') {
+							if (notifyArray[2] == 'CR') {
+								url = 'actionRAS';
+								pageValJson = "{\"ID\":" + "\""
+										+ notifyArray[1] + "\"}";
+							}
+						}
+						var homeString = "{\n" + "    \"moduleId\": \""
+								+ notifyArray[0] + "\",\n"
+								+ "    \"moduleName\": \"" + notifyArray[1]
+								+ "\",\n" + "    \"moduleAction\":\""
+								+ notifyArray[2] + "\"\n" + "}";
+
+						var iterationCount = 1000;
+						var keySize = 128;
+						//passPhrase is the key
+						var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+								.toString(CryptoJS.enc.Hex);
+
+						var aesUtil = new AesUtil(keySize, iterationCount);
+						var ciphertext = aesUtil.encrypt(
+								reverseText(passphrase), homeString);
+						$("#encryptedJson")
+								.val(ciphertext + ':~:' + passphrase);
+
+						$("#homeForm").submit();
+
+					});
+
+			$(function() {
+				$("#taskNotification").DataTable({
+					"columnDefs" : [ {
+						orderable : false,
+						targets : [ 6 ]
+					} ],
+					"order" : [ 0, "desc" ],
+					"lengthMenu" : [ 20, 40, 60, 80, 100 ],
+					"responsive" : false,
+					"autoWidth" : false,
+					"searching" : true,
+					"fixedHeader" : true,
+					"language" : {
+						"emptyTable" : "No Data Available"
+					}
+				}).buttons().container().appendTo(
+						'#actionplantable_wrapper .col-md-12:eq(0)');
+			});
+
+			/* 	$(function() {
+					$("#taskNotification").DataTable({
+						"columnDefs" : [ {
+							orderable : false,
+							targets : [ 6 ]
+						} ],
+						"order" : [ 0, "desc" ],
+						"lengthMenu" : [ 20, 40, 60, 80, 100 ],
+						"responsive" : false,
+						"autoWidth" : true,
+						"searching" : true,
+						"fixedHeader" : true,
+						"language" : {
+							"emptyTable" : "No Data Available"
+						}
+					}).buttons().container().appendTo(
+							'#actionplantable_wrapper .col-md-12:eq(0)');
+				}); */
+		</script>
+		<script>
+			$(document).ready(function() {
+				var message = $('#message').val();
+				if (message != "") {
+					toastr.success(message);
+				}
+				
+				$('#graph-tab').css('display', '');
+				
+			});
+		</script>
+
+
+		<!-- <script>
+			$(document).ready(function() {
+				sessionStorage.clear();
+			});
+		</script> -->
+
+	</div>
+
+</body>
+</html>

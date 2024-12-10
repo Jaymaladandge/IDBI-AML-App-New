@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<div th:fragment="header">
+	<!-- Navbar -->
+	<nav class="main-header navbar navbar-expand navbar-info navbar-light"
+		style="background: linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%, hsla(33, 100%, 55%, 1) 100%);">
+		<!-- Left navbar links -->
+
+		<ul class="navbar-nav">
+			<li class="nav-item"><a class="nav-link text-white"
+				data-widget="pushmenu" href="#" role="button"><em
+					class="fas fa-bars"></em></a></li>
+
+		</ul>
+
+
+		<!-- Right navbar links -->
+		<ul class="navbar-nav ml-auto justify-content-center">
+
+			<li class="nav-item dropdown"><a
+				class="nav-link text-bold text-white text-capitalize"
+				data-toggle="dropdown"><em class="far fa-user">&nbsp;</em><span
+					sec:authentication="principal.username"></span></a>
+
+				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+
+					<div class="media" style="margin: 10px 20px 15px 20px;">
+						<img src="dist/img/avatar5.png" alt="User Avatar"
+							class="img-size-50 mr-3 img-circle">
+						<div class="media-body">
+							<h3 class="dropdown-item-title text-capitalize"
+								sec:authentication="principal.username">
+								<span class="float-right text-sm text-danger"></span>
+							</h3>
+							<p class="text-sm text-bold">
+								EIN: <span sec:authentication="principal.userId"></span>
+							</p>
+						</div>
+					</div>
+					<div class="dropdown-divider text-bold"></div>
+
+					<p class="text-sm text-bold" style="margin: 0 10px 0px 10px;">
+						<em class="fab fa-buffer ">&nbsp;</em>Vertical: <span
+							sec:authentication="principal.userVertical"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"></div>
+
+					<p class="text-sm text-bold"
+						th:if="${#authentication.principal.omsOfficeType eq 'BRANCH'}"
+						style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Branch: <span
+							class="text-capitalize" sec:authentication="principal.branchName"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"
+						th:if="${#authentication.principal.omsOfficeType eq 'BRANCH'}"></div>
+
+
+					<p class="text-sm text-bold"
+						th:if="${#authentication.principal.omsOfficeType eq 'REGION'}"
+						style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Region: <span
+							class="text-capitalize"
+							sec:authentication="principal.locationName"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"
+						th:if="${#authentication.principal.omsOfficeType eq 'REGION'}"></div>
+
+					<p class="text-sm text-bold"
+						th:if="${#authentication.principal.omsOfficeType eq 'ZONE'} or ${#authentication.principal.omsOfficeType eq 'CENTRAL'}"
+						style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Zonal/Central:
+						<span sec:authentication="principal.hrmsZone"
+							class="text-capitalize"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"
+						th:if="${#authentication.principal.omsOfficeType eq 'ZONE'} or ${#authentication.principal.omsOfficeType eq 'CENTRAL'}"></div>
+
+					<p class="text-sm text-bold" style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Position: <span
+							class="text-capitalize"
+							sec:authentication="principal.omsUserPosition"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"></div>
+
+				</div></li>
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.omsOfficeType eq 'BRANCH'}"><a
+				class="nav-link text-bold text-white text-capitalize"><em
+					class="far fa-building text-capitalize">&nbsp;</em><span
+					sec:authentication="principal.branchName"></span></a></li>
+			<li class="nav-item"
+				th:if="${#authentication.principal.omsOfficeType eq 'REGION'} "><a
+				class="nav-link text-bold text-white text-capitalize"><em
+					class="far fa-building text-capitalize">&nbsp;</em><span
+					sec:authentication="principal.locationName"></span></a></li>
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.omsOfficeType eq 'ZONE'} or ${#authentication.principal.omsOfficeType eq 'CENTRAL'}"><a
+				class="nav-link text-white text-bold"><em
+					class="far fa-building text-capitalize">&nbsp;</em>Zone : <span
+					sec:authentication="principal.hrmsZone"></span></a></li>
+			<li class="nav-item"><a class="nav-link text-white text-bold">EIN:
+					<span sec:authentication="principal.userId"></span>
+			</a></li>
+
+			<li class="nav-item"><a class="nav-link text-white text-bold">Role:
+					<span sec:authentication="principal.userPosition"></span>
+			</a></li>
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.switchAccessFlg}"><a
+				class="nav-link text-white" data-toggle="modal" id="changeOffice"
+				title="switch office" href="#"><em class="fas fa-random"></em></a></li>
+			<!-- SOP -->
+			<li class="nav-item"><a
+				class="nav-link text-bold text-white text-capitalize"
+				data-toggle="modal" id="documentMgmt" title="Document Library"
+				href="#"><em class="fas fa-file-word">&nbsp; </em> Document
+					Library</a></li>
+
+			<li class="nav-item"><a
+				class="nav-link text-bold text-white text-capitalize"
+				th:href="@{/logout}"><em class="fas fa-sign-out-alt">&nbsp;</em>logout</a></li>
+		</ul>
+	</nav>
+	<!-- Main Sidebar Container -->
+	<aside class="main-sidebar sidebar-light-info elevation-4 myDIV "
+		id="logo">
+
+
+		<a href="#" class="brand-link logo-switch">
+			<img th:src="@{/dist/img/bee_logo.png}" alt="APIS Logo Small"
+			class="brand-image-xs logo-xs"
+			style="margin: 0 0 0 3px; background: white; border-radius: 50%;">
+			<img th:src="@{/dist/img/IDBI-Bank-1.png}" alt="IDBI Bank Logo"
+			class="brand-image-xl logo-xl"
+			style="margin: 0 0 0 20px; ">
+
+		</a>
+		<!-- Sidebar -->
+		<div class="sidebar">
+			<!-- Sidebar user panel (optional) -->
+			<div class="user-panel mt-3 pb-3 mb-3 d-flex">
+				<!-- SidebarSearch Form -->
+				<div class="form-inline">
+					<div class="input-group" data-widget="sidebar-search">
+						<input class="form-control form-control-sidebar" type="search"
+							placeholder="Search" aria-label="Search">
+						<div class="input-group-append">
+							<button class="btn btn-sidebar">
+								<em class="fas fa-search fa-fw"></em>
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Sidebar Menu -->
+			<nav class="mt-2 text-sm">
+				<ul
+					class="nav nav-pills nav-sidebar nav-child-indent flex-column  card text-white rolelist"
+					data-widget="treeview"
+					th:each="authority : ${#authentication.getPrincipal()}" role="menu"
+					data-accordion="false">
+					<!-- Add icons to the links using the .nav-icon class
+               with font-awesome or any other icon font library -->
+					<li class="nav-item text-bold"><a th:href="@{/RolePage}"
+						id="switchRole" class="nav-link"> <em
+							class="nav-icon fas fa-home text-navy pt-2"></em>
+							<p>Home</p>
+					</a></li>
+
+					<li class="nav-item text-bold"><a th:href="@{/home}"
+						class="nav-link"> <em
+							class="nav-icon fas fa-user-tag text-navy"></em>
+							<p>WorkList</p>
+					</a></li>
+					<li class="nav-item" th:each="roleName:${authority.menuMapList}">
+						<ul
+							class="nav nav-pills nav-sidebar nav-child-indent flex-column rolelist"
+							data-widget="treeview" id="main-side"
+							th:if="${roleName.key == session.rolePosition}" role="menu"
+							th:each="menuNames:${roleName.value}">
+							<!--  <input type="text" th:value="${menuNames.menuName}"> -->
+							<li class="nav-item text-bold" th:each="menuName:${menuNames}">
+
+								<a th:href="@{|/${menuName.actionPath}|}" id="switchRole"
+								class="nav-link" th:unless="${menuName.subMenus!=null}"
+								th:if="${menuName.moduleCode==#authentication.principal.moduleCode || menuName.moduleCode=='AP'} or ${#authentication.principal.moduleCode=='OA'}">
+									<em class="nav-icon fab fa-forumbee text-warning"></em>
+									<p>
+
+										<span th:unless="${menuName.subMenus!=null}"><span
+											th:text="${menuName.menuName}"></span></span>
+
+
+									</p>
+							</a> <a th:href="@{|/${menuName.actionPath}|}" id="switchRole"
+								class="nav-link"
+								th:if="${menuName.subMenus!=null} and ${menuName.moduleCode==#authentication.principal.moduleCode or #authentication.principal.moduleCode=='OA'}">
+									<em class="nav-icon fab fa-forumbee text-warning"></em>
+									<p>
+										<span th:if="${menuName.subMenus!=null}"><span
+											th:text="${menuName.menuName}"></span></span> <span
+											th:if="${menuName.subMenus!=null}" class="float-right pl-2"
+											id="test"><em class="right fas fa-angle-left"></em></span>
+									</p>
+							</a>
+								<ul class="nav nav-treeview uldisplay"
+									th:each="submenuName:${menuName.subMenus}">
+									<li class="nav-item text-bold"
+										th:if="${submenuName.menuId== menuName.menuId}"><a
+										th:href="@{|/${submenuName.subMenuPath}|}" class="nav-link">
+											<em class="fas fa-bullseye nav-icon" style="color: #044383"></em>
+											<p th:if="${submenuName.menuId== menuName.menuId}">
+												<span th:text="${submenuName.subMenuName}"></span>
+											</p>
+									</a></li>
+								</ul>
+							</li>
+
+
+						</ul>
+
+
+					</li>
+
+
+
+
+				</ul>
+
+
+				<!-- Menu map end  -->
+
+
+
+
+
+
+			</nav>
+			<!-- /.sidebar-menu -->
+
+		</div>
+		<!-- /.sidebar -->
+
+
+
+	</aside>
+
+
+
+	<!-- Modal -->
+	<div class="modal fade" id="switchOfcModel" tabindex="-1" role="dialog"
+		aria-labelledby="switchOfcLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Switch Office</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<form id="switchOfcFrm" autocomplete="off"
+						th:action="@{/switchOfficePage}" method="post"
+						th:object="${encryptedRequest}">
+						<input type="hidden" id="encryptedJsonModel" name="encryptedJson" />
+						<div class="card-body">
+							<div class="row">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label for="officeType">Office Type <code>*</code></label>&nbsp;
+										<select class="select2 swOfc form-control form-control-sm"
+											name="officeTypeSwitchOffice" id="officeTypeSwitchOffice"
+											data-placeholder="Office Type" style="width: 100%;">
+											<option value=''>Select Office Type</option>
+											<!-- <option value='CO'>Central Office</option>
+														<option value='ZO'>Zonal Office</option>
+														<option value='DO'>Divisional Office</option>
+														<option value='BO'>Branch Office</option> -->
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row" id="deptModel" style="display: none">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label for="department">Department <code>*</code></label> <select
+											class="select2 swOfc form-control form-control-sm"
+											name="departmentSo" id="departmentSo"
+											data-placeholder="Department" style="width: 100%;">
+											<option value=''>Select Department</option>
+
+										</select>
+									</div>
+								</div>
+							</div>
+
+							<div class="row" id="officeCodeModel" style="display: none">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label for="officeCode">Office Code <code>*</code></label>&nbsp;
+										<select class="select2 swOfc form-control form-control-sm"
+											name="officeCodeSo" id="officeCodeSo"
+											data-placeholder="Office Code" style="width: 100%;">
+											<option value=''>Select Office Code</option>
+
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row" id="roleModel" style="display: none">
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label for="roleName">Role Name </label>&nbsp; <select
+											class="select2 swOfc form-control form-control-sm"
+											name="roleNameSo" id="roleNameSo" multiple="multiple"
+											data-dropdown-css-class="select2-purple"
+											data-placeholder="Select Role" style="width: 100%;">
+
+
+
+										</select>
+									</div>
+
+								</div>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary"
+						id="submitBtnSwitchOfc">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- ./Model -->
+
+	<!--  Document Library Modal Start -->
+	<div class="modal fade" id="switchOfcModel" tabindex="-1" role="dialog"
+		aria-labelledby="switchOfcLabel" aria-hidden="true">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Switch Office</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+
+
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="officeType">Office Type <code>*</code></label>&nbsp;
+									<select class="select2 swOfc form-control form-control-sm"
+										name="officeTypeSwitchOffice" id="officeTypeSwitchOffice"
+										data-placeholder="Office Type" style="width: 100%;">
+										<option value=''>Select Office Type</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="deptModel" style="display: none">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="department">Department <code>*</code></label> <select
+										class="select2 swOfc form-control form-control-sm"
+										name="departmentSo" id="departmentSo"
+										data-placeholder="Department" style="width: 100%;">
+										<option value=''>Select Department</option>
+
+									</select>
+								</div>
+							</div>
+						</div>
+
+						<div class="row" id="officeCodeModel" style="display: none">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="officeCode">Office Code <code>*</code></label>&nbsp;
+									<select class="select2 swOfc form-control form-control-sm"
+										name="officeCodeSo" id="officeCodeSo"
+										data-placeholder="Office Code" style="width: 100%;">
+										<option value=''>Select Office Code</option>
+
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="row" id="roleModel" style="display: none">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="roleName">Role Name </label>&nbsp; <select
+										class="select2 swOfc form-control form-control-sm"
+										name="roleNameSo" id="roleNameSo" multiple="multiple"
+										data-dropdown-css-class="select2-purple"
+										data-placeholder="Select Role" style="width: 100%;">
+
+
+
+									</select>
+								</div>
+
+							</div>
+						</div>
+					</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary"
+						id="submitBtnSwitchOfc">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--  Document Library Modal End -->
+
+
+	<!-- Document Modal Start -->
+	<div class="modal fade" id="viewDocumentModal" tabindex="-1"
+		role="dialog" aria-labelledby="switchOfcLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Document
+						Library</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="card-body">
+						<div class="row">
+							<div class="col-sm-12">
+
+								<div class="form-group">
+									<form autocomplete="off" role="form" method="post"
+										th:action="@{/closeKri}" id="fileForm"
+										th:object="${encryptedRequest}">
+										<input type="hidden" id="encryptedJsonFile"
+											name="encryptedJson" />
+										<table
+											class="table uploadTable table-head-fixed table-bordered table-striped"
+											id="modalFileId">
+											<thead>
+												<tr>
+													<th>File Name</th>
+													<th>File Size (kb)</th>
+													<th>Uploaded Date</th>
+													<th>Uploaded by</th>
+													<th></th>
+												</tr>
+											</thead>
+											<tbody class="fileBody">
+
+											</tbody>
+										</table>
+									</form>
+								</div>
+							</div>
+						</div>
+
+
+
+
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary"
+						id="submitBtnSwitchOfc2" style="display: none">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- /.Document Modal End -->
+
+
+</div>
+
+<div th:fragment="roleHeader">
+
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-expand " style="background: linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%, hsla(33, 100%, 55%, 1) 100%);">
+
+		<!-- Right navbar links -->
+		<ul class="navbar-nav ml-auto justify-content-center">
+
+			<li class="nav-item"><img
+				th:src="@{/dist/img/IDBI-Bank-1.png}"
+				alt="IDBI Bank LOGO Large" class="brand-image-xl logo-xl"
+				style="margin: 0 0 0 56px; height: 40px;"></li>
+
+			<li class="nav-item dropdown"><a
+				class="nav-link text-bold text-white text-capitalize"
+				data-toggle="dropdown"><em class="far fa-user">&nbsp;</em><span
+					sec:authentication="principal.username"></span></a>
+
+				<div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+
+					<div class="media" style="margin: 10px 20px 15px 20px;">
+						<img src="dist/img/avatar5.png" alt="User Avatar"
+							class="img-size-50 mr-3 img-circle">
+						<div class="media-body">
+							<h3 class="dropdown-item-title text-capitalize"
+								sec:authentication="principal.username">
+								<span class="float-right text-sm text-danger"></span>
+							</h3>
+							<p class="text-sm text-bold">
+								EIN: <span sec:authentication="principal.userId"></span>
+							</p>
+						</div>
+					</div>
+					<div class="dropdown-divider text-bold"></div>
+
+					<p class="text-sm text-bold" style="margin: 0 10px 0px 10px;">
+						<em class="fab fa-buffer ">&nbsp;</em>Vertical: <span
+							sec:authentication="principal.userVertical"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"></div>
+
+					<p class="text-sm text-bold"
+						th:if="${#authentication.principal.omsOfficeType eq 'BRANCH'}"
+						style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Branch: <span
+							sec:authentication="principal.branchName"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"
+						th:if="${#authentication.principal.omsOfficeType eq 'BRANCH'}"></div>
+
+
+					<p class="text-sm text-bold"
+						th:if="${#authentication.principal.omsOfficeType eq 'REGION'}"
+						style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Region: <span
+							class="text-capitalize"
+							sec:authentication="principal.locationName"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"
+						th:if="${#authentication.principal.omsOfficeType eq 'REGION'}"></div>
+
+					<p class="text-sm text-bold"
+						th:if="${#authentication.principal.omsOfficeType eq 'ZONE'} or ${#authentication.principal.omsOfficeType eq 'CENTRAL'}"
+						style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Zonal/Central:
+						<span sec:authentication="principal.hrmsZone"
+							class="text-capitalize"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"
+						th:if="${#authentication.principal.omsOfficeType eq 'ZONE'} or ${#authentication.principal.omsOfficeType eq 'CENTRAL'}"></div>
+
+					<p class="text-sm text-bold" style="margin: 0px 10px 0px 10px;">
+						<em class="far fa-building text-capitalize">&nbsp;</em>Position: <span
+							sec:authentication="principal.omsUserPosition"></span>
+					</p>
+					<div class="dropdown-divider" style="margin: 5px 0px 5px 0px;"></div>
+
+				</div></li>
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.omsOfficeType eq 'BRANCH'}"><a
+				class="nav-link text-bold text-white text-capitalize"><em
+					class="far fa-building text-capitalize">&nbsp;</em><span
+					sec:authentication="principal.branchName"></span></a></li>
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.omsOfficeType eq 'REGION'} "><a
+				class="nav-link text-bold text-white text-capitalize"><em
+					class="far fa-building text-capitalize">&nbsp;</em><span
+					sec:authentication="principal.locationName"></span></a></li>
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.omsOfficeType eq 'ZONE'} or ${#authentication.principal.omsOfficeType eq 'CENTRAL'}"><a
+				class="nav-link text-white text-bold"><em
+					class="far fa-building text-capitalize">&nbsp;</em>Zone : <span
+					sec:authentication="principal.hrmsZone"></span></a></li>
+			<li class="nav-item"><a class="nav-link text-white text-bold">EIN:<span
+					sec:authentication="principal.userId"></span></a></li>
+
+			<!-- 	<li class="nav-item"><a
+				class="nav-link text-bold text-white text-capitalize"><em
+					class="fab fa-buffer text-capitalize">&nbsp;</em><span 
+					sec:authentication="principal.omsUserPosition"></span></a></li> -->
+
+			<li class="nav-item"
+				th:if="${#authentication.principal.switchAccessFlg}"><a
+				class="nav-link text-white" data-toggle="modal" id="changeOffice"
+				title="switch office" href="#"><em class="fas fa-random"></em></a></li>
+
+			<!-- SOP -->
+			<li class="nav-item"><a
+				class="nav-link text-bold text-white text-capitalize"
+				data-toggle="modal" id="documentMgmt" title="Document Library"
+				href="#"><em class="fas fa-file-word">&nbsp; </em> Document
+					Library</a></li>
+
+			<li class="nav-item"><a
+				class="nav-link text-bold text-white text-capitalize"
+				th:href="@{/logout}"><em class="fas fa-sign-out-alt">&nbsp;</em>logout</a></li>
+
+		</ul>
+	</nav>
+	<!-- /.navbar -->
+
+
+	<!-- Document Modal Start -->
+	<div class="modal fade" id="viewDocumentModal" tabindex="-1"
+		role="dialog" aria-labelledby="switchOfcLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Document
+						Library</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body">
+					<div class="card">
+						<div class="card-body table-responsive">
+							<div class="row">
+								<div class="col-sm-12">
+
+									<div class="form-group">
+										<form autocomplete="off" role="form" method="post"
+											th:action="@{/closeKri}" id="fileForm"
+											th:object="${encryptedRequest}">
+											<input type="hidden" id="encryptedJsonFile"
+												name="encryptedJson" />
+											<table
+												class="table  uploadTable table-head-fixed table-bordered table-striped"
+												id="modalFileId">
+												<thead>
+													<tr>
+														<th>File Name</th>
+														<th>File Size (kb)</th>
+														<th>Uploaded Date</th>
+														<th>Uploaded by</th>
+														<th></th>
+													</tr>
+												</thead>
+												<tbody class="fileBody">
+
+												</tbody>
+											</table>
+										</form>
+									</div>
+								</div>
+							</div>
+
+
+
+						</div>
+					</div>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary"
+						id="submitBtnSwitchOfc2" style="display: none">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm-12">
+			<form class="form-horizontal" id="getTatReport"
+				th:action="@{/SelectReportsMainPage}" method="post"
+				th:object="${encryptedRequest}">
+
+				<input type="hidden" id="encryptedJsonEdit" name="encryptedJson" />
+			</form>
+		</div>
+	</div>
+
+	<!-- /.Document Modal End -->
+
+
+</div>
+<style>
+/* .navbar {
+	background: hsla(333, 66%, 38%, 1);
+	background: linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%,
+		hsla(33, 100%, 55%, 1) 100%);
+	background: -moz-linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%,
+		hsla(33, 100%, 55%, 1) 100%);
+	background: -webkit-linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%,
+		hsla(33, 100%, 55%, 1) 100%);
+	filter: progid: DXImageTransform.Microsoft.gradient( startColorstr="#A0215A",
+		endColorstr="#FF991C", GradientType=1);
+} */
+</style>
+
+<script>
+	$("a #switchRole").on("click", function(e) {
+
+		sessionStorage.removeItem("rolename");
+	});
+</script>
+</html>

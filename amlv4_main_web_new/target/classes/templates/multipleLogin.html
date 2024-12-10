@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/dist/img/OMSLOGO.png}" />
+<title>i-CSS</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+<!-- Font Awesome -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- icheck bootstrap -->
+<link rel="stylesheet"
+	th:href="@{/plugins/icheck-bootstrap/icheck-bootstrap.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<style>
+body {
+	margin: 0;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: .875rem !important;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	text-align: left;
+	background-color: #fff;
+}
+
+header {
+	width: 100%;
+	padding: 10px 0 0 15px;
+	;
+}
+
+.content {
+	display: flex;
+	width: 85%;
+	margin: 25px auto;
+}
+
+hr {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border: 0;
+}
+
+.loginfooter {
+	bottom: 0;
+	position: fixed;
+	background: white;
+	border-top: 1px solid #dee2e6;
+	color: #869099;
+	width: 100%;
+	display: inline-flex;
+	padding: 5px 0 5px 0;
+}
+
+.float-right {
+	float: right !important;
+	text-align: end;
+	padding: 0 10px 0px 0px;
+}
+
+.lic-hands {
+	margin: 70px;
+	background-color: #ffffff;
+	margin-left: 170px;
+	margin-top: 90px;
+	width: 290px;
+	height: 395px;
+}
+
+.right-side-box-firstRow {
+	margin-top: 5px;
+}
+
+.apis-div {
+	margin-left: 60px;
+	margin-top: 50px;
+}
+
+a:hover {
+	cursor: pointer;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	style="background: url(dist/img/photo-2.png); background-size: cover;">
+
+	<!-- <header>
+		<div class="logo">
+			<img width="" height="" th:src="@{/dist/img/lic-logo.jpg}" alt="LIC">
+		</div>
+	</header> -->
+	<div class="container-lg">
+
+
+		<div class="row">
+			<div class="col-lg-4">
+				<div class="logo_left">
+
+					<img th:src="@{/dist/img/bobError.jpg}" class="lic-hands"
+						alt="APIS">
+				</div>
+
+			</div>
+			<div class="col-lg-6">
+
+				<div class="error-page">
+					<div class="row text-center">
+						<img th:src="@{/dist/img/IDBI-Bank-Logo1.png}"
+							class="img-responsive rounded mx-auto d-block apis-div"
+							alt="APIS" style="width: 200px; height: 260px;">
+					</div>
+					<div class="error-content text-center ml-5">
+						<h3>
+							<i class="fas fa-exclamation-triangle text-warning "></i> Oops!
+							You seems to be logged in from a different PC or Tab.
+						</h3>
+						<p>
+							Sorry! Access Restricted due to security reason. To start a fresh
+							session click on <a th:href="@{/}"><b>Login</b></a> to start a
+							fresh session.
+						</p>
+					</div>
+					<!-- /.error-content -->
+				</div>
+
+			</div>
+		</div>
+
+
+
+	</div>
+
+
+	<footer class="loginfooter">
+		<div class="col-md-4" style="float: left; padding: 6px 0 0 10px;">
+			© 2020-2021 All rights reserved.</div>
+		<div class="col-md-4"
+			style="float: left; text-align: center; padding: 6px 0 0 10px;">
+			&nbsp<img class="img-fluid" th:src="@{/dist/img/flag.png}"
+				alt="Proudly Made In India" width="" height=""> &nbsp Proudly
+			Made In India
+		</div>
+		<div class="float-right col-md-4">
+			Designed &amp; Developed by <img class="img-fluid"
+				th:src="@{/dist/img/intech-logo.png}" alt="Photo" width="100"
+				height="100">
+		</div>
+	</footer>
+
+	<!-- /.login-box -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap 4 -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.min.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+body { font-family:Arial, Helvetica, sans-serif;}
+
+
+.heading01 { display:block; color:#FFFFFF; background:#14ADA9; padding:6px; border-radius:0px; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); border-left:solid 3px #FF9900;}
+
+.heading02 {font-size:14px;}
+
+
+.wrap {width:82%; background:rgba(255, 255, 255, 0.8); margin-top: 20px; margin-bottom: 20px; padding: 20px 15px 20px 15px; border-radius: 10px 10px 10px 10px; box-shadow: 1px 3px 11px 2px #a1a1a1;}
+
+.button:hover { background:#FF9900;}
+
+.mytableClass01 { font-size:14px;}
+
+.mytableClass01 td { border-bottom:1px solid #DDDDDD; padding:8px; font-size:14px;}
+
+.mytableClass01 tr:last-child td { border:0;}
+
+.mytableClass01 td a { color:#FF6600; text-decoration:underline; transition: all 0.2s ease-out;}
+
+.mytableClass01 td a:hover { color:#25A5A2; text-decoration:none; }
+
+.mytableClass01 th { border-bottom:1px solid #DDDDDD; padding:6px; color:#fff; background:#FF9900; text-align:left;  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); }
+
+
+
+
+.mytableClass02 { font-size:14px;}
+
+.mytableClass02 td { border-bottom:1px solid #DDDDDD; padding:8px;}
+
+.mytableClass02 tr:last-child td { border:0;}
+
+.mytableClass02 td a { color:#FF6600; text-decoration:underline; transition: all 0.2s ease-out;}
+
+.mytableClass02 td a:hover { color:#25A5A2; text-decoration:none; }
+
+.mytableClass02 th { border-bottom:1px solid #DDDDDD; padding:8px; background:#23ABAB; color:#fff;  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); }
+
+
+
+.mytableClass03 { font-size:13px;}
+
+.mytableClass03 td { border-bottom:1px solid #DDDDDD; padding:8px; font-size:13px;}
+
+.mytableClass03 tr:last-child td { border:0;}
+
+.mytableClass03 td a { color:#FF6600; text-decoration:underline; transition: all 0.2s ease-out;}
+
+.mytableClass03 td a:hover { color:#25A5A2; text-decoration:none; }
+
+.mytableClass03 th { border-bottom:1px solid #DDDDDD; padding:8px; background:#23ABAB; color:#fff;  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); }
+
+
+.simple-table { font-size:14px; background:#3FD6C7; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); border-radius:6px;}
+
+.simple-table td { border-bottom:0px solid #DDDDDD; padding:8px;}
+
+
+
+input[type=text], input[type=password], input[type=number], input[type=select] { border:1px solid #999999; padding:5px;}
+
+select { border:1px solid #999999; padding:4px;}
+
+
+
+.form-button-02 { border-radius: 6px; outline: 0; border:0; margin-top: 10px; padding: 8px 20px; font-size: 18px; font-weight: 400; color: #fff; background: linear-gradient(80deg, #fa6e11, #f7b968); transition: all 1s ease-out;  box-shadow: -2px 4px 8px 0px rgba(0,0,0,0.25);}
+
+.form-button-02:hover { transition: all 1.2s cubic-bezier(0.1, 0.9, 0, 1.2); background-position:108px;}
+
+.form-button-03 { border-radius: 6px; outline: 0; border:0; margin-top: 10px; padding: 8px 20px; font-size: 18px; font-weight: 400; color: #fff; background: linear-gradient(80deg, #00a396, #00d9e0); transition: all 1s ease-out;  box-shadow: -2px 4px 8px 0px rgba(0,0,0,0.25);}
+
+.form-button-03:hover { transition: all 1.2s cubic-bezier(0.1, 0.9, 0, 1.2); background-position:108px;}
+
+.form-button-04 { border-radius: 6px; outline: 0; border:0; margin-top: 10px; padding: 8px 20px; font-size: 18px; font-weight: 400; color: #fff;  background: linear-gradient(45deg, #3b8da7, #33c0d3); transition: all 1s ease-out;  box-shadow: -2px 4px 8px 0px rgba(0,0,0,0.25);}
+
+.form-button-04:hover { transition: all 1.2s cubic-bezier(0.1, 0.9, 0, 1.2); background-position:108px;}
+
+
+
+.input01 { 
+	width:200px; 
+	height:20px; 
+	padding:3px;
+	border:1px solid #333333;
+	outline:none; 
+	font-size:14px;
+	box-shadow: 4px 5px 0px -3px rgba(120,120,120,1);
+	border-radius: 4px 4px 4px 4px;
+	transition-duration: 0.4s;
+	}
+	
+.input01:hover { border:1px solid #FF6600; outline:none;  }
+
+
+.login-button {
+	font-family:Arial, Helvetica, sans-serif;
+    font-size: 16px;
+    height:30px; 
+    transition-duration: 0.4s;
+    cursor: pointer;
+	padding:5px 18px 5px 18px;
+	background:teal;
+	color:#FFFFFF;
+	outline:none;
+	font-weight:bold;
+	border:1px solid #333333; 
+	border-radius: 4px 4px 4px 4px;
+	behavior: url(./login-dist/css/PIE.htc);
+}
+
+.login-button:hover {
+	font-family:Arial, Helvetica, sans-serif;
+    font-size: 16px;
+	height:30px; 
+	background:#FF6600;
+	border:1px solid #fff; 
+	border-radius: 4px 4px 4px 4px;
+	-moz-border-radius: 4px 4px 4px 4px;
+	-webkit-border-radius: 4px 4px 4px 4px;
+}
+
+
+.error { font-size:12px; color:#fff;}

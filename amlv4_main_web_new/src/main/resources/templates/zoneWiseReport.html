@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Top Risk</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Top Risk Graphs</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid">
+
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Top Risk Graphs</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+
+								<form id="frmTpRiskGraph" th:action="@{/getZoneWiseReportPage}"
+									method="post">
+									<input type="hidden" th:feild="*{encryptedJson}"
+										id="encryptedJson" name="encryptedJson" />
+
+
+									<div class="card-body" id='DivIdToPrint'>
+										<div class="row">
+											<div class="col-md-6 float-left">
+												<input type='button' id='btn' class="btn btn-primary"
+													value='Print' onclick='printDiv();'>
+											</div>
+
+										</div>
+										<div class="row pt-2">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="assessmentDate">Select Assessment
+														Period</label> <select class="form-control select2"
+														data-placeholder="Assessment Date" name="assessmentDate"
+														id="assessmentDate" style="width: 100%;">
+														<option value=''>Select Assessment Period</option>
+
+														<option th:each="assessmentDate : ${assessmentDateList}"
+															th:value="${assessmentDate}" th:text="${assessmentDate}"></option>
+													</select>
+
+
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="department">Select Department</label> <select
+														class="form-control select2" data-placeholder="Department"
+														name="department" id="department" style="width: 100%;">
+														<option value=''>Select Department</option>
+
+														<option th:each="department : ${deptList}"
+															th:value="${department.split('~')[0]}"
+															th:text="${department.split('~')[1]}"></option>
+													</select>
+
+
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="officeName">Select Office</label> <select
+														class="form-control select2" data-placeholder="officeName"
+														name="officeName" id="officeName" style="width: 100%;">
+														<option value=''>Select Office</option>
+
+														<option th:each="ofcName : ${officeNameList}"
+															th:value="${ofcName}" th:text="${ofcName}"></option>
+													</select> <input type="hidden" id="selectedOfficeType"
+														name="selectedOfficeType" th:value="${officeType}">
+
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="zone">Select Zone</label> <select
+														class="form-control select2" data-placeholder="Zone"
+														name="zone" id="zone" style="width: 100%;">
+														<option value=''>Select Zone</option>
+
+														<option th:each="zone : ${zoneList}" th:value="${zone}"
+															th:text="${zone=='CZ'?'Central Zone':zone=='ECZ'?'East Central Zone':zone=='EZ'?'East Zone':zone=='NCZ'?'North Central Zone':zone=='SCZ'?'South Central Zone':zone=='SZ'?'South Zone':zone=='WZ'?'West Zone':zone=='NZ'?'North Zone':zone}"></option>
+													</select>
+
+
+												</div>
+											</div>
+
+
+										</div>
+										<div class="row pt-2">
+											<div class="col-sm-3">
+												<input type='button' id='btn_submit'
+													class="btn btn-primary pl-1" value='Submit'>
+											</div>
+										</div>
+
+										<!-- PIE CHART -->
+										<div class="row p-1"
+											th:if="${tpRiskDto.assessmentPeriod!=null}">
+											<div class="col-md-6 float-left">
+												<div class="card-title text-primary m-2 p-1">
+
+													Zone Wise Count for Assessment Period <span
+														id="assessmentPeriod"
+														th:text="${tpRiskDto.assessmentPeriod}"></span> <span
+														id="assessmentPeriodTemp"
+														th:text="${tpRiskDto.assessmentPeriod=='Oct2021'?'October 2021':tpRiskDto.assessmentPeriod}"></span>
+
+												</div>
+
+
+
+
+												<canvas id="pieChart"
+													style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+
+
+
+											</div>
+											<div class="col-md-6 float-left mt-5">
+
+
+
+												<table class="table">
+													<thead>
+														<tr>
+
+															<th scope="col">Dept RAG</th>
+															<th scope="col">Count</th>
+
+														</tr>
+													</thead>
+													<tbody>
+
+														<tr th:each="data:${tpRiskCount}">
+															<td><span
+																th:style="${#strings.arraySplit(data, '-')[0]=='Green' ? 'color: #28A745;' : #strings.arraySplit(data, '-')[0]=='Red'?'color: #FF0000;':'color:#FFBF00'}"
+																th:text="${#strings.arraySplit(data, '-')[0]}"></span></td>
+															<td><a href="#topRiskGraphTableRow"
+																th:attr="onclick=|getData('${#strings.arraySplit(data, '-')[0]}')|">
+																	<span th:text="${#strings.arraySplit(data, '-')[1]}"></span>
+															</a></td>
+														<tr>
+
+														</tr>
+													</tbody>
+												</table>
+
+
+
+
+
+
+											</div>
+
+										</div>
+										<div class="row m-1 mt-4 p-1" id="topRiskGraphTableRow"
+											style="display: none">
+											<div class="card-title text-primary m-1 mt-4 p-1">
+
+												Department Wise Status List</div>
+											<div class="col-sm-12  m-1 mt-4 p-1">
+
+												<table id="topRiskGraphTable"
+													class="table table-head-fixed table-bordered table-striped">
+													<thead>
+														<tr>
+
+															<th>Top Risk Id</th>
+															<th>Top Risk Description</th>
+															<th>Top Risk Theme</th>
+															<th>Top Risk Weightage</th>
+															<th>Office Code</th>
+
+														</tr>
+													</thead>
+													<tbody>
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-md-12">
+												<input type="hidden" name="tpRiskCount" id="tpRiskCount"
+													th:value="${tpRiskCount}" /> <input type="hidden"
+													name="greenColour" id="greenColour"
+													th:value="${greenColorVal}" /> <input type="hidden"
+													name="redColour" id="redColour" th:value="${redColorVal}" />
+												<input type="hidden" name="amberColour" id="amberColour"
+													th:value="${amberColorVal}" /><input type="hidden"
+													name="dept" id="dept" th:value="${tpRiskDto.topRiskDeptId}" />
+												<input type="hidden" name="zonetemp" id="zonetemp"
+													th:value="${tpRiskDto.zone}" /> <input type="hidden"
+													name="officeNameTemp" id="officeNameTemp"
+													th:value="${tpRiskDto.officeName}" />
+
+											</div>
+										</div>
+
+
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+
+
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/topRiskGraph.js}"></script>
+
+	<script type="text/javascript">
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				/* document.getElementById('contents').style.visibility = "hidden"; */
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+
+
+
+	<script>
+
+function printDiv() 
+{
+window.print();
+}
+</script>
+	<script>
+	$('#btn_submit')
+	.on(
+			'click',
+			function() {
+				var assessmentDate = $("#assessmentDate").val();
+				var zone=$("#zone").val();
+				var department=$("#department").val();
+				var officeName=$("#officeName").val();
+				
+				
+				var reportString ="{\"assessmentPeriod\":\"" + assessmentDate
+				+ "\",\n" + "\"zone\":\"" + zone
+				+ "\",\n" + "\"officeName\":\"" + officeName
+				+ "\",\n" + "\"topRiskDeptId\":\"" + department+ "\"}";
+				
+				var iterationCount = 1000;
+				var keySize = 128;
+				//passPhrase is the key
+				var passphrase = CryptoJS.lib.WordArray.random(
+						128 / 8).toString(CryptoJS.enc.Hex);
+
+				var aesUtil = new AesUtil(keySize,
+						iterationCount);
+
+				var ciphertext = aesUtil.encrypt(
+						reverseText(passphrase), reportString);
+
+				$("#encryptedJson").val(
+						ciphertext + ':~:' + passphrase);
+				$("#frmTpRiskGraph").submit();
+
+
+			}); 
+	</script>
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+
+			//Date range picker
+			$('#completionDate').datetimepicker({
+				format : 'DD-MM-YYYY'
+			//format : 'YYYY-MM-DD'
+			});
+		})
+	</script>
+	<script>
+	jQuery(document)
+	.ready(
+			function() {
+				$(function() {
+					$('#frmTpRiskGraph')
+							.validate(
+									{
+										rules : {
+											assessmentDate : {
+												required : true,
+											},
+											department : {
+												required : true,
+												
+											},
+											zone : {
+												required : true,
+											},
+},
+
+										messages : {
+											assessmentDate : {
+												required : "Please Select Assessment Date"
+											},
+
+											department : {
+												required : "Please Select Department"
+											},
+
+											zone : {
+												required : "Please Select Zone"
+											},
+
+											
+											
+											
+										},
+										errorElement : 'span',
+										errorPlacement : function(
+												error, element) {
+											error
+													.addClass('invalid-feedback');
+											element.closest(
+													'.form-group')
+													.append(error);
+										},
+										highlight : function(
+												element,
+												errorClass,
+												validClass) {
+											$(element).addClass(
+													'is-invalid');
+										},
+										unhighlight : function(
+												element,
+												errorClass,
+												validClass) {
+											$(element).removeClass(
+													'is-invalid');
+										},
+										submitHandler : function(
+												form) {
+
+											document
+													.getElementById('load').style.visibility = "visible";
+											form.submit();
+
+										}
+									});
+				});
+			});
+	</script>
+	<script>
+	function getData(ragStatus) {
+		
+		
+		$("#topRiskGraphTableRow").css("display", "");
+		
+		var assesmentPeriod = $("#assessmentPeriod").text();
+		var topRiskDeptId=$("#dept").val();
+		var rag = ragStatus.trim().toUpperCase();
+		var zoneCode=$("#zonetemp").val();
+		var officeName=$("#officeNameTemp").val();
+		var pageValJson = "{\"assessmentPeriod\":\"" + assesmentPeriod
+				+ "\",\n" + "\"deptRagStatus\":\"" + rag
+				+ "\",\n" + "\"topRiskDeptId\":\"" + topRiskDeptId
+				+ "\",\n" + "\"officeName\":\"" + officeName
+				+ "\",\n" + "\"zone\":\"" + zoneCode+ "\"}";
+	document.getElementById('load').style.visibility = "visible";
+		// ajax call
+		$
+				.ajax({
+					url : 'getZoneWiseReportDetail',
+					type : "POST",
+					data : {
+						pageValJson : pageValJson
+					},// important line for thymeleaf http security
+					headers : {
+						"X-CSRF-TOKEN" : $("input[name='_csrf']").val()
+					},
+					cache : false,
+					// async:true,
+					success : function(response) {
+						
+
+						setTimeout(
+								function() {
+									document.getElementById('interactive');
+									document.getElementById('load').style.visibility = "hidden";
+								}, 1000);
+
+						var jsonResponse = JSON.stringify(response);
+						var obj = JSON.parse(jsonResponse);
+						var topRiskTableData = $('#topRiskGraphTable')
+								.DataTable();
+						
+
+						topRiskTableData.clear().draw();
+						$(".topRiskRagTable > #topRiskRagTableTbody").empty();
+						
+						//destroy datatable
+						//table.destroy();
+						obj
+								.forEach(function(items) {
+									
+									var deptDetails = items.topRiskDeptId;
+									var ragColor=''
+									
+									if(items.deptRagStatus==='GREEN'){
+										ragColor='#28A745';
+									}
+									else if(items.deptRagStatus==='RED'){
+										ragColor='#FF0000';
+									}
+									else{
+										ragColor='#FFBF00';
+									}
+									console.log(ragColor);
+
+									var tr = $("<tr>"
+											+ "<td><a href='#kriRagTableTbody' class='text-blue' id='"
+											+ deptDetails
+											+ "' onclick='getKriRagCount(this.id)'>"
+											+ items.topRiskId
+											+ "</a></td>"
+											+ "<td class='text-capitalize'>"
+											+ items.topRiskDescription
+											+ "</td>"
+											+ "<td class='text-capitalize'>"
+											+ items.topRiskTheme
+											+ "</td>"
+											+ "<td class='text-capitalize'>"
+											+ items.topRiskWeightage
+											+ "</td>"
+											+ "<td class='text-capitalize'>"
+											+ items.officeCode
+											+ "</td>"
+											+ "</tr>");
+
+									
+									topRiskTableData.row.add(tr[0]).draw();
+									
+									
+								
+									
+
+								});
+						
+
+					},
+					error : function(xhr, status, error) {
+						console.log(xhr);
+						console.log(status);
+						console.log(error);
+						toastr.success('Some Error Occured');
+					}
+				});
+
+	}
+
+
+	</script>
+	<script>
+		$(document).ready(function() {
+			$(
+					'#officeName option[value="'
+							+ $("#selectedOfficeType").val() + '"]')
+					.attr("selected", "selected").change();
+			//assessmentDateSelected
+			$(
+					'#assessmentDate option[value="'
+							+ $("#assessmentDateSelected").val() + '"]')
+					.attr("selected", "selected").change();
+			var userOffice=$("#selectedOfficeType").val();
+			//alert(userOffice);
+		
+			if(userOffice==='ZO'){
+				$('#officeName option[value="CO"]').attr("disabled", true);
+		}else if(userOffice==='divisional office'){
+				$('#officeName option[value="CO"]').attr("disabled", true);
+				$('#officeName option[value="ZO"]').attr("disabled", true);
+			}else if(userOffice==='BO'){
+				$('#officeName option[value="CO"]').attr("disabled", true);
+				$('#officeName option[value="ZO"]').attr("disabled", true);
+				$('#officeName option[value="DO"]').attr("disabled", true);
+			}
+			});
+		
+		</script>
+
+</body>
+
+</html>
+

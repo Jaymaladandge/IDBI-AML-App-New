@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+		<div class="wrapper">
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+			<div class="content-wrapper">
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Branch EDD Management</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+									<li class="breadcrumb-item active"><a href="#">Branch
+											EDD Management</a></li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<section class="content">
+					<div class="container-fluid">
+						<div class="container-fluid">
+							<div class=" card">
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="card-body">
+											<div class="card card-outline card-secondary" id="collapse">
+												<div class="card-header" data-card-widget="collapse">
+													<h3 class="card-title text-bold">Search</h3>
+												</div>
+												<div class="card-body">
+													<form autocomplete="off" role="form" method="post"aria-label="form"
+														th:action="@{/searchEdd}" id="searchForm"
+														th:object="${encryptedRequest}">
+														<input type="hidden" id="encryptedJson"
+															name="encryptedJson" /> <input type="hidden"
+															id="message" th:value="${msg}" name="message" />
+														<div class="row">
+															<div class="col-sm-12">
+																<div class="form-group row">
+																	<label class="col-4">Select Parameter</label> <label
+																		class="col-6">Value</label><span class="col-2"></span>
+																	<select
+																		class="col-sm-4 form-control form-control-sm select2"
+																		name="searchParam" id="searchParam"
+																		data-placeholder="Search Parameter">
+																		<option value=''>Select</option>
+																		<option value='testId'>EDD ID</option>
+																		<option value='testStatus'>Test Status</option>
+																	</select> &nbsp;&nbsp;<input type="text"
+																		class="col-4 form-control form-control-sm"
+																		name="searchcriteria" id="searchcriteria"
+																		placeholder="Value">&nbsp; <a
+																		class="btn btn-sm btn-info" href="#"
+																		onclick="searchData()" title="Search"> <em
+																		class="col-2 fas fa-search fa-1x text-black"></em>
+																	</a>
+																</div>
+															</div>
+														</div>
+													</form>
+												</div>
+												<!-- card-body -->
+											</div>
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<input type="hidden" th:value="*{message}" id="message" />
+													<span class="float-right"> <a
+														th:href="@{/redirectToCreateTest}" class="btn bg-teal"
+														style="margin-right: 5px;" title="Create workflow"> <em
+															class="fas fa-plus-square"></em>&nbsp;Create
+													</a></span>
+												</div>
+												<div class="card-body table-responsive">
+													<form autocomplete="off" role="form" method="post"
+														th:action="@{/fetchEddData}" id="eddForm"
+														th:object="${encryptedRequest}">
+														<input type="hidden" id="encryptedJsonEdit"
+															name="encryptedJson" />
+														<table id="testSummarytable"
+															class="table table-sm table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th scope="col">Branch EDD Id</th>
+																	<th scope="col">Branch EDD Description</th>
+																	<th scope="col">Upload By</th>
+																	<th scope="col">Upload TimeStamp</th>
+																	<th scope="col">Status</th>
+																	<th scope="col"></th>
+																	<th scope="col"></th> 
+																</tr>
+															</thead>
+															<tbody>
+																<tr th:each="testMasterObj:${testMasterDto.testList}">
+																	<td th:text="${testMasterObj.testId}"></td>
+																	<td th:text="${testMasterObj.testDescription}"
+																		class="text-capitalize"></td>
+																	<td th:text="${testMasterObj.uploadBy}"
+																		class="text-capitalize"></td>
+																	<td
+																		th:text="${#calendars.format(testMasterObj.uploadTimestamp,'dd/MM/YYYY')}"></td>
+																	<td th:switch="${testMasterObj.status}"><span
+																		th:case="'A'" class="badge bg-success">Active</span> <span
+																		th:case="'C'" class="badge bg-warning">Pending
+																			For Create Verification</span> <span th:case="'E'"
+																		class="badge bg-warning">Pending For Edit
+																			Verification</span></td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple editEdd"
+																			th:if="${testMasterObj.status} eq 'A'" title="Edit"
+																			th:id="${testMasterObj.testId}"> <em
+																				class="fa fa-edit fa-1x text-black"></em></a> <a
+																			th:unless="${testMasterObj.status} eq 'A'"
+																			class="btn btn-sm bg-purple editEdd disabled"
+																			title="Edit" th:id="${testMasterObj.testId}"> <em
+																				class="fa fa-edit fa-1x text-black "></em></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span><a
+																			th:id="${testMasterObj.testId}"
+																			class="btn btn-sm bg-maroon viewAuditModal"
+																			title="Audit Trail"><em class="fab fa-twitch"></em></a></span></td>
+																	<td class="project-actions text-center"><span>
+																			<a
+																			th:if="(!(${testMasterObj.status}  eq 'A')) and (${testMasterObj.currentRole} eq ${user.userPosition}) and !(${testMasterObj.lastModifiedby}  eq ${user.userId} )"
+																			class="btn btn-sm bg-success verifyEdd"
+																			title="Verify" th:id="${testMasterObj.testId}"> <em
+																				class="fas fa-arrow-circle-right text-white	"></em></a>
+																			<a
+																			th:unless="(!(${testMasterObj.status}  eq 'A')) and (${testMasterObj.currentRole} eq ${user.userPosition}) and !(${testMasterObj.lastModifiedby}  eq ${user.userId} )"
+																			class="btn btn-sm bg-success editWorkflow disabled"
+																			title="Verify" th:id="${testMasterObj.testId}"> <em
+																				class="fas fa-arrow-circle-right text-white	"></em></a>
+																	</span></td>
+																</tr>
+															</tbody>
+														</table>
+													</form>
+													<!-- /form -->
+												</div>
+												<!-- /card-body -->
+											</div>
+											<div class="modal fade" id="timelinemodal">
+												<div class="modal-dialog modal-xl">
+													<div class="modal-content">
+														<div class="modal-header bg-info">
+															<h5 class="modal-title">Audit Trail</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<!-- form start -->
+														<div class="card-body">
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="timeline">
+																<div class="timeline timeline-inverse" id="row_0"></div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+			<div th:insert="/footer::footer"></div>
+		</div>
+	</div>
+
+	<!-- REQUIRED SCRIPTS -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/audittrail.js}"></script>
+	<script th:src="@{/dist/appjs/aml/eddSummary.js}"></script>
+
+</body>
+</html>

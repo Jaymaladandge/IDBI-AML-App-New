@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../erm-web/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.viewThresh {
+	visibility: visible;
+	width: 120px;
+	background-color: white;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+	bottom: 2em;
+	left: 75%;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus
+	{
+	background-color: #FCD900 !important;
+}
+
+.active {
+	background-color: Dodgerblue !important;
+}
+
+.activeFreeze {
+	background-color: #ff1e1e !important;
+}
+
+.matchFound {
+	margin-bottom: 1rem;
+	margin-left: 2rem;
+}
+
+.qrySearch {
+	margin-right: 1rem;
+	margin-left: 1rem;
+}
+
+.BBEDetails {
+	margin-right: 1rem;
+	margin-left: 2rem;
+}
+
+.examples-wrapper {
+	background-color: #f9faff;
+	border-radius: 11px;
+	border: 0.5px solid #838fa0;
+	box-shadow: none;
+	width: 95%;
+	height: 15rem;
+	position: relative;
+	outline: 0;
+}
+
+.examples-wrapper {
+	margin-top: auto;
+	margin-right: auto;
+	margin-bottom: auto;
+	margin-left: 2rem;
+}
+
+.ttc-group-heading {
+	border-bottom: 0.5px solid #838fa0;
+	padding: 7px 15px;
+	font-size: 1.4rem;
+}
+
+div#remarksDiv {
+    margin-top: 1rem;
+}
+.submitenricher{
+	margin-left: 1rem;
+}
+</style>
+</head>
+<div id="load"></div>
+
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>LQTS - Verify Enquiry</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<!-- <li class="breadcrumb-item"><a th:href="@{/mainRasPage}">Risk
+										Appetite Statement</a></li> -->
+								<li class="breadcrumb-item">Verify Enquiry</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content-header -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Verify Enquiry</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form autocomplete="off" class="form-horizontal" id="frmAction"
+									th:action="@{/reviewLEA}" method="post"
+									enctype="multipart/form-data" th:object="${encryptedRequest}">
+<input type="hidden" id="encryptedJson" name="encryptedJson"
+										/> 
+								
+									<input type="hidden"
+															class="form-control form-control-sm text-bold" id="requestorIdHidden"
+															name="requestorIdHidden"  th:value="${leaRquester.requestorId}">
+									<input type="hidden"
+															class="form-control form-control-sm text-bold" id="recordStatusHidden"
+															name="recordStatusHidden"  th:value="${leaRquester.recordStatus}">
+															<input type="hidden"
+															class="form-control form-control-sm text-bold" id="actionStatusHidden"
+															name="actionStatusHidden"  th:value="${leaRquester.actionStatus}">
+											<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="enricherReqId">Enricher Request ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold" id="enricherReqId"
+															name="enricherReqId"  th:value="${leaRquester.leaEnricherDtoObj.enricherId}"  readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="recordstatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="recordStatus" name="recordStatus"
+															th:value="${action}" readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group enroll_custom_batch_popup">
+														<label for="selectionOfEnricherLabel">Selection Of
+															Enricher <code>*</code>
+														</label> <input type="text" class="form-control form-control-sm"
+															id="selectionOfEnricher" name="selectionOfEnricher"
+															th:field="${enriherMaster.leaRequestDto.selectionOfEnricher}"
+															readonly>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group enroll_copy_coupon_code">
+														<label for="sourceOfQueryLabel">Source Of Query <code>*</code></label>
+														<input type="text" class="form-control form-control-sm "
+															id="sourceOfQuery" name="sourceOfQuery"
+															th:value="${enriherMaster.leaRequestDto.sourceOfQuery}"
+															readonly>
+													</div>
+												</div>
+
+											</div>
+												<div class="row">
+
+												<div class="col-sm-6">
+													<div class="form-group enroll_custom_batch_popup">
+														<label for="subjectLineLabel">Subject Line <code>*</code>
+														</label> <input type="text" class="form-control form-control-sm"
+															id="subjectLine" name="subjectLine"
+															th:value="${enriherMaster.leaRequestDto.subjectLine}"
+															readonly>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group enroll_copy_coupon_code">
+														<label for="locationOfLeaLabel">Location Of LEA <code>*</code>
+														</label> <input type="text" class="form-control form-control-sm "
+															name="locationOfLea" id="locationOfLea" maxlength="200"
+															th:value="${enriherMaster.leaRequestDto.locationOfLea}"
+															placeholder=" Location Of LEA" readonly>
+
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group enroll_custom_batch_popup">
+														<label for="infoNeededLabel">Information Needed <code>*</code>
+														</label> <input type="text" class="form-control form-control-sm "
+															name="infoNeeded" id="infoNeeded" maxlength="200"
+															th:value="${enriherMaster.leaRequestDto.infoNeeded}"
+															placeholder=" Information Needed " readonly>
+													</div>
+												</div>
+
+												<div class="col-sm-6">
+													<div class="form-group enroll_copy_coupon_code">
+														<label for="noticeReceivedDateLabel">Notice
+															Received Date<code>*</code>
+														</label> <input type="text" class="form-control form-control-sm "
+															name="noticeReceivedDate" id="noticeReceivedDate"
+															maxlength="200"
+															th:value="${#dates.format(enriherMaster.leaRequestDto.noticeReceivedDate, 'dd/MM/yyyy')}"
+															placeholder=" Notice Received Date" readonly>
+
+													</div>
+												</div>
+											</div>
+												<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group enroll_custom_batch_popup">
+														<label for="tatMentionedInQueryLabel">TAT
+															Mentioned In Query<code>*</code>
+														</label> <input type="text" class="form-control form-control-sm "
+															name="tatMentionedInQuery" id="tatMentionedInQuery"
+															maxlength="200"
+															th:value="${#dates.format(enriherMaster.leaRequestDto.tatMentionedInQuery, 'dd/MM/yyyy')}"
+															placeholder="TAT Mentioned In Query" readonly>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group enroll_copy_coupon_code">
+														<label for="tatAssignByRequestorLabel">TAT
+															Assigned By Requester<code>*</code>
+														</label> <input type="text" class="form-control form-control-sm "
+															name="tatAssignByRequestor" id="tatAssignByRequestor"
+															maxlength="200"
+															th:value="${#dates.format(enriherMaster.leaRequestDto.tatAssignByRequestor, 'dd/MM/yyyy')}"
+															placeholder="TAT Assigned By Requester" readonly>
+													</div>
+												</div>
+
+											</div>
+											<div class="row qrySearch">
+										<div class="col-sm-12">
+											<div class="card  card-outline card-secondary"
+												id="collapse">
+												<div class="card-header" data-card-widget="collapse">
+													<h3 class="card-title text-bold">Customer Details</h3>
+													<div class="card-tools">
+														<button type="button" class="btn btn-tool" id="collapse"
+															data-card-widget="collapse" data-toggle="tooltip"
+															title="Collapse">
+															<i class="fas fa-plus" style="color: #28a745;"></i>
+														</button>
+
+													</div>
+												</div>
+												<div class="card-body">
+													<!-- <div class="row">
+														<div class="col-sm-12">
+															<div class="form-group row">
+																<div class="col-sm-3">
+																	<label for="Select Parameter">Select Parameter</label>
+																	<select class="select2" name="dimension" id="dimension"
+																		data-placeholder="Select Parameter"
+																		style="width: 100%;">
+																		<option value=''>Select</option>
+																		<option
+																			th:each="zone : ${enriherMaster.searchParameterList}"
+																			th:value="${zone.searchParam}"
+																			th:text="${zone.searchValue}" />
+																	</select>
+																</div>
+																<div class="col-sm-5">
+																	<label for="Value">Value</label> <input type="text"
+																		class="form-control form-control-sm"
+																		name="searchcriteria" id="searchcriteria"
+																		placeholder="Value" maxlength="50">
+																</div>
+																<div class="col-sm-2">
+																	<label for="search"></label>
+																	<h3>
+																		<a class="btn btn-sm btn-info" href="#" id="search"
+																			title="Search"> <em
+																			class="fas fa-search fa-1x text-black"></em>
+																		</a>
+																	</h3>
+																</div>
+															</div>
+														</div>
+													</div> -->
+													<div class="row" id="docIdRow">
+														<div class="col-sm-12 table-responsive">
+															<div class="card card-outline card-secondary">
+																<div class="card-header"
+																	style="background-color: #00AA9E;">
+																	<h3 class="card-title text-white">Customer
+																		Document Details</h3>
+																</div>
+																<div class="card-body" id="grad5">
+																	<table
+																		class="table table-bordered bg-light customerDtls"
+																		id="customerDtls" style="width: 100%">
+																		<thead>
+																			<tr>
+																				<th>Customer Id</th>
+																				<th>Customer Full Name</th>
+																				<th>Customer Type</th>
+																			</tr>
+																		</thead>
+																		<tbody id="tbodyDocR"
+																			th:each="custObj : ${enriherMaster.custDataList}">
+																			<tr th:id="${custObj.custId}">
+																				<td th:text="${custObj.custId}"></td>
+																				<td th:text="${custObj.custFullName}"></td>
+																				<td><span th:unless="${custObj.custType} eq I"
+																					class="text-teal text-bold"
+																					th:text="'Non Individual'"> </span> <span
+																					th:if="${custObj.custType} eq I"
+																					class="text-teal text-bold" th:text="Individual">
+																				</span></td>
+
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row" id="docIdRow">
+														<div class="col-sm-12 table-responsive">
+															<div class="card card-outline card-secondary">
+																<div class="card-header"
+																	style="background-color: #00AA9E;">
+																	<h3 class="card-title text-white">Account Details</h3>
+																</div>
+																<div class="card-body" id="grad5">
+																	<table
+																		class="table table-bordered custAcctDtls bg-light"
+																		id="custAcctDtls" style="width: 100%">
+																		<thead>
+																			<tr>
+																				<th scope="col">Account Number</th>
+																				<th scope="col">Customer Id</th>
+																				<th scope="col">Account Name</th>
+																				<th scope="col">Account Status</th>
+																				<th scope="col">Account Balance</th>
+																				
+																			</tr>
+																		</thead>
+																		<tbody id="tbodyAcct"
+																			th:each="accountObj : ${enriherMaster.custDataList}">
+																			<tr th:each="acctObj : ${accountObj.acctList}" th:id="${accountObj.custId}+'-'+${acctObj.accountId}">
+																				<td th:text="${acctObj.accountNo}"></td>
+																				<td th:text="${accountObj.custId}"></td>
+																				<td th:text="${acctObj.accountName}"></td>
+																				<td th:text="${acctObj.acctStatus}"></td>
+																				<td th:text="${acctObj.acBalanceAmt}"></td>
+																				
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row" id="docIdRow">
+														<div class="col-sm-12 table-responsive">
+															<div class="card card-outline card-secondary">
+																<div class="card-header"
+																	style="background-color: #00AA9E;">
+																	<h3 class="card-title text-white">Related Details
+																		For Account Number</h3>
+																</div>
+																<div class="card-body" id="grad5">
+																	<table
+																		class="table table-bordered custAcctPersonDtls bg-light"
+																		id="custAcctPersonDtls" style="width: 100%">
+																		<thead>
+																			<tr>
+																				<th scope="col">Account Number</th>
+																				<th scope="col">Account Name</th>
+																				<th scope="col">Customer Id</th>
+																				<th scope="col">Holder Type</th>
+
+																			</tr>
+																		</thead>
+
+																		<tbody id="tbodyAcctPerson"
+																			th:each="accountObj : ${accountDtoList}">
+																			<tr th:each="acctObj : ${accountObj.aasDetails}"
+																				th:id="'likelihood-'+${accountObj.accountId}">
+																				<td th:text="${accountObj.accountNo}"></td>
+																				<td th:text="${acctObj.acReltnPersonName}"></td>
+																				<td th:text="${acctObj.reltdCustId}"></td>
+																				<td th:text="${acctObj.acReltnTypeDesc}"></td>
+																			</tr>
+
+																		</tbody>
+
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+
+										<div class="col-sm-4">
+											<div
+												style="overflow-x: auto !important; width: 100% !important;">
+												<div class="form-group matchFound">
+
+													<p class="mb-1">
+														<label for="matchFoundLabel">Match Found<code>*</code></label>
+													</p>
+												<input type="text"
+															class="form-control form-control-sm text-bold" id="matchFound"
+															name="matchFound"  th:value="${enriherMaster.matchFound eq 'Y'?'Yes':'No'}"  readonly>
+													
+												</div>
+
+
+
+
+											</div>
+
+										</div>
+										<div class="col-sm-4">
+											<div
+												style="overflow-x: auto !important; width: 100% !important;">
+												<div class="form-group matchFound">
+
+													<p class="mb-1">
+														<label for="freezeMarkedLabel">Freeze Marked<code>*</code></label>
+													</p>
+													<!-- leaRquester.leaEnricherDtoObj -->
+												<input type="text"
+															class="form-control form-control-sm text-bold" id="freezeMarked"
+															name="freezeMarked"  th:value="${leaRquester.leaEnricherDtoObj.freezeMarked eq 'Y'?'Yes':'No'}"  readonly>
+													
+												</div>
+												</div>
+
+
+
+											</div>
+<div class="col-sm-4">
+											<div class="form-group "
+												style="margin-right: 1rem;">
+												<label for="statusOfQueryLabel">Status of Query<code>*</code></label>
+												<input type="text"
+															class="form-control form-control-sm text-bold" id="statusOfQuery"
+															name="statusOfQuery"  th:value="${leaRquester.leaEnricherDtoObj.statusOfQuery}"  readonly>
+												
+											</div>
+										</div>
+										</div>
+										
+									
+									<div class="row">
+
+										<div class="col-sm-12">
+											<div class="form-group matchFound" 
+												id="remarksDiv">
+												<label for="remarksValueDesc">Remarks<code>*</code>
+												</label>
+												<textarea type="text" class="form-control form-control-sm"
+													id="remarksValueDesc" name="remarksValueDesc" rows="3"
+													maxlength="3000" placeholder="Remarks"
+													value="remarks testing" th:text="${leaRquester.leaEnricherDtoObj.remarks eq null?'NA':leaRquester.leaEnricherDtoObj.remarks}" disabled></textarea>
+											</div>
+										</div>
+									</div>
+									
+									<div th:if="${enriherMaster.leaRequestDto.bbeRequirement} eq Y">
+										<div class="row">
+											<div class="col-sm-12">
+												<section class="examples-wrapper" tabindex="0">
+													<header class="header-examples"></header>
+													<div class="ttc-group-heading">BBE Details</div>
+
+													<div class="card-body">
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="PODNo">POD Number</label>
+																	<div class="input-group">
+																		<input type="text"
+																			class="form-control form-control-sm text-bold"
+																			id="PODNo" name="PODNo" th:value="${leaRquester.leaEnricherDtoObj.bbePodNumber}" disabled>
+																	</div>
+																</div>
+															</div>
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label>BBE Date of Issue<code>*</code></label> <input
+																		type="text" id="bbeDate"
+																		class="form-control form-control-sm" th:value="${leaRquester.leaEnricherDtoObj.bbeDateOfIssue}" disabled/>
+																</div>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col-sm-6">
+																<div class="form-group">
+																	<label for="branchName">Branch Name</label>
+																	<div class="input-group">
+																		<input type="text"
+																			class="form-control form-control-sm text-bold"
+																			id="branchName" name="branchName"
+																			th:value="${leaRquester.leaEnricherDtoObj.branchName}" disabled>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+
+												</section>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+
+										<div class="col-sm-12">
+											<div class="form-group matchFound" id="remarksDiv">
+												<label for="banksReply">Bank’s Reply<code>*</code>
+												</label>
+												<textarea type="text" class="form-control form-control-sm"
+													id="banksReply" name="banksReply" rows="3" maxlength="3000"
+													placeholder="Bank’s Reply" th:text="${leaRquester.leaEnricherDtoObj.banksReply}" disabled></textarea>
+											</div>
+										</div>
+									</div>
+
+									</div>
+								
+									
+
+								
+									
+									
+
+									
+
+									<div class="card-footer submitenricher">
+										<button type="button" id="approve" name="approve" class="btn btn-success"
+											title="Approve">
+											<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+										</button>
+										<button type="button" class="btn bg-red" id="reject" name="reject" title="Reject" >
+											<i class="fas fa-circle-notch" style="padding: 0 7px 0 0px;"></i>Reject
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="home"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+
+								</form>
+							</div>
+						</div>
+						<!-- /.card-footer -->
+					</div>
+				</div>
+			</section>
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- Confirmation Modal -->
+	<div class="modal fade" id="confirmmodal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Confirm</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+
+				<!-- form start -->
+
+				<div class="card-body">
+					<!-- /.tab-pane -->
+					<div class="tab-pane" id="confirm">
+
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">Are You Sure You Want To Submit
+									This Record?</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+							</button>
+							<button type="button" id="create" name="create"
+								class="btn btn-info">
+								<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+							</button>
+
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cancel Modal -->
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check"
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+				</div>
+
+				<!-- /.Card -->
+
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Development JavaScript -->
+	<!-- <script th:src="@{/dist/appjs/lea/ViewAssignedQuery.js}"></script> -->
+		<script th:src="@{/dist/appjs/lea/actionAssignQuery.js}"></script>
+</body>
+
+</html>

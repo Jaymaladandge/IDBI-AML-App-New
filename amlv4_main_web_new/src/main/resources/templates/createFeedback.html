@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+textarea {
+	overflow-y: scroll;
+}
+
+.mt-4, .my-4 {
+	margin-top: 1.8rem !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Feedback Create Page</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/feedbackSummaryPage}">Feedback Summary </a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title text-center">Create Feedback</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="feedbackForm" autocomplete="off"
+									th:action="@{/createfeedbackPage}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+									<div class="card-body">
+								
+									<div class="row">
+									<div class="col-sm-3">
+									<input type="hidden" id="username1" th:value="${user.userId}">
+									<label for="TAG to">TAG To </label>
+									</div>
+									</div>
+
+										<div class="row">
+											<div class="col-sm-3">
+									<div class="form-group">
+													<label for="feedbackId">Feedback ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold" id="feedbackId"
+															name="feedbackId" th:value="${feedbackId}" readonly>
+													
+									</div>
+									</div>
+									</div>
+												<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeType">Select Office Type <code>*</code></label>
+															<select class="select2 text-capitalize" name="officeType"
+																data-placeholder="Office Type" id="officeType"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option th:each="officeNameList : ${officeNameList}"
+																	th:value="${officeNameList.officeType}"
+																	th:text="${officeNameList.officeName}" />
+															</select>
+														</div>
+													</div>
+
+													<div class="col-sm-3">
+														<div th:if="${user.userDeptName == 'ERM'}">
+															<div class="form-group">
+																<label for="riskDept">Select Department <code>*</code></label>
+
+																<select class="select2 text-capitalize"
+																	name="Department" id="riskDept"
+																	data-placeholder="Select Department"
+																	style="width: 100%;">
+																	<option value=''>Select Department</option>
+
+																</select>
+															</div>
+														</div>
+														<div th:if="${user.userDeptName != 'ERM'}">
+															<div class="form-group">
+																<label for="riskDept">Department Name <code>*</code></label>
+
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm other-input"
+																		id="riskDept1" name="riskDept1"
+																		th:value="${user.userDeptName}" readonly>
+																		
+																</div>
+																<input type="hidden"
+																		class="form-control form-control-sm other-input"
+																		id="riskDept" name="riskDept"
+																		th:value="${user.getUserDept}" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeCode">Select Office Code <code>*</code></label>
+															<select
+																class="select2 text-capitalize form-control float-right"
+																name="officeCode" id="officeCode"
+																data-placeholder="Select OfficeCode" style="width: 100%">
+																<option value=''>Select OfficeCode</option>
+
+															</select>
+														</div>
+													</div>
+												
+
+										</div>
+										<!-- /.row -->
+	
+
+										<!-- /.row -->
+										<div class="row">
+
+												<div class="col-sm-6">
+												<div class="form-group">
+													<label for="subject">Subject <code>*</code></label>
+													<div class="input-group mb-2">
+														<textarea type="text" class="form-control form-control-sm"
+															id="feedbackSubject" name="feedbackSubject" rows="3" maxlength="100"
+															placeholder="Feedback Subject"></textarea>
+													</div>
+												</div>
+											</div>											
+											
+
+
+										</div>
+										<div class="row">
+	<div class="col-sm-6">
+												<div class="form-group">
+													<label for="feedbackDescription">Feedback
+														Description <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="feedbackDescription"
+														id="feedbackDescription" rows="3"
+														placeholder="Feedback Description"></textarea>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+
+										<div class="col-sm-4">
+
+												<div class="form-group">
+													<label>Evidence</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table uploadTable" id="filedetails"
+													style="display: none">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Upload By</th>
+															<th>Upload Date</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+										</div>
+
+										<!-- /.row -->
+									</div>
+									<!-- ./card-body -->
+								
+
+									<!-- <div class="card-body">
+
+									</div> -->
+
+
+									<!-- /.card-body -->
+									<div class="card-footer">
+										<a class="btn btn-info" id="create_btn"> <i
+											class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</a> <a href="#" data-toggle="modal" data-whatever="feedbackSummaryPage"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+									<!-- /.card-footer -->
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/createFeedback.js}"></script>
+	<!-- REQUIRED SCRIPTS -->
+
+
+
+
+
+	
+	
+
+</body>
+</html>

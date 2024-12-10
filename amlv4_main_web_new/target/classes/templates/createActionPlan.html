@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+textarea {
+	overflow-y: scroll;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Action Plan</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/mainActionPlan}">Action
+										Plan</a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title text-center">Create</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="frmActionPlan" th:action="@{/createActionPlanPage}"
+									method="post" th:object="${encryptedRequest}"
+									enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="actionPlanId">Action Plan ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="actionPlanId" name="actionPlanId"
+															th:field="${apmDto.actionId}" readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="recordstatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold text-capitalize"
+															id="recordstatus" name="recordstatus" value="Create"
+															readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="moduleName">Module Name</label>
+													<div class="input-group mb-2">
+														<input type="text"
+															class="form-control form-control-sm text-bold text-capitalize"
+															id="moduleName" name="moduleName"
+															th:value="${moduleName}" readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="sourceId">Source ID</label>
+													<div class="input-group mb-2">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="sourceId" name="sourceId" th:value="${sourceId}"
+															readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="sourceName">Source Name</label>
+													<div class="input-group mb-2">
+														<input type="text"
+															class="form-control form-control-sm text-bold text-capitalize"
+															id="sourceName" name="sourceName"
+															th:value="${sourceName}" readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="departmentName">Department Name</label>
+													<div class="input-group mb-2">
+														<input type="text"
+															class="form-control form-control-sm  text-bold text-capitalize"
+															id="departmentName" th:name="${deptId}"
+															th:value="${deptName}" readonly>
+													</div>
+												</div>
+											</div>
+
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="actionName">Action Name <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="actionName" id="actionName" maxlength="100"
+														placeholder="Action Name" style="overflow: auto;"></textarea>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-8">
+												<div class="form-group">
+													<label for="actionDescription">Action Description <code>*</code>
+													</label>
+													<textarea class="form-control form-control-sm"
+														name="actionDescription" id="actionDescription" rows="3"
+														placeholder="Action Description" maxlength="3000"
+														style="overflow: auto;"></textarea>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="completionDate">Completion Date <code>*</code></label>
+													<div class="input-group date" data-target-input="nearest">
+														<input type="text"
+															class="form-control form-control-sm col-6 datetimepicker-input"
+															placeholder="Completion Date" name="completionDate"
+															id="completionDate" data-target="#completionDate" />
+														<div class="input-group-append"
+															data-target="#completionDate"
+															data-toggle="datetimepicker">
+															<div class="input-group-text">
+																<i class="far fa-calendar-alt"></i>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- ./row -->
+
+										<div class="row">
+											<!-- <div class="col-sm-3">
+												<div class="form-group">
+													<label for="actionOwner">Action Owner <code>*</code></label>
+													<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="actionOwner" name="actionOwner"
+															th:value="${captureValue}" readonly>
+												</div>
+											</div> -->
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="actionOwnerName">Action Owner Name<code>*</code></label>
+													<!-- <input type="text"
+														class="form-control form-control-sm text-bold text-capitalize"
+														id="actionOwnerName" name="actionOwnerName"
+														th:value="${riskOwnerName}" readonly> -->
+													<select class="form-control from-control-sm select2"
+														id="actionOwnerName" name="actionOwnerName"
+														style="width: 100%;" onchange="setOwnerId()">
+														<option value=''>Action Owner</option>
+														<option th:each="acOwnerList : ${actionOwnerList}"
+															th:value="${acOwnerList.userId}"
+															th:text="${acOwnerList.username}"></option>
+													</select>
+												</div>
+
+
+												<input type="hidden" name="actionOwner" id="actionOwner">
+
+
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="frequency">Action Update Frequency <code>*</code></label>
+													<select class="form-control from-control-sm select2"
+														name="frequency" id="frequency" style="width: 100%;">
+														<option value=''>Frequency</option>
+														<option value='D'>Daily</option>
+														<option value='W'>Weekly</option>
+														<option value='F'>Fortnightly</option>
+														<option value='M'>Monthly</option>
+														<option value='Q'>Quarterly</option>
+														<option value='H'>Half Yearly</option>
+														<option value='Y'>Yearly</option>
+													</select>
+												</div>
+											</div>
+										</div>
+
+
+										<div class="row">
+											<div class="col-sm-4">
+												<!-- <div class="form-group">
+													<label for="customFile">Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="custom-file-label" for="customFile">Choose
+															file</label>
+
+													</div>
+												</div> -->
+												
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display:none;"
+															name="files[]" multiple="multiple"
+															onchange="getFileData(this);" />
+															<label
+															class="btn bg-gray" for="customFile">Choose
+															file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table uploadTable" id="filedetails"
+													style="display: none">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Upload By</th>
+															<th>Upload Date</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-12">
+												<input type="hidden" id="username" th:value="${userName}">
+											</div>
+										</div>
+									</div>
+
+									<!-- /.card-body -->
+									
+								</form>
+								<form id="cancelActionPlan" th:action="@{/cancelActionPlanPage}"
+									method="post" th:object="${encryptedRequest}">
+									<input type="hidden" id="encryptedJsonTemp" name="encryptedJson" />
+									<input type="hidden"
+															class="form-control form-control-sm text-bold"
+															id="sourceIdTemp" name="sourceIdTemp" th:value="${sourceId}"
+															readonly>
+															<input type="hidden"
+															class="form-control form-control-sm text-bold text-capitalize"
+															id="sourceNameTemp" name="sourceNameTemp"
+															th:value="${sourceName}" readonly>
+															
+																<input type="hidden"
+															class="form-control form-control-sm text-bold text-capitalize"
+															id="moduleNameTemp" name="moduleNameTemp"
+															th:value="${moduleName}" readonly>
+								</form>
+								<div class="card-footer">
+										<input type="hidden" id="datasource" name="datasource"
+											th:value="${sourceReq}"> <a class="btn btn-info"
+											id="create_btn"> <i class="fas fa-save"
+											style="padding: 0 7px 0 0px;"></i>Submit
+										</a> <!-- <a href="#" data-toggle="modal" data-whatever="mainActionPlan"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a> -->
+											<a class="btn btn-warning"
+											id="cancel_btn"> <i class="fas fa-times"
+											style="padding: 0 7px 0 0px;"></i>Cancel
+										</a>
+									</div>
+									<!-- /.card-footer -->
+								
+							
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- REQUIRED SCRIPTS -->
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+
+			//Date range picker
+			$('#completionDate').datetimepicker({
+				format : 'DD-MM-YYYY'
+			//format : 'YYYY-MM-DD'
+			});
+		})
+	</script>
+	<script>
+		// File upload //
+		var totalsizeOfUploadFiles = 0;
+		function getFileData(input) {
+			var select = $('.uploadTable');
+
+			for (var i = 0; i < input.files.length; i++) {
+				var filesizeInBytes = input.files[i].size;
+				var filesizeInMB = (filesizeInBytes / (1024)).toFixed(2);
+				var filename = input.files[i].name;
+				var userName = $("#username").val();
+				var flg = true;
+				$('.uploadTable tr').each(function() {
+					var fName = $(this).find('td:eq(0)').text();
+					if (fName == filename) {
+						flg = false;
+					}
+				});
+				if (flg) {
+					select
+							.append($('<tr id=tr'+i+'><td id=filetd'+i+'>'
+									+ filename
+									+ '</td><td id=filesizetd'+i+'>'
+									+ filesizeInMB
+									+ ' kb</td><td class="text-capitalize">'
+									+ userName
+									+ '</td><td>'
+									+ moment(new Date()).format('DD/MM/YYYY')
+									+ '</td><td class="project-actions text-right"><a class="btn btn-danger btn-sm"  id="closerow"><i class="fas fa-window-close"></i></a></td></tr>'));
+
+					totalsizeOfUploadFiles += parseFloat(filesizeInMB);
+				}
+
+				$('#filedetails').show();
+
+			}
+
+			$(".uploadTable").on("click", "#closerow", function() {
+
+				$(this).closest("tr").remove();
+
+				var rowCount = $('.uploadTable tr').length;
+
+				if (rowCount == 1) {
+					$('#filedetails').hide();
+				}
+			});
+
+		}
+
+		//
+	</script>
+	<script>
+		$("#create_btn")
+				.click(
+
+						function() {
+							if ($('#frmActionPlan').valid()) {
+								document.getElementById('load').style.visibility = "visible";
+								//Check table data
+								var filedetails = "[\n";
+								if ($('#filedetails tr').length > 0) {
+									$('#filedetails > tbody  > tr')
+											.each(
+													function(index, value) {
+														var splitvalue = $(this)
+																.find(
+																		'td:eq(0)')
+																.text().split(
+																		'.');
+														var sizesplit = $(this)
+																.find(
+																		'td:eq(1)')
+																.text().split(
+																		' ');
+														filedetails = filedetails
+																+ "  {  \"fileName\": \""
+																+ $(this)
+																		.find(
+																				'td:eq(0)')
+																		.text()
+																+ "\",\n"
+																+ "    \"fileSize\": \""
+																+ sizesplit[0]
+																+ "\",\n"
+																+
+
+																"    \"fileType\": \""
+																+ splitvalue[1]
+																+ "\"\n"
+																+ " },";
+
+													});
+									//filedetails = filedetails.slice(0,-1);
+									filedetails = filedetails.substring(0,
+											filedetails.length - 1);
+								}
+								filedetails = filedetails + "]";
+								var actionStatus="create";
+
+								var apString = "{\"actionId\":\""
+										+ $("#actionPlanId").val()
+										+ "\",\n"
+										+ "\"actionName\":\""
+										+ $("#actionName").val()
+										+ "\",\n"
+										+ "\"actionDescription\":\""
+										+ $("#actionDescription").val()
+												.replace(/(\r\n|\n|\r)/gm, "")
+										+ "\",\n"
+										+ "\"actionCompletionDate\":\""
+										+ $("#completionDate").val() + "\",\n"
+										+ "\"actionOwner\":\""
+										+ $("#actionOwner").val() + "\",\n"
+										+ "\"sourceId\":\""
+										+ $("#sourceId").val() + "\",\n"
+										+ "\"sourceName\":\""
+										+ $("#sourceName").val() + "\",\n"
+										+ "\"moduleName\":\""
+										+ $("#moduleName").val() + "\",\n"
+										+ "\"filedetails\":" + filedetails
+										+ ",\n"
+										+ "\"actionUpdateFrequency\":\""
+										+ $("#frequency").val() + "\",\n"
+										+ "\"actionStatus\":\""
+										+ actionStatus
+										+ "\"}"
+
+								//var apString=""
+
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), apString);
+
+								$("#encryptedJson").val(
+										ciphertext + ':~:' + passphrase);
+
+								$("#frmActionPlan").submit();
+							}
+						});
+		$(function() {
+			$('#frmActionPlan')
+					.validate(
+							{
+								rules : {
+									actionName : {
+										required : true,
+										minlength : 10
+									},
+									actionDescription : {
+										required : true,
+										minlength : 10,
+										maxlength : 3000
+									},
+									completionDate : {
+										required : true
+									},
+									actionOwner : {
+										required : true
+									},
+									frequency : {
+										required : true
+									},
+									actionOwnerName : {
+										required : true
+									},
+								},
+								messages : {
+									actionName : {
+										required : "Please provide a action name"
+									},
+									actionDescription : {
+										required : "Please provide a description for action plan"
+									},
+									completionDate : {
+										required : "Please provide a completion date for action plan"
+									},
+									actionOwner : {
+										required : "Please select a owner for action plan"
+									},
+									frequency : {
+										required : "Please select a action update frequency"
+									},
+									actionOwnerName : {
+										required : "Please select a action owner Name"
+									},
+								},
+								errorElement : 'span',
+								errorPlacement : function(error, element) {
+									error.addClass('invalid-feedback');
+									element.closest('.form-group')
+											.append(error);
+								},
+								highlight : function(element, errorClass,
+										validClass) {
+									$(element).addClass('is-invalid');
+								},
+								unhighlight : function(element, errorClass,
+										validClass) {
+									$(element).removeClass('is-invalid');
+								},
+								submitHandler : function(form) {
+									//toastr
+									//		.success('Action Plan Created Successfully');
+									document.getElementById('load').style.visibility = "visible";
+									form.submit();
+									// setTimeout( function () { 	
+									//form.submit();
+									//	}, 2000);	
+								}
+							});
+		});
+	</script>
+	<script type="text/javascript">
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			setTimeout(function() {
+				document.getElementById('load').style.visibility = "hidden";
+			}, 1000);
+		}
+	</script>
+	<script>
+		$('#cancelmodel').on('show.bs.modal', function(event) {
+		 	var button = $(event.relatedTarget)
+			//var recipient = button.data('whatever') 
+			var recipient = $('#datasource').val()
+			var modal = $(this)
+			$('a.target').attr('href', 'mainActionPlan'); 
+			// window.history.back();
+
+		})
+	</script>
+	<script>
+		function setOwnerId() {
+
+			var actionOwnerId = $('#actionOwnerName').val();
+
+			$("#actionOwner").val(actionOwnerId);
+
+		}
+	</script>
+	<script>
+	$("#cancel_btn")
+	.click(
+			
+			function() {
+							//alert("cancel btn called ")
+					document.getElementById('load').style.visibility = "visible";
+			var reqString = "{\"sourceId\":\""
+							+ $("#sourceIdTemp").val()
+							+ "\",\n"
+							+ "\"sourceName\":\""
+							+ $("#sourceNameTemp").val() + "\",\n"
+							+ "\"moduleName\":\""
+							+ $("#moduleNameTemp").val()+ "\"}"
+					//alert(reqString);
+
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(
+							128 / 8).toString(CryptoJS.enc.Hex);
+					console.log('passphrase '+passphrase);
+					var aesUtil = new AesUtil(keySize,
+							iterationCount);
+					console.log('aesUtil '+aesUtil);
+					var ciphertext = aesUtil.encrypt(
+							reverseText(passphrase), reqString);
+					console.log('ciphertext '+ciphertext);
+
+					$("#encryptedJsonTemp").val(
+							ciphertext + ':~:' + passphrase);
+				
+					$("#cancelActionPlan").submit();
+				
+			});
+	</script>
+	
+</body>
+</html>

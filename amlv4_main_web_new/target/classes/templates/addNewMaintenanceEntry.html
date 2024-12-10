@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+  #load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+} 
+
+textarea {
+	overflow-y: scroll;
+}
+
+.files input {
+    outline: 2px dashed #92b0b3;
+    outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    padding: 120px 0px 85px 35%;
+    text-align: center !important;
+    margin: 0;
+    width: 100% !important;
+}
+ .files input:focus{     outline: 2px dashed #92b0b3;  outline-offset: -10px;
+    -webkit-transition: outline-offset .15s ease-in-out, background-color .15s linear;
+    transition: outline-offset .15s ease-in-out, background-color .15s linear; border:1px solid #b0c4de;
+ } 
+.files{ position:relative}
+.files:after {  pointer-events: none;
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 50px;
+    right: 0;
+    height: 56px;
+    content: "";
+     background-image: url(https://image.flaticon.com/icons/png/128/109/109612.png); 
+    display: block;
+    margin: 0 auto;
+    background-size: 100%;
+    background-repeat: no-repeat;
+}
+.color input{ background-color:powderblue	;}
+.files:before {
+    position: absolute;
+    bottom: 10px;
+    left: 0;  pointer-events: none;
+    width: 100%;
+    right: 0;
+    height: 57px;
+    content: "    or drag it here. ";
+    display: block;
+    margin: 0 auto;
+    color: #2ea591;
+    font-weight: 600;
+    text-transform: capitalize;
+    text-align: center;
+}
+.card {
+    border-radius: 5px;
+    -webkit-box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px rgba(43, 43, 43, .1);
+    box-shadow: 0 0 5px 0 rgba(43, 43, 43, .1), 0 11px 6px -7px rgba(43, 43, 43, .1);
+    border: none;
+    margin-bottom: 30px;
+    -webkit-transition: all .3s ease-in-out;
+    transition: all .3s ease-in-out
+}
+
+.card .card-header {
+    background-color: transparent;
+    border-bottom: none;
+    padding: 20px;
+    position: relative
+}
+
+.card .card-header h5:after {
+    content: "";
+    background-color: #d2d2d2;
+    width: 101px;
+    height: 1px;
+    position: absolute;
+    bottom: 6px;
+    left: 20px
+}
+
+.card .card-block {
+    padding: 1.25rem
+}
+
+.active{
+ background-color: Dodgerblue !important;
+ }
+  
+
+/* .mt-4, .my-4 {
+	margin-top: 1.8rem !important; */
+
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>System Maintenance Page</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/SystemMaintenanceSummary}">System Maintenance Summary</a></li>
+								<li class="breadcrumb-item active2">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title text-center">Create</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="frmDocumentUploader" autocomplete="off"
+									 method="post" th:action="@{/addNewMaintenanceEntryAction}"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+									th:field="*{encryptedJson}" /> <input type="hidden"
+										id="userName" th:field="${user.username}" name="userName" />
+
+									<div class="card-body">
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="raRecordStatus">Maintenance Id</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold"
+															id="DocumentId" name="DocumentId" th:field="${sysPk.maintenanceId}"
+															 readonly>
+													</div>
+												</div>
+											</div>
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="Sr.no">Record Status</label>
+													<div class="input-group">
+														<input type="text" class="form-control form-control-sm text-bold"
+															name="Status" id="Status" value="Create" readonly>
+
+													</div>
+												</div>
+											</div>
+									</div>
+								
+										<div class="row">
+										
+											
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="WorkflowName">Maintenance Description <code>*</code>
+													</label>
+													<textarea type="text" class="form-control form-control-sm"
+														id="FileDescription" name="FileDescription "
+														placeholder="File Description" Required></textarea>
+													</div>
+												</div>
+											
+											
+										</div>
+										
+										
+										<div class="row" >
+											
+											<div class="col-sm-6" >
+											<div class="form-group" id="dvPassport" >
+											    <label>Start Date<code>*</code></label>
+											    <input type="Date" id="startdate" th:name="duration" class="form-control form-control-sm"/>
+											</div>
+											</div>
+											
+											<div class="col-sm-6" >
+											<div class="form-group" id="Passport" >
+											    <label>End Date<code>*</code></label>
+											    <input type="Date" id="enddate" th:name="duration" class="form-control form-control-sm"/>
+											</div>
+											</div>
+										</div>
+										
+										<div class="row" >
+											
+											<div class="col-sm-6" >
+											<div class="form-group" id="dvPassport" >
+											    <label>Start Time<code>*</code></label>
+											    <input type="Time" id="starttime" th:name="duration" class="form-control form-control-sm"/>
+											</div>
+											</div>
+											
+											<div class="col-sm-6" >
+											<div class="form-group" id="Passport" >
+											    <label>End Time<code>*</code></label>
+											    <input type="Time" id="endtime" th:name="duration" class="form-control form-control-sm"/>
+											</div>
+											</div>
+										</div>
+										</div>
+										<div class="card-body">
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="customFile">Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table table-bordered table-striped uploadTable" 
+												id="filedetails" style="display: none">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Upload By</th>
+															<th>Upload Date</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													
+													</tbody>
+												</table>
+											</div>
+										</div>
+										
+										<div class="row">
+											<div class="col-sm-12">
+
+												<input type="hidden" id="username1" th:value="${user.username}">
+												
+											</div>
+										</div>
+										
+										</div>
+
+									
+
+
+
+									<!-- /.card-body -->
+									<div class="card-footer">
+										<button type="button" class="btn btn-info" id="create_btn"> <i
+											class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</button> 
+										<a href="#" data-toggle="modal" data-whatever="DocumentManagerSummary"
+											data-target="#cancelmodel"><button type="reset"
+												class="btn btn-warning" title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+									<!-- /.card-footer -->
+								</form>
+							</div>
+							</div>
+							</div>
+							
+						</div>
+						
+				<!--/. container-fluid -->
+			
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</section>
+					</div>
+				</div>
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+		<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- REQUIRED SCRIPTS -->
+	<script>
+	$(document).ready(function() {
+	
+	//Initialize Select2 Elements
+	$('.select2').select2();
+
+	bsCustomFileInput.init();
+	
+	});
+	//loader
+	document.onreadystatechange = function() {
+		var state = document.readyState
+		setTimeout(function() {
+			document.getElementById('load').style.visibility = "hidden";
+		}, 1000);
+	}
+
+	
+
+	</script>
+	
+	<script>
+		// File upload //
+	 	var totalsizeOfUploadFiles = 0;
+		function getFileData(input) {
+			var select = $('.uploadTable');
+
+			for (var i = 0; i < input.files.length; i++) {
+				var filesizeInBytes = input.files[i].size;
+				var filesizeInMB = (filesizeInBytes / (1024)).toFixed(2);
+				var filename = input.files[i].name;
+				var userName = $("#username1").val();
+				var flg = true;
+				$('.uploadTable tr').each(function() {
+					var fName = $(this).find('td:eq(0)').text();
+					if (fName == filename) {
+						flg = false;
+					}
+				});
+				if (flg) {
+					select
+							.append($('<tr id=tr'+i+'><td id=filetd'+i+'>'
+									+ filename
+									+ '</td><td id=filesizetd'+i+'>'
+									+ filesizeInMB
+									+ ' kb</td><td class="text-capitalize">'
+									+ userName
+									+ '</td><td>'
+									+ moment(new Date()).format('YYYY-MM-DD')
+									+ '</td><td class="project-actions text-right"><a class="btn btn-danger btn-sm"  id="closerow"><i class="fas fa-window-close"></i></a></td></tr>'));
+
+					totalsizeOfUploadFiles += parseFloat(filesizeInMB);
+				}
+
+				$('#filedetails').show();
+
+			}
+
+			$(".uploadTable").on("click", "#closerow", function() {
+
+				$(this).closest("tr").remove();
+
+				var rowCount = $('.uploadTable tr').length;
+
+				if (rowCount == 1) {
+					$('#filedetails').hide();
+				}
+			});
+
+		} 
+
+		//
+	</script>
+	
+	<script type="text/javascript">
+	
+	
+
+	
+	
+	
+	$("#create_btn")
+	.click(
+			function(e) {
+				var emailflag = false;
+					if($("#startdate").val() == '' || $("#enddate").val() == ''){
+						emailflag=true;
+						toastr.error('Please enter EndDate And StartDate');
+					}
+				
+				 
+				if(startdate <= enddate){
+
+					var filedetails = "[\n";
+					if ($('#filedetails tr').length > 0) {
+						$('#filedetails > tbody  > tr')
+								.each(
+										function(index, value) {
+											var splitvalue = $(this)
+													.find(
+															'td:eq(0)')
+													.text().split(
+															'.');
+											var sizesplit = $(this)
+													.find(
+															'td:eq(1)')
+													.text().split(
+															' ');
+											filedetails = filedetails
+													+ "  {  \"fileName\": \""
+													+ $(this)
+															.find(
+																	'td:eq(0)')
+															.text()
+													+ "\",\n"
+													+ "    \"fileSize\": \""
+													+ sizesplit[0]
+													+ "\",\n"
+													+
+
+													"    \"fileType\": \""
+													+ splitvalue[1]
+													+ "\",\n"
+													+
+													"    \"uploadTimestamp\": \""
+													+ $(this)
+													.find(
+															'td:eq(3)')
+													.text()
+													+ "\"\n"
+													+ " },";
+
+										});
+						//filedetails = filedetails.slice(0,-1);
+						filedetails = filedetails.substring(0,
+								filedetails.length - 1);
+					}
+					filedetails = filedetails + "]";
+					
+					//console.log(filedetails);
+ 
+					var apString = "{\"maintenanceId\":\""
+							+ $("#DocumentId").val()
+							+ "\",\n"
+							+ "\"maintenanceDesc\":\""
+							+ $("#FileDescription").val() + "\",\n"
+							+ "\"startDate\":\"" + $("#startdate").val()
+							+ "\",\n" + "\"endDate\":\""
+							+ $("#enddate").val() + "\",\n" + "\"startTime\":\""
+							+  $("#starttime").val()+ "\",\n" + "\"endTime\":\""
+							+ $("#endtime").val() + "\",\n"
+							+ "\"fileDetailsList\":" + filedetails
+							+ "}" 
+
+					//var apString=""
+					//console.log(apString);
+
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(
+							128 / 8).toString(CryptoJS.enc.Hex);
+
+					var aesUtil = new AesUtil(keySize,
+							iterationCount);
+
+					var ciphertext = aesUtil.encrypt(
+							reverseText(passphrase), apString);
+
+					$("#encryptedJson").val(
+							ciphertext + ':~:' + passphrase);
+					
+					if(emailflag==false){
+					$("#frmDocumentUploader").submit();
+					}
+
+				
+				}else{
+					toastr.error('EndDate should be greater StartDate');
+				}
+				
+					
+					
+			});
+	
+	
+	</script>
+
+</body>
+</html>

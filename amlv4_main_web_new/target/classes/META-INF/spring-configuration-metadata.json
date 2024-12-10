@@ -1,0 +1,37 @@
+{
+  "groups": [
+    {
+      "name": "available-product-list",
+      "type": "com.idbi.intech.aml.domain.app.ProductMasterDto",
+      "sourceType": "com.idbi.intech.aml.domain.app.ProductMasterDto"
+    },
+    {
+      "name": "roles",
+      "type": "com.idbi.intech.erm.domain.app.Role",
+      "sourceType": "com.idbi.intech.erm.domain.app.Role"
+    }
+  ],
+  "properties": [
+    {
+      "name": "available-product-list.configurations",
+      "type": "java.util.List<com.idbi.intech.aml.domain.app.ChannelConfiguration>",
+      "sourceType": "com.idbi.intech.aml.domain.app.ProductMasterDto"
+    },
+    {
+      "name": "roles.admin",
+      "type": "java.lang.String",
+      "sourceType": "com.idbi.intech.erm.domain.app.Role"
+    },
+    {
+      "name": "roles.branch",
+      "type": "java.lang.String",
+      "sourceType": "com.idbi.intech.erm.domain.app.Role"
+    },
+    {
+      "name": "roles.name",
+      "type": "java.lang.String",
+      "sourceType": "com.idbi.intech.erm.domain.app.Role"
+    }
+  ],
+  "hints": []
+}

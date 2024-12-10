@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style type="text/css">
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.viewThresh {
+	visibility: visible;
+	width: 120px;
+	background-color: white;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+	bottom: 2em;
+	left: 75%;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus
+	{
+	background-color: #FCD900 !important;
+}
+
+body {
+	text-align: center;
+	font-family: "Bookman Old style";
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+th:nth-child(6) {
+	/* Set the desired width for the second header column */
+	width: 200px;
+}
+
+th:nth-child(2) {
+	/* Set the desired width for the second header column */
+	width: 100px;
+}
+
+th:nth-child(3) {
+	/* Set the desired width for the second header column */
+	width: 100px;
+}
+
+th:nth-child(1) {
+	/* Set the desired width for the second header column */
+	width: 50px;
+}
+
+.table-container {
+	display: inline;
+	text-align: left;
+	width: 60%;
+	margin-bottom: 50px; /* Original margin */
+	margin-left: 300px;
+	margin-top: 50px; /* Original margin */
+	/* added */
+}
+
+.table1 {
+	width: 80%;
+	max-height: 15%; /* Adjust the height as needed */
+	/* Other styles... */
+}
+
+body {
+	margin: 0;
+	/* font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; */
+	/* font-family:"Bookman Old style"; */
+	font-size: .875rem !important;
+	font-weight: 400;
+	color: #212529;
+	text-align: left;
+	background-color: #fff;
+}
+
+header {
+	width: 100%;
+	padding: 10px 0 0 15px;
+	display: flex;
+	flex-direction: row;
+}
+
+.login-box, .register-box {
+	width: 420px;
+	margin: 65px auto;
+	margin-bottom: 100px;
+}
+
+.content {
+	display: flex;
+	width: 85%;
+	margin: 120px auto;
+}
+
+hr {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border: 0;
+}
+
+span {
+	font-size: 13px;
+}
+
+.loginfooter {
+	bottom: 0;
+	position: fixed;
+	background: white;
+	border-top: 1px solid #dee2e6;
+	color: #869099;
+	width: 100%;
+	display: inline-flex;
+	padding: 5px 0 5px 0;
+}
+
+.float-right {
+	float: right !important;
+	text-align: end;
+	padding: 0 10px 0px 0px;
+}
+
+.lic-hands {
+	margin: 0px;
+	background-color: #ffffff;
+	margin-left: 120px;
+	margin-top: 260px;
+	width: 380px;
+	height: 230px;
+}
+
+.right-side-box-firstRow {
+	margin-top: 5px;
+}
+
+.apis-div {
+	margin-left: 60px;
+	margin-top: 25px;
+}
+
+a:hover {
+	cursor: pointer;
+}
+
+#partitioned {
+	padding-left: 15px;
+	letter-spacing: 42px;
+	border: 0;
+	background-image: linear-gradient(to left, black 70%, rgba(255, 255, 255, 0)
+		0%);
+	background-position: bottom;
+	background-size: 50px 1px;
+	background-repeat: repeat-x;
+	background-position-x: 35px;
+	width: 220px;
+}
+
+.table-heading.bg-success {
+	background-color: #5cb85c; /* Green color */
+}
+
+.head {
+	/* background: linear-gradient(90deg, hsla(200, 100%, 25%, 1) 0%,
+		hsla(180, 100%, 40%, 1) 100%); */
+		background: linear-gradient(90deg, hsla(270, 100%, 80%, 1) 0%, hsla(240, 100%, 65%, 1) 100%);
+	color: white;
+}
+
+
+table#tblCustomers {
+    /* -webkit-box-shadow: -10px -7px 12px -6px rgba(0,0,0,0.63); */
+    -moz-box-shadow: -10px -7px 12px -6px rgba(0,0,0,0.63);
+    /* box-shadow: -10px -7px 12px -6px rgba(0,0,0,0.63); */
+    /* -webkit-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75); */
+    -moz-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+    /* box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75); */
+    -webkit-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+    box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+}
+
+table#tblcustomer2 {
+    /* -webkit-box-shadow: -10px -7px 12px -6px rgba(0,0,0,0.63); */
+    -moz-box-shadow: -10px -7px 12px -6px rgba(0,0,0,0.63);
+    /* box-shadow: -10px -7px 12px -6px rgba(0,0,0,0.63); */
+    /* -webkit-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75); */
+    -moz-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+    /* box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75); */
+    -webkit-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+    -moz-box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+    box-shadow: 10px 8px 19px -5px rgba(0,0,0,0.75);
+}
+
+.yellow-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #ffcc00;
+    border-radius: 20px;
+}
+
+.orange-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color:  #ff3300;
+    border-radius: 20px;
+}
+
+
+.blue-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #00ccff;
+    border-radius: 20px;
+}
+
+.green-pill {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #33cccc;
+    border-radius: 20px;
+}
+
+
+  .red-text {
+        color: #ff0066;
+    }
+    
+    .blue-text {
+        color: #0066ff;
+    }
+</style>
+</head>
+<body>
+	<div class="wrapper">
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper"
+			style="width: 1014px; min-height: 312.667px;">
+			<section class="content-header" style="margin-bottom: 20px;">
+				<div class="container-fluid">
+					<div class="row mb-0" style="height: 0px;">
+						<div class="col-sm-6">
+							<h4>REPORT</h4>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/regAnalysisReport}">Regulatory
+										Report Analysis</a></li>
+								<li class="breadcrumb-item active">REPORT</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content"
+				style="margin-right: 0px; margin-top: 0px; margin-left: 0px; width: 100%; margin: 0 auto; padding: 0; box-sizing: border-box;">
+
+				<div class="row"
+					style="width: 100%; min-height: 100vh; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; background: #f0f0f5; padding: 0px 90px; margin-left: 10px;">
+					<!--body  -->
+
+
+					<div class="table-responsive-lg"
+						style="margin-top: 30px; width: 100%; border-radius: 30px; padding: 0; box-sizing: border-box;">
+
+						<div class="table-heading head text-center rounded  "
+							style="width: 80%; display: table; margin-bottom: 10px; /* width: 100%!important; */ display: table; border-radius: 10px;">
+							<h4
+								th:text="${reportType + ' REPORT ANALYSIS OF ' + month + ' ' + year}"
+								class="text-light"></h4>
+						</div>
+						<table
+							class="table1 table table-hover  border border-secondary table-striped"
+							id="tblCustomers"
+							style="border-radius: 10px;  background-color: ghostwhite; box-sizing: border-box; border: 1px solid black;">
+
+
+							<thead style="background-color:teal; color: antiquewhite;">
+								<tr>
+									<th style="width: 20%;">Request ID</th>
+									<th>Criteria</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody class="table-group-divider ">
+								<tr th:each="row : ${regAnalysisFinal}">
+									<td><h4>
+											<span  th:text="${row.requestId}"></span>
+										</h4></td>
+									<td><h4>
+											<span class="red-text" th:text="${row.threshold}" id="thresholdSpan"></span>
+										</h4></td>
+									<td><h4>
+											<span  class="yellow-pill" th:text="${row.value}"></span>
+										</h4></td>
+
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+					<div class="table-responsive-lg"
+						style="margin-top: 30px; width: 100%; border-radius: 30px; padding: 0; box-sizing: border-box;"
+						th:if="${not #lists.isEmpty(regAnalysis)}">
+
+						<div class="table-heading head text-center rounded "
+							style="width: 80%; display: table; margin-bottom: 10px; /* width: 100%!important; */ display: table; border-radius: 10px; overflow: hidden;">
+							<h4
+								th:text="${reportType + ' REPORT ANALYSIS OF ' + month + ' ' + year}"
+								class="text-light"></h4>
+						</div>
+
+						<table
+							class="table1 table table-hover  border border-secondary table-striped"
+							style="border-radius: 10px;  background-color: ghostwhite; box-sizing: border-box; border: 1px solid black;"id="tblcustomer2">
+
+							<thead style="background-color:teal; color: antiquewhite;">
+								<tr>
+									<th style="width: 80px;">Request ID</th>
+									<th style="width: 30%;">Criteria</th>
+									<th>TotalCnt</th>
+									<th>TotalCreCnt</th>
+									<th>TotalDebCnt</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="row : ${regAnalysis}">
+									<td><h4>
+											<span th:text="${row.requestId}"></span>
+										</h4></td>
+
+									<td><h4>
+											<span class="red-text" th:text="${row.threshold}" style="width: 90px;" id="thresholdSpan2"></span>
+										</h4></td>
+
+									<td><h4>
+											<span  class="yellow-pill"  th:text="${row.totalCnt}"></span>
+										</h4></td>
+									<td><h4>
+											<span class="blue-pill" th:text="${row.totalCreCnt}"></span>
+										</h4></td>
+									<td><h4>
+											<span class="green-pill" th:text="${row.totalDebCnt}"></span>
+										</h4></td>
+
+								</tr>
+							</tbody>
+						</table>
+					</div>
+
+
+				</div>
+
+
+
+
+
+			</section>
+
+
+		</div>
+
+		<div th:insert="/footer::footer"></div>
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- footer -->
+	</div>
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	
+	<script>
+    var spanText = document.getElementById("thresholdSpan").textContent;
+    spanText = spanText.charAt(0).toUpperCase() + spanText.slice(1);
+    document.getElementById("thresholdSpan").textContent = spanText;
+    
+    
+    var spanText = document.getElementById("thresholdSpan2").textContent;
+    spanText = spanText.charAt(0).toUpperCase() + spanText.slice(1);
+    document.getElementById("thresholdSpan2").textContent = spanText;
+</script>
+
+	<script>
+		$(function() {
+			$("#alertList").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : [ 0, 7 ]
+				} ],
+				"order" : [ 5, "asc" ],
+				"responsive" : false,
+				"lengthMenu" : [ 25, 50, 75, 100 ],
+				"autoWidth" : true,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo(
+					'#alertList_wrapper .col-md-6:eq(0)');
+		});
+	</script>
+</body>
+</html>

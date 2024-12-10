@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+ #load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+} 
+ 
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Document Manager Summary</h1>
+						</div>
+							<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Document Management</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+										
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="card collapsed-card card-outline card-secondary" id="collapse">
+														<div class="card-header" data-card-widget="collapse">
+															<h3 class="card-title text-bold">Search</h3>
+															<button type="button" class="btn btn-tool float-right"
+																data-toggle="tooltip" title="Collapse">
+																<em class="fas fa-plus" style="color: #007bff;"></em>
+															</button>
+														</div>
+														<div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchDocumentList}" id="searchForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row" id="alert">
+																			<label class="col-3">Select Parameter</label> <label
+																				class="col-5">Value</label> <label class="col-4"></label>
+																			<select
+																				class="col-3 form-control form-control-sm select2"
+																				name="dimension" id="dimension"
+																				data-placeholder="Search Parameter">
+																				<option value=''>Select</option>
+																				<option value='documentId'>Document Id</option>
+																				<option value='documentCategory'>Document Category</option>
+																				<option value='documentDesc'>Document Description</option>
+																				<option value='documentDepartment'>Department</option>
+																				
+																				
+																			</select>&nbsp;&nbsp; <input type="text"
+																				class="col-5 form-control form-control-sm"
+																				name="searchcriteria" id="searchcriteria"
+																				placeholder="Value">
+																				<!-- &nbsp; <select
+																				class="col-2 form-control form-control-sm select2"
+																				name="sorting" id="sorting" data-placeholder="Sort">
+																				<option value=''>Sort</option>
+																				<option value='a'>Ascending</option>
+																				<option value='d'>Descending</option>
+																				<option value='n'>None</option>
+																			</select> -->&nbsp;&nbsp; <a class="btn btn-sm btn-info" href="#"
+																				onclick="searchData()" title="Search"> <i
+																				class="fas fa-search fa-1x text-black"></i>
+																			</a>
+																			
+																		</div>
+																		<span id="reason-error"></span>
+																	</div>
+																</div>
+																<!-- /row -->
+															</form>
+														</div>
+														<!-- card-body -->
+													</div>
+													<!-- card -->
+												</div>
+												<!-- ./col -->
+											</div>
+											<!-- ./row -->
+
+											<!-- /row -->
+
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-header">
+														<input type="hidden" th:value="*{message}" id="message" />
+																<span class="float-right"> 
+																<a
+															th:href="@{/UploadNewDocument}" class="btn bg-teal" 
+															style="margin-right: 5px;" title="Create User"> <i
+																class="fas fa-plus-square"></i>&nbsp;Create
+														</a></span>
+														</div>
+														<div class="card-body table-responsive">
+															
+																<form autocomplete="off" role="form" method="post"
+																 id="editUserForm"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" /><input type="hidden"
+																	name="userRole" id="userRole" th:value="${userRole}"
+																	th:name="clientName" />
+
+
+														<table id="Documenttable"
+															class="table table-bordered table-striped table-head-fixed ">
+															<thead>
+																<tr>
+
+																	<th>Document ID</th>
+																	<th>Document Category</th>
+																	<th>Office Type</th>
+																	<th>Module Name</th>
+																	<th>Department</th>
+																	<th>Document Description</th>
+																	<th></th>
+																	
+																	
+
+																</tr>
+															</thead>
+															<tbody>
+																
+																<tr th:each="documentList:${docList.documentDataList}" >
+																	
+																<td><a class="text-blue documentModel"
+																				data-toggle="modal" href="#"
+																				th:id="${documentList.documentId}"
+																				th:text="${documentList.documentId}"></a></td>
+																
+																	<td th:text="${documentList.documentCategory}" class="text-capitalize"></td>
+																
+																<td th:value="${user.selectedOfficeType}" th:switch="${user.selectedOfficeType}" class="text-capitalize">
+																	<span th:case="'DO'" >DIVISIONAL OFFICE</span>
+																		<span th:case="'CO'" >CENTRAL OFFICE</span>
+																		<span th:case="'ZO'" >ZONAL OFFICE</span>
+																		<span th:case="'BO'" >BRANCH OFFICE</span>
+																		</td>
+																
+																<!-- <td th:text="${docList.documentModuleName}" class="text-capitalize"></td> -->
+																		
+																<td>
+																
+																<th:block th:each="modelList,iter:${documentList.modeleList}">
+																<div th:if="${modelList.documentModuleName != null}">
+																<div th:if="${modelList.documentId == documentList.documentId}">
+																 <div th:text="${modelList.documentModuleName+'.'}" ></div>
+																 </div>
+																  </div>
+																 
+																</th:block>
+																<div th:text="${documentList.documentModuleName}" ></div>
+																
+																</td>
+																	
+																<td th:text="${documentList.documentDepartment}" class="text-capitalize"></td>
+																<td th:text="${documentList.documentDesc}" class="text-capitalize"></td>
+																
+														
+																<td>
+																<div>
+																<button type="button" class="btn bg-red" data-toggle="modal" 
+																name="remove" data-target="#commentmodal" title="Remove">
+																<i class='fas fa-close'></i></button>
+																
+																<!-- ./wrapper -->
+																<div class="modal fade" id="commentmodal">
+																				<div class="modal-dialog modal-lg">
+																					<div class="modal-content">
+																						<div class="modal-header bg-info">
+																							<h5 class="modal-title">Comments</h5>
+																							<button type="button" class="close" data-dismiss="modal"
+																								aria-label="Close">
+																								<span aria-hidden="true">&times;</span>
+																							</button>
+																						</div>
+										
+																						<!-- form start -->
+										
+																						<div class="card-body">
+																							<!-- /.tab-pane -->
+																							<div class="tab-pane" id="comments">
+										
+																								<div class="row">
+																									<div class="col-sm-12">
+																										<div class="form-group">
+																											<label for="comments">Reason For Rejection <code>*</code></label>
+																											<textarea class="form-control" name="reason"
+																												id="rejectReason" maxlength="3000"
+																												placeholder="Reason For Rejection"></textarea>
+																											<span id="reason-error"></span>
+																										</div>
+																									</div>
+																								</div>
+																								<div class="card-footer">
+																									<a class="btn btn-info remove" th:name="remove" th:id="${docList.documentId}"
+																										>
+																										<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+																									</a>
+																								</div>
+																								<!-- /.row -->
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																
+																
+																
+																
+																</div>
+																</td>
+																
+																</tr>
+
+
+															</tbody>
+														</table>
+															</form>
+															<!-- /form -->
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse">
+												<!-- timeline time label -->
+												<div class="time-label">
+													<span class="bg-success"> 10 Feb. 2014 </span>
+												</div>
+												<!-- /.timeline-label -->
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 5
+															mins ago</span>
+
+														<h3 class="timeline-header border-0">
+															<a href="#">Rohit Singh</a> approved request
+														</h3>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div class="time-label">
+													<span class="bg-success"> 3 Jan. 2014 </span>
+												</div>
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 27
+															mins ago</span>
+
+														<h3 class="timeline-header">
+															<a href="#">Akshay Mhatre</a> created request
+														</h3>
+
+														<div class="timeline-body">Request created.</div>
+														<div class="timeline-footer">
+															<a href="#" class="btn btn-warning btn-flat btn-sm">View
+																comment</a>
+														</div>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline time label -->
+
+												<!-- /.timeline-label -->
+
+												<!-- END timeline item -->
+												<div>
+													<i class="far fa-clock bg-gray"></i>
+												</div>
+											</div>
+										</div>
+										<!-- /.tab-pane -->
+
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+
+
+			
+				<!-- View Modal -->
+				<div class="modal fade" id="viewDocumentModel">
+				<form autocomplete="off" role="form" method="post"
+						th:action="@{/DocumentManagerSummary}" id="fileForm"
+						th:object="${encryptedRequest}">
+						<input type="hidden" id="encryptedJsonFile" name="encryptedJson" />
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">
+									DOCUMENT ID - <span id="documentIdLabel"></span>
+								</h5>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+							<form class="form-horizontal">
+								<div class="card-body">
+							
+										<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="parameter_key">File Category</label> <input
+															type="text" class="form-control form-control-sm"
+															id="Category" name="Category"
+															value="" placeholder="File Category"
+															readonly>
+													</div>
+												</div>
+
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="parameter_key">File Description</label> <textarea
+															 class="form-control form-control-sm"
+															id="FileDesc" name="FileDesc"
+															value="" placeholder="FileDesc I"
+															readonly></textarea>
+													</div>
+												</div>
+
+
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="parameter_key">Module Name</label> <textarea
+															type="text" class="form-control form-control-sm"
+															id="module" name="module"
+															value=""
+															placeholder="Module Name" readonly></textarea>
+													</div>
+												</div>
+											</div>
+											
+										
+											<div class="row">
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="riskcategory">Office Type </label> <input
+															type="text" class="form-control form-control-sm"
+															id="mOfficeType" name="mOfficeType"
+															value=""
+															placeholder="Office Type" readonly>
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="riskcategory">Department </label> <input
+															type="text" class="form-control form-control-sm"
+															id="mDepartment" name="mDepartment"
+															value=""
+															placeholder="Department" readonly>
+
+													</div>
+												</div>
+												<div class="col-sm-4">
+													<div class="form-group">
+														<label for="userRoleShortName">File Valid Till Date</label><input
+															type="text" class="form-control form-control-sm textCapitalize"
+															id="Notification" name="Notification"
+															value=""
+															placeholder="Notification" readonly>
+
+													</div>
+												</div>
+											</div>
+											
+										<div class="row" id="fileDiv" style="display: none">
+										<div class="col-sm-12 table-responsive" >
+											<div class="card card-outline card-secondary">
+												<div class="card-header">
+													<h3 class="card-title text-bold">Document List</h3>
+												</div>
+												<div class="card-body">
+													<table class="table table-bordered table-striped"
+														id="modalFileId">
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size</th>
+																<th>Uploaded By</th>
+																<th>Uploaded Date</th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+									</div>
+									
+
+								
+
+
+																<div class="card-footer">
+
+									<button class="btn btn-secondary" id="backbtn">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</div>
+								</div>
+								</form>
+								</div>
+								</div>
+								<!-- /.card-footer -->
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</section>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- Comment Modal -->
+				
+
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- <script th:src="@{/dist/appjs/erm/filedownload.js}"></script> -->
+<script>	
+
+$(document).ready(function(){
+    $("#searchcriteria").keypress(function (e) {
+      var key = e.keyCode;
+      $return = (key == 8 || key == 32 || (key >= 48 && key <= 57) || (key > 64 && key < 91) || (key > 96 && key < 123)  );
+      if(!$return) {
+    	  toastr.error('No special characters Allowed!');
+        return false;
+      }
+    });
+  });
+
+
+$(function() {
+	//Initialize Select2 Elements
+	$('.select2').select2();
+
+	bsCustomFileInput.init();
+});
+
+$(".remove") 
+.click(
+		function() {
+			var reasonCheck = $('#rejectReason').val();
+			if (reasonCheck == '') {
+				$('span[id^="reason-error"]').remove();
+				$('#rejectReason').addClass('is-invalid');
+				$('#rejectReason')
+					.after(
+						'<span id="reason-error" class="error invalid-feedback" style="display: inline;">Please provide a Reason</span>');
+			} else if (reasonCheck.length < 10) {
+				$('span[id^="reason-error"]').remove();
+				$('#rejectReason').addClass('is-invalid');
+				$('#rejectReason')
+					.after(
+						'<span id="reason-error" class="error invalid-feedback" style="display: inline;">Reason must be greater than 10 characters</span>');
+			} else {
+				
+				
+				var reason = $('#rejectReason').val().replace(/(\r\n|\n|\r)/gm, "");
+
+			var documentId = $(this).attr('id');
+			
+			var pageValJson = "{\"documentId\":" + "\""+ documentId + "\"\,\"reasonComment\":" + "\""+ reason + "\"}";
+			console.log(pageValJson);
+			 document.getElementById('load').style.visibility = "visible";
+			 // ajax call
+			$
+				.ajax({
+					url: 'removeDocumentById',
+					type: "POST",
+					data: {
+						pageValJson: pageValJson
+					},// important line for thymeleaf http security
+
+					headers: {
+						"X-CSRF-TOKEN": $( "input[name='_csrf']").val()
+					},
+					cache: false,
+					// async:true,
+					success: function(response) {
+							
+						
+						var jsonResponse = JSON
+							.stringify(response);
+						
+						obj = JSON.parse(jsonResponse);
+						
+					if(obj != null){
+						 location.reload();
+						 toastr
+							.success('Document has been removed');
+					}
+					 	
+			
+			},
+			error: function(xhr, status, error) {
+				console.log(xhr);
+				toastr
+					.error('Some Error Occured here	');
+			}
+		}); 			
+			}
+		});
+
+	
+	$(function() {
+		
+		var currentdate = new Date(); 
+	    var datetime =+ currentdate.getDate() + "/"
+	                + (currentdate.getMonth()+1)  + "/" 
+	                + currentdate.getFullYear() + "_"  
+	                + currentdate.getHours() + ":"  
+	                + currentdate.getMinutes() + ":" 
+	                + currentdate.getSeconds();
+		
+		$("#Documenttable").DataTable({
+			"columnDefs" : [ {
+				orderable : false,
+				targets : [6]
+			} ],
+			"order" : [ 0, "desc" ],
+			"responsive" : false,
+			"lengthMenu" : [ 10,25, 50, 75, 100 ],
+			"autoWidth" : true,
+			"searching" : false,
+			"fixedHeader" : true,
+			
+			"language" : {
+				"emptyTable" : "No Data Available"
+			},
+		"buttons": [{
+			
+			extend: 'excel',
+			exportOptions: {
+				columns: [0, 1, 2, 3, 4, 5]
+            },
+			title: 'Document_Summary_'+datetime,
+		
+		},{
+			
+			extend: 'csvHtml5',
+			exportOptions: {
+				columns: [0, 1, 2, 3, 4, 5]
+            },
+			title: 'Document_Summary_'+datetime,
+		
+		},{
+			
+			extend: 'print',
+			exportOptions: {
+				columns: [0, 1, 2, 3, 4, 5]
+            },
+			title: 'Document_Summary_'+datetime,
+		
+		},{
+			
+			extend: 'pdfHtml5',
+			exportOptions: {
+				columns: [0, 1, 2, 3, 4, 5]
+            },
+			title: 'Document_Summary_'+datetime,
+		
+		}]
+			}).buttons().container().appendTo(
+				'#Documenttable_wrapper .col-md-6:eq(0)');
+	});
+
+	//loader
+	document.onreadystatechange = function() {
+		var state = document.readyState
+		setTimeout(function() {
+			document.getElementById('load').style.visibility = "hidden";
+		}, 1000);
+	}
+
+	//Button Click
+	$(document).ready(function() {
+		var message = $('#message').val();
+		if (message != "") {
+			toastr.success(message);
+		}
+
+		$("a .fa-tools").click(function() {
+			$('#actionplanlink').css('class', 'border');
+			$('#actionplanlink').css('display', '');
+			$('#actionplanlink').click();
+		});
+
+		$("a .fa-twitch").click(function() {
+			$('#timelinelink').css('class', 'border');
+			$('#timelinelink').css('display', '');
+			$('#timelinelink').click();
+		});
+
+		$("#summarylink").click(function() {
+			$('#actionplanlink').css('display', 'none');
+			$('#timelinelink').css('display', 'none');
+		});
+
+		$("#actionplanlink").click(function() {
+			$('#timelinelink').css('display', 'none');
+		});
+
+		//download
+
+
+	});
+</script>
+	
+	
+	<script>
+ $('a.documentModel')
+	.click(
+			function() {
+
+				var documentId = $(this).attr('id');
+				
+
+				var pageValJson = "{\"documentId\":" + "\""
+						+ documentId + "\"}";
+						
+						
+						console.log(pageValJson);
+						
+				document.getElementById('load').style.visibility = "visible";
+
+				// ajax call
+				 $
+						.ajax({
+							url : 'DocumentViewModel',
+							type : "POST",
+							data : {
+								pageValJson : pageValJson
+							},// important line for thymeleaf http security
+							headers : {
+								"X-CSRF-TOKEN" : $(
+										"input[name='_csrf']")
+										.val()
+							},
+							cache : false,
+							// async:true,
+							success : function(response) {
+								setTimeout(
+										function() {
+											document
+													.getElementById('interactive');
+											document
+													.getElementById('load').style.visibility = "hidden";
+										}, 1000);
+								var jsonResponse = JSON
+										.stringify(response);
+								console.log("json Response "+jsonResponse)
+								var obj = JSON.parse(jsonResponse);
+								console.log("obj "+obj);
+								var i=0; 
+								   $("#documentIdLabel").text(obj.documentId);
+								  $("#Category").val(obj.documentCategory);
+								  $("#FileDesc").val(obj.documentDesc);
+								  $("#module").val(obj.documentModuleName);
+								  $("#mOfficeType").val(obj.documentOfficeType);
+								  $("#mDepartment").val(obj.documentDepartment);
+								  $("#Notification").val(obj.documentEndDate);
+								  $('#modalFileId tr:gt(0)').remove(); 
+									if (obj.fileDetailsList.length > 0) {
+										obj.fileDetailsList
+											.forEach(function(item) {
+												$(
+													'#modalFileId tr:last')
+													.after(
+														'<tr><td>'
+														+ item.fileName
+														+ '</td><td>'
+														+ item.fileSize
+														+ 'KB</td><td class="text-capitalize">'
+														+ item.uploadedBy
+														+ '</td><td>'
+														+ item.uploadTimestamp
+														+ '</td><td><div class="btn-group btn-group-sm">'
+														+ '<a name=' + item.fileName + ' href="#" class="btn btn-info downloadfile"><i '
+														+ ' class="fas fa-download"></i></a>'
+														+ '</div></td></tr>');
+											});
+										var seen = {};
+										$('#modalFileId tr')
+											.each(
+												function() {
+													var txt = $(
+														this)
+														.text();
+													if (seen[txt])
+														$(this)
+															.remove();
+													else
+														seen[txt] = true;
+												});
+										$('#fileDiv').show();
+									}
+								   
+							
+								 },
+							error : function(xhr, status, error) {
+								toastr.error('Some Error Occured');
+							}
+						}); 
+				$('#viewDocumentModel').modal('show');
+			});
+ $("#backbtn").click(function(){
+	 location.reload();
+ });
+ 
+ function formatJSONDate(jsonDate) {
+	  var newDate = dateFormat(jsonDate, "mm/dd/yyyy");
+	  return newDate;
+	}
+ </script>
+ 
+ <script type="text/javascript">
+ 
+	function searchData() {
+		var searchParam = $('#dimension').find(":selected").val();
+		var searchValue = $('#searchcriteria').val().trim().toUpperCase().replace(
+				/(\r\n|\n|\r)/gm, "");
+		if (searchParam == '') {
+			toastr.info('Please Select Search Parameter For Search');
+		} else if (searchValue == '') {
+			toastr.info('Please Add Some Value For Search');
+		} else {
+			
+			
+			var sortValue = $('#sorting').find(":selected").val();
+			var pageValJson = "{\"docSearchParam\":" + "\"" + searchParam
+					+ "\",\"docSearchValue\":\"" + searchValue.replace(/(\r\n|\n|\r)/gm, "")+ "\"}";
+			//alert(pageValJson);		
+											
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+					.toString(CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize, iterationCount);
+			var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+					pageValJson);
+			$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+			$("#searchForm").submit();
+		}
+	}
+ 
+ </script>
+ 
+ <script>
+ $('#searchcriteria').keypress(function(e){
+	 if ( e.which == 13 ) return false;
+	 if ( e.which == 13 ) e.preventDefault();
+	 });
+ 
+ 
+ $(document).on('click', '.downloadfile', function() {
+		//var fileName = $(this).attr('name');
+		var fileName = $(this).closest('tr').find("td").eq(0).text().trim();
+		var pageValJson = "{\"fileName\":" + "\"" + fileName + "\"}";
+		console.log(pageValJson);
+
+		var iterationCount = 1000;
+		var keySize = 128;
+		//passPhrase is the key
+		var passphrase = CryptoJS.lib.WordArray.random(
+			128 / 8).toString(CryptoJS.enc.Hex);
+
+		var aesUtil = new AesUtil(keySize,
+			iterationCount);
+		var ciphertext = aesUtil.encrypt(
+			reverseText(passphrase), pageValJson);
+		$("#encryptedJsonFile").val(ciphertext + ':~:' + passphrase);
+		$('#fileForm').attr("method", "post");
+		$('#fileForm').attr("action", "fileDownload");
+		$('#fileForm').submit();
+	});
+
+ 
+ </script>
+ 
+
+
+ 
+	
+</body>
+</html>

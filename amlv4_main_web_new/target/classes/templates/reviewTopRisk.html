@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- BS Stepper -->
+<link rel="stylesheet"
+	th:href="@{/plugins/bs-stepper/css/bs-stepper.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0 text-secondary">Top Risk</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/mainTopRiskPage}">Top Risk</a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- /.row -->
+					<div class="row">
+						<form autocomplete="off" role="form" method="post"
+							th:action="@{/reCreateTopRisk}" id="edittopriskform"
+							enctype="multipart/form-data" th:object="${encryptedRequest}"
+							class="col-sm-12">
+							<input type="hidden" id="encryptedJson" name="encryptedJson" />
+							<input type="hidden" id="userName" name="userName"
+								th:value="${trMaster.userName}" />
+							<div class="col-md-12">
+								<div class="card card-info">
+									<div class="card-header">
+										<h3 class="card-title text-center">Create</h3>
+									</div>
+									<div class="card-body p-0">
+
+										<div class="bs-stepper">
+											<div class="bs-stepper-header" role="tablist">
+												<!-- your steps here -->
+												<div class="step" data-target="#create-part">
+													<button type="button" class="step-trigger" role="tab"
+														aria-controls="create-part" id="create-part-trigger">
+														<span class="bs-stepper-circle">1</span> <span
+															class="bs-stepper-label">Create</span>
+													</button>
+												</div>
+												<div class="line"></div>
+												<div class="step" data-target="#link-dept">
+													<button type="button" class="step-trigger" role="tab"
+														aria-controls="link-dept" id="link-dept-trigger">
+														<span class="bs-stepper-circle">2</span> <span
+															class="bs-stepper-label">Linked Department</span>
+													</button>
+												</div>
+												<div class="line"></div>
+												<div class="step" data-target="#link-part">
+													<button type="button" class="step-trigger" role="tab"
+														aria-controls="link-part" id="link-part-trigger">
+														<span class="bs-stepper-circle">3</span> <span
+															class="bs-stepper-label">Link KRI</span>
+													</button>
+												</div>
+											</div>
+											<div class="bs-stepper-content">
+												<!-- your steps content here -->
+												<!-- Add Top Risk -->
+												<div id="create-part" class="content" role="tabpanel"
+													aria-labelledby="create-part-trigger">
+													<div class="row">
+														<div class="col-12">
+															<!-- title row -->
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="raStmtId">Top Risk ID</label>
+																		<div class="input-group">
+																			<input type="text"
+																				class="form-control form-control-sm text-bold"
+																				id="topRiskId" name="topRiskId"
+																				th:field="${trMaster.topRiskId}" readonly>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="raRecordStatus">Record Status</label>
+																		<div class="input-group">
+																			<input type="text"
+																				class="form-control form-control-sm  text-bold"
+																				id="raRecordStatus" name="raRecordStatus"
+																				th:field="${trMaster.topRiskRecordStatus}" readonly>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<!-- create row -->
+															<div class="row ">
+																<div class="col-sm-6">
+																	<label for="Theme">Theme</label>
+																	<div class="input-group">
+																		<input type="text"
+																			class="form-control form-control-sm text-capitalize text-bold"
+																			id="topRiskTheme" name="topRiskTheme"
+																			th:field="${trMaster.topRiskTheme}" readonly>
+																	</div>
+																	<br> <br>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label>Document Attachment</label>
+																		<div class="custom-file">
+																			<input type="file"
+																				class="custom-file-input input-group-sm"
+																				id="customFile" style="display: none;"
+																				name="files[]" multiple="multiple"
+																				onchange="getFileData(this);" /> <label
+																				class="btn bg-gray" for="customFile">Choose
+																				file</label>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row table-responsive">
+																<div class="col-sm-12">
+																	<table
+																		class="table uploadTable table-head-fixed table-bordered table-striped"
+																		id="filedetails"
+																		th:if="${trMaster.filedetails != null}">
+																		<thead>
+																			<tr>
+																				<th>File Name</th>
+																				<th>File Size</th>
+																				<th>Uploaded Date</th>
+																				<th>Uploaded by</th>
+																				<th></th>
+																				<th></th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr th:each="mvc : ${trMaster.filedetails}">
+																				<td th:text="${mvc.fileName}"></td>
+																				<td th:text="${mvc.fileSize}"></td>
+																				<td th:text="${mvc.uploadTimestamp}"></td>
+																				<td th:text="${mvc.uploadedBy}"
+																					class="text-capitalize"></td>
+																				<td><a th:name='${mvc.fileName}' href="#"
+																					class="btn btn-info downloadfile"><i
+																						class="fas fa-download"></i></a></td>
+																				<td class="project-actions text-right"><a
+																					class="btn btn-danger btn-sm disabled"
+																					id="closerow"><i class="fa fa-window-close"></i></a></td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+
+															</div>
+															<div class="col-sm-6 invoice-col">
+																<label for="Description">Description</label>
+																<textarea class="form-control form-control-sm"
+																	name="topRiskDescription" id="topRiskDescription"
+																	placeholder="Description"
+																	th:field="${trMaster.topRiskDescription}" rows="4"
+																	cols="3000" maxlength="3000"></textarea>
+																<br>
+															</div>
+															<!-- /.col -->
+
+															<!-- /.col -->
+
+															<!-- /.row -->
+															<a th:href="@{/mainTopRisk}" class="btn btn-secondary">
+																<i class="fas fa-arrow-left"
+																style="padding: 0 7px 0 0px;"></i>Back
+
+															</a> <a type="button" class="btn bg-maroon"
+																onclick="validateFirst();"> <i
+																class="fas fa-step-forward"
+																style="padding: 0 7px 0 0px;"></i>Next
+															</a>
+
+															<!-- /.row -->
+														</div>
+														<!-- /.col -->
+													</div>
+													<!-- /.row -->
+												</div>
+												<!-- Link Department -->
+												<div id="link-dept" class="content" role="tabpanel"
+													aria-labelledby="link-dept-trigger">
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card ">
+																<div class="card-header  text-green">
+																	<label><i class="fas fa-dumbbell"></i>&nbsp;Cumulative
+																		Weight -</label> <label id="cummWt">100</label><label id="wt">%</label>
+																</div>
+																<br>
+																<!-- /.card-header -->
+																<div class="card-body p-0">
+																	<div class="col-sm-6 invoice-col">
+																		<label for="Department">Select Department <code>*</code></label>
+																		<select class="select2" name="department"
+																			th:field="${deptList}" id="department"
+																			data-placeholder="Department" style="width: 100%;">
+																			<option value=''>Select</option>
+																			<option th:each="deptList : ${deptList}"
+																				th:value="${deptList.deptId}"
+																				th:text="${deptList.deptName}" />
+																		</select> <span id="departmenterror"></span> <br> <br>
+																	</div>
+																	<table class="table table-sm" id="departTable">
+																		<thead>
+																			<tr>
+																				<th class="w-70">Department</th>
+																				<th class="w-25">Weight %</th>
+																				<th></th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr
+																				th:each="deptMasterList : ${trMaster.deptMasterList}"
+																				th:id="'tr' +${deptMasterList.deptId}"
+																				class="text-capitalize">
+																				<td class="text-capitalize"
+																					th:id="${deptMasterList.deptId}"
+																					th:text="${deptMasterList.deptName}"></td>
+																				<td><div class="form-group">
+																						<input type="number" min="0" max="100"
+																							onblur="updateCummWt('weight','cummWt','wt');"
+																							class="form-control form-control-sm weight"
+																							th:value="${deptMasterList.deptWeightage}" />
+																					</div></td>
+																				<td class="project-actions text-center"><a
+																					class="btn btn-danger btn-sm" title="Remove"
+																					th:id="${deptMasterList.deptId}"
+																					th:name="${deptMasterList.deptName}"
+																					onclick="removeTr(this.id,this.name)"><i
+																						class="fas fa-window-close"> </i></a></td>
+																			</tr>
+																		</tbody>
+																	</table>
+																</div>
+																<!-- /.card-body -->
+															</div>
+															<a class="btn  bg-maroon" th:onclick="stepper.previous()">
+																<i class="fas fa-step-backward"
+																style="padding: 0 7px 0 0px;"></i>Previous
+															</a>&nbsp;<a class="btn bg-maroon"
+																th:onclick="validateNext();"> <i
+																class="fas fa-step-forward"
+																style="padding: 0 7px 0 0px;"></i>Next
+															</a>&nbsp; <a href="#" data-toggle="modal"
+																data-whatever="mainTopRiskPage"
+																data-target="#cancelmodel"><button type="reset"
+																	class="btn btn-warning" title="Cancel">
+																	<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+																</button></a>
+														</div>
+													</div>
+												</div>
+												<!-- Link KRI -->
+
+												<div id="link-part" class="content" role="tabpanel"
+													aria-labelledby="link-part-trigger">
+													<div class="row">
+														<div class="col-md-12">
+															<div class="card card-outline ">
+																<div class="card-body deptclass">
+																	<div class="card card-primary card-outline "
+																		th:each="deptMasterList : ${trMaster.deptMasterList}"
+																		th:id="'div' +${deptMasterList.deptId}">
+																		<div class="card-header">
+																			<h5 class="card-title text-capitalize"
+																				th:text="${deptMasterList.deptName}"></h5>
+																			<div class="card-tools">
+																				<a th:onclick="openmodal(this.id,this.name)"
+																					th:id="${deptMasterList.deptId}"
+																					th:name="${deptMasterList.deptName}"
+																					data-toggle="modal"
+																					class="btn btn-tool krilistmodal"><button
+																						type="button" class="btn bg-olive">
+																						<i class="far fa-list-alt">&nbsp;KRI List</i>
+																					</button> </a>
+																			</div>
+																		</div>
+																		<div class="card-body">
+																			<div class="row table-responsive">
+																				<table th:id="${deptMasterList.deptId}+editTab"
+																					class="table table-head-fixed table-bordered table-striped">
+																					<thead>
+																						<tr>
+																							<th>KRI ID</th>
+																							<th>KRI Name</th>
+																							<th>Threshold</th>
+																							<th>KRI Weight</th>
+																							<th></th>
+																						</tr>
+																					</thead>
+																					<tbody>
+																						<tr
+																							th:each="kriList : ${deptMasterList.topRiskKriList}"
+																							th:id="'tr'+${#strings.replace(kriList.kriId,'/','')}+${deptMasterList.deptId}">
+																							<td th:text="${kriList.kriId}"></td>
+																							<td th:text="${kriList.kriName}"></td>
+																							<td>
+																								<table>
+																									<tr th:each="kriThreshold : ${kriList.mdtlist}">
+																										<td class="text-capitalize"><span
+																											th:style="'background-color:'+${kriThreshold.bgClass}"
+																											th:text="${#strings.toLowerCase(kriThreshold.deptThresholdType)}"></span></td>
+																										<td
+																											th:text="${kriThreshold.deptThresholdValue}"></td>
+																									</tr>
+																								</table>
+																							</td>
+																							<td><input type="number"
+																								th:name="${deptMasterList.deptId}"
+																								th:classappend="${deptMasterList.deptId}+'weight'"
+																								th:onblur="updateCummWt(this.name);"
+																								class="form-control form-control-sm  text-bold"
+																								th:value="${kriList.kriWeightage}" /></td>
+																							<td class="project-actions text-center"><a
+																								class="btn btn-danger btn-sm" title="Remove"
+																								th:id="${#strings.replace(kriList.kriId,'/','')}"
+																								th:name="${deptMasterList.deptId}"
+																								onclick="removeTag(this.id,this.name);"> <i
+																									class="fas fa-window-close"></i>
+																							</a></td>
+																						</tr>
+																						<tr class="kriTab"></tr>
+																					</tbody>
+																				</table>
+																			</div>
+																		</div>
+																		<div class="card-footer text-green">
+																			<label><i class="fas fa-dumbbell"></i>&nbsp;Cumulative
+																				KRI Weight - </label> <label
+																				th:id="${deptMasterList.deptId}+cummWt">100</label><label
+																				th:id="${deptMasterList.deptId}+wt">%</label>
+																		</div>
+																		<!-- /.card-footer -->
+																	</div>
+																	<a class="btn bg-maroon"
+																		th:onclick="stepper.previous()"> <i
+																		class="fas fa-step-backward"
+																		style="padding: 0 7px 0 0px;"></i>Previous
+																	</a> <a type="submit" class="btn btn-info"
+																		onclick="validateForm('create')"> <i
+																		class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+																	</a> <a href="#" data-toggle="modal"
+																		data-whatever="mainTopRiskPage"
+																		data-target="#cancelmodel"><button type="reset"
+																			class="btn btn-warning" title="Cancel">
+																			<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+																		</button></a>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.card -->
+											</div>
+										</div>
+										<!-- /.row -->
+									</div>
+									<!-- Cancel Modal -->
+									<div class="modal fade" id="cancelmodel">
+										<div class="modal-dialog modal-fluid">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h6 class="modal-title">Confirm</h6>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="modal-body">
+													<h5 class="card-title">
+														If you leave this page, all changes will be lost. <br>
+														Press "Ok" to Continue.
+													</h5>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+													</button>
+													<a class="btn btn-primary target"><i
+														class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Ok
+													</a>
+												</div>
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+									<!-- /.Cancel Modal -->
+									<!-- KRI list Modal -->
+									<div class="modal fade" id="krilistmodal">
+										<div class=" modal-dialog mw-100 w-60">
+											<div class=" card modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">KRI List</h5>
+													<span style="display: none;" id="kriDept"></span>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<div class="modal-body row justify-content-center">
+													<div class="col-auto table-responsive">
+														<table id="kriTable"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th>KRI ID</th>
+																	<th>KRI Name</th>
+																	<th>Threshold</th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr class="mainTab"></tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- end KRI Modal -->
+									<!--/. container-fluid -->
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- BS-Stepper -->
+	<script th:src="@{/plugins/bs-stepper/js/bs-stepper.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<script th:src="@{/dist/appjs/erm/toprisk.review.js}"></script>
+</body>
+
+</html>

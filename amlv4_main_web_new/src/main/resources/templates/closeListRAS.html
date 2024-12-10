@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+  <!-- DataTables -->
+  <link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+  <link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+  <style>
+.card-info:not(.card-outline) > .card-header {
+    background-color: #044383 !important;
+}
+.bg-info {
+    background-color: #044383 !important;
+}
+.btn-info {
+    color: #fff;
+    background-color: #044383 !important;
+    border-color: #044383 !important;
+    box-shadow: none;
+}
+
+</style>
+</head>
+<body class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+<div class="wrapper">
+
+<!-- Included header.html -->
+<div th:insert="/header::header"></div>
+  
+<!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-secondary">Risk Appetite Statement</h1>
+          </div><!-- /.col -->
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+			  <li class="breadcrumb-item active">Risk Appetite Statement - Closure</li>
+            </ol>
+          </div><!-- /.col -->
+        </div><!-- /.row -->
+      </div><!-- /.container-fluid -->
+    </div>
+    <!-- /.content-header -->
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="container-fluid">
+		<div class="row">
+          <div class="col-sm-12">	
+			
+			<div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Risk Appetite Statement List</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table id="example1" class="table table-head-fixed table-bordered table-striped">
+                  <thead>
+                  <tr>
+                    <th>Risk Appetite Statement ID</th>
+                    <th>Risk Category</th>
+                    <th>Risk Description</th>
+                    <th>Risk Owner</th>
+                    <th>Department</th>
+					<th>Status</th>
+					<th></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</a></td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-danger">Closed</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-success">Active</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  <tr>
+                    <td>01234567890</td>
+                    <td>High</td>
+                    <td>Zero tolerence of the fraud in policy creation</td>
+                    <td>Compliance Officer</td>
+                    <td>Marketing</td>
+					<td><span class="badge bg-danger">Closed</span></td>
+					<td class="project-actions text-right">
+					<a class="btn btn-danger btn-sm" href="#" data-toggle="modal" data-target="#riskmodal"> 
+					<i class="fas fa-window-close"> </i> Close </a>
+					</td>
+                  </tr>
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+		  </div>
+		</div>
+      </div>
+	  <!--/. container-fluid -->
+	  
+	  <div class="modal fade" id="riskmodal">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header bg-info">
+              <h5 class="modal-title">Risk Appetite Statement ID : 0123456789</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+			
+			<form class="form-horizontal" id="frmriskapptstmt">
+                <div class="modal-body">
+				
+                  <div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+						  <label for="riskcategory">Risk Category</label>
+						  <input type="text" name="risksubcategory" class="form-control form-control-sm"  id="risksubcategory" value="High" disabled>
+						</div>
+					  </div>
+					  
+					 <div class="col-sm-6">
+						<div class="form-group">
+						  <label for="risksubcategory">Risk Sub Category</label>
+						  <input type="text" name="risksubcategory" class="form-control form-control-sm"  id="risksubcategory" value="High" disabled>
+						</div>
+					  </div>
+					  
+				  </div>
+				  <!-- /.row -->
+				  
+				  <div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+						  <label for="riskdescription" >Risk Appetite Statement Description</label>
+						  <textarea class="form-control form-control-sm" name="riskdescription" id="riskdescription" rows="2" disabled>Zero tolerence of the fraud in policy creation</textarea>
+						</div>
+					</div>
+				  </div>
+                  <!-- /.row -->
+				  
+				  <div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+						  <label for="datapoints">Data Points to be considered</label>
+						  <input type="text" name="datapoints" class="form-control form-control-sm"  id="datapoints" value="Marketing;Claims" disabled>
+						</div>
+						
+						<div class="form-group">
+						  <label for="datatype">Data Type</label>
+						  <input type="text" name="datatype" class="form-control form-control-sm"  id="datatype" value="Number" disabled>
+						</div>
+					</div>
+					
+					<div class="col-sm-6">
+						<div class="form-group">
+						  <label for="department">Department Providing Data</label>
+						  <input type="text" name="department" class="form-control form-control-sm"  id="department" value="Marketing;Claims;" disabled>
+						</div>
+						
+						<div class="form-group">
+						  <label for="frequency">Update Frequency</label>
+						  <input type="text" name="frequency" class="form-control form-control-sm"  id="frequency" value="Quarterly" disabled>
+						</div>
+					</div>
+					
+				  </div>
+				  <!-- /.row -->
+				  
+				  <div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+						  <label for="threshold">Tolerance Threshold</label>
+						  <input type="text" class="form-control form-control-sm" name="threshold" id="threshold" value="0" disabled>
+						</div>
+					</div>
+					
+					<div class="col-sm-6">
+						<div class="form-group">
+						  <label for="riskowner">Risk Owner</label>
+						  <input type="text" name="riskowner" class="form-control form-control-sm"  id="riskowner" value="Marketing" disabled>
+						</div>
+					</div>
+				  </div>
+                  <!-- /.row -->
+				  
+				  <div class="row">
+					<div class="col-sm-6">
+						<div class="form-group">
+						  <label for="valuecapturer">Risk Appetite Statement Value Capturer</label>
+						  <input type="text" name="valuecapturer" class="form-control form-control-sm"  id="valuecapturer" value="Marketing Head" disabled>
+						</div>
+					  </div>
+					  
+					 <div class="col-sm-6">
+						<table class="table">
+						<thead>
+						  <tr>
+							<th>File Name</th>
+							<th>File Size</th>
+							<th></th>
+						  </tr>
+						</thead>
+						<tbody>
+						  <tr>
+							<td>Functional-requirements.docx</td>
+							<td>49.8005 kb</td>
+							<td class="text-right py-0 align-middle">
+							  <div class="btn-group btn-group-sm">
+								<a href="#" class="btn btn-info"><i class="fas fa-download"></i></a>
+							  </div>
+							</td>
+						</tbody>
+						</table>
+					  </div>
+					  
+				  </div>
+				  <!-- /.row -->
+				  
+				  <div class="row">
+				   <div class="col-sm-12">
+					 <table class="table">
+							<thead>
+							 <tr>
+							  <th>Comment By</th>
+							  <th>Department</th>
+							  <th>User Role</th>
+							  <th>Comments</th>
+							  <th>Comment Timestamp</th>
+							  <th></th>
+							 </tr>
+					       </thead>
+						   <tbody>
+							<tr>
+							  <td>Sharath Nair (11020104)</td>
+							  <td>Marketing</td>
+							  <td>Marketing Head</td>
+							  <td>Risk for the zero tolerance to be created in the RAS for Marketing</td>
+							  <td>10-12-2020 14:01:00</td>
+							</tbody>
+						</table>
+					</div>
+				 </div>
+				<!-- /.row -->
+				  
+				  <div class="row">
+					<div class="col-sm-12">
+						<div class="form-group">
+						  <label for="comments">Reason of Closure</label>
+						  <textarea class="form-control form-control-sm" name="comments" id="comments" rows="1"></textarea>
+						</div>
+					</div>
+				  </div>
+                  <!-- /.row -->
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-info" id="approvebtn"><i class="fa fa-save" style="padding: 0 7px 0 0px;"></i>Submit</button>
+				  <button type="reject" class="btn btn-secondary" id="rejectbtn"><i class="fa fa-times" style="padding: 0 7px 0 0px;"></i>Cancel</button>
+                </div>
+                <!-- /.card-footer -->
+              </form>
+          </div>
+          <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+      </div>
+      <!-- /.modal -->
+	  
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+
+  <!-- Control Sidebar -->
+  <aside class="control-sidebar control-sidebar-dark">
+    <!-- Control sidebar content goes here -->
+  </aside>
+  <!-- /.control-sidebar -->
+
+  <!-- Included Footer -->
+ <div th:insert="/footer::footer"></div>
+</div>
+<!-- ./wrapper -->
+
+<!-- REQUIRED SCRIPTS -->
+<!-- jQuery -->
+<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+<!-- Bootstrap -->
+<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- jquery-validation -->
+<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+<!-- overlayScrollbars -->
+<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+<!-- Toastr -->
+<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<!-- DataTables  & Plugins -->
+<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+<script th:src="@{/plugins/dkkbrftgatatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+<!-- AdminLTE App -->
+<script th:src="@{/dist/js/adminlte.js}"></script>
+<script>
+  $(function () {
+    $("#example1").DataTable({
+      "responsive": true, "autoWidth": true,
+      "buttons": ["csv", "excel", "pdf", "print"]
+    }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
+  });
+</script>
+<script>
+$(function () {
+  $.validator.setDefaults({
+    submitHandler: function () {
+	toastr.success('Details submitted sucessfully...')
+	$('#riskmodal').modal('hide');
+    }
+  });
+  $('#frmriskapptstmt').validate({
+    rules: {
+	
+	  comments: {
+        required: true,
+		minlength: 10,
+		maxlength: 100
+      },		
+     
+    },
+    messages: {
+		comments: {
+        required: "Please provide your comments",
+      },
+    },
+    errorElement: 'span',
+    errorPlacement: function (error, element) {
+      error.addClass('invalid-feedback');
+      element.closest('.form-group').append(error);
+    },
+    highlight: function (element, errorClass, validClass) {
+      $(element).addClass('is-invalid');
+    },
+    unhighlight: function (element, errorClass, validClass) {
+      $(element).removeClass('is-invalid');
+    }
+  });
+});
+</script>
+<!-- PAGE PLUGINS -->
+
+</body>
+</html>

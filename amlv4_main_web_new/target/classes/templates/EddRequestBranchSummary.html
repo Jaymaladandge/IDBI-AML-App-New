@@ -1,0 +1,810 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/dist/img/OMSLOGO.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat
+		#fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+.disabled {
+	pointer-events: none; /* Disable mouse events */
+	opacity: 0.6; /* Reduce opacity to indicate disabled state */
+	cursor: not-allowed; /* Change cursor to not-allowed */
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../branchop-web/dist/img/loader.gif) center no-repeat
+		#fff;
+	opacity: 1;
+}
+
+.thHead {
+	background-color: #4fa9a7 !important;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+}
+
+.alert-warning1 {
+	color: #856404;
+	background-color: #fff3cd;
+	border-color: #ffeeba;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+
+		<div class="wrapper">
+
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+			<!-- Content Wrapper. Contains page content -->
+			<div class="content-wrapper">
+				<!-- Content Header (Page header) -->
+				<section class="content-header">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-7">
+								<h1>Enhanced Due Diligence Request Summary</h1>
+							</div>
+							<div class="col-sm-5">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+									<li class="breadcrumb-item active">EDD Request Summary</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+					<!-- /.container-fluid -->
+				</section>
+				<!-- Main content -->
+				<section class="content">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-12">
+								<form class="form-horizontal" id="alertSummary"
+									th:action="@{/alertComplienceTest}" method="post">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:feild="*{encryptedJson}" /> <input type="hidden"
+										th:value="*{message}" id="message" />
+									<div class="card card-secondary card-outline ">
+										<div class="card-header">
+											<span class="text-bold">Search Requests</span>
+										</div>
+										<!-- /.card-header -->
+										<div class="card-body">
+											<div class="row">
+												<div class="col-md-3">
+													<div class="form-group">
+														<label for="officeType">Request Status <code>*</code></label>
+														<select class="select2 text-capitalize form-control-sm"
+															name="alertStatus" data-placeholder="Status"
+															id="alertStatus" style="width: 100%;">
+															<option value='All'>All</option>
+															<option value='O'>Open</option>
+															<option value='C'>Created</option>
+															<option value='V'>Verified</option>
+															<option value='A'>Approved</option>
+														</select>
+
+
+													</div>
+
+												</div>
+
+
+												<div class="col-sm-9 ">
+													<div class="form-group ">
+														<label class="col-12">Select Date Range For Search
+															<code>*</code>
+														</label>
+														<!-- Date range -->
+														<!-- /.form group -->
+														<div class="input-group date ml-1"
+															data-target-input="nearest">
+															<input type="text"
+																class="form-control form-control form-control-sm col-4 datetimepicker-input datepicker"
+																placeholder="Start Date" name="startDate" id="startDate"
+																data-target="#startDate" autocomplete="off" />
+															<div class="input-group-append datepicker"
+																data-target="#startDate" data-toggle="datetimepicker">
+																<div class="input-group-text">
+																	<i class="far fa-calendar-alt"></i>
+																</div>
+															</div>
+															&nbsp; <input type="text"
+																class="form-control form-control form-control-sm col-4 datetimepicker-input datepicker"
+																placeholder="End Date" name="endDate" id="endDate"
+																data-target="#endDate" autocomplete="off" />
+															<div class="input-group-append datepicker"
+																data-target="#endDate" data-toggle="datetimepicker">
+																<div class="input-group-text">
+																	<i class="far fa-calendar-alt"></i>
+																</div>
+
+															</div>
+															&nbsp; &nbsp;
+															<div class="col-4">
+																<button type="button" id="fetchDataBtn"
+																	class="btn btn-sm btn-primary fetchDataBtn"
+																	name="fetchDataBtn">Fetch Requests</button>
+															</div>
+
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+
+									<!-- TO DO List -->
+									<div class="card card-secondary card-outline ">
+										<!-- /.card-header -->
+										<div class="card-body table-responsive">
+											<!-- Rule Based Count -->
+											<div id="ruleBased">
+												<table id="taskNotification"
+													class="table table-head-fixed table-bordered table-striped table-sm">
+													<caption></caption>
+													<thead>
+														<tr>
+															<th scope="col" class="thHead text-bold text-center ">Request
+																ID</th>
+															<th scope="col" class="thHead text-bold text-center ">UCIC
+																ID</th>
+															<th scope="col" class="thHead text-bold text-center ">Customer
+																ID</th>
+															<th scope="col" class="thHead text-bold text-center ">Customer
+																Name</th>
+															<th scope="col" class="thHead text-bold text-center ">Branch
+																ID</th>
+															<th scope="col" class="thHead text-bold text-center ">Status</th>
+															<th scope="col" class="thHead text-bold text-center ">Request
+																By</th>
+															<th scope="col" class="thHead text-bold text-center ">Request
+																Date</th>
+															<th scope="col" class="thHead text-bold "></th>
+															<th scope="col" class="thHead text-bold "></th>
+														</tr>
+													</thead>
+													<tbody class="ruleBody">
+														<tr th:each="rule : ${ActionList}">
+															<td th:text="${rule.requestId}"></td>
+															<td th:text="${rule.custUCIC}" class="text-capitalize"></td>
+															<td th:text="${rule.custId}" class="text-capitalize"></td>
+															<td th:text="${rule.custName}" class="text-capitalize"></td>
+															<td th:text="${rule.branchId}" class="text-capitalize"></td>
+															<td th:switch="${rule.actionStatus}"><span
+																th:case="'A'" class="badge bg-success">Approved</span> <span
+																th:case="'V'" class="badge bg-warning">Verified</span> <span
+																th:case="'C'" class="badge bg-primary">Created</span> <span
+																th:case="'O'" class="badge bg-info">Open</span></td>
+															<td th:text="${rule.requestBy}" class="text-capitalize"></td>
+															<td th:text="${rule.requestTime}" class="text-capitalize"></td>
+
+															<td><a th:id="${rule.requestId}"
+																class="btn-sm bg-maroon transferSol"
+																title="Transfer Branch"><i class="fa fa-telegram"></i></a></td>
+
+															<td th:if="${rule.lastUserId != 'NA'}"><a
+																th:id="${rule.requestId}"
+																class="btn-sm btn-info downloadZip" title="Download"><i
+																	class="fas fa-download fa-1x text-black"></i></a></td>
+															<td th:if="${rule.lastUserId eq 'NA'}"><a
+																th:id="${rule.requestId}"
+																class="btn-sm btn-info disabled" title="Download"><i
+																	class="fas fa-download fa-1x text-black "></i></a></td>
+														</tr>
+													</tbody>
+												</table>
+											</div>
+
+										</div>
+									</div>
+
+								</form>
+								<form autocomplete="off" class="form-horizontal" id="exportForm"
+									th:object="${encryptedRequest}" method="post"
+									th:action=@{/eddSavePDFExport} enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJsonExport"
+										name="encryptedJson" th:field="*{encryptedJson}" />
+								</form>
+								<form autocomplete="off" class="form-horizontal" id="searchForm"
+									th:object="${encryptedRequest}" method="post"
+									th:action=@{/EddRequestBranchSummary}
+									enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJsonSearch"
+										name="encryptedJson" th:field="*{encryptedJson}" />
+								</form>
+								<!-- View Modal -->
+								<div class="modal fade" id="transferBranchModel">
+									<div class="modal-dialog  modal-lg">
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h5 class="modal-title ">
+													Transfer Request- <span id="WorkflowIdLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<!-- form start -->
+											<form autocomplete="off" class="form-horizontal"
+												id="transferForm" th:object="${encryptedRequest}"
+												method="post" th:action=@{/eddRequestTransfer}>
+												<input type="hidden" id="encryptedJsonTransfer"
+													name="encryptedJson" th:field="*{encryptedJson}" />
+												<div class="card-body">
+													<div class="row">
+														<div class="col-md-5">
+															<div class="form-group">
+																<label for="officeType">Branch ID<code>*</code></label>
+																<select class="select2 text-capitalize form-control-sm"
+																	name="alertStatus" data-placeholder="Branch ID"
+																	id="branchId" style="width: 100%;">
+																</select>
+															</div>
+
+														</div>
+														<div class="col-md-12">
+
+															<div class="form-group">
+																<label for="parameter_key">Transfer Comment</label>
+																<textarea class="form-control form-control-sm"
+																	id="transferBranchComment" name="WorkflowDesc"
+																	placeholder="Transfer Comment"></textarea>
+
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="card-footer">
+													<div class="col-sm-12">
+														<button type="button" id="updateBranch"
+															class="btn btn-sm btn-primary updateBranch"
+															name="fetchDataBtn">Transfer Request</button>
+													</div>
+												</div>
+											</form>
+										</div>
+										<!-- /.modal-content -->
+									</div>
+									<!-- /.modal-dialog -->
+								</div>
+								<!-- Comment Modal -->
+							</div>
+						</div>
+
+					</div>
+
+				</section>
+			</div>
+			<!-- /.container-fluid -->
+			<div th:insert="/footer::footer"></div>
+		</div>
+		<!-- /.content-header -->
+	</div>
+	<!--/. container-fluid -->
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+
+	<!-- Included Footer -->
+
+	<!-- /.login-box -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/home.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script>
+		$(document).ready(function() {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}
+		});
+
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+
+		$(document).ready(
+				function() {
+					$("#taskNotification").DataTable({
+						"columnDefs" : [ {
+							orderable : false,
+							targets : [ 8, 9 ]
+						} ],
+
+						"lengthMenu" : [ 20, 40, 60, 80, 100 ],
+						"responsive" : false,
+						"autoWidth" : false,
+						"searching" : true,
+						"fixedHeader" : false,
+						"buttons" : [ "csv", "excel", "pdf", "print" ],
+						"language" : {
+							"emptyTable" : "No Data Available"
+						}
+					}).buttons().container().appendTo(
+							'#taskNotification_wrapper .col-md-12:eq(0)');
+				});
+
+		$(document).ready(function() {
+			/*var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}*/
+			$("#summarylink").click(function() {
+
+				$('#task-tab').css('display', '');
+				$('#info-tab').css('display', 'none');
+				$('#graph-tab').css('display', 'none');
+			});
+
+			$("#graphLink").click(function() {
+				$('#task-tab').css('display', 'none');
+				$('#info-tab').css('display', 'none');
+				$('#graph-tab').css('display', '');
+
+			});
+
+		});
+	</script>
+
+	<script type="text/javascript">
+		$(document).on(
+				'click',
+				".tasknotification",
+				function() {
+
+					var notifyInfo = $(this).attr('id');
+
+					var notifyArray = notifyInfo.split('~');
+					var pageValJson;
+					var url;
+					/*var homeString = "{\n" + "    \"moduleId\": \""
+						+ notifyArray[0] + "\",\n"
+						+ "    \"moduleName\": \"" + notifyArray[1]
+						+ "\",\n" + "    \"moduleAction\":\""
+						+ notifyArray[2] + "\"\n" + "}";*/
+
+					var homeString = "{\n" + "    \"requestId\": \""
+							+ notifyArray[0] + "\",\n" + "    \"testId\": \""
+							+ notifyArray[1] + "\",\n"
+							+ "    \"previousActionStatus\": \""
+							+ notifyArray[2] + "\"\n" + "}";
+
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+							.toString(CryptoJS.enc.Hex);
+
+					var aesUtil = new AesUtil(keySize, iterationCount);
+					var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+							homeString);
+					$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+					$("#alertSummary").submit();
+
+				});
+	</script>
+
+	<script type="text/javascript">
+		$(document).on(
+				'click',
+				'.downloadZip',
+				function() {
+
+					var requestId = $(this).attr('id').replace(/\//g, '\\/');
+
+					var pageValJson = {
+						"requestId" : requestId
+					};
+					//document.getElementById('load').style.visibility = "visible";
+					// Convert the JavaScript object to a JSON string
+					var jsonString = JSON.stringify(pageValJson);
+
+					var iterationCount = 1000;
+					var keySize = 128;
+					//passPhrase is the key
+					var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+							.toString(CryptoJS.enc.Hex);
+
+					var aesUtil = new AesUtil(keySize, iterationCount);
+
+					var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+							jsonString);
+
+					$("#encryptedJsonExport").val(
+							ciphertext + ':~:' + passphrase);
+					$('#exportForm').submit();
+
+				});
+	</script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			$(".datepicker").attr("autocomplete", "off");
+
+			$('#startDate').datetimepicker({
+				closeOnDateSelect : false,
+				closeOnTimeSelect : true,
+				maxDate : new Date(),
+				format : 'YYYY-MM-DD',
+				autocomplete : 'off',
+				onChangeDateTime : function(dp, $input) {
+				}
+			});
+			$('#endDate').datetimepicker({
+				closeOnDateSelect : false,
+				closeOnTimeSelect : true,
+				maxDate : new Date(),
+				format : 'YYYY-MM-DD',
+				autocomplete : 'off',
+				onChangeDateTime : function(dp, $input) {
+				}
+			});
+
+			$('.datepicker').on('click', function(e) {
+				e.preventDefault();
+				$(this).attr("autocomplete", "off");
+			});
+
+			$('#reportTable').hide();
+
+		});
+
+		$("#fetchDataBtn")
+				.click(
+						function() {
+							var alertStatus = "All";
+							var searchParam = "fiterList";
+							if ($('#alertStatus').val() !== null
+									&& $('#alertStatus').val() !== undefined
+									&& $('#alertStatus').val() !== '') {
+
+								alertStatus = $('#alertStatus').val();
+							}
+
+							var validFlg = true;
+
+							var startDate = $('#startDate').val();
+							var endDate = $('#endDate').val();
+
+							if (startDate > endDate) {
+								toastr
+										.error("start date cannot be greater than end date");
+								validFlg = false;
+							} else if (startDate == null
+									&& startDate == undefined
+									&& startDate == '') {
+								toastr.error("start date cannot be blank");
+								validFlg = false;
+							} else if (endDate == null && endDate == undefined
+									&& endDate == '') {
+								toastr.error("end date cannot be blank");
+								validFlg = false;
+							}
+
+							if (validFlg) {
+
+								var pagevalJson = "{\"actionStatus\": \""
+										+ alertStatus + "\",\n"
+										+ "    \"searchParam\": \""
+										+ searchParam + "\",\n"
+										+ "    \"startDate\": \"" + startDate
+										+ "\",\n" + "    \"endDate\":\""
+										+ endDate + "\"\n" + "}";
+								document.getElementById('load').style.visibility = "visible";
+
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), pagevalJson);
+
+								$("#encryptedJsonSearch").val(
+										ciphertext + ':~:' + passphrase);
+								$('#searchForm').submit();
+
+							}
+						});
+	</script>
+	<script type="text/javascript">
+		$('.transferSol')
+				.click(
+						function() {
+
+							var wfGroupId = $(this).attr('id');
+							//var sourceName="createVerify";
+
+							var pageValJson = "{\"wfGroupId\":" + "\""
+									+ wfGroupId + "\"}";
+
+							document.getElementById('load').style.visibility = "visible";
+							// ajax call
+							$
+									.ajax({
+										url : 'FetchBranchIdList',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+													}, 1000);
+											document.getElementById('load').style.visibility = "hidden";
+
+											var jsonResponse = JSON
+													.stringify(response);
+
+											obj = JSON.parse(jsonResponse);
+
+											$("#WorkflowIdLabel").text(
+													wfGroupId);
+
+											$("#branchId").empty();
+											$("<option />", {
+												val : "",
+												text : "Select Branch"
+											}).appendTo($("#branchId"));
+											obj.forEach(function(items) {
+												$("<option />", {
+													val : items.split('~')[1],
+													text : items.split('~')[0]
+												}).appendTo($("#branchId"));
+											});
+
+										},
+										error : function(xhr, status, error) {
+											console.log(xhr);
+											toastr
+													.error('Some Error Occured here	');
+										}
+									});
+
+							$('#transferBranchModel').modal('show');
+						});
+	</script>
+
+	<script type="text/javascript">
+		$("#updateBranch")
+				.click(
+						function() {
+							var validFlg = true;
+							var wfGroupId = $("#WorkflowIdLabel").text()
+									.replace(/\//g, '\\/');
+							;
+							//var sourceName="createVerify";
+							var branchId = "";
+							if ($('#branchId').val() !== null
+									&& $('#branchId').val() !== undefined
+									&& $('#branchId').val() !== '') {
+								branchId = $("#branchId").val();
+							} else {
+								validFlg = false;
+								toastr.error('Select Branch ID');
+							}
+
+							var userComment = $("#transferBranchComment").val();
+
+							var checkComment = checkTextArea("User Comment",
+									userComment);
+
+							if (checkComment != 'SUCCESS') {
+								validFlg = false;
+								toastr.error(checkComment);
+							}
+
+							var pageValJson = "{\"requestId\":" + "\""
+									+ wfGroupId + "\",\"transferComment\":"
+									+ "\"" + userComment + "\",\"branchId\":"
+									+ "\"" + branchId + "\"}";
+
+							if (validFlg) {
+								document.getElementById('load').style.visibility = "visible";
+
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), pageValJson);
+
+								$("#encryptedJsonTransfer").val(
+										ciphertext + ':~:' + passphrase);
+								$('#transferForm').submit();
+
+							}
+						});
+
+		/*TextArea validation*/
+		function checkTextArea(textAreaName, data) {
+			let msg = "SUCCESS";
+			if (data == '') {
+				msg = textAreaName + " cannot be blank.";
+			} else if (data.length < 10) {
+				msg = textAreaName + " should be greater than 10 letters.";
+			} else if (/[!\^'",[\]\<>?|]/.test(data)) {
+				msg = textAreaName + " cannot contain special characters.";
+			} else if (data.indexOf('\'') >= 0) {
+				msg = textAreaName + " should not contains single quote.";
+			}
+			return msg;
+		}
+	</script>
+
+
+
+
+</body>
+
+</html>

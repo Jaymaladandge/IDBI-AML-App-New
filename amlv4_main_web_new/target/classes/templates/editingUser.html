@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+textarea {
+	overflow-y: scroll;
+}
+
+.mt-4, .my-4 {
+	margin-top: 1.8rem !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>User Management</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/userSummary}">User
+										Management </a></li>
+								<li class="breadcrumb-item active">Edit</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title text-center">Edit</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="frmUser" autocomplete="off"
+									th:action="@{/editUserPage}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+									<div class="card-body">
+
+
+											<div class="row">
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="username">User Id <code>*</code></label> <input
+														type="text" class="form-control form-control-sm" disabled
+														name="userId" id="userId" th:value="${userId}" placeholder="User Id">
+												</div>
+											</div>
+											
+											
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="username">User Name <code>*</code></label> <input
+														type="text" class="form-control form-control-sm"
+														name="username" id="username" th:value="${username}" placeholder="User Name">
+												</div>
+											</div>
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="emailid">Email ID <code>*</code></label> <input
+														type="email" class="form-control form-control-sm"
+														name="userEmail" id="userEmail" th:value="${userEmail}" placeholder="Email ID">
+
+												</div>
+											</div>
+
+
+
+
+											<div class="form-group" style="display: none">
+												<label for="sr.No">Sr. Number <code>*</code></label> <input
+													type="hidden" class="form-control form-control-sm"
+													name="srno" id="srno" placeholder="Sr. No" readonly>
+											</div>
+
+										</div>
+
+										<div class="row">
+
+
+											<!-- 	<div class="col-sm-4">
+												<div class="form-group" style="display: none">
+													<label for="raStmtId">Record ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="userId" name="userId" th:value="${userId}" readonly>
+
+
+													</div>
+												</div>
+											</div> -->
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType"> Channel ID <code>*</code></label>
+
+													<select class="select2 text-capitalize" name="channelId"
+														id="channelId" data-placeholder="Channel ID"
+														style="width: 100%;">
+														
+														<option value=''></option>
+														<option th:each="data : ${nsRegisterMasterDtoList}"
+															th:value="${data.channelId}"
+															th:text="${data.channelName.toUpperCase()}"
+															th:selected="${data.channelId == channelId}"></option>
+														
+													</select>
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="mobilenumber">Mobile Number <code>*</code></label>
+													<input type="tel" class="form-control form-control-sm"
+														name="userMobile" id="userMobile" placeholder="Mobile Number"
+														pattern="[1-9]{1}[0-9]{9}" maxlength="10"
+														title="Enter valid Mobile Number" 
+														th:value="${userMobile}">
+												</div>
+											</div>
+
+
+											<div class="col-sm-4">
+												<div class="form-group" style="display: none">
+													<label for="raRecordStatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold"
+															id="userActiveStatus" name="userActiveStatus"
+															th:value="${userActiveStatus}" readonly>
+													</div>
+												</div>
+											</div>
+
+
+
+
+											<div class="col-sm-3">
+												<div class="form-group">
+													<!-- <label for="userId">User ID</label> -->
+													<div class="input-group">
+														<input type="hidden"
+															class="form-control form-control-sm text-bold"
+															id="userId" name="userId" readonly>
+
+
+													</div>
+												</div>
+											</div>
+
+										</div>
+										<div class="row">
+
+											<!-- <div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType">Application Name <code>*</code></label>
+													<select class="select2" name="applicationNames"
+														id="application" data-placeholder="Select Application"
+														style="width: 100%;">
+														<option value=''></option>
+														<option th:each="appName : ${appNamesWithDesc}"
+															th:value="${#strings.arraySplit(appName, '~')[1]}"
+															th:text="${#strings.arraySplit(appName, '~')[0]}"></option>
+													</select>
+												</div>
+											</div> -->
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType"> Select Positions <code>*</code></label>
+
+													<select class="select2 text-capitalize" name="userPosition"
+														id="userPosition" data-placeholder="Position"
+														style="width: 100%;">
+
+														<option value=''></option>
+														<option th:each="position : ${roleNameList}"
+															th:value="${position}"
+															th:text="${position.toUpperCase()}"
+															th:selected="${position == userPosition}"></option>
+																	
+													</select>
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group userRole">
+													<label for="rolename">Role Name<code>*</code></label> <select
+														class="select2 text-capitalize" name="userRole"
+														id="userRole" multiple="multiple"
+														data-placeholder="Role Name" style="width: 100%;" readonly>
+														<option value=''></option>
+														<option th:each="rolename : ${RoleShortNameList}"
+															th:value="${rolename.roleId}"
+															th:text="${rolename.roleName}" />
+
+													</select>
+												</div>
+											</div>
+
+
+											
+										</div>
+										
+									</div>
+								
+									<div class="card-body">
+
+										
+</div>
+										<!--./card-body  -->
+
+										<div class="card-body">
+											<div class="row">
+												<div class="col-sm-4">
+
+													<div class="form-group">
+														<label>Document Attachment</label>
+														<div class="custom-file">
+															<input type="file"
+																class="custom-file-input input-group-sm" id="customFile"
+																style="display: none;" name="files[]"
+																multiple="multiple" onchange="getFileData(this);" /> <label
+																class="btn bg-gray" for="customFile">Choose file</label>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<table
+														class="table uploadTable table-bordered table-striped"
+														id="filedetails" th:style="${filedetails.isEmpty()} ? 'display: none;' : ''">
+														<thead>
+															<tr >
+																<th>File Name</th>
+																<th>File Size</th>
+																<th>Upload By</th>
+																<th>Upload Date</th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+														 	<tr th:each="file : ${filedetails}">
+                   												<td th:text="${file.fileName}"></td>
+                    											<td th:text="${file.fileSize}"></td>
+                    											<td th:text="${file.uploadedBy}"></td>
+                    											<td th:text="${file.uploadTimestamp}"></td>
+                    											<td class="project-actions text-right"><a class="btn btn-danger btn-sm" th:data-id="${file.fileId}"  id="closerow"><i class="fas fa-window-close"></i></a></td>
+                											</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<!-- /.row -->
+											<div class="row">
+												<div class="col-sm-12">
+
+													<input type="hidden" id="username1" th:value="${userName1}">
+													<input type="hidden" id="ermFlg" name="ermFlg"
+														th:value="${ermDeptFlg}"> <input type="hidden"
+														id="sessionOfficeType" name="sessionOfficeType"
+														th:value="${userOfficeType}"> <input type="hidden"
+														id="level1" name="level1" th:value="${level1}"> <input
+														type="hidden" id="level2" name="level2"
+														th:value="${level2}"> <input type="hidden"
+														id="level3" name="level3" th:value="${level3}"> <input
+														type="hidden" id="level4" name="level4"
+														th:value="${level4}"> <input type="hidden"
+														id="emailFlgTemp" name="emailFlgTemp">
+												</div>
+											</div>
+
+
+
+										</div>
+
+
+
+										<!-- /.card-body -->
+										<div class="card-footer">
+											<a class="btn btn-info" id="edit_btn"> <i
+												class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+											</a> <a href="#" data-toggle="modal" data-whatever="userSummary"
+												data-target="#cancelmodel"><button type="reset"
+													class="btn btn-warning" title="Cancel">
+													<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+												</button></a>
+										</div>
+										<!-- /.card-footer -->
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/dist/appjs/erm/editUser.js}"></script>
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- Development JavaScript -->
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<!-- REQUIRED SCRIPTS -->
+
+
+	
+
+
+	<script>
+		$('#cancelmodel').on('show.bs.modal', function(event) {
+			var button = $(event.relatedTarget)
+			var recipient = button.data('whatever')
+			//var recipient = $('#datasource').val()
+			var modal = $(this)
+			$('a.target').attr('href', recipient);
+
+		})
+	</script>
+
+</body>
+</html>

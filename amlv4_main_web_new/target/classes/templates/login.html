@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Cache-Control"
+	content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title>i-AML</title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/login-dist/css/animate.min.css}">
+<link rel="stylesheet" th:href="@{/plugins/bootstrap/bootstrap.css}">
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+
+<style>
+.bg-img {
+	background-image: url('../aml-v4/login-dist/images/light-bg-2.jpg');
+	background-size: 100%;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+</head>
+<div id="load"></div>
+
+<body class="login">
+	<div class='your-element-selector h-100 z-n1 w-100 position-absolute'
+		id='your-element-selector'></div>
+
+	<header>
+		<nav class="navbar navbar-expand-lg bg-gradient fixed-top">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="#"><img
+					th:src="@{/dist/img/idbi-bank.png}" width='170'></a>
+			</div>
+		</nav>
+	</header>
+	<main class="vh-100">
+		<div class='d-flex vh-100 align-items-center'>
+			<div class='w-100 ms-5'>
+				<div id="myCarousel" class="carousel slide mb-6"
+					data-bs-ride="carousel" data-bs-theme="light">
+					<div class="carousel-indicators justify-content-start start-0 ms-0">
+						<button type="button" data-bs-target="#myCarousel"
+							data-bs-slide-to="0" class="active" aria-current="true"
+							aria-label="Slide 1"></button>
+						<button type="button" data-bs-target="#myCarousel"
+							data-bs-slide-to="1" aria-label="Slide 2"></button>
+						<button type="button" data-bs-target="#myCarousel"
+							data-bs-slide-to="2" aria-label="Slide 3"></button>
+					</div>
+					<div class="carousel-inner">
+						<div class="carousel-item active">
+							<svg class="bd-placeholder-img" width="100%" height="250px"
+								xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+								preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <rect width="100%" height="100%"
+									fill="var(--bs-border-color-translucent)" />
+                            </svg>
+							<div class="container">
+								<div class="carousel-caption text-start text-dark start-0 end-0">
+									<h1 class='display-1'>WELCOME</h1>
+									<p class='lead'>
+										<b>Harness the Strength of AML-4.1 </b> Turbocharge Your
+										Compliance Efforts!
+									</p>
+								</div>
+							</div>
+						</div>
+						<div class="carousel-item">
+							<svg class="bd-placeholder-img" width="100%" height="250px"
+								xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+								preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <rect width="100%" height="100%"
+									fill="var(--bs-border-color-translucent)" />
+                            </svg>
+							<div class="container">
+								<div class="carousel-caption text-start text-dark start-0 end-0">
+									<h1 class='display-1'>AML 4.1</h1>
+									<h5>Transaction Monitoring - Anti Money Laundering
+										Solution</h5>
+								</div>
+							</div>
+						</div>
+						<div class="carousel-item">
+							<svg class="bd-placeholder-img" width="100%" height="250px"
+								xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+								preserveAspectRatio="xMidYMid slice" focusable="false">
+                                <rect width="100%" height="100%"
+									fill="var(--bs-border-color-translucent)" />
+                            </svg>
+							<div class="container">
+								<div class="carousel-caption text-start text-dark start-0 end-0">
+									<h1 class='display-1'>WELCOME</h1>
+									<h5>Transaction Monitoring - Anti Money Laundering
+										Solution</h5>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class='ms-auto me-5'>
+				<div class='border rounded-5 pb-4 bg-white shadow-lg p-3'
+					style='min-width: 400px;'>
+					<div class='w-100 text-center pt-3'>
+						<img th:src="@{/login-dist/images/i-aml-logo.svg}" width="150px"
+							class='text-center'>
+					</div>
+					<h4 class='py-4 text-center'>Sign in with your AD credentials</h4>
+					<form autocomplete="off" role="form" method="post"
+						th:action="@{/login}" id="loginForm">
+						<input type="hidden" name="username" id="username"> <input
+							type="hidden" name="hdnPwd" id="hdnPwd"> <input
+							type="hidden" name="password" id="password"> <input
+							type="hidden" name="officeType" id="officeType"> <input
+							type="hidden" id="officeTypeIs" name="officeType"
+							th:value="${officesType}" /> <label for="username"
+							class="form-label">User Name</label>
+						<div class="input-group mb-3">
+							<span class="input-group-text rounded-start-5"><i
+								class="fa fa-user" aria-hidden="true"></i></span> <input type="text"
+								class="form-control rounded-end-5" placeholder="Username"
+								id="userName" name="userName" autocomplete="off"
+								onkeyup="makeUpper(this.id);" aria-label="Username"
+								aria-describedby="basic-addon1">
+							<div class="invalid-feedback">Not a valid username.</div>
+						</div>
+
+						<label for="password" class="form-label">Password</label>
+						<div class="input-group mb-3">
+							<span class="input-group-text rounded-start-5"><em
+								class="fa fa-unlock-alt"></em></span> <input type="password"
+								class="form-control rounded-end-5" placeholder="Password"
+								id="pass" name="pass" autocomplete="off"
+								onkeypress="checkCaps(event);" aria-label="Username">
+							<div class="invalid-feedback">Not a valid password.</div>
+						</div>
+						<div class="input-group mb-3">
+							<button type="button" id="logbtn"
+								class="btn btn-lg btn-primary px-5 rounded-pill mt-4 mx-auto">
+								Login</button>
+							<input type="hidden" name="hdnuserid" id="hdnuserid" value="" />
+							<input type="hidden" name="hdnpwd" id="hdnpwd" value="" />
+						</div>
+					</form>
+				</div>
+			</div>
+
+		</div>
+
+	</main>
+
+	<footer class='fixed-bottom'>
+		<div
+			class='bg-light d-flex py-1 align-items-center justify-content-around'>
+			<span>© 2024-2025. All rights reserved</span> <span><img
+				class="img-fluid" src="/aml-v4/dist/img/flag.png"
+				alt="Proudly Made In India"> Proudly Made In India</span> <span><img
+				style='height: 35px;' alt="IDBI Intech Logo"
+				th:src="@{/login-dist/images/IDBI-Intech-logo.svg}" /></span>
+		</div>
+	</footer>
+
+	<!-- /.login-box -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap 4 -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- Themes -->
+	<script th:src="@{/login-dist/themes/js/three.js}"></script>
+	<script th:src="@{/login-dist/themes/js/vanta.clouds.min.js}"></script>
+	<script type="text/javascript"
+		th:src="@{/login-dist/js/bootstrap.bundle.js}"></script>
+
+
+
+	<script>
+		VANTA.CLOUDS({
+			el : "#your-element-selector",
+			mouseControls : true,
+			touchControls : true,
+			gyroControls : false,
+			minHeight : 500.00,
+			minWidth : 200.00
+		})
+	</script>
+	<script>
+		function makeUpper(val) {
+			var y = document.getElementById(val).value;
+			document.getElementById(val).value = y.toUpperCase();
+		}
+
+		function checkCaps(e) {
+			var charKeyCode = e.keyCode ? e.keyCode : e.which;
+
+			var shiftKey = e.shiftKey ? e.shiftKey
+					: ((charKeyCode == 16) ? true : false);
+
+			if (((charKeyCode >= 65 && charKeyCode <= 90) && !shiftKey)
+					|| ((charKeyCode >= 97 && charKeyCode <= 122) && shiftKey))
+				alert("Caps Lock is ON.");
+		}
+		$('#userName').keypress(function(event) {
+			if (event.keyCode == 13 || event.which == 13) {
+				$('#pass').focus();
+				event.preventDefault();
+			}
+		});
+		$('#pass')
+				.keypress(
+						function(event) {
+							if (event.keyCode == 13 || event.which == 13) {
+								usernameTemp = $("#userName").val();
+								username = $.trim(usernameTemp);
+								passwd = $("#hdnPwd").val();
+								$("#pass").val('');
+								$("#userName").val('');
+								userOfficeType = $("#officeTypeIs").val();
+								if (usernameTemp == null || usernameTemp == ''
+										|| passwd == null || passwd == '') {
+									toastr
+											.error("You have entered an invalid username or password");
+								} else {
+									var iterationCount = 1000;
+									var keySize = 128;
+									var passphrase = CryptoJS.lib.WordArray
+											.random(128 / 8).toString(
+													CryptoJS.enc.Hex);
+									var aesUtil = new AesUtil(keySize,
+											iterationCount);
+									var ciphertext = aesUtil.encrypt(
+											reverseText(passphrase), username);
+									var ciphertextpassword = aesUtil.encrypt(
+											reverseText(passphrase), passwd);
+
+									var ciphertextoffice = aesUtil.encrypt(
+											reverseText(passphrase),
+											userOfficeType);
+									var idGen = Math.floor(Math.random() * 26)
+											+ Date.now();
+									localStorage.setItem('deviceToken', idGen);
+									$("#username").val(
+											ciphertext + ':~:'
+													+ ciphertextoffice + ':~:'
+													+ idGen);
+									$("#password").val(
+											ciphertextpassword + ':~:'
+													+ passphrase);
+									$("#userOfcType").val(ciphertextoffice);
+									$("#loginForm").submit();
+								}
+							}
+						});
+		$("#logbtn")
+				.click(
+						function() {
+							usernameTemp = $("#userName").val();
+							username = $.trim(usernameTemp);
+							passwd = $("#hdnPwd").val();
+							$("#pass").val('');
+							$("#userName").val('');
+							userOfficeType = $("#officeTypeIs").val();
+							if (usernameTemp == null || usernameTemp == ''
+									|| passwd == null || passwd == '') {
+								toastr
+										.error("You have entered an invalid username or password");
+							} else {
+								var iterationCount = 1000;
+								var keySize = 128;
+
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), username);
+								var ciphertextpassword = aesUtil.encrypt(
+										reverseText(passphrase), passwd);
+
+								var ciphertextoffice = aesUtil
+										.encrypt(reverseText(passphrase),
+												userOfficeType);
+								var idGen = Math.floor(Math.random() * 26)
+										+ Date.now();
+								localStorage.setItem('deviceToken', idGen);
+								$("#username").val(
+										ciphertext + ':~:' + ciphertextoffice
+												+ ':~:' + idGen);
+								$("#password")
+										.val(
+												ciphertextpassword + ':~:'
+														+ passphrase);
+								$("#userOfcType").val(ciphertextoffice);
+
+								$("#loginForm").submit();
+							}
+						});
+
+		$("#userName").keyup(function(e) {
+			var str = $(this).val();
+			$("#userName").val(str.toUpperCase());
+		})
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+						}, 100);
+			}
+		}
+	</script>
+	<script type="text/javascript">
+		function Generator() {
+			Generator.prototype.rand = Math.floor(Math.random() * 26)
+					+ Date.now();
+
+			Generator.prototype.getId = function() {
+				alert(this.rand++);
+				return this.rand++;
+			};
+		}
+		var idGen = new Generator();
+		var passArray = [];
+		var iterationCount = 1000;
+		var keySize = 128;
+		var aesUtil = new AesUtil(keySize, iterationCount);
+		var passphrase = CryptoJS.lib.WordArray.random(128 / 8).toString(
+				CryptoJS.enc.Hex);
+		passArray.push(passphrase);
+		$('#pass').keypress(
+				function(event) {
+					if (!(event.keyCode == 13 || event.which == 13)) {
+						var passwd = $("#pass").val();
+						$(this).val(
+								aesUtil
+										.encrypt(reverseText(passphrase),
+												passwd)
+										+ ':~:' + passphrase);
+					}
+					let passwordDummyText = ''; 
+					for (var i = 1; i < passArray.length; i++) {
+						passwordDummyText = passwordDummyText + '*';
+					}
+					 passArray.push(aesUtil.encrypt(reverseText(passphrase),
+								String.fromCharCode(event.which))); 
+					//alert(passArray.length);
+					$('#pass').val(passwordDummyText);
+					$('#hdnPwd').val(passArray);
+				});
+	</script>
+
+</body>
+
+</html>

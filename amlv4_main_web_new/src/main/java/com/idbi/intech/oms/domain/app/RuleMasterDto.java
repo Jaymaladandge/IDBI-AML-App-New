@@ -1,0 +1,100 @@
+package com.idbi.intech.oms.domain.app;
+
+import java.util.HashMap;
+import java.util.List;
+
+import com.idbi.intech.erm.domain.app.CommentDto;
+import com.idbi.intech.erm.domain.app.UserDto;
+
+import lombok.Data;
+
+@Data
+public class RuleMasterDto {
+
+	private String ruleId;
+	private String ruleDesc;
+	private String ruleType;
+	private String recordId;
+	private String dataSource;
+	private String rulePriority;
+	private String rulePriorityValue;
+	private String ruleFrequency;
+	private String ruleDependancy;
+	private String ruleDependancyValue;
+	private String ruleThreshold;
+	private String ruleClassification;
+	private String makerId;
+	private String suggestedAction;
+	private String auditConcern;
+	private String makerTimestamp;
+	private String checkerId;
+	private String checkerTimestamp;
+	private UserDto userDto;
+	HashMap<String, List<String>> ruleParameterList = new HashMap<>();
+	private List<String> returnTypeColumnList;
+	private HashMap<String, String> parameterColumnNameList;
+	private String tableName;
+	private String recordStatus;
+	private String riskColor;
+	private String ruleQuery;
+	private String userEnteredQuery;
+	private String ruleComment;
+	private UserDto user;
+	private String query;
+	private String searchParam;
+	private List<RuleMasterDto> ruleList;
+	private boolean ruleCheckFlg;
+	private HashMap<String, String> parameterList;
+	private HashMap<String, String> tableColumnList;
+	private List<String> commentList;
+	private String sourceName;
+	private String ruleActionStatusOld;
+	private String ruleActionStatus;
+	private String actionName;
+	private CommentDto commentDto;
+	private String ruleFlow;
+	private String priorityColor;
+	private String ruleCategory;
+	private int count;
+	private String recheckRequired;
+	private String maxAllowedDays;
+	private String ruleStatus;
+	private String procParameterString;
+	private String parameterString;
+	private String searchValue;
+	private String recheckRequiredValue;
+	private String verticalType;
+	private String verticalTypevalue;
+	private String maxAllowDays;
+	private String defaultComment;
+	private List<RuleValueParameterDto> valueParamDtoList;
+	private String recordStatusValue;
+	private String ruleTypeValue;
+
+	private String ruleFrequencyValue;
+	private boolean futureDateFlag;
+	private String futureDate;
+	private String ruleTat;
+	private String lastThreeExecutedCount;
+	private String lastTwoExecutedCount;
+	private String lastOneExecutedCount;
+	private String ruleIdTemp;
+	private Integer oneDayCount;
+	private Integer oneWeekCount;
+	private Integer gtOneWeekltTwoWeek;
+	private Integer gtTwoWeekltOneMonth;
+	private Integer gtOneMonthltThreeMonth;
+	private Integer gtThreeMonthltSixMonth;
+	private Integer gtSixMonthltOneYear;
+	private Integer gtOneYears;
+	private Integer oneDayCountTotal;
+	private Integer oneWeekCountTotal;
+	private Integer gtOneWeekltTwoWeekTotal;
+	private Integer gtTwoWeekltOneMonthTotal;
+	private Integer gtOneMonthltThreeMonthTotal;
+	private Integer gtThreeMonthltSixMonthTotal;
+	private Integer gtSixMonthltOneYearTotal;
+	private Integer gtOneYearsTotal;
+	private Integer perRuleCount;
+	private Integer perRuleCountTotal;
+}

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.canvas {
+	width: 100%;
+	object-fit: contain;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>RCSA - Residual Assessment</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/SelectReportsMainPage}">Report</a></li>
+								<li class="breadcrumb-item active">RCSA - Residual
+									Assessment Trend Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid d-print-block">
+
+
+					<div class="row ">
+						<div class="col-sm-12">
+
+
+
+
+
+							<div class="card card-info">
+
+
+
+								<div class="card-header d-print-none">
+									<h3 class="card-title">RCSA - Residual Assessment Trend
+										Report</h3>
+								</div>
+
+
+								<div class="card-body d-none d-print-block mt-4">
+
+									<div class="licImage ">
+										<img src="/oms-web/dist/img/lic-logo.jpg"
+											alt="LIC INDIA LOGO Large" class="brand-image-xl logo-xl"
+											style="width: 100px;">
+
+									</div>
+
+								</div>
+								<div class="card-body ">
+									<div class="row d-print-none">
+										<div class="col-sm-3">
+											<div class="form-group">
+												<label for="officeType">Select Office Type <code>*</code></label>
+												<select class="select2 text-capitalize" name="officeType"
+													data-placeholder="Select Office Type" id="officeType"
+													style="width: 100%;">
+													<option value=''>Select Office Type</option>
+													<option
+														th:each="officeNameList : ${riskLibDto.officeDtoList}"
+														th:value="${officeNameList.officeType}"
+														th:text="${officeNameList.officeName}" />
+												</select>
+											</div>
+										</div>
+
+										<div class="col-sm-3 d-print-none">
+											<div class="form-group">
+												<label for="officeCode">Select Office Code <code>*</code></label>
+												<select
+													class="select2 text-capitalize form-control float-right"
+													name="officeCode" id="officeCode"
+													data-placeholder="Select OfficeCode" style="width: 100%">
+													<option value=''>Select OfficeCode</option>
+
+												</select>
+											</div>
+										</div>
+
+										<div class="col-sm-3 d-print-none">
+											<div class="form-group">
+												<label for="officeCode">Select Creation Period <code>*</code></label>
+												<select
+													class="select2 text-capitalize form-control float-right"
+													name="creationPeriod" id="creationPeriod"
+													data-placeholder="Select CreationPeriod "
+													style="width: 100%">
+													<option value=''>Select CreationPeriod</option>
+													<option th:each="bizzList : ${riskLibDto.bizzDtoList}"
+														th:value="${bizzList.creationPeriod}"
+														th:text="${bizzList.creationPeriod}" />
+												</select>
+											</div>
+										</div>
+										<div class="form-group  col-sm-2 mt-4 d-print-none">
+
+											<a type="submit" class="btn btn-info" id=getReport> <i
+												class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Get
+												Report
+											</a>
+
+										</div>
+
+
+
+									</div>
+
+
+									<form id="frmGraph" autocomplete="off"
+										th:action="@{/redirectToTrendGraphDetails}" method="post"
+										th:object="${encryptedRequest}" enctype="multipart/form-data">
+										<input type="hidden" id="encryptedJson" name="encryptedJson"
+											th:field="*{encryptedJson}" /> <input type="hidden"
+											id="userName" th:field="${user.username}" name="userName" />
+
+										<!-- <input type="hidden" name="userName" id="userName"
+										th:value="${userName}" th:name="userName" />  -->
+										<input type="hidden" name="userDeptName" id="userDeptName"
+											th:value="${user.userDeptName}" th:name="userName" />
+
+									</form>
+
+
+									<div id="divHide">
+										<!-- Trend Report Started -->
+
+
+										<div class="card card-secondary card-outline">
+											<div class="card-header">
+
+												<span id="tagline" class="float-left text-bold text-black"
+													th:text="${'Trend Report for - ' + riskLibDto.selectedAssessmentPeriod +' for '+riskLibDto.officeName+' - '+ riskLibDto.filterCode}">
+												</span> <input type="hidden" name="trendData" id="trendData"
+													th:value="${riskLibDto.trendData}" /> <input type="hidden"
+													id="assesmentDate" th:value="${id}"> <input
+													type="hidden" id="seleectedAssessmentDate"
+													th:value="${riskLibDto.selectedAssessmentPeriod}">
+												<input type="hidden" id="selectedOfcCode"
+													th:value="${riskLibDto.filterCode}">
+
+												<button
+													class="btn float-right downloadPiePdfRegister text-white ra-bar-graph"
+													type="button" id="downloadPie" value="Download PDF"
+													style="margin-right: 15px; background-color: #cc0000"
+													title="Print">
+													<i class="fas fa-file-pdf"></i>&nbsp;&nbsp;Print
+												</button>
+
+
+
+											</div>
+											<div class="card-body">
+												<canvas id="visitors-chart" class="canvas" height="380"></canvas>
+											</div>
+										</div>
+										<!-- Trend Report End -->
+
+										<!-- Count Table Start  -->
+										<div class="card card-secondary card-outline">
+											<div class="card-body">
+
+												<table id="rcsaGraphTable"
+													class="table table-head-fixed table-bordered table-striped">
+													<thead>
+														<tr>
+															<th>Department Name</th>
+															<th>Total Risk</th>
+															<th>Risk Assessed</th>
+
+															<th>Low (in %)</th>
+															<th>Medium (in %)</th>
+															<th>High (in %)</th>
+
+														</tr>
+													</thead>
+													<tbody class="registerBody">
+														<tr th:each="data :${riskLibDto.trendData}">
+															<td th:text="${#strings.arraySplit(data, '~')[0]}"></td>
+															<td class="text-bold"><a class="text-blue riskmodal"
+																data-toggle="modal" href="#"
+																th:id="${#strings.arraySplit(data, '~')[2]}"
+																th:text="${#strings.arraySplit(data, '~')[6]}"></a></td>
+
+															<td th:text="${#strings.arraySplit(data, '~')[1]}"></td>
+
+
+															<td class="text-bold text-green"
+																th:text="${#strings.arraySplit(data, '~')[3]}"></td>
+															<td class="text-bold text-orange"
+																th:text="${#strings.arraySplit(data, '~')[4]}"></td>
+															<td class="text-bold text-red"
+																th:text="${#strings.arraySplit(data, '~')[5]}"></td>
+
+														</tr>
+
+
+
+													</tbody>
+												</table>
+
+											</div>
+										</div>
+										<!-- /. Count Table End -->
+
+
+
+									</div>
+
+									<!-- /.card-body-->
+								</div>
+
+
+
+
+
+
+
+
+
+								<div class="modal fade" id="riskmodal">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h5 class="modal-title">View</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<!-- /.col -->
+											<div class="card-body">
+
+												<!-- /.row -->
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="controlDept">Department <code>*</code>
+															</label> <input type="text"
+																class="form-control form-control-sm text-capitalize text-bold"
+																id="controlDept" name="controlFunction"
+																placeholder="Department" readonly>
+														</div>
+													</div>
+
+
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="controlDept">Status <code>*</code>
+															</label> <input type="text"
+																class="form-control form-control-sm text-capitalize text-bold"
+																id="status" name="status" placeholder="Status" readonly>
+														</div>
+													</div>
+
+												</div>
+												<!-- /.row -->
+
+
+
+
+												<!-- /.row -->
+
+
+
+												<!-- Previous Assessment Matrix calculation Start -->
+												<div class="row table-responsive" id="previousMatrixRow"
+													style="display: none;">
+													<div class="col-sm-12">
+														<div class="card card-outline card-secondary">
+															<div class="card-header">
+																<label> Risk Library Details </label>
+
+															</div>
+
+															<div class="card-body table-responsive">
+																<table id="previousMatrix"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+																	<thead>
+																		<tr>
+
+																			<th>Sr No</th>
+																			<th>Risk Description</th>
+																			<th>Inherent Risk Assessment</th>
+																			<th>Residual Risk Assessment</th>
+																			<th>Ref Sr No</th>
+																			<th>Risk Status</th>
+
+
+																		</tr>
+																	</thead>
+																	<tbody class="previousMatrixBody">
+																	</tbody>
+																</table>
+															</div>
+															<!-- /card-body -->
+														</div>
+														<!-- /card -->
+													</div>
+													<!-- /col -->
+												</div>
+												<!-- /row -->
+
+												<!-- Previous Assessment Matrix calculation End -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+												<!-- ./row -->
+											</div>
+											<!-- /.card-body -->
+											<div class="card-footer">
+												<button class="btn btn-secondary" data-dismiss="modal">
+													<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+												</button>
+											</div>
+											<!-- /.row -->
+										</div>
+										<!-- modal-content -->
+									</div>
+									<!-- /modal-dialog -->
+								</div>
+								<!-- /modal -->
+
+
+							</div>
+
+
+						</div>
+
+					</div>
+				</div>
+				<div class="col-sm-12" id="divHide"></div>
+		</div>
+	</div>
+	</section>
+	</div>
+	<!-- /.content-wrapper -->
+	<!-- Control Sidebar -->
+	<aside class="control-sidebar control-sidebar-dark">
+		<!-- Control sidebar content goes here -->
+	</aside>
+	<!-- /.control-sidebar -->
+	<!-- Included Footer -->
+	<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+	<!-- Graph JS -->
+	<!-- rcsaTrendGraph  -->
+	<script th:src="@{/dist/appjs/erm/rcsaTrendGraph.js}"></script>
+
+</body>
+</html>

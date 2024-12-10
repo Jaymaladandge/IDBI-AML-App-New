@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Top Risk And KRI Graphs</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/getDeptTopRiskReport}">Top Risk And KRI Graphs </a></li>
+								<li class="breadcrumb-item active">KRI Graphs</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.col -->
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">KRI Graphs</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+
+								<form id="frmTpRiskGraph" th:action="@{/KRIRAGByDeptIdPage}"
+									method="post">
+									<input type="hidden" th:feild="*{encryptedJson}"
+										id="encryptedJson" name="encryptedJson" />
+
+									<!-- <input type="hidden" name="userName" id="userName"
+										th:value="${userName}" th:name="userName" />  -->
+
+									<div class="card-body">
+									<div class="row">
+											<div class="col-md-3">
+												<div class="form-group">
+													<label for="assessmentDate">Select Assessment
+														Period</label> <select class="form-control select2"
+														data-placeholder="Assessment Date" name="assessmentDate"
+														id="assessmentDate" style="width: 100%;">
+														<option value=''>Select Assessment Period</option>
+
+														<option th:each="assessmentDate : ${assessmentDateList}"
+															th:value="${#strings.arraySplit(assessmentDate, '~')[0]}" th:text="${#strings.arraySplit(assessmentDate, '~')[1]}"></option>
+													</select>
+												</div>
+											</div>
+											<div class="col-md-3">
+												<div class="form-group">
+													<label for="officeType">Office Type <code>*</code></label>&nbsp;
+													<select class="select2 form-control" name="officeType"
+														id="officeType" data-placeholder="Office Type"
+														style="width: 100%;">
+														<option value=''>Select Office Type</option>
+														<option class="text-capitalize"
+															th:each="officeType : ${tpRiskDto.officeList}"
+															th:value="${officeType.split('~')[1]}"
+															th:text="${officeType.split('~')[0]}" />
+													</select>
+												</div>
+<input type="hidden" id="selectedOfficeType" th:value="${selectedOfficeType}">
+<input type="hidden" th:value="${assessmentDateSelected}" id="assessmentDateSelected">
+											</div>
+											<div class="col-sm-2 p-2">
+												<div class="form-group mt-4">
+													<button type="button" id="fetch_data_btn"
+														class="btn btn-block btn-sm btn-outline-primary">Fetch
+														Data</button>
+												</div>
+											</div>
+											</div>
+
+										<!-- PIE CHART -->
+										<div class="row p-1">
+											<!-- <div class="col-md-6 float-left">
+												<div class="card-title text-primary m-2 p-1">
+
+												Department wise KRI Status For Assessment Period <span
+														id="assessmentPeriod"
+														th:text="${tpRiskDto.assessmentPeriod}"></span> <span
+														id="assessmentPeriodTemp"
+														th:text="${tpRiskDto.assessmentPeriod}"></span>
+
+												</div>
+
+
+											</div> -->
+
+											<input type="hidden" th:value="${tpRiskDto.kriRAGDeptCount}"
+												id="kriData">
+											<div class="card-body">
+												<!-- <div class="chart">
+													<canvas id="barChart"
+														style="min-height: 1500px; height: 100%; max-height: 100%; max-width: 100%;"></canvas>
+												</div> -->
+												Department wise KRI Status For Assessment Period <span
+														id="assessmentPeriod"
+														th:text="${tpRiskDto.assessmentPeriod}"></span> <span
+														id="assessmentPeriodTemp"
+														th:text="${tpRiskDto.assessmentPeriod}"></span>
+												<div class="card-body">
+												
+											<canvas id="visitors-chart" height="300"></canvas>
+										</div>
+												
+												
+											</div>
+
+
+
+
+
+										</div>
+
+										<!-- PIE CHART END-->
+
+
+
+										<div class="row">
+											<div class="col-md-12">
+												<input type="hidden" name="tpRiskCount" id="tpRiskCount"
+													th:value="${tpRiskCount}" /> <input type="hidden"
+													name="tpRiskCount" id="tpRiskCount"
+													th:value="${tpRiskCount}" /> <input type="hidden"
+													name="greenColour" id="greenColour"
+													th:value="${greenColorVal}" /> <input type="hidden"
+													name="redColour" id="redColour" th:value="${redColorVal}" />
+												<input type="hidden" name="amberColour" id="amberColour"
+													th:value="${amberColorVal}" />
+
+											</div>
+										</div>
+									</div>
+
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+
+
+
+
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- <script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+ -->
+	<!-- Developer Added JS -->
+	<!-- <script th:src="@{/dist/appjs/erm/dashboard.js}"></script> -->
+	<!-- 		<script th:src="@{/dist/appjs/erm/home.js}"></script> -->
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+
+	<!-- Developer Added Print JS -->
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/topRiskGraph.js}"></script>
+
+
+
+	<!-- Graph JS -->
+
+
+
+	<script>
+		$(function() {
+			$("#topRiskGraphTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : []
+				} ],
+
+				"order" : [ 0, "desc" ],
+				"lengthMenu" : [ 5 ],
+				"responsive" : false,
+				"autoWidth" : false,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo(
+					'#actionplantable_wrapper .col-md-12:eq(0)');
+		});
+		//topRiskDetailsTable
+		$(function() {
+			$("#topRiskDetailsTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : []
+				} ],
+
+				"order" : [ 0, "desc" ],
+				"lengthMenu" : [ 5 ],
+				"responsive" : false,
+				"autoWidth" : false,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo(
+					'#actionplantable_wrapper .col-md-12:eq(0)');
+		});
+
+
+	</script>
+		<script type="text/javascript">
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+
+	<script>
+$(document).ready(function(){
+	$("#assessmentPeriod").hide();
+})
+</script>
+
+	
+
+	<script>
+
+$(document).ready(function(){
+	var kriData = $("#kriData").val();
+	
+str = kriData.replace('{','');
+str = str.replace('}','');// these lines will remove the leading and trailing braces
+
+var arr = str.split(','); // this will give you an array of strings with each index in the format "12=Other Services (Assisted)"
+
+var keys = [];
+var red = [];
+var green = [];
+var amber = [];
+
+
+var $visitorsChart = $('#visitors-chart')
+var ticksStyle = {
+			fontColor : '#495057',
+			fontStyle : 'bold'
+		}
+		// eslint-disable-next-line no-unused-vars
+		var mode = 'index'
+		var intersect = true
+		
+		
+arr.forEach(function(item){
+    // here you can split again with '=' and do what is required
+    //alert("Items Before Loop "+ item);
+  
+	    //alert("Items After Loop "+ item);
+	    var s = item.split('=');
+	   	// alert("Key "+ s[0]);
+	    keys.push(s[0]);
+	    var obj = {key: s[0], value:s[1]}; // this is up to your implementation
+	    var rgb = s[1].split('~');
+	    green.push(rgb[0]);
+	    amber.push(rgb[1]);
+	    red.push(rgb[2]);
+	
+})
+
+
+var visitorsChart = new Chart($visitorsChart, {
+				data : {
+					labels : keys,
+					datasets : [ {
+						type : 'line',
+						label : 'Green',
+						data : green,
+						backgroundColor : 'transparent',
+						borderColor : '#28A745',
+						pointBorderColor : '#28A745',
+						pointBackgroundColor : '#28A745',
+						fill : false
+					// pointHoverBackgroundColor: '#007bff',
+					// pointHoverBorderColor : '#007bff'
+					}, {
+						type : 'line',
+						label : 'Amber',
+						data : amber,
+						backgroundColor : 'tansparent',
+						borderColor : '#FFBF00',
+						pointBorderColor : '#FFBF00',
+						pointBackgroundColor : '#FFBF00',
+						fill : false
+					// pointHoverBackgroundColor: '#ced4da',
+					// pointHoverBorderColor : '#ced4da'
+					} , {
+						type : 'line',
+						label : 'Red',
+						data : red,
+						backgroundColor : 'tansparent',
+						borderColor : '#FF0000',
+						pointBorderColor : '#FF0000',
+						pointBackgroundColor : '#FF0000',
+						fill : false
+					// pointHoverBackgroundColor: '#ced4da',
+					// pointHoverBorderColor : '#ced4da'
+					}]
+				},
+				options : {
+					maintainAspectRatio : false,
+					tooltips : {
+						mode : mode,
+						intersect : intersect
+					},
+					hover : {
+						mode : mode,
+						intersect : intersect
+					},
+					legend : {
+						display : true
+					},
+					scales : {
+						yAxes : [ {
+							// display: false,
+							gridLines : {
+								display : true,
+								lineWidth : '4px',
+								color : 'rgba(0, 0, 0, .2)',
+								zeroLineColor : 'transparent'
+							},
+							ticks : $.extend({
+								beginAtZero : true,
+
+							}, ticksStyle)
+						} ],
+						xAxes : [ {
+							display : true,
+							gridLines : {
+								display : true
+							},
+							ticks : ticksStyle
+						} ]
+					}
+				}
+			})
+	
+});
+
+</script>
+
+<script>
+$("#fetch_data_btn").click(function(){
+	var apString = "{\"assessmentPeriod\":\""
+		+ $("#assessmentDate").val()
+		+ "\",\n" + "\"capturerOfficeType\":\""
+		+ $("#officeType").val() + "\"}";
+		
+		document.getElementById('load').style.visibility = "visible";
+	var iterationCount = 1000;
+	var keySize = 128;
+	//passPhrase is the key
+	var passphrase = CryptoJS.lib.WordArray.random(
+			128 / 8).toString(CryptoJS.enc.Hex);
+
+	var aesUtil = new AesUtil(keySize,
+			iterationCount);
+
+	var ciphertext = aesUtil.encrypt(
+			reverseText(passphrase), apString);
+
+	$("#encryptedJson").val(
+			ciphertext + ':~:' + passphrase);
+	$("#frmTpRiskGraph").submit();
+})
+</script>
+<script>
+		$(document).ready(function() {
+			$(
+					'#officeType option[value="'
+							+ $("#selectedOfficeType").val() + '"]')
+					.attr("selected", "selected").change();
+			//assessmentDateSelected
+			$(
+					'#assessmentDate option[value="'
+							+ $("#assessmentDateSelected").val() + '"]')
+					.attr("selected", "selected").change();
+			var userOffice=$("#selectedOfficeType").val();
+			//alert(userOffice);
+		
+			if(userOffice==='ZO'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+		}else if(userOffice==='divisional office'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+				$('#officeType option[value="ZO"]').attr("disabled", true);
+			}else if(userOffice==='BO'){
+				$('#officeType option[value="CO"]').attr("disabled", true);
+				$('#officeType option[value="ZO"]').attr("disabled", true);
+				$('#officeType option[value="DO"]').attr("disabled", true);
+			}
+			});
+		
+</script>
+
+</body>
+
+</html>
+

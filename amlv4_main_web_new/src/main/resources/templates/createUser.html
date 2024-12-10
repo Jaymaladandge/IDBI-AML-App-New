@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+textarea {
+	overflow-y: scroll;
+}
+
+.mt-4, .my-4 {
+	margin-top: 1.8rem !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>User Management</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/userSummary}">User
+										Management </a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title text-center">Create</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="frmUser" autocomplete="off"
+									th:action="@{/createUserPage}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+									<div class="card-body">
+
+
+											<div class="row">
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="username">User Name <code>*</code></label> <input
+														type="text" class="form-control form-control-sm"
+														name="username" id="username" placeholder="User Name">
+												</div>
+											</div>
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="username">User Id <code>*</code></label> <input
+														type="text" class="form-control form-control-sm"
+														name="userId" id="userId" placeholder="User Id">
+												</div>
+											</div>
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="emailid">Email ID <code>*</code></label> <input
+														type="email" class="form-control form-control-sm"
+														name="emailid" id="emailid" placeholder="Email ID">
+
+												</div>
+											</div>
+
+
+
+
+											<div class="form-group" style="display: none">
+												<label for="sr.No">Sr. Number <code>*</code></label> <input
+													type="hidden" class="form-control form-control-sm"
+													name="srNo" id="srNo" placeholder="Sr. No" readonly>
+											</div>
+
+										</div>
+
+										<div class="row">
+
+
+											<!-- 	<div class="col-sm-4">
+												<div class="form-group" style="display: none">
+													<label for="raStmtId">Record ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="userId" name="userId" th:value="${userId}" readonly>
+
+
+													</div>
+												</div>
+											</div> -->
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType"> Channel ID <code>*</code></label>
+
+													<select class="select2 text-capitalize" name="channelId"
+														id="channelId" data-placeholder="Channel ID"
+														style="width: 100%;">
+													</select>
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="mobilenumber">Mobile Number <code>*</code></label>
+													<input type="tel" class="form-control form-control-sm"
+														name="mobileno" id="mobileno" placeholder="Mobile Number"
+														pattern="[1-9]{1}[0-9]{9}" maxlength="10"
+														title="Enter valid Mobile Number">
+												</div>
+											</div>
+
+
+											<div class="col-sm-4">
+												<div class="form-group" style="display: none">
+													<label for="raRecordStatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm  text-bold"
+															id="recordStatus" name="recordStatus"
+															th:value="${recordStatus}" readonly>
+													</div>
+												</div>
+											</div>
+
+
+
+
+											<!-- <div class="col-sm-4">
+												<div class="form-group">
+													<label for="Sr.no">SRNO</label>
+													<div class="input-group">
+														<input type="text" class="form-control form-control-sm"
+															name="srNoTemp" id="srNoTemp" placeholder="SRNo">
+
+													</div>
+												</div>
+											</div> -->
+
+
+
+
+											<!-- <div class="col-sm-2">
+
+												<button type="button" id="fetch_data_btn"
+													class="btn btn-block btn-sm btn-outline-primary mt-4">Fetch
+													Data</button>
+
+											</div> -->
+
+
+
+											<div class="col-sm-3">
+												<div class="form-group">
+													<!-- <label for="userId">User ID</label> -->
+													<div class="input-group">
+														<input type="hidden"
+															class="form-control form-control-sm text-bold"
+															id="userId" name="userId" readonly>
+
+
+													</div>
+												</div>
+											</div>
+
+										</div>
+										<div class="row">
+
+											<!-- <div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType">Application Name <code>*</code></label>
+													<select class="select2" name="applicationNames"
+														id="application" data-placeholder="Select Application"
+														style="width: 100%;">
+														<option value=''></option>
+														<option th:each="appName : ${appNamesWithDesc}"
+															th:value="${#strings.arraySplit(appName, '~')[1]}"
+															th:text="${#strings.arraySplit(appName, '~')[0]}"></option>
+													</select>
+												</div>
+											</div> -->
+
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType"> Select Positions <code>*</code></label>
+
+													<select class="select2 text-capitalize" name="userPosition"
+														id="userPosition" data-placeholder="Position"
+														style="width: 100%;">
+
+
+
+													</select>
+												</div>
+											</div>
+
+											<div class="col-sm-4">
+												<div class="form-group userRole">
+													<label for="rolename">Role Name<code>*</code></label> <select
+														class="select2 text-capitalize" name="userRole"
+														id="userRole" multiple="multiple"
+														data-placeholder="Role Name" style="width: 100%;" readonly>
+														<option value=''></option>
+														<option th:each="rolename : ${RoleShortNameList}"
+															th:value="${rolename.roleId}"
+															th:text="${rolename.roleName}" />
+
+													</select>
+												</div>
+											</div>
+
+
+											<!--<div class="col-sm-3 mt-4">
+												<div class="form-group">
+													<button id="addData" type="button" class="btn btn-sm btn-primary">Add</button>
+												</div>
+
+											</div>
+										</div>
+										-->
+
+
+											<div class="row">
+
+												<!-- <div class="col-sm-4">
+												<div class="form-group">
+													<label for="rolename">Role Name<code>*</code></label> <select
+														class="select2" name="userRole" id="userRole"
+														multiple="multiple" data-placeholder="Role Name"
+														style="width: 100%;">
+														<option value=''></option>
+														<option th:each="rolename : ${RoleShortNameList}"
+															th:value="${rolename.roleId}"
+															th:text="${rolename.roleName}" />
+
+													</select>
+												</div>
+											</div> 
+											<div class="col-sm-4" th:if="${ermDeptFlg}" style="display:none" id="switchOfcColumn">
+												<div class="form-group">
+													<label for="switchOfcFlg">Switch Office</label> <select
+														class="select2" name="switchAccessFlg"
+														id="switchAccessFlg" data-placeholder="Switch Ofc Flag"
+														style="width: 100%;">
+														<option value=''>Switch Ofc Flag</option>
+														<option value='Y'>Yes</option>
+														<option value='N'>No</option>
+
+
+													</select>
+												</div>
+											</div>-->
+
+
+
+
+
+
+
+												<div class="col-sm-4" th:unless="${ermDeptFlg}">
+													<input type="hidden" id="switchAccessFlg"
+														name="switchAccessFlg" value="N">
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+
+										
+										<!-- /.row -->
+
+
+										<!-- /.row -->
+									</div>
+									<!-- ./card-body -->
+
+
+
+
+									<!-- 									<div class="card card-outline card-info  p-2">
+										<h3 class="card-title text-info">&nbsp; Details for Role</h3>
+									</div> -->
+
+
+
+
+									<div class="card-body">
+										<!--  <div class="row">
+
+											<div class="col-sm-4">
+												<div class="form-group">
+													<label for="officeType">Office Type <code>*</code></label>
+
+													<input type="text" class="form-control form-control-sm"
+														id="officetype" placeholder="Office Type"
+														name="officetype" readonly>
+												</div>
+											</div>
+
+
+											<div class="col-sm-4">
+												<div class="form-group" th:if="${ermDeptFlg}">
+													<label for="department">Department <code>*</code></label> <select
+														class="form-control select2" data-placeholder="Department"
+														name="Department" id="Department" style="width: 100%;">
+														<option value=''>Department</option>
+
+													</select>
+												</div>
+												<div class="form-group" th:unless="${ermDeptFlg}">
+													<label for="department">Department <code>*</code></label> <select
+														class="form-control select2" data-placeholder="Department"
+														name="Department" id="Department" style="width: 100%;" disabled>
+														<option th:value="${deptId}" th:text="${deptName}" selected></option>
+														</select>
+
+												</div>
+											</div>
+											<div class="col-sm-4">
+												<div class="form-group">
+
+													<label for="officeCode">Office Code <code>*</code></label>
+													<div class="input-group">
+														<input type="text" class="form-control form-control-sm"
+															id="officeCode" name="officeCode"
+															placeholder="Office Code" readonly>
+
+													</div>
+
+												</div>
+											</div>
+
+
+										</div>  -->
+
+
+										
+</div>
+										<!--./card-body  -->
+
+										<div class="card-body">
+											<div class="row">
+												<div class="col-sm-4">
+
+													<div class="form-group">
+														<label>Document Attachment</label>
+														<div class="custom-file">
+															<input type="file"
+																class="custom-file-input input-group-sm" id="customFile"
+																style="display: none;" name="files[]"
+																multiple="multiple" onchange="getFileData(this);" /> <label
+																class="btn bg-gray" for="customFile">Choose file</label>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<table
+														class="table uploadTable table-bordered table-striped"
+														id="filedetails" style="display: none">
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size</th>
+																<th>Upload By</th>
+																<th>Upload Date</th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<!-- /.row -->
+											<div class="row">
+												<div class="col-sm-12">
+
+													<input type="hidden" id="username1" th:value="${userName1}">
+													<input type="hidden" id="ermFlg" name="ermFlg"
+														th:value="${ermDeptFlg}"> <input type="hidden"
+														id="sessionOfficeType" name="sessionOfficeType"
+														th:value="${userOfficeType}"> <input type="hidden"
+														id="level1" name="level1" th:value="${level1}"> <input
+														type="hidden" id="level2" name="level2"
+														th:value="${level2}"> <input type="hidden"
+														id="level3" name="level3" th:value="${level3}"> <input
+														type="hidden" id="level4" name="level4"
+														th:value="${level4}"> <input type="hidden"
+														id="emailFlgTemp" name="emailFlgTemp">
+												</div>
+											</div>
+
+
+
+										</div>
+
+
+
+										<!-- /.card-body -->
+										<div class="card-footer">
+											<a class="btn btn-info" id="create_btn"> <i
+												class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+											</a> <a href="#" data-toggle="modal" data-whatever="userSummary"
+												data-target="#cancelmodel"><button type="reset"
+													class="btn btn-warning" title="Cancel">
+													<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+												</button></a>
+										</div>
+										<!-- /.card-footer -->
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal"
+							aria-label="Close">
+							<span aria-hidden="true">&times;</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br> Press
+							"Ok" to Continue.
+						</h5>
+					</div>
+
+					<div class="modal-footer">
+
+						<button type="button" class="btn btn-secondary"
+							data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check"
+							style="padding: 0 7px 0 0px;"></i>Ok </a>
+
+					</div>
+
+					<!-- /.Card -->
+
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/userCreate.js}"></script>
+	<!-- REQUIRED SCRIPTS -->
+
+
+	<script>
+		$("#fetch_data_btn")
+				.click(
+						function() {
+
+							var srno = $("#srNoTemp").val();
+							var ermDeptFlg = $("#ermFlg").val();
+							var deptId = $("#Department").val();
+							//alert("deptId "+deptId);
+							var sessionOfficeType = $("#sessionOfficeType")
+									.val();
+							var level1 = $("#level1").val();
+							var level2 = $("#level2").val();
+							var level3 = $("#level3").val();
+							var level4 = $("#level4").val();
+							var ofcFlag = false;
+
+							var pageValJson = "{\"srno\":" + "\"" + srno
+									+ "\"}";
+							document.getElementById('load').style.visibility = "visible";
+							$
+									.ajax({
+										url : 'fetchHrmsDataBySrno',
+										type : "POST",
+										data : {
+											pageValJson : pageValJson
+										},// important line for thymeleaf http security
+										headers : {
+											"X-CSRF-TOKEN" : $(
+													"input[name='_csrf']")
+													.val()
+										},
+										cache : false,
+										// async:true,
+										success : function(response) {
+
+											setTimeout(
+													function() {
+														document
+																.getElementById('interactive');
+														document
+																.getElementById('load').style.visibility = "hidden";
+
+													}, 1000);
+
+											var jsonResponse = JSON
+													.stringify(response);
+
+											var obj = JSON.parse(jsonResponse);
+
+											//$("#userRole option:selected").prop("selected", false);
+											/*  $("#Department").html(""); */
+
+											$(':input', '#frmUser')
+													.not(
+															':button, :submit, :reset, :hidden')
+													.val('').prop('checked',
+															false).prop(
+															'selected', false);
+
+											$("#recordStatus").val(
+													"Create User");
+											$("#srNoTemp").val(srno);
+											$("#sessionOfficeType").val(
+													sessionOfficeType);
+											$("#level1").val(level1);
+											$("#level2").val(level2);
+											$("#level3").val(level3);
+											$("#level4").val(level4);
+											
+											$("#userRole").empty();
+											if(	obj.roleNameList!=null){
+											$(
+													"<option />",
+													{
+														val : "",
+														text : "Select Roles"
+													}).appendTo(
+													$("#userRole"));
+											obj.roleNameList
+													.forEach(function(items) {
+														console.log(items);
+
+														$(
+																"<option />",
+																{
+																	val : items
+																			.split('~')[0],
+																	text : items
+																			.split('~')[1]
+																})
+																.appendTo(
+																		$("#userRole"));
+
+													});
+											}
+											if (ermDeptFlg === "false") {
+												$("#Department").val(deptId);
+											} else {
+												$("#Department").empty();
+												if(obj.deptNameList!=null){
+												$(
+														"<option />",
+														{
+															val : "",
+															text : "Select Department Type"
+														}).appendTo(
+														$("#Department"));
+												obj.deptNameList
+														.forEach(function(items) {
+															console.log(items);
+
+															$(
+																	"<option />",
+																	{
+																		val : items
+																				.split('~')[0],
+																		text : items
+																				.split('~')[1]
+																	})
+																	.appendTo(
+																			$("#Department"));
+
+														});
+												}
+											}
+
+											Object
+													.keys(obj)
+													.forEach(
+															function(items) {
+																console
+																		.log("test");
+																console
+																		.log("items "
+																				+ items);
+
+																if (items == 'username') {
+																	var userName = items;
+																	if (obj[userName] == null) {
+																		toastr
+																				.warning('Sr.no not present')
+																	}
+																	$(
+																			"#username")
+																			.val(
+																					obj[userName]
+																							.toUpperCase());
+
+																}
+																if (items == 'userMobile') {
+																	$(
+																			"#mobileno")
+																			.val(
+																					obj[items]);
+																}
+																if (items == 'userEmail') {
+																	$(
+																			"#emailid")
+																			.val(
+																					obj[items]
+																							.toUpperCase());
+																}
+																if (items == 'userOfficeType') {
+
+																	/* $('#officetype option[value="'+obj[items]+'"]').attr("selected",
+																	"selected").change(); */
+																	$(
+																			'#officetype')
+																			.val(
+																					obj[items]);
+																	if (sessionOfficeType
+																			.toUpperCase() === level2) {
+
+																		if (obj[items] === level1) {
+
+																			ofcFlag = true;
+
+																		}
+																	} else if (sessionOfficeType
+																			.toUpperCase() === level3) {
+																		if (obj[items] === level1
+																				|| obj[items] === level2) {
+																			ofcFlag = true;
+																		}
+																	} else if (sessionOfficeType
+																			.toUpperCase() === level4) {
+																		if (obj[items] != level4) {
+																			ofcFlag = true;
+																		}
+																	}
+																	if (ofcFlag == true) {
+
+																		toastr
+																				.error(obj[items]
+																						+ ' user Cannot be Created by '
+																						+ sessionOfficeType);
+																		$(
+																				':input',
+																				'#frmUser')
+																				.not(
+																						':button, :submit, :reset, :hidden')
+																				.val(
+																						'')
+																				.prop(
+																						'checked',
+																						false)
+																				.prop(
+																						'selected',
+																						false);
+
+																		$(
+																				"#recordStatus")
+																				.val(
+																						"Create User");
+																		$(
+																				"#srNoTemp")
+																				.val(
+																						srno);
+																		$(
+																				"#sessionOfficeType")
+																				.val(
+																						sessionOfficeType);
+																		$(
+																				"#level1")
+																				.val(
+																						level1);
+																		$(
+																				"#level2")
+																				.val(
+																						level2);
+																		$(
+																				"#level3")
+																				.val(
+																						level3);
+																		$(
+																				"#level4")
+																				.val(
+																						level4);
+																		if (ermDeptFlg === "false") {
+																			$(
+																					"#Department")
+																					.val(
+																							deptId);
+																		}
+
+																	}
+
+																}
+																if (items == 'officeCode') {
+																	$(
+																			"#officeCode")
+																			.val(
+																					obj[items]);
+
+																}
+																if (items == 'srno') {
+																	$("#srNo")
+																			.val(
+																					obj[items]);
+																	//$("#srNoTemp").val(obj[items]);
+																}
+
+																if (items == 'emailFlg') {
+																	if (obj[items]) {
+																		emailIdFlg = true;
+																		$(
+																				"#emailFlgTemp")
+																				.val(
+																						"true");
+																		toastr
+																				.error('Email Id Already Exists');
+
+																	} else {
+																		$(
+																				"#emailFlgTemp")
+																				.val(
+																						"false");
+																	}
+
+																}
+
+															});
+											if ($("#officeCode").val().length === 0
+													|| $("#officeCode").val()
+															.trim() === '') {
+
+												toastr
+														.error('Sr. Number Not Present.')
+											}
+											$("#emailid")
+													.keyup(
+															function(e) {
+															
+																var str = $(
+																		this)
+																		.val();
+																$("#emailid")
+																		.val(
+																				str
+																						.toUpperCase());
+																var emailId = $(
+																		"#emailid")
+																		.val();
+																
+																
+																
+																const userId = emailId.split("@");
+																if (userId[0] != "") {
+																	//("username "+userName[0]);
+																	$("#userId")
+																			.val(
+																					userId[0]
+																							.toUpperCase());
+																}
+															})
+
+											$(document)
+													.ready(
+															function() {
+																$("#username")
+																		.keyup(
+																				function(
+																						e) {
+																					var strUserName = $(
+																							this)
+																							.val();
+																					$(
+																							"#username")
+																							.val(
+																									strUserName
+																											.toUpperCase());
+																											
+																									
+
+																				});
+
+															});
+
+										},
+										error : function(xhr, status, error) {
+
+											toastr
+													.success('Some Error Occured');
+										}
+									});
+
+						})
+						
+					
+						
+	</script>
+
+	<script>
+$('#Department')
+.on(
+		'change',
+		function() {
+			var dept = $('#Department').find(":selected").text();
+			if(dept==='ERM'){
+				$("#switchOfcColumn").css("display","");
+			}else{
+				$("#switchOfcColumn").css("display","none");
+			}
+			
+			
+		});
+		
+		
+		
+
+//----------------------------------------------- Fetch positions -----------------------------------------
+
+
+$(document).ready(function(){
+
+
+$('#recordStatus').val($('#recordStatus').val().toUpperCase());
+
+
+$.ajax({
+		
+		url : 'fetchAllPositions',
+		type : 'get',
+		success : function(response){
+		var positionArr = response.roleNameList;
+		//console.log("-----------fetchAllPositions data------------"+positionArr);
+		
+		if(response != null  && Array.isArray(response.roleNameList)){
+		
+			var positionSelect = $('#userPosition');
+			positionSelect.empty();
+			
+			var defaultOption = $('<option>', {
+                value: '',               
+                text: 'Select Channel Id', 
+                selected: true,           
+                disabled: true,           
+                hidden: true            
+            });
+            positionSelect.append(defaultOption); 
+			
+			positionArr.forEach(function(position){
+				
+				
+				var option = $('<option>', {
+                    value: position,  
+                    text: position.toUpperCase()
+                });
+              
+                positionSelect.append(option);
+				
+			});
+			
+			positionSelect.select2('destroy');
+			positionSelect.select2();
+		}
+		else{
+			console.log("-----------response is null or undefined------------"+response);
+		}
+		},
+		error : function(xhr, status, error){
+			toastr.error('Some Error Occured');
+		}
+
+});
+
+
+
+$.ajax({
+
+		url : 'fetchAllChannelId',
+		type : 'get',
+		success : function(response){
+		
+		//console.log('----------fetchAllChannelId----------'+response);
+		
+		if(response != null && Array.isArray(response) && response.length > 0){
+		
+			var channelIdSelect = $('#channelId');
+			channelIdSelect.empty();
+			
+			
+			var defaultOption = $('<option>', {
+                value: '',               
+                text: 'Select Channel Id', 
+                selected: true,           
+                disabled: true,           
+                hidden: true            
+            });
+            channelIdSelect.append(defaultOption); 
+			
+			response.forEach(data => {
+
+			var option = $('<option>', {
+                    value: data.channelId,  
+                    text: data.channelName.toUpperCase()
+                });
+                
+			channelIdSelect.append(option);
+				
+			});
+			 
+			channelIdSelect.select2('destroy');
+			channelIdSelect.select2();
+		}
+		else{
+			console.log("-----------response is null or undefined or empty------------"+response);
+		}	
+	
+			
+		},
+		error : function(xhr, status, error){
+			toastr.error('Some Error Occured');
+		}
+			
+});
+
+
+
+
+
+//-------------------------------------------------------------------------------
+
+$('#userPosition').change(function(){
+
+var positionVal = $('#userPosition').val();
+ 
+//console.log('--------positionVal---------'+positionVal);
+
+	 $.ajax({
+		
+		url : 'fetchRolesForPosition',
+		type : 'post',
+		data : { positionVal: positionVal },
+		headers : {"X-CSRF-TOKEN" :  $("input[name='_csrf']").val()},
+		success : function(response){
+		
+		if(response != null && Array.isArray(response) && response.length > 0){
+		
+		var userRoleSelect = $('#userRole');
+		userRoleSelect.empty();
+		
+		response.forEach(data => {
+			console.log(data.roleId+'='+data.roleName);
+			
+			
+			var option = $('<option>',{
+					value: data.roleId,  
+                    text: data.roleName.toUpperCase()
+			});
+			
+			option.prop('selected', true);
+			userRoleSelect.append(option);
+			
+			userRoleSelect.prop('disabled', true);
+			
+		});
+		
+		userRoleSelect.select2();
+		
+		}
+		else{
+			console.log("-----------response is null or undefined or empty------------"+response);
+		}
+		
+		},
+		error : function(xhr, status, error){
+			toastr.error('Some error occured');
+		}
+
+	}); 
+
+
+});
+
+
+
+
+
+
+
+
+
+
+
+});	
+
+
+		
+		
+</script>
+
+	<script>
+		$('#cancelmodel').on('show.bs.modal', function(event) {
+			var button = $(event.relatedTarget)
+			var recipient = button.data('whatever')
+			//var recipient = $('#datasource').val()
+			var modal = $(this)
+			$('a.target').attr('href', recipient);
+
+		})
+	</script>
+
+</body>
+</html>

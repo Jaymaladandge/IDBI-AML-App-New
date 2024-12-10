@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>APIS</title>
+
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+		integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+	<style>
+		#load {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			opacity: 1;
+		}
+
+		.card-info:not(.card-outline)>.card-header {
+			background-color: #044383 !important;
+		}
+
+		.bg-info {
+			background-color: #044383 !important;
+		}
+
+		.btn-info {
+			color: #fff;
+			background-color: #044383 !important;
+			border-color: #044383 !important;
+			box-shadow: none;
+		}
+
+		.image-upload>input {
+			display: none;
+
+		}
+	</style>
+
+
+</head>
+<!--<div id="load"></div>-->
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>BenchMark </h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">BenchMark</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Select Excel File</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+
+								<form id="uploadExcelFile" th:action="@{/fetchBmFileUploader}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+									<input type="hidden" id="userName" name="userName" th:value="${userName}" />
+									<input type="hidden" id="financialYear" name="financialYear"
+										th:value="${financialYear}" />
+									<input type="hidden" id="deptList" name="deptList" th:value="${deptList}" />
+									<input type="hidden" th:value="${message}" id="message" />
+
+									<div class="card-body">
+
+										<div class="custom-file">
+											<input type="file" class="excel_file-input input-group-sm" id="excel_file"
+												style="display:none;" name="files[]" accept=".xlsx, .xls" />
+											<label class="btn bg-gray" name="chooseFileFirst" for="excel_file">Choose
+												file</label>
+											<label for="excel_file">
+												<img th:src="@{/dist/img/Microsoft-Excel-icon.png}" />
+
+											</label>
+										</div>
+
+									</div>
+
+									<div class="col-sm-12">
+
+										<div id="excel_data" class="mt-5 table-responsive"></div>
+
+									</div>
+									<!--</div>-->
+									<div class="card-footer">
+										<button type="button" class="btn btn-info submit_button" id="submitFile">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+										</button>
+										<a href="#" data-toggle="modal" data-whatever="benchMarkFileUploader"
+											data-target="#cancelmodel"><button type="reset" class="btn btn-warning"
+												title="Cancel">
+												<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+											</button></a>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+
+			</section>
+
+		</div>
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+
+
+
+		<!-- Cancel Modal -->
+		<div class="modal fade" id="cancelmodel">
+			<div class="modal-dialog modal-fluid">
+				<div class="modal-content">
+					<div class="modal-header bg-info">
+						<h6 class="modal-title">Confirm</h6>
+						<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+							<span aria-hidden="true">×</span>
+						</button>
+					</div>
+					<!-- form start -->
+					<div class="modal-body">
+						<h5 class="card-title">
+							If you leave this page, all changes will be lost. <br>
+							Press "Ok" to Continue.
+						</h5>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-dismiss="modal">
+							<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+						</button>
+						<a class="btn btn-primary target"><i class="fas fa-check" style="padding: 0 7px 0 0px;"></i>Ok
+						</a>
+					</div>
+					<!-- /.Card -->
+				</div>
+				<!-- /.modal-content -->
+			</div>
+			<!-- /.modal-dialog -->
+		</div>
+		<!-- End Cancel Modal -->
+	</div>
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<script th:src="@{/dist/appjs/js/jszip.js}"></script>
+	<script th:src="@{/dist/appjs/js/xlsx.full.min.js}"></script>
+	<script th:src="@{/dist/appjs/erm/unpkg.xlsx.full.min.js}"></script>
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/benchmarkFileUploader.js}"></script>
+
+	<script>
+		$(document).ready(function () {
+			var message = $('#message').val();
+			if (message != "") {
+				toastr.success(message);
+			}
+		});
+	</script>
+
+	<script>
+		var uploadField = document.getElementById("excel_file");
+		uploadField.onchange = function () {
+			if (this.files[0].size > 10485760) {
+				toastr.error("File Size Is Too Big!");
+				this.value = "";
+			};
+		};
+	</script>
+</body>
+
+</html>

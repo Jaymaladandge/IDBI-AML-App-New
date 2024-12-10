@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+</head>
+<div id="load"></div> 
+<body class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Risk Appetite Statement</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Review</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-12">
+								<div class="invoice p-3 mb-3">
+
+									<div class="card card-info card-tabs">
+										<div class="card-header p-2">
+											<ul class="nav ">
+												<li class="nav-item"><a class="nav-link active"
+													href="#activity" id="summarylink" data-toggle="tab" ><i
+														class="fas fa-list-ul text-white">&nbsp;Review List</i> </a></li>
+											</ul>
+										</div>
+										<!-- /.row -->
+										<!-- Filter Table row -->
+										<!-- /.card-header -->
+										<div class="card-body">
+											<div class="tab-content">
+												<div class="active tab-pane" id="activity">
+											<br>
+											<div class="row invoice-info">
+
+												<div class="col-sm-3">
+													<div class="form-group">
+													<label>Select Parameter</label><select class="form-control select2" name="dimension" id="dimension"
+														data-placeholder="Search Parameter" style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='statementid'>Statement Id</option>
+														<option value='category'>Category</option>
+														<option value='subcategory'>Sub Category</option>
+														<option value='deptdata'>Department Providing
+															Data</option>
+														<option value='frequency'>Frequency</option>
+														<option value='riskowner'>Risk Owner</option>
+														<option value='status'>Status</option>
+														<option value='edit'>Edited In Last (X) Days</option>
+														<option value='create'>Created In Last (X) Days</option>
+														<option value='approve'>Activated In Last (X)
+															Days</option>
+														<option value='approve'>Closed In Last (X) Days</option>
+													</select><br>
+													<br>
+													</div>
+												</div>
+												<div class="col-sm-5">
+													<label>Value</label> <input type="text" class="form-control form-control-sm"
+														name="searchcriteria" id="searchcriteria"
+														placeholder="Value">
+												</div>
+												<div class="col-sm-2">
+													<label>Sort</label><select class="select2" name="sorting" id="sorting"
+														data-placeholder="Sort" style="width: 100%;">
+														<option value=''>Sort</option>
+														<option value='a'>Ascending</option>
+														<option value='d'>Descending</option>
+														<option value='n'>None</option>
+													</select><br>
+													<br>
+												</div>
+												<div class="col-sm-2 pl=5">
+													<label></label><a class="text-info mt-4" href="#"><h3>
+															<i class="fab fa-searchengin"></i>
+														</h3></a><br>
+												</div>
+											</div>
+											<!-- /.row -->
+											<!-- Table row -->
+											<div class="row">
+												<div class="col-12">
+													<table id="riskstmttable" class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr>
+																<th>Serial#</th>
+																<th>Statement ID</th>
+																<th>Category</th>
+																<th>Sub-Category</th>
+																<th>Risk Owner</th>
+																<th>Status</th>
+																<th>Date</th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr>
+																<td>1</td>
+																<td>LIC04058921007612</td>
+																<td>Solvency</td>
+																<td>Market</td>
+																<td>Marketing</td>
+																<td>Active</td>
+																<td>20/10/2021</td>
+																<td class="project-actions text-center"><span>
+																<a class="btn btn-sm bg-purple" th:href="@{/actionRAS}"> <i
+																			class="fa fa-edit fa-1x text-black">&nbsp;Review</i></a></span></td>
+															</tr>
+															<tr>
+																<td>2</td>
+																<td>LIC04058921007613</td>
+																<td>Surplus</td>
+																<td>Direct Market</td>
+																<td>Marketing</td>
+																<td>Active</td>
+																<td>21/10/2020</td>
+																<td class="project-actions text-center"><span>
+																<a class="btn btn-sm bg-purple" th:href="@{/actionRAS}"> <i
+																			class="fa fa-edit fa-1x text-black">&nbsp;Review</i></a></span></td>
+															</tr>
+															<tr>
+																<td>3</td>
+																<td>LIC04058921007614</td>
+																<td>Solvency</td>
+																<td>Direct Market</td>
+																<td>Marketing</td>
+																<td>Active</td>
+																<td>25/10/2021</td>
+																<td class="project-actions text-center"><span>
+																<a class="btn btn-sm bg-purple" th:href="@{/actionRAS}"> <i
+																			class="fa fa-edit fa-1x text-black">&nbsp;Review</i></a></span></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<!-- /.col -->
+											</div>
+										
+									</div>
+									<!-- /.row -->
+									
+												</div>
+											</div>
+											<!-- /.tab-content -->
+										</div>
+										<!-- /.card-body -->
+									</div>
+									<!-- /.card -->
+
+								</div>
+								<!-- /.invoice -->
+
+							<!-- </form> -->
+							<!-- /.form -->
+
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				<!-- /.container-fluid -->
+			</section>
+			<!-- remove -->
+			
+			<!-- remove -->
+			<!-- /.content -->
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script>
+	 $(function () {
+	    $("#riskstmttable").DataTable({
+		  "columnDefs": [ { orderable: false, targets: [7,8] } ],
+	      "responsive": true, "autoWidth": true, "searching": false, "fixedHeader": true,
+	      "buttons": ["csv", "excel", "pdf", "print"]
+	    }).buttons().container().appendTo('#riskstmttable_wrapper .col-md-6:eq(0)');
+	  });
+	  
+
+
+//loader
+  document.onreadystatechange = function () {
+  var state = document.readyState
+  if (state == 'interactive') {
+       document.getElementById('contents').style.visibility="hidden";
+   } else if (state == 'complete') {
+      setTimeout(function(){
+         document.getElementById('interactive');
+         document.getElementById('load').style.visibility="hidden";
+         document.getElementById('contents').style.visibility="visible";
+      },1000);
+   }
+  }
+ 	</script>
+	<script>
+  	$(function () {
+	    //Initialize Select2 Elements
+	    $('.select2').select2();
+		
+		bsCustomFileInput.init();
+	}) 
+	</script>
+	<!-- PAGE PLUGINS -->
+
+</body>
+</html>

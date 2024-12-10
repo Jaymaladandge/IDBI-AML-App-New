@@ -1,0 +1,61 @@
+
+<div th:fragment="roleHeader">
+
+
+	<!-- Navbar -->
+	<nav
+		class="main-header navbar navbar-expand navbar-warning navbar-light " > 
+
+		<!-- Right navbar links -->
+		<ul class="navbar-nav mx-auto justify-content-center">
+			<li class="nav-item"><a
+				class="nav-link text-bold text-capitalize"><i
+					class="far fa-user">&nbsp;</i><span
+					sec:authentication="principal.username"></span></a></li><li class="nav-item"><a
+				class="nav-link text-bold text-capitalize"><i
+					class="far fa-user">&nbsp;</i><span
+					sec:authentication="principal.username"></span></a></li>
+			<li class="nav-item"><a class="nav-link text-bold"><i
+					class="far fa-address-card ">&nbsp;</i><span
+					sec:authentication="principal.userPosition"></span></a></li>
+			<!-- <li class="nav-item rolePositionIcon"><a class="nav-link text-bold"><i
+					class="far fa-address-card">&nbsp;</i><span
+					id="rolePositionHeader" class="text-capitalize"></span></a></li> -->
+			<li class="nav-item"><a
+				class="nav-link text-bold text-capitalize"><i
+					class="far fa-building text-capitalize">&nbsp;</i><span
+					sec:authentication="principal.userOfficeType"></span></a></li>
+			<li class="nav-item"><a
+				class="nav-link text-bold text-capitalize"><i
+					class="fab fa-buffer ">&nbsp;</i><span
+					sec:authentication="principal.userDeptName"></span></a></li>
+			<li class="nav-item"><a
+				class="nav-link text-bold text-capitalize" th:href="@{/logout}"><i
+					class="fas fa-sign-out-alt ">&nbsp;</i>logout</a></li>
+					
+			<li class="nav-item"><a
+				class="nav-link text-bold text-capitalize" th:href="@{/golive}"><i
+					class="">&nbsp;</i>Subscriptions</a></li>
+					
+			<li class="nav-item"><a class="nav-link"
+				data-widget="fullscreen" href="#" role="button"> <i
+					class="fas fa-expand-arrows-alt"></i>
+			</a></li>
+			<li class="nav-item"><a class="nav-link"
+				data-widget="control-sidebar" data-slide="true" href="#"
+				role="button"> <i class="fas fa-th-large"></i>
+			</a></li>
+		</ul>
+	</nav>
+	<!-- /.navbar -->
+
+
+
+
+
+</div>
+
+
+
+
+

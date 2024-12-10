@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Role Summary</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Role Management</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+									</ul>
+								</div>
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<div class="row ">
+												<div class="col-sm-12">
+													<div class="card collapsed-card card-outline card-secondary" id="collapse">
+														<div class="card-header" data-card-widget="collapse">
+															<h3 class="card-title text-bold">Search</h3>
+															<button type="button" class="btn btn-tool float-right"
+																data-toggle="tooltip" title="Collapse">
+																<em class="fas fa-plus" style="color: #007bff;"></em>
+															</button>
+														</div>
+														 <input type="hidden"
+																	id="message" th:value="${message}" name="message" />
+														<!-- <div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchRoleList}" id="searchForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row">
+																			<div class="col-sm-3">
+																				<label for="Select Parameter">Select
+																					Parameter</label> <select
+																				class="col-3 form-control form-control-sm select2"
+																				name="dimension" id="dimension"
+																				data-placeholder="Search Parameter">
+																				<option value=''>Select</option>
+																				<option value='roleId'>Role Id</option>
+																				<option value='roleName'>Name</option>
+																				<option value='roleCategory'>Category</option>
+																				<option value='statusFlg'>Record Status</option>
+																				<option value='makerTimestamp~'>Created In
+																					Last (X) Days</option>
+																				<option value='approverTimestamp~'>Activated
+																					In Last (X) Days</option>
+																			</select>&nbsp;
+																			</div>
+																			<div class="col-sm-5">
+																				<label for="Value">Value</label> <input type="text"
+																					class="form-control form-control-sm"
+																					name="searchcriteria" id="searchcriteria"
+																					placeholder="Value" maxlength="50">
+																			</div>
+																			<div class="col-sm-2">
+																				<label for="search"></label>
+																				<h3>
+																					<a class="btn btn-sm btn-info" href="#" id="search"
+																						title="Search"> <em
+																						class="fas fa-search fa-1x text-black"></em>
+																					</a>
+																				</h3>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																/row
+															</form>
+														</div> -->
+														<!-- /.card-body -->
+													</div>
+													<!-- /.card card-outline card-secondary -->
+												</div>
+												<!-- /.col-sm-12 -->
+											</div>
+											<!-- /.row -->
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-header">
+														
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/createRole}" class="createForm"
+																th:object="${encryptedRequest}">
+															
+															<span class="float-right">
+															<a
+															th:href="@{/createRole}" class="btn bg-teal" 
+															style="margin-right: 5px;" title="Create Role"> <i
+																class="fas fa-plus-square"></i>&nbsp;Create
+														</a>
+															</span> 
+															<!-- <input type="hidden" id="modulename" name="modulename"
+																th:value="${modulename}" /> -->
+																</form>
+														</div>
+														<div class="card-body table-responsive">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/editRole}" id="editRoleForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" /> <input type="hidden"
+																	name="userRole" id="userRole" th:value="${userRole}"
+																	th:name="clientName" />
+
+																<table id="roletable" th:object="${roleList}"
+																	class="table table-head-fixed table-bordered table-striped ">
+																	<thead>
+																		<tr>
+																			<th>Role ID</th>
+																			<th>Name</th>
+																			<th>Category</th>
+																			<th>Record Status</th>
+																			<th></th>
+																			<th></th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="roleList : ${roleList}">
+																			<td><a class="text-blue viewRole"
+																				data-toggle="modal" href="#"
+																				th:id="${roleList.roleId}"
+																				th:text="${roleList.roleId}"> </a></td>
+																			<td class="text-capitalize"
+																				th:text="${roleList.roleName}"></td>
+																			<td th:text="${roleList.roleCategory}"></td>
+																			<td th:switch="${roleList.statusFlg}"><span
+																				th:case="'I'" class="badge bg-danger">Inactive</span>
+																				<span th:case="'A'" class="badge bg-success">Active</span>
+																				<span th:case="'R'" class="badge bg-warning">Rejected</span>
+																				<span th:case="'D'" class="badge bg-purple">Pending
+																					Approval</span> <span th:case="'M'" class="badge bg-success">Active</span></td>
+																			<td class="project-actions text-center"><span
+																				th:unless="${roleList.statusFlg} eq 'A' or ${roleList.statusFlg} eq 'I' or ${roleList.statusFlg} eq 'R' or ${roleList.statusFlg} eq 'M'">
+																					<a class="btn btn-sm bg-purple disabled"
+																					th:href="@{/editRolePage}" title="Edit"> <i
+																						class="fa fa-edit fa-1x text-black"></i>
+																				</a>
+																			</span> <span
+																				th:if="${roleList.statusFlg} eq 'A' or ${roleList.statusFlg} eq 'I' or ${roleList.statusFlg} eq 'R' or ${roleList.statusFlg} eq 'M'">
+																					<a class="btn btn-sm bg-purple editRo"
+																					th:id="${roleList.roleId}" title="Edit"> <i
+																						class="fa fa-edit fa-1x text-black"></i>
+																				</a>
+																			</span></td>
+																			<td class="project-actions text-center"><span><a
+																					class="btn btn-sm bg-maroon viewAuditTrail"
+																					href="#" th:id="${roleList.roleId}"
+																					title="Audit Trail"><i class="fab fa-twitch"></i></a></span></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</form>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse"></div>
+										</div>
+										<!-- /.tab-pane -->
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+								<!-- View Role Modal -->
+								<div class="modal fade" id="viewRolemodal">
+									<div class=" modal-dialog modal-lg">
+										<div class=" card modal-content">
+											<div class="modal-header bg-info">
+												<h5 class="modal-title">View Role</h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="roleId">Role ID</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold"
+																	id=paramId name="paramId" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="statusFlg">Record Status</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm  text-bold"
+																	id="statusFlgM" name="statusFlgM" readonly>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="roleName">Role Name</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	id="roleNameM" name="roleNameM" readonly>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="roleCategory">Role Category </label> <input
+																class="form-control form-control-sm"
+																name="roleCategoryM" id="roleCategoryM" readonly />
+														</div>
+													</div>
+												</div>
+												<div class="row" id="accordion">
+													<div class="col-sm-12">
+														<div class="card card-primary">
+															<div class="card-header">
+																<a class=" w-100"> Selected Menus For Role : </a>
+															</div>
+															<div  class=" show"
+																data-parent="#accordion">
+																<div class="card-body">
+																	<div class="row" id="viewMenuDiv">
+																		<ul class="control  menu_list  col-sm-12"
+																			id="menuList">
+																			<li class="text-capitalize col-sm-5 has-treeview"></li>
+																		</ul>
+																	</div>
+																</div>
+																<!-- /.card-body -->
+															</div>
+
+														</div>
+														<!-- /.card -->
+
+													</div>
+												</div>
+												<div class="row table-responsive">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<table
+																class="table uploadTable table-head-fixed table-bordered table-striped"
+																id="filedetails">
+																<thead>
+																	<tr>
+																		<th>File Name</th>
+																		<th>File Size</th>
+																		<th>Uploaded Date</th>
+																		<th>Uploaded by</th>
+																		<th></th>
+																	</tr>
+																</thead>
+																<tbody>
+																</tbody>
+															</table>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button class="btn btn-secondary" data-dismiss="modal">
+													<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- end View Role Modal -->
+							</div>
+							<!-- /.col sm-12 -->
+						</div>
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/RoleMainPage.js}"></script>
+	<!-- <script th:src="@{/dist/appjs/erm/header.js}"></script> -->
+	<!--  WorkFlow Js -->
+	<!-- <script th:src="@{/dist/appjs/erm/workflow.js}"></script> -->
+
+	<!-- PAGE PLUGINS -->
+
+
+</body>
+</html>

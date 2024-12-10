@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	/* background-color: #00b3b3; */
+	/*  background-color:linear-gradient(90deg, hsla(270, 100%, 80%) 0%, hsla(276, 100%, 50%) 100%); */
+	background: linear-gradient(90deg, hsla(270, 100%, 80%, 1) 0%,
+		hsla(240, 100%, 65%, 1) 100%);
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+.thHead {
+	background-color: #C0C0C0 !important;
+}
+
+th {
+	/* background-color: #001F3F; /* Dark Blue Hex Color Code */
+	/*  background-color: lightblue; */
+	/*  background: linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%, hsla(33, 100%, 55%, 1) 100%);
+	color: white;  */
+	/* background: linear-gradient(90deg, hsla(200, 100%, 25%, 1) 0%,
+		hsla(180, 100%, 40%, 1) 100%); */
+	/* color: white; */
+	
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+.alert-investigation-tab {
+	background-color: #2E8BC0;
+}
+
+body {
+	line-height: 1.1;
+}
+
+
+
+table.dataTable thead .sorting {
+    background-image: none !important; /* Remove the background image */
+    /* Add any other custom styling here */
+}
+
+/* .background{
+ background: linear-gradient(90deg, hsla(333, 66%, 38%, 1) 0%, hsla(33, 100%, 55%, 1) 100%);
+	color: white;
+
+} */
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Regulatory Report Analysis</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/SelectReportsMainPage}"> Reports</a></li>
+								<li class="breadcrumb-item active">Regulatory Report
+									Analysis</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-info">
+								<div class="card card-info card-tabs background">
+									<div class="card-header">
+										<h3 class="card-title">Regulatory Report Analysis</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+
+								<!-- <input type="hidden" id="searchParam" th:value="${searchParam}"> -->
+
+								<!-- <div class="card-body" th:if="${searchParam} == 'CENTRAL'"> -->
+
+								<form method="post" th:action="@{/fetchgenerateddata}"
+									id="searchId">
+									<input type="hidden" id="encryptedJsonSearch"
+										name="encryptedJson" /><input type="hidden" id="message"
+										th:value="${msg}" name="message" />
+									<div class="row m-2 p-2">
+										<!-- <div class="col-md-3 m-1 pl-3">
+											<div class="form-group row">
+												<label for="officeType">Select Zone <code>*</code></label> <select
+													class="select2 text-capitalize" name="zoneDropdown"
+													data-placeholder="Zone" id="zoneDropdown"
+													style="width: 100%;">
+													<option value=''>Select</option>
+													<option th:each="zone : ${zoneList}"
+														th:value="${zone.zoneId}" th:text="${zone.zoneName}" />
+												</select>
+											</div>
+										</div> -->
+
+										<div class="col-md-3 m-1 pl-3">
+											<div class="form-group row"
+												style="margin-top: 10px;">
+												<label for="reportType" style="font-size: 20px;">REPORT
+													TYPE</label> <select id="reportType"
+													style=" border-radius: 6px;" class="form-control form-control-sm">
+													<option value="CTR">select report type</option>
+													<option value="CTR">CTR</option>
+													<option value="NTR">NTR</option>
+													<option value="CBWTR">CBWTR</option>
+												</select>
+											</div>
+										</div>
+										<div class="col-md-3 m-1 pl-3">
+											<div class="form-group row" style="margin-top: 10px;">
+												<label for="otherInput1" style="font-size: 20px;">YEAR</label>
+												<select class="select2 text-capitalize form-control form-control-sm" name="yeardropdown"
+													data-placeholder="Year" id="yeardropdown"
+													style=" border-radius: 6px">
+
+												</select>
+											</div>
+										</div>
+
+										<div class="col-md-3 m-1 pl-3">
+											<div class="form-group row"
+												style="margin-top: 10px;">
+												<label for="otherInput2" style="font-size: 20px;">MONTH</label>
+												<select class="select2 text-capitalize form-control form-control-sm" name="monthdropdown"
+													data-placeholder="Month" id="monthdropdown"
+													style=" border-radius: 6px">
+
+												</select>
+
+											</div>
+										</div>
+
+
+										<!-- <div class="col-sm-7 mt-3 pl-3">
+											<div class="form-group row">
+												<label class="col-5">Select Date Range For Search <code>*</code></label>
+												Date range
+												/.form group
+												<div class="input-group date" data-target-input="nearest">
+													<input type="text"
+														class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+														placeholder="Start Date" name="startDate" id="startDate"
+														data-target="#startDate" onkeydown="return false"
+														autocomplete="off" />
+													<div class="input-group-append datepicker"
+														data-target="#startDate" data-toggle="datetimepicker">
+														<div class="input-group-text">
+															<i class="far fa-calendar-alt"></i>
+														</div>
+													</div>
+													&nbsp; <input type="text"
+														class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+														placeholder="End Date" name="endDate" id="endDate"
+														data-target="#endDate" onkeydown="return false"
+														autocomplete="off" />
+													<div class="input-group-append datepicker"
+														data-target="#endDate" data-toggle="datetimepicker">
+														<div class="input-group-text">
+															<i class="far fa-calendar-alt"></i>
+														</div>
+
+													</div>
+
+
+												</div>
+											</div>
+										</div> -->
+										<div class="col-sm-2 mt-5">
+											<button type="button" id="fetchDataButton"
+												class="btn btn-sm btn-info mt-n1 mt-3 fetchDataBtn rounded-pill"
+												name="fetchDataBtn" style="margin-left: 10px;">Generate
+												Data</button>
+										</div>
+									</div>
+									<!-- </div> -->
+
+									<!-- ZONE -->
+									<!-- 
+								<div class="card-body" th:if="${searchParam} == 'ZONE'">
+
+
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="officeType">Select Region <code>*</code></label>
+
+											<select class="select2 text-capitalize" name="regionDropdown"
+												data-placeholder="Region" id="regionDropdown"
+												style="width: 100%;">
+												<option value=''>Select</option>
+												<option th:each="zone : ${regionList}"
+													th:value="${zone.regionId}" th:text="${zone.regionName}" />
+											</select>
+
+
+										</div>
+									</div>
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="officeType">Select Branch <code>*</code></label>
+											<select class="select2 text-capitalize" name="branchDropdown"
+												data-placeholder="Branch" id="branchDropdown"
+												style="width: 100%;">
+
+											</select>
+										</div>
+									</div>
+
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="riskType">Select Rule Risk Type <code>*</code></label>
+											<select class="select2 text-capitalize"
+												name="riskTypeDropdown" data-placeholder="Risk Type"
+												id="riskTypeDropdown" style="width: 100%;">
+
+												<option value=''>Select</option>
+												<option value='A'>ALL</option>
+												<option value='H'>HIGH</option>
+												<option value='M'>MEDIUM</option>
+												<option value='L'>LOW</option>
+
+											</select>
+										</div>
+									</div>
+
+
+									<div class="col-sm-7 mt-3 pl-3">
+										<div class="form-group row">
+											<label class="col-5">Select Date Range For Search <code>*</code></label>
+											Date range
+											/.form group
+											<div class="input-group date" data-target-input="nearest">
+												<input type="text"
+													class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+													placeholder="Start Date" name="startDate" id="startDate"
+													data-target="#startDate" onkeydown="return false"
+													autocomplete="off" />
+												<div class="input-group-append datepicker"
+													data-target="#startDate" data-toggle="datetimepicker">
+													<div class="input-group-text">
+														<i class="far fa-calendar-alt"></i>
+													</div>
+												</div>
+												&nbsp; <input type="text"
+													class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+													placeholder="End Date" name="endDate" id="endDate"
+													data-target="#endDate" onkeydown="return false"
+													autocomplete="off" />
+												<div class="input-group-append datepicker"
+													data-target="#endDate" data-toggle="datetimepicker">
+													<div class="input-group-text">
+														<i class="far fa-calendar-alt"></i>
+													</div>
+
+												</div>
+
+
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-2 mt-3">
+										<button type="button" id="fetchDataBtn"
+											class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+											name="fetchDataBtn">Fetch Report</button>
+									</div>
+								</div>
+ -->
+									<!-- ZONE -->
+
+
+									<!-- REGION -->
+
+									<!-- <div class="card-body" th:if="${searchParam} == 'REGION'">
+
+
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="officeType">Select Branch <code>*</code></label>
+
+											<select class="select2 text-capitalize" name="branchDropdown"
+												data-placeholder="Branch" id="branchDropdown"
+												style="width: 100%;">
+												<option value=''>Select</option>
+												<option th:each="zone : ${branchList}"
+													th:value="${zone.branchId}" th:text="${zone.branchName}" />
+											</select>
+
+
+										</div>
+									</div>
+
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="riskType">Select Rule Risk Type <code>*</code></label>
+											<select class="select2 text-capitalize"
+												name="riskTypeDropdown" data-placeholder="Risk Type"
+												id="riskTypeDropdown" style="width: 100%;">
+
+												<option value=''>Select</option>
+												<option value='A'>ALL</option>
+												<option value='H'>HIGH</option>
+												<option value='M'>MEDIUM</option>
+												<option value='L'>LOW</option>
+
+											</select>
+										</div>
+									</div>
+
+
+									<div class="col-sm-7 mt-3 pl-3">
+										<div class="form-group row">
+											<label class="col-5">Select Date Range For Search <code>*</code></label>
+											Date range
+											/.form group
+											<div class="input-group date" data-target-input="nearest">
+												<input type="text"
+													class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+													placeholder="Start Date" name="startDate" id="startDate"
+													data-target="#startDate" onkeydown="return false"
+													autocomplete="off" />
+												<div class="input-group-append datepicker"
+													data-target="#startDate" data-toggle="datetimepicker">
+													<div class="input-group-text">
+														<i class="far fa-calendar-alt"></i>
+													</div>
+												</div>
+												&nbsp; <input type="text"
+													class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+													placeholder="End Date" name="endDate" id="endDate"
+													data-target="#endDate" onkeydown="return false"
+													autocomplete="off" />
+												<div class="input-group-append datepicker"
+													data-target="#endDate" data-toggle="datetimepicker">
+													<div class="input-group-text">
+														<i class="far fa-calendar-alt"></i>
+													</div>
+
+												</div>
+
+
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-2 mt-3">
+										<button type="button" id="fetchDataBtn"
+											class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+											name="fetchDataBtn">Fetch Report</button>
+									</div>
+								</div> -->
+
+									<!-- REGION -->
+
+									<!-- BRANCH -->
+
+									<!-- <div class="card-body" th:if="${searchParam} == 'BRANCH'">
+
+
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="officeType">Select Branch <code>*</code></label>
+
+											<select class="select2 text-capitalize" name="branchDropdown"
+												data-placeholder="Branch" id="branchDropdown"
+												style="width: 100%;">
+												<option value=''>Select</option>
+												<option th:each="zone : ${branchList}"
+													th:value="${zone.branchId}" th:text="${zone.branchName}" />
+											</select>
+
+
+										</div>
+									</div>
+
+									<div class="col-md-3 m-1 pl-3">
+										<div class="form-group row">
+											<label for="riskType">Select Rule Risk Type <code>*</code></label>
+											<select class="select2 text-capitalize"
+												name="riskTypeDropdown" data-placeholder="Risk Type"
+												id="riskTypeDropdown" style="width: 100%;">
+
+												<option value=''>Select</option>
+												<option value='A'>ALL</option>
+												<option value='H'>HIGH</option>
+												<option value='M'>MEDIUM</option>
+												<option value='L'>LOW</option>
+
+											</select>
+										</div>
+									</div>
+
+
+									<div class="col-sm-7 mt-3 pl-3">
+										<div class="form-group row">
+											<label class="col-5">Select Date Range For Search <code>*</code></label>
+											Date range
+											/.form group
+											<div class="input-group date" data-target-input="nearest">
+												<input type="text"
+													class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+													placeholder="Start Date" name="startDate" id="startDate"
+													data-target="#startDate" onkeydown="return false"
+													autocomplete="off" />
+												<div class="input-group-append datepicker"
+													data-target="#startDate" data-toggle="datetimepicker">
+													<div class="input-group-text">
+														<i class="far fa-calendar-alt"></i>
+													</div>
+												</div>
+												&nbsp; <input type="text"
+													class="form-control form-control-sm col-5 datetimepicker-input datepicker"
+													placeholder="End Date" name="endDate" id="endDate"
+													data-target="#endDate" onkeydown="return false"
+													autocomplete="off" />
+												<div class="input-group-append datepicker"
+													data-target="#endDate" data-toggle="datetimepicker">
+													<div class="input-group-text">
+														<i class="far fa-calendar-alt"></i>
+													</div>
+
+												</div>
+
+
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-2 mt-3">
+										<button type="button" id="fetchBtn"
+											class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+											name="fetchDataBtn">Fetch Report</button>
+									</div>
+								</div> -->
+
+									<!-- BRANCH -->
+
+
+									<div class="card-body " id="reportTable">
+										<input type="hidden" id="reportList" name="reportList"
+											th:value="${reportList}" />
+
+
+										<div class="card card-secondary card-outline">
+											<!-- <div class="card-header">
+											<label>Generated Request</label>
+
+										</div> -->
+
+
+											<div class="card-body">
+												<!-- <div class="dt-buttons btn-group  mb-3 float-right">
+
+												<form autocomplete="off" role="form" method="post"
+													th:action="@{/exportAlertRiskwiseReport}" id="export"
+													th:object="${encryptedRequest}">
+													<input type="hidden" id="encryptedJsonExport"
+														name="encryptedJson" />
+													<button class="btn btn-secondary buttons-excel"
+														aria-controls="exportAlertRiskwiseReport"
+														style="margin-right: 5px; background-color: #006400;"
+														type="button">
+														<span class="exportExcel" title="Export To Excel"
+															id="exportExcel"> <i class="fas fa-file-excel"></i>&nbsp;&nbsp;Excel
+														</span>
+													</button>
+												</form>
+											</div>
+ -->
+
+
+												<div class="table-responsive">
+													<table
+														class="table table-bordered table-striped border border-secondary ruleWiseReportTable "
+														id="ruleWiseReportTable" border="1">
+
+														<thead>
+															<tr style="text-align: center;">
+																<th>Request Id</th>
+																<th>User Name</th>
+																<th>Role</th>
+																<th>Report Type</th>
+																<th>Year</th>
+																<th>Month</th>
+																<th>Request Date</th>
+																<th>Status</th>
+																<th>View</th>
+
+
+
+															</tr>
+														</thead>
+														<tbody id="tbodyR" class="table-group-divider">
+															<tr th:each="form : ${viewRequest}">
+
+																<td th:text="${form.requestId}"
+																	style="text-align: center;"></td>
+																<td style="text-align: center;"><span
+																	class="text-capitalize"><span
+																		th:text="${#strings.capitalize(form.user)}"
+																		style="text-align: center;"></span></span></td>
+																<td style="text-align: center;"><span
+																	class="text-capitalize"> <span
+																		th:text="${#strings.capitalize(form.role)}"
+																		style="text-align: center;"></span>
+																</span></td>
+
+																<td th:text="${form.reportType}"
+																	style="text-align: center;"></td>
+
+																<td th:text="${form.year}" style="text-align: center;"></td>
+
+																<td th:text="${form.month}" style="text-align: center;"></td>
+
+																<!-- 	<td style="text-align: center;"><span
+																th:if="${form.status=='R'}" class="badge bg-warning">Pending</span>
+																<span th:if="${form.status=='C'}"
+																class="badge bg-success"> Completed </span> <span
+																th:if="${form.status=='I'}" class="badge bg-primary">Requested</span>
+															</td> -->
+
+																<td th:text="${form.request_Date}"
+																	style="text-align: center;"></td>
+
+																 	<td style="text-align: center;"><span
+																th:if="${form.status=='I'}" class="badge bg-primary">Requested</span>
+																<span th:if="${form.status=='C'}"
+																class="badge bg-success"> Completed </span> <!--  <span
+																th:if="${form.status=='I'}" class="badge bg-primary">Requested</span> -->
+															</td> 
+																<!-- <td th:text="${form.alertEndDate}"
+																style="text-align: center;"></td> -->
+
+																<td style="text-align: center;"><span
+																	th:if="${form.status=='C'}"> <a
+																		th:id="${'getProceed~'+form.requestId}"
+																		th:data-requestId="${form.requestId}"
+																		th:data-reportType="${form.reportType}"
+																		th:data-month="${form.month}"
+																		th:data-year="${form.year}"
+																		onclick="viewButtonClick(this.getAttribute('data-requestId'),this.getAttribute('data-reportType'),this.getAttribute('data-month'),this.getAttribute('data-year'))"
+																		class="btn btn-sm bg-primary " title="Proceed"
+																		style="text-align: center;"><i
+																			class="fas fa-solid fa-glasses"></i></a></span> <!--  <span
+																th:if="${form.status=='R'}"> <a
+																	th:id="${'getProceed~'+form.requestId}"
+																	th:data-requestId="${form.requestId}"
+																	onclick="getProceed(this.getAttribute('data-requestId'))"
+																	class="btn btn-sm bg-primary disabled" title="Proceed"
+																	style="text-align: center;"><i
+																		class="fas fa-solid fa-glasses"></i></a></span> --> <span
+																	th:if="${form.status=='I'}"> <a
+																		th:id="${'getProceed~'+form.requestId}"
+																		th:data-requestId="${form.requestId}"
+																		onclick="getProceed(this.getAttribute('data-requestId'))"
+																		class="btn btn-sm bg-primary disabled" title="Proceed"
+																		style="text-align: center;"><i
+																			class="fas fa-solid fa-glasses"></i></a></span></td>
+
+
+															</tr>
+
+
+														</tbody>
+													</table>
+												</div>
+								</form>
+							</div>
+						</div>
+						<!-- /.card-body-->
+					</div>
+
+				</div>
+		</div>
+	</div>
+	</div>
+	</div>
+	<!-- /.container-fluid -->
+	</section>
+	<!-- /.content -->
+	</div>
+	<!-- /.content-wrapper -->
+
+	<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/requestReportfile.js}"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" type="text/css"
+		href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css">
+	<script type="text/javascript" charset="utf8"
+		src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"></script> -->
+
+
+	<script>
+		/* $(document).ready(function() {
+			var dataTable = $("#ruleWiseReportTable").DataTable({
+				"columnDefs" : [ {
+					orderable : false
+				} ],
+				"responsive" : false,
+				"autoWidth" : true,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				},
+				"paging" : true, // Enable pagination
+				"lengthChange" : false, // Disable length change dropdown
+				"pageLength" : 10,
+			// Set the default page length
+			});
+		}); */
+	</script>
+
+</body>
+</html>

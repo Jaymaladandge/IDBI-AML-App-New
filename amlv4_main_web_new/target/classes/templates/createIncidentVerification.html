@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+
+<!-- BS Stepper -->
+<link rel="stylesheet"
+	th:href="@{/plugins/bs-stepper/css/bs-stepper.min.css}">
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- BS Stepper -->
+<link rel="stylesheet"
+	th:href="@{/plugins/bs-stepper/css/bs-stepper.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
+	{
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+input[type=text].rupee {
+	background-image: url(../oms-web/dist/img/rupee.png);
+	border: 1px solid #aaa;
+	padding: 7px;
+	padding-left: 20px;
+	background-size: 10px 15px;
+	background-repeat: no-repeat;
+	background-position: 8px 6px;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Incident Management</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/incidentVerifyMainPage}">Incident Verify</a></li>
+								<li class="breadcrumb-item active">Verify</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-md-12">
+							<div class="card card-default">
+
+								<div class="card-body p-0">
+									<div class="bs-stepper">
+										<div class="bs-stepper-header" role="tablist">
+											<!-- your steps here -->
+											<div class="step" data-target="#create-part">
+												<button type="button" class="step-trigger" role="tab"
+													aria-controls="create-part" id="create-part-trigger">
+													<span class="bs-stepper-circle">1</span> <span
+														class="bs-stepper-label">Details</span>
+												</button>
+											</div>
+											<div class="line"></div>
+											<div class="step" data-target="#information-part">
+												<button type="button" class="step-trigger" role="tab"
+													aria-controls="information-part"
+													id="information-part-trigger">
+													<span class="bs-stepper-circle">2</span> <span
+														class="bs-stepper-label">Additional Information</span>
+												</button>
+											</div>
+											<div class="line"></div>
+											<div class="step" data-target="#link-part">
+												<button type="button" class="step-trigger" role="tab"
+													aria-controls="link-part" id="link-part-trigger">
+													<span class="bs-stepper-circle">3</span> <span
+														class="bs-stepper-label">Link Previous Incidence</span>
+												</button>
+											</div>
+
+										</div>
+										<div class="bs-stepper-content">
+											<!-- your steps content here -->
+											<div id="create-part" class="content" role="tabpanel"
+												aria-labelledby="create-part-trigger">
+
+
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card card-info">
+																<div class="card card-info card-tabs">
+																	<div class="card-header">
+																		<h3 class="card-title">Incident Details</h3>
+																	</div>
+																	<!-- /.col -->
+																</div>
+																<!-- <form autocomplete="off" class="form-horizontal"
+																	id="basicInfo"
+																	th:action="@{/createIncidentVerification}"
+																	method="post" th:object="${encryptedRequest}"
+																	enctype="multipart/form-data"> -->
+
+
+
+																<div class="card-body">
+
+																	<input type="hidden" id="assessedImpactValueH"
+																		name="assessedImpactValueH"
+																		th:value="${incidentDto.assessedImpactValue}" /> <input
+																		type="hidden" id="categoryList" name="categoryList"
+																		th:value="${categoryList}" />
+
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="incidentId">Incident ID</label>
+																				<div class="input-group">
+																					<input type="text"
+																						class="form-control form-control-sm text-bold"
+																						id="incidentId" name="incidentId"
+																						th:field="${incidentDto.incidentId}" readonly>
+																				</div>
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="incidentStatus">Incident Status</label>
+																				<div class="input-group">
+																					<input type="text"
+																						class="form-control form-control-sm  text-bold"
+																						id="incidentStatus" name="incidentStatus"
+																						th:value="${recordStatus}" readonly>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="incidentName">Incident Name</label> <input
+																					class="form-control form-control-sm text-capitalize text-bold"
+																					type="text" name="incidentName"
+																					placeholder="Incident Name"
+																					th:field="${incidentDto.incidentName}"
+																					id="incidentName" readonly />
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="employeeId">Incident Reporter ID</label>
+																				<input type="text"
+																					class="form-control form-control-sm text-bold"
+																					id="employeeId" name="employeeId"
+																					th:value="${incidentDto.employeeId}" readonly>
+																			</div>
+																		</div>
+
+																	</div>
+																	<!-- /.row -->
+
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="form-group">
+																				<label for="incidentDescription">Description</label>
+																				<textarea
+																					class="form-control form-control-sm text-bold"
+																					name="incidentDescription" id="incidentDescription"
+																					rows="3" maxlength="3000"
+																					placeholder="Incident Description"
+																					th:field="${incidentDto.incidentDescription}"
+																					readonly></textarea>
+																			</div>
+																		</div>
+
+																	</div>
+																	<!-- /.row -->
+
+
+
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="department">Department Where
+																					Incident Occurred </label> <input type="text"
+																					class="form-control form-control-sm text-bold"
+																					id="department" name="department"
+																					th:value="${incidentDto.department}" readonly>
+
+
+																			</div>
+																		</div>
+
+																		<div class="col-sm-4">
+																			<div class="form-group">
+																				<label for="OperatingOfcLocation">Operating
+																					Office Location</label> <input type="text"
+																					class="form-control form-control-sm text-bold"
+																					id="operatingOfcLocation"
+																					name="operatingOfcLocation"
+																					th:field="${incidentDto.ofcLoc}" readonly>
+
+																			</div>
+																		</div>
+
+																		<div class="col-sm-2">
+																			<div class="form-group">
+																				<label for="officeCode">Office Code</label> <input
+																					type="text"
+																					class="form-control form-control-sm text-bold"
+																					id="officeCode" name="officeCode"
+																					th:field="${incidentDto.officeCode}" readonly>
+
+																			</div>
+																		</div>
+
+
+																	</div>
+																	<!-- /.row -->
+
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="incidentReportingPerson">Incident
+																					Reporting Person</label> <input type="text"
+																					class="form-control form-control-sm  text-bold text-capitalize"
+																					id="incidentReportingPerson"
+																					name="incidentReportingPerson"
+																					th:value="${incidentDto.incidentReportingPerson}"
+																					readonly>
+
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+
+																				<label for="assessedImpactValue">Assessed
+																					Impact in terms of Value</label>
+
+																				<div class="input-group">
+																					<input
+																						class="form-control form-control-sm  text-bold rupee"
+																						type="text" name="assessedImpactValue"
+																						id="assessedImpactValue" readonly />
+																				</div>
+																				<div id="showWordAmt" class="showWordAmt text-green"></div>
+																			</div>
+																		</div>
+
+																	</div>
+																	<!-- /.row -->
+
+																	<div class="row">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="phoneNumber">Mobile Number</label> <input
+																					type="tel" id="phoneNumber"
+																					pattern="[1-9]{1}[0-9]{9}"
+																					class="form-control form-control-sm text-bold"
+																					maxlength="10" name="phoneNumber"
+																					placeholder="Mobile Number"
+																					th:value="${incidentDto.phoneNumber}" readonly>
+
+																			</div>
+																		</div>
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<label for="emailId">Email</label> <input
+																					type="email" id="emailId" placeholder="Email ID"
+																					class="form-control form-control-sm text-bold"
+																					name="emailId" th:value="${incidentDto.emailId}"
+																					readonly>
+
+																			</div>
+																		</div>
+
+																	</div>
+																	<!-- /.row -->
+
+																	<div class="row">
+																		<div class="col-sm-3">
+																			<div class="form-group">
+
+																				<div class="col-sm-11">
+																					<label for="incidentIdentificationDate">Incident
+																						Identification Date</label>
+																					<div class="input-group date"
+																						data-target-input="nearest">
+																						<input type="text" class="form-control text-bold"
+																							id="incidentIdentificationDate"
+																							name="incidentIdentificationDate"
+																							placeholder="Identification Date"
+																							data-target="#incidentIdentificationDate"
+																							th:value="${incidentDto.incidentIdentificationDate}"
+																							readonly />
+																						<div class="input-group-append"
+																							data-target="#incidentIdentificationDate"
+																							data-toggle="datetimepicker">
+																							<div class="input-group-text">
+																								<i class="fa fa-calendar"></i>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+
+																		<div class="col-sm-3">
+																			<div class="form-group">
+																				<div class="col-sm-11">
+																					<label for="refPreId">Incident Record Date</label>
+																					<div class="input-group date"
+																						data-target-input="nearest">
+																						<input type="text" class="form-control text-bold"
+																							id="incidentRecordDate" name="incidentRecordDate"
+																							th:value="${incidentDto.incidentRecordDate}"
+																							readonly />
+																						<div class="input-group-append"
+																							data-target="#incidentRecordDate"
+																							data-toggle="datetimepicker">
+																							<div class="input-group-text">
+																								<i class="fa fa-calendar"></i>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																	<!-- /.row -->
+
+																	<!-- row -->
+																	<div class="row mt-2">
+																		<div class="col-sm-6">
+																			<div class="form-group">
+																				<input type="hidden" id="caseReportedS"
+																					name="caseReportedS"
+																					th:value="${casesListSelected}" /> <input
+																					type="hidden" id="caseReported" name="caseReported"
+																					th:value="${casesList}" />
+																				<!-- <label
+																					for="caseReport">Cases Reported To</label> -->
+
+																				<!-- <input type="text" id="caseReported"
+																					name="caseReported"
+																					th:value="${incidentDto.casesReportedTo}" readonly disabled/>  -->
+
+																				<label for="caseReport">Cases Reported To <code>*</code></label> <select
+																					class="select2" name="caseReported"
+																					id="caseReportedTo" multiple="multiple"
+																					data-placeholder="Cases Reported To"
+																					style="width: 100%;">
+																					<option th:each="casesel : ${casesListSelected}"
+																						th:value="${casesel}" th:text="${casesel}"
+																						selected />
+																					<option th:each="casesList : ${casesList}"
+																						th:value="${casesList}" th:text="${casesList}" />
+																				</select>
+																			</div>
+																		</div>
+																	</div>
+
+																	<!-- /.row -->
+
+
+																</div>
+																<!-- </form> -->
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div class="row ">
+													<div class="col-sm-6 invoice-col">
+														<label class="col-sm-12" for="button"></label> <a
+															type="button" class="btn bg-maroon" id="viewLink"> <i
+															class="fas fa-step-forward" style="padding: 0 7px 0 0px;"></i>Next
+														</a>
+
+														<button type="button" class="btn bg-red"
+															data-toggle="modal" data-target="#commentmodal"
+															title="Reject">
+															<i class="fas fa-circle-notch"
+																style="padding: 0 7px 0 0px;"></i>Reject
+														</button>
+
+														<a href="#" data-toggle="modal"
+															data-whatever="incidentVerifyMainPage"
+															data-target="#cancelmodel"><button type="reset"
+																class="btn btn-warning" title="Cancel">
+																<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+															</button></a>
+													</div>
+												</div>
+											</div>
+
+											<div id="information-part" class="content" role="tabpanel"
+												aria-labelledby="information-part-trigger">
+
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card card-info">
+																<div class="card card-info card-tabs">
+																	<div class="card-header">
+																		<h3 class="card-title">Additional Information</h3>
+																	</div>
+																</div>
+																<!-- /.col -->
+																<form autocomplete="off" class="form-horizontal"
+																	id="verifyIncidentForm"
+																	th:action="@{/verifyActionIncident}" method="post"
+																	th:object="${encryptedRequest}"
+																	enctype="multipart/form-data">
+
+																	<input type="hidden" id="encryptedJson"
+																		name="encryptedJson" th:field="*{encryptedJson}" /> <input
+																		type="hidden" id="userName" name="userName"
+																		th:value="${userName}" /> <input type="hidden"
+																		id="deptId" name="deptId"
+																		th:value="${incidentDto.departmentId}" /> <input
+																		type="hidden" id="deptListH" name="deptListH"
+																		th:value="${deptList}" />
+
+																	<div class="card-body">
+
+
+																		<div class="row">
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<label for="incidentType">Incident Type <code>*</code></label>
+																					<select class="text-capitalize select2"
+																						name="incidentType" id="incidentType"
+																						data-placeholder="Incident Type"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option value='Major Incident'>Major
+																							Incident</option>
+																						<option value='Medium Incident'>Medium
+																							Incident</option>
+																						<option value='Minor Incident'>Minor
+																							Incident</option>
+
+																					</select>
+																				</div>
+																			</div>
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<label for="incidentImpactLevel">Incident
+																						Impact Level </label> <select
+																						class="text-capitalize select2"
+																						name="incidentImpactLevel" multiple="multiple"
+																						id="incidentImpactLevel"
+																						data-placeholder="Incident Impact Level"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option value='Local' selected>Local</option>
+																						<option value='Regional'>Regional</option>
+																						<option value='Corporation'>Corporation</option>
+
+																					</select>
+																				</div>
+																			</div>
+																		</div>
+
+																		<div class="row">
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<input type="hidden" id="losseventPrimary"
+																						name="losseventPrimary"
+																						th:value="${incidentDto.primaryLossEvent}" /> <label
+																						for="primaryLossEvent">Primary Loss Event
+																						Category <code>*</code>
+																					</label> <select class="select2" name="primaryLossEvent"
+																						id="primaryLossEvent"
+																						data-placeholder="Primary Loss Event Category"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option th:value="${incidentDto.primaryLossEvent}"
+																							th:text="${incidentDto.primaryLossEvent}"
+																							selected />
+																						<option th:each="category : ${categoryList}"
+																							th:text="${category.replace('~',', ')}" />
+																					</select>
+																				</div>
+																			</div>
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<input type="hidden" id="losseventSecondary"
+																						name="losseventSecondary"
+																						th:value="${incidentDto.secondaryLossEvent}" /> <label
+																						for="secondaryLossEvent">Secondary Loss
+																						Event Category </label> <select class="select2"
+																						name="secondaryLossEvent" id="secondaryLossEvent"
+																						multiple="multiple"
+																						data-placeholder="Secondary Loss Event Category"
+																						style="width: 100%;">
+																						<option
+																							th:value="${incidentDto.secondaryLossEvent}"
+																							th:text="${incidentDto.secondaryLossEvent}"
+																							selected />
+																					</select>
+																				</div>
+																			</div>
+																		</div>
+
+																		<div class="row">
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<label for="recoverableValue">Recoverable
+																						Value </label> <input
+																						class="form-control form-control-sm rupee two-decimals"
+																						type="text" name="recoverableValue"
+																						placeholder="Recoverable Value" maxlength="16"
+																						id="recoverableValue" />
+
+																					<div id="showWordsAmt"
+																						class="showWordsAmt text-green"></div>
+																				</div>
+																			</div>
+
+
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<label for="recoveryStatus">Recovery Status
+																					</label> <select class="text-capitalize select2"
+																						name="recoveryStatus" id="recoveryStatus"
+																						data-placeholder="Recovery Status"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option value='Partially Recoverable'>Partially
+																							Recoverable</option>
+																						<option value='Fully Recoverable'>Fully
+																							Recoverable</option>
+																						<option value='Recovery In Progress'>Recovery
+																							In Progress</option>
+																						<option value='Recovery Completed'>Recovery
+																							Completed</option>
+																						<option value='Recovery Not Possible'>Recovery
+																							Not Possible</option>
+
+																					</select>
+																				</div>
+																			</div>
+																		</div>
+
+
+
+																		<div class="row">
+
+																			<div class="col-sm-6">
+																				<div class="form-group">
+																					<label for="additionalBusinessUnit">Additional
+																						Department Affected</label> <select
+																						class="text-capitalize select2"
+																						name="additionalBusinessUnit" multiple="multiple"
+																						id="additionalBusinessUnit"
+																						data-placeholder="Additional Business Unit"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="deptListSelected : ${deptListSelected}"
+																							th:value="${deptListSelected.deptId}"
+																							th:text="${deptListSelected.deptName}" selected />
+																						<option th:each="deptList : ${deptList}"
+																							th:value="${deptList.deptId}"
+																							th:text="${deptList.deptName}" />
+																					</select>
+																				</div>
+																			</div>
+																			<div class="row m-2 p-2">
+																				<div class="row ">
+																					<div class="col-sm-6">
+																						<div class="form-group">
+																							<label for="whetherInsured">Whether
+																								Insured</label>
+																							<div class="input-group">
+																								<div
+																									class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																									<input type="checkbox"
+																										class="custom-control-input"
+																										id="whetherInsured"> <label
+																										class="custom-control-label"
+																										for="whetherInsured"></label>
+																								</div>
+																							</div>
+																						</div>
+																						<div class="row">
+																							<div class="col-sm-6">
+																								<label id="whetherInsuredStatus"> </label>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																				<div class="row">
+																					<div class="col-sm-6">
+																						<div class="form-group">
+																							<label for="customerImpacted">Customer
+																								Impacted</label>
+																							<div class="input-group">
+																								<div
+																									class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																									<input type="checkbox"
+																										class="custom-control-input"
+																										id="customerImpacted"> <label
+																										class="custom-control-label"
+																										for="customerImpacted"></label>
+																								</div>
+																							</div>
+																						</div>
+																						<div class="row">
+																							<div class="col-sm-6">
+																								<label id="customerImpactedStatus"> </label>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+
+																				<div class="row">
+																					<div class="col-sm-6">
+																						<div class="form-group">
+																							<label for="regulatoryImpact">Regulatory
+																								Impact</label>
+																							<div class="input-group">
+																								<div
+																									class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																									<input type="checkbox"
+																										class="custom-control-input"
+																										id="regulatoryImpact"> <label
+																										class="custom-control-label"
+																										for="regulatoryImpact"></label>
+																								</div>
+																							</div>
+																						</div>
+																						<div class="row">
+																							<div class="col-sm-6">
+																								<label id="regulatoryImpactStatus"> </label>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+
+																		</div>
+
+																		<div class="row">
+																			<div class="col-sm-12">
+																				<div class="form-group">
+																					<label for="incidentComment">Comments </label>
+																					<textarea class="form-control form-control-sm"
+																						name="incidentComment" id="incidentComment"
+																						rows="3" maxlength="3000" placeholder="Comments"></textarea>
+																				</div>
+																			</div>
+
+																		</div>
+																		<!-- /.row -->
+
+
+																		<div class="row ">
+
+																			<!-- <div class="row"> -->
+																			<div class="col-sm-6">
+
+																				<div class="form-group">
+																					<label>Document Attachment</label>
+																					<div class="custom-file">
+																						<input type="file"
+																							class="custom-file-input input-group-sm"
+																							id="customFile" style="display: none;"
+																							name="files[]" multiple="multiple"
+																							onchange="getFileData(this);" /><label
+																							class="btn btn-sm bg-gray" for="customFile"><i
+																							class="fas fa-folder-open"></i> Choose File</label>
+																					</div>
+																				</div>
+																			</div>
+																			<!-- </div> -->
+
+
+																		</div>
+
+																		<div class="row">
+																			<div class="col-sm-12">
+																				<table class="table uploadTable" id="filedetails"
+																					th:if="${incidentDto.filedetails != null}">
+																					<thead>
+																						<tr>
+																							<th>File Name</th>
+																							<th>File Size</th>
+																							<th>Uploaded Date</th>
+																							<th>Uploaded by</th>
+																							<th></th>
+																						</tr>
+																					</thead>
+																					<tbody>
+																						<tr th:each="file : ${incidentDto.filedetails}">
+																							<td class="text-capitalize"
+																								th:id="${file.fileName}"
+																								th:text="${file.fileName}"></td>
+																							<td class="text-capitalize"
+																								th:text="${file.fileSize} + ' Kb'"></td>
+																							<td class="text-capitalize"
+																								th:text="${file.uploadTimestamp}"></td>
+																							<td class="text-capitalize"
+																								th:text="${file.uploadedBy}"></td>
+																							<td><a th:name='${file.fileName}' href="#"
+																								class="btn btn-info downloadfile"><i
+																									class="fas fa-download"></i></a></td>
+																						</tr>
+																					</tbody>
+																				</table>
+																			</div>
+
+																		</div>
+
+																	</div>
+																</form>
+															</div>
+														</div>
+													</div>
+
+												</div>
+
+												<div class="card-body">
+
+
+													<div class="row-sm-12">
+
+														<a class="btn bg-maroon" th:onclick="stepper.previous()">
+															<i class="fas fa-step-backward"
+															style="padding: 0 7px 0 0px;"></i>Previous
+														</a> <a type="button" class="btn bg-maroon"
+															onclick="validateSecond()"> <i
+															class="fas fa-step-forward" style="padding: 0 7px 0 0px;"></i>Next
+														</a>
+
+													</div>
+
+												</div>
+											</div>
+											<!-- VERIFIER TAB -->
+
+
+											<div id="link-part" class="content" role="tabpanel"
+												aria-labelledby="link-part-trigger">
+
+
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card card-info">
+																<div class="card card-info card-tabs">
+																	<div class="card-header">
+																		<h3 class="card-title">Link Previous Incidence
+																			Reference</h3>
+																	</div>
+																</div>
+
+
+																<div class="card-body">
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div
+																				class="card card-outline collapsed-card card-secondary">
+																				<div class="card-header">
+																					<h3 class="card-title text-bold">Search</h3>
+																					<button type="button"
+																						class="btn btn-tool float-right" id="collapse"
+																						data-card-widget="collapse" data-toggle="tooltip"
+																						title="Collapse">
+																						<em class="fas fa-plus" style="color: #007bff;"></em>
+																					</button>
+																				</div>
+																				<div class="card-body">
+																					<form autocomplete="off" role="form" method="post"
+																						th:action="@{/searchRaReportList}"
+																						aria-labelledby="searchForm" id="searchForm"
+																						th:object="${encryptedRequest}">
+																						<input type="hidden" id="encryptedJson"
+																							name="encryptedJson" />
+
+																						<div class="row">
+																							<div class="col-sm-12">
+																								<div class="form-group row">
+																									<div class="col-sm-3">
+																										<label for="Select Parameter">Select
+																											Parameter</label> <select class="select2"
+																											name="dimension" id="dimension"
+																											data-placeholder="Select Parameter"
+																											style="width: 100%;">
+																											<option value=''>Select</option>
+																											<option value='incidentId'>Incident
+																												ID</option>
+																											<option value='incidentName'>Incident
+																												Name</option>
+																											<option value='raRiskCate'>Category</option>
+																											<option value='raRecordStatus'>Record
+																												Status</option>
+																											<!-- <option value='edit'>Edited In Last (X)
+																									Days</option> -->
+																											<option value='makerTimestamp~'>Created
+																												In Last (X) Days</option>
+																											<option value='approverTimestamp~'>Activated
+																												In Last (X) Days</option>
+																										</select>
+																									</div>
+																									<div class="col-sm-5">
+																										<label for="Value">Value</label> <input
+																											type="text"
+																											class="form-control form-control-sm"
+																											name="searchcriteria" id="searchcriteria"
+																											placeholder="Value" maxlength="50">
+																									</div>
+																									<!-- <div class="col-sm-2">
+																										<label for="Sort">Sort</label> <select
+																											class="select2" name="sorting" id="sorting"
+																											data-placeholder="Sort" style="width: 100%;">
+																											<option value=''>Sort</option>
+																											<option value='a'>Ascending</option>
+																											<option value='d'>Descending</option>
+																											<option value='n'>None</option>
+																										</select>
+																									</div> -->
+																									<div class="col-sm-1">
+																										<label for="search"></label>
+																										<h3>
+																											<a class="btn btn-sm btn-info" href="#"
+																												onclick="searchData()" title="Search"> <em
+																												class="fas fa-search fa-1x text-black"></em>
+																											</a>
+																										</h3>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																					</form>
+																				</div>
+																				<!-- card-body -->
+																			</div>
+																			<!-- card -->
+																		</div>
+																		<!-- ./col -->
+																	</div>
+																	<!-- ./row -->
+
+																	<!-- /row Search by date-->
+																	<!-- <div class="row">
+																		<div class="col-sm-12">
+																			<div class="card card-outline card-secondary">
+																				<div class="card-body">
+																					<form autocomplete="off" role="form" method="post"
+																						th:action="@{/searchRaReportByDateList}"
+																						id="searchDateForm"
+																						th:object="${encryptedRequest}">
+																						<input type="hidden" id="encryptedDateJson"
+																							name="encryptedJson" />
+																						<div class="row">
+																							<div class="col-sm-12">
+																								<div class="form-group row">
+																									<label class="col-5">Select Date Range
+																										For Search</label>
+																									Date range
+																									/.form group
+																									<div class="input-group date"
+																										data-target-input="nearest">
+																										<input type="text"
+																											class="form-control form-control-sm col-5 datetimepicker-input"
+																											placeholder="Start Date" name="startDate"
+																											id="startDate" data-target="#startDate"
+																											onkeydown="return false" />
+																										<div class="input-group-append"
+																											data-target="#startDate"
+																											data-toggle="datetimepicker">
+																											<div class="input-group-text">
+																												<i class="far fa-calendar-alt"></i>
+																											</div>
+																										</div>
+																										&nbsp; <input type="text"
+																											class="form-control form-control-sm col-5 datetimepicker-input"
+																											placeholder="End Date" name="endDate"
+																											id="endDate" data-target="#endDate"
+																											onkeydown="return false" />
+																										<div class="input-group-append"
+																											data-target="#endDate"
+																											data-toggle="datetimepicker">
+																											<div class="input-group-text">
+																												<i class="far fa-calendar-alt"></i>
+																											</div>
+																										</div>
+																										&nbsp; <a class="btn btn-sm btn-info" href="#"
+																											onclick="searchDateData()" title="Search">
+																											<i class="fas fa-search fa-1x text-black"></i>
+																										</a>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																						/row
+																					</form>
+																				</div>
+																				card-body
+																			</div>
+																			card
+																		</div>
+																		./col
+																	</div> -->
+																	<!-- ./row -->
+
+
+
+																	<!-- list dept wise -->
+																	<div class="row">
+																		<div class="col-sm-12">
+																			<div class="card card-outline card-secondary">
+
+																				<div class="card-header">
+
+																					<label>Link Previous Incidence</label> <a href="#"
+																						id="link" name="link"
+																						class="btn bg-orange float-right"
+																						style="margin-right: 5px;"
+																						title="Link Previous Incidence Reference"> <i
+																						class="fas fa-link"></i>&nbsp;Link
+																					</a>
+																				</div>
+
+																				<div class="card-body table-responsive">
+																					<table id="incidentListView"
+																						class="table table-head-fixed table-bordered table-striped text-capitalize incidentListView">
+																						<thead>
+																							<tr>
+																								<th></th>
+																								<th>Incident ID</th>
+																								<th>Incident Name</th>
+																								<th>Incident Description</th>
+
+																							</tr>
+																						</thead>
+																						<tbody>
+
+																						</tbody>
+																					</table>
+
+																					<!-- </form> -->
+																					<!-- /form -->
+																				</div>
+																				<!-- /card-body -->
+																			</div>
+																			<!-- /card -->
+																		</div>
+																		<!-- /col -->
+																	</div>
+																	<!-- /row -->
+
+																	<!-- list dept wise -->
+
+																	<div class="row incidentRow" id="linkedIncident">
+																		<div class="col-sm-12">
+																			<div class="card card-outline card-secondary">
+																				<div class="card-header">
+																					<label class="col-5">Previous Incidence
+																						Linked</label>
+																				</div>
+																				<div class="card-body table-responsive">
+																					<table
+																						class="table table-head-fixed table-bordered table-striped listView incidentdetails"
+																						id="incidentdetails" style="display: none">
+																						<thead>
+																							<tr>
+																								<th>Incident ID</th>
+																								<th>Incident Name</th>
+																								<th>Incident Description</th>
+																								<!-- <th></th> -->
+																							</tr>
+																						</thead>
+																						<tbody>
+
+																						</tbody>
+																					</table>
+																				</div>
+																			</div>
+																		</div>
+
+																	</div>
+																	<!-- ./row -->
+
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- container-fluid -->
+
+												<div class="card-body">
+
+
+													<a class="btn bg-maroon" th:onclick="stepper.previous()">
+														<i class="fas fa-step-backward"
+														style="padding: 0 7px 0 0px;"></i>Previous
+													</a>
+
+													<button type="button" id="approve" name="approve"
+														class="btn btn-success" title="Approve">
+														<i class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></i>Approve
+													</button>
+
+
+													<a class="btn btn-secondary text-white viewAuditTrail"
+														title="Audit Trail" data-toggle="modal"> <i
+														class="fab fa-twitch" style="padding: 0 7px 0 0px;"></i>Audit
+														Trail
+													</a> <a href="#" data-toggle="modal"
+														data-whatever="incidentVerifyMainPage"
+														data-target="#cancelmodel"><button type="reset"
+															class="btn btn-warning" title="Cancel">
+															<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+														</button></a>
+
+												</div>
+
+
+											</div>
+
+											<!--Reject Modal -->
+											<div class="modal fade" id="commentmodal">
+												<div class="modal-dialog modal-lg">
+													<div class="modal-content">
+														<div class="modal-header bg-info">
+															<h5 class="modal-title">Comments</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<!-- form start -->
+														<div class="card-body">
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="comments">
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group">
+																			<label for="comments">Reason For Rejection <code>*</code>
+																			</label>
+																			<textarea class="form-control" name="reason"
+																				maxlength="3000" placeholder="Reason For Rejection"
+																				id="reason"></textarea>
+																		</div>
+																	</div>
+																</div>
+																<div class="card-footer">
+																	<button type="button" id="reject" name="reject"
+																		class="btn btn-info">
+																		<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+																	</button>
+																</div>
+																<!-- /.row -->
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!--Reject Modal -->
+
+											<!-- Timeline Modal -->
+											<div class="modal fade" id="timelinemodal">
+												<div class="modal-dialog modal-xl">
+													<div class="modal-content">
+														<div class="modal-header bg-info">
+															<h5 class="modal-title">Audit Trail</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<!-- form start -->
+														<div class="card-body">
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="timeline">
+																<div class="timeline timeline-inverse" id="row_0"></div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- Timeline Modal End-->
+
+											<!-- view Modal -->
+											<div class="modal fade" id="viewIncidentmodal">
+												<div class=" modal-dialog modal-lg">
+													<div class=" card modal-content">
+														<div class="modal-header bg-info">
+															<h5 class="modal-title">View Incident Details</h5>
+															<button type="button" class="close" data-dismiss="modal"
+																aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="modal-body">
+
+															<input type="hidden" id="incidentDto" name="incidentDto"
+																th:value="${incidentDto}" /> <input type="hidden"
+																id="incidentRemediationLinkDto"
+																name="incidentRemediationLinkDto"
+																th:value="${incidentRemediationLinkDto}" />
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentId">Statement ID</label>
+																		<div class="input-group">
+																			<input type="text"
+																				class="form-control form-control-sm text-bold"
+																				id="incidentIdM" name="incidentIdM" readonly>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentStatus">Record Status</label>
+																		<div class="input-group">
+																			<input type="text"
+																				class="form-control form-control-sm  text-bold"
+																				id="incidentStatusM" name="incidentStatusM" readonly>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentName">Name</label> <input
+																			class="form-control form-control-sm text-capitalize"
+																			type="text" name="incidentName"
+																			placeholder="Incident Name" id="incidentNameM"
+																			readonly />
+																	</div>
+																</div>
+
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentReportingPerson">Incident
+																			Reporting Person</label> <input type="text"
+																			class="form-control form-control-sm text-capitalize"
+																			id="incidentReportingPersonM"
+																			name="incidentReportingPersonM" readonly>
+																	</div>
+																</div>
+
+															</div>
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group">
+																		<div class="form-group">
+																			<label for="incidentDescription">Description</label>
+																			<textarea class="form-control form-control-sm"
+																				name="incidentDescriptionM"
+																				id="incidentDescriptionM" rows="3"
+																				placeholder="Description" maxlength="3000" readonly></textarea>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="OperatingOfcLocation">Operating
+																			Office Location</label> <input type="text"
+																			class="form-control form-control-sm"
+																			id="operatingOfcLocationM"
+																			name="operatingOfcLocationM" readonly>
+
+																	</div>
+																</div>
+
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="department">Department</label> <input
+																			type="text" class="form-control form-control-sm"
+																			id="departmentM" name="departmentM" readonly>
+																	</div>
+																</div>
+
+															</div>
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentIdentificationDate">Incident
+																			Identification Date</label>
+																		<div class="input-group date"
+																			data-target-input="nearest">
+																			<input type="text" class="form-control text-bold"
+																				id="incidentIdentificationDateM"
+																				name="incidentIdentificationDateM"
+																				placeholder="Identification Date"
+																				data-target="#incidentIdentificationDate" readonly />
+																			<div class="input-group-append"
+																				data-target="#incidentIdentificationDateM"
+																				data-toggle="datetimepicker">
+																				<div class="input-group-text">
+																					<i class="fa fa-calendar"></i>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentRecordDate">Incident
+																			Record Date</label>
+																		<div class="input-group date"
+																			data-target-input="nearest">
+																			<input type="text" class="form-control text-bold"
+																				id="incidentRecordDateM" name="incidentRecordDate"
+																				readonly />
+																			<div class="input-group-append"
+																				data-target="#incidentRecordDateM"
+																				data-toggle="datetimepicker">
+																				<div class="input-group-text">
+																					<i class="fa fa-calendar"></i>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+
+															</div>
+
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="assessedImpactValue">Assessed
+																			Impact in terms of Value</label>
+																		<div class="input-group">
+																			<input
+																				class="form-control form-control-sm  text-bold rupee"
+																				type="text" name="assessedImpactValueM"
+																				id="assessedImpactValueM" readonly />
+																		</div>
+																		<div id="showWordAmt" class="showWordAmt text-green"></div>
+																	</div>
+																</div>
+
+															</div>
+
+
+															<div class="row">
+																<div class="col-sm-12">
+																	<table th:if="${previousLinkedIncidentlist != null}"
+																		class="table table-head-fixed table-bordered table-striped listView"
+																		id="incidentdetails">
+																		<thead>
+																			<tr>
+
+																				<th>Incident Id</th>
+																				<th>Incident Name</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr th:each="mvc : ${previousLinkedIncidentlist}">
+																				<td class="text-bold" th:text="${mvc.incidentId}"></td>
+																				<td class="text-bold" th:text="${mvc.incidentName}"></td>
+
+																			</tr>
+
+																		</tbody>
+																	</table>
+																</div>
+
+															</div>
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentType">Incident Type</label> <input
+																			class="form-control form-control-sm text-bold"
+																			type="text" name="incidentTypeM" id="incidentTypeM"
+																			readonly />
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="incidentImpactLevel">Incident
+																			Impact Level </label> <input
+																			class="form-control form-control-sm text-bold"
+																			type="text" name="incidentImpactLevelM"
+																			id="incidentImpactLevelM" readonly />
+
+
+																	</div>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="primaryLossEvent">Primary Loss
+																			Event Category </label> <input
+																			class="form-control form-control-sm text-bold"
+																			type="text" name="primaryLossEventM"
+																			id="primaryLossEventM" readonly />
+
+																	</div>
+																</div>
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="secondaryLossEvent">Secondary Loss
+																			Event Category </label> <input
+																			class="form-control form-control-sm text-bold"
+																			type="text" name="secondaryLossEventM"
+																			id="secondaryLossEventM" readonly />
+
+
+																	</div>
+																</div>
+															</div>
+
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="recoverableValue">Recoverable
+																			Value </label> <input
+																			class="form-control form-control-sm text-bold rupee"
+																			type="text" name="recoverableValueM"
+																			id="recoverableValueM" readonly />
+
+																		<div id="showRecvrAmt" class="showWordsAmt text-green"></div>
+																	</div>
+																</div>
+
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="recoveryStatus">Recovery Status</label> <input
+																			class="form-control form-control-sm text-bold"
+																			type="text" name="recoveryStatusM"
+																			id="recoveryStatusM" readonly />
+
+
+
+																	</div>
+																</div>
+															</div>
+
+															<div class="row">
+																<div class="col-sm-6">
+																	<div class="form-group">
+																		<label for="additionalBusinessUnit">Additional
+																			Department Affected</label> <input type="text"
+																			class="form-control form-control-sm text-capitalize text-bold"
+																			id="additionalBusinessUnitM"
+																			name="additionalBusinessUnitM" readonly>
+
+																	</div>
+																</div>
+															</div>
+															<!-- <div class="row m-2 p-2">
+											<div class="row">
+												<div class="col-sm-6">
+
+													<div class="col-sm-3">
+													<div class="form-group">
+														<label for="whetherInsured">Whether Insured</label>
+														<div class="input-group">
+															<div
+																class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																<input type="checkbox" class="custom-control-input"
+																	id="whetherInsured" 
+																	th:if="${incidentDto.whetherInsured}=='Y'"
+																	th:checked="true" disabled> <input
+																	type="checkbox" 
+																	th:if="${incidentDto.whetherInsured}=='N'"
+																	class="custom-control-input" id="whetherInsured"
+																	th:checked="false" disabled> <label
+																	class="custom-control-label" for="whetherInsured"></label>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<label th:id="whetherInsuredStatus" th:if="${incidentDto.whetherInsured}=='Y'"> Yes</label>
+															<label th:id="whetherInsuredStatus" th:if="${incidentDto.whetherInsured}=='N'"> No</label>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="customerImpacted">Customer Impacted</label>
+														<div class="input-group">
+															<div
+																class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																<input type="checkbox" class="custom-control-input"
+																	id="customerImpactedM"
+																	th:if="${incidentDto.customerImpacted}=='Y'"
+																	th:checked="true" disabled> <input
+																	type="checkbox" class="custom-control-input"
+																	id="customerImpactedM"
+																	th:if="${incidentDto.customerImpacted}=='N'"
+																	th:checked="false" disabled>
+																	 <label
+																	class="custom-control-label" for="customerImpacted"></label>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<label th:id="customerImpactedStatus" th:if="${incidentDto.customerImpacted}=='Y'">Yes </label>
+															<label th:id="customerImpactedStatus" th:if="${incidentDto.customerImpacted}=='N'">No </label>
+														</div>
+													</div>
+												</div>
+											</div>
+
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="regulatoryImpact">Regulatory Impact</label>
+														<div class="input-group">
+															<div
+																class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+																<input type="checkbox" class="custom-control-input"
+																	id="regulatoryImpactM"
+																	th:if="${incidentDto.regulatoryImpact}=='Y'"
+																	th:checked="true" disabled> <input
+																	type="checkbox" class="custom-control-input"
+																	id="regulatoryImpactM"
+																	th:if="${incidentDto.regulatoryImpact}=='N'"
+																	th:checked="false" disabled> 
+																	<label
+																	class="custom-control-label" for="regulatoryImpact"></label>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-sm-6">
+															<label th:id="regulatoryImpactStatus" th:if="${incidentDto.regulatoryImpact}=='Y'">Yes </label>
+															<label th:id="regulatoryImpactStatus" th:if="${incidentDto.regulatoryImpact}=='N'">No </label>
+														</div>
+													</div>
+												</div>
+											</div>
+											</div>
+										</div>	 -->
+
+															<div id="remediateDiv">
+																<div class="card card-info bg-info p-2">
+																	<h3 class="card-title">&nbsp; Remediation Details</h3>
+																</div>
+
+																<div class="row">
+
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="rootCauseIncident">Root Cause Of
+																				Incident </label> <input
+																				class="form-control form-control-sm text-bold"
+																				type="text" name="rootCauseIncident"
+																				id="rootCauseIncidentM" readonly />
+																		</div>
+																	</div>
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="rootCauseType">Root Cause Type </label> <input
+																				class="form-control form-control-sm text-bold"
+																				type="text" name="rootCauseType" id="rootCauseTypeM"
+																				readonly />
+																		</div>
+																	</div>
+																</div>
+
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group">
+																			<label for="rootCauseDescription">Description
+																				Of Root Cause </label>
+																			<textarea
+																				class="form-control form-control-sm text-bold"
+																				name="rootCauseDescription"
+																				id="rootCauseDescriptionM" rows="3" maxlength="3000"
+																				placeholder="Description Of Root Cause" readonly></textarea>
+
+																		</div>
+																	</div>
+																</div>
+
+																<div class="row">
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="grossLossRemediation">Gross Loss
+																				of Incident </label> <input
+																				class="form-control form-control-sm text-bold rupee"
+																				type="text" name="grossLossRemediation"
+																				id="grossLossRemediationM" readonly />
+
+																			<div id="grossLossRemediationW"
+																				class="showWordAmt text-green"></div>
+																		</div>
+																	</div>
+
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="netLossRemediation">Net Loss of
+																				Incident </label> <input
+																				class="form-control form-control-sm text-bold rupee"
+																				type="text" name="netLossRemediation"
+																				id="netLossRemediationM" readonly />
+
+																			<div id="netLossRemediationW"
+																				class="showWordAmt text-green"></div>
+																		</div>
+																	</div>
+
+																</div>
+
+																<div class="card card-info bg-info p-2">
+																	<h3 class="card-title">&nbsp; Gross Loss Details</h3>
+																</div>
+
+																<div class="row">
+																	<div class="col-sm-12">
+																		<table
+																			class="table grossLossTable table-bordered table-striped"
+																			id="grossLossTable">
+																			<!--  th:if="${incidentDto.filedetails != null}" -->
+																			<thead>
+																				<tr>
+																					<th>Date Of Loss</th>
+																					<th>Description Of Loss</th>
+																					<th>Loss Amount</th>
+																				</tr>
+																			</thead>
+																			<tbody id="tbodyR">
+
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+																<div class="card card-info bg-info p-2">
+																	<h3 class="card-title">&nbsp; Recovery Loss
+																		Details</h3>
+																</div>
+
+																<div class="row">
+																	<div class="col-sm-12">
+																		<table
+																			class="table recoveryLossTable table-bordered table-striped"
+																			id="recoveryLossTable">
+																			<!--  th:if="${incidentDto.filedetails != null}" -->
+																			<thead>
+																				<tr>
+																					<th>Date Of Recovery</th>
+																					<th>Description Of Recovery</th>
+																					<th>Recovery Amount</th>
+
+																				</tr>
+																			</thead>
+																			<tbody id="tbodyT">
+
+																			</tbody>
+																		</table>
+																	</div>
+
+																</div>
+
+															</div>
+
+
+															<div id="closureDiv">
+
+																<div class="card card-info bg-info p-2">
+																	<h3 class="card-title">&nbsp; Closure Details</h3>
+																</div>
+
+																<div class="row">
+																	<div class="col-sm-6">
+
+																		<div class="form-group">
+																			<label for="businessSegment">Business Segment
+																			</label> <input
+																				class="form-control form-control-sm text-bold"
+																				type="text" name="businessSegment"
+																				id="businessSegmentM" readonly />
+
+																		</div>
+
+																	</div>
+																</div>
+
+																<div class="row">
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="riskInRiskRegister">Details Of
+																				Risk Added In Risk Register </label> <input
+																				class="form-control form-control-sm" type="text"
+																				name="riskInRiskRegister"
+																				placeholder="Details Of Risk Added In Risk Register"
+																				id="riskInRiskRegisterM" readonly />
+																		</div>
+																	</div>
+
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="controlInRiskRegister">Details Of
+																				Control Added In Risk Register </label> <input
+																				class="form-control form-control-sm" type="text"
+																				name="controlInRiskRegister"
+																				placeholder="Details Of Control Added In Risk Register"
+																				id="controlInRiskRegisterM" readonly />
+																		</div>
+																	</div>
+
+																</div>
+
+
+
+
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="card-header">
+																			<div class="card">
+																				<h3 class="card-title text-bold">Checklist for
+																					fraud cases</h3>
+																			</div>
+																			<div class="card-body">
+																				<table
+																					class="table checklistView table-bordered table-striped"
+																					id="checklistView">
+																					<!--  th:if="${incidentDto.filedetails != null}" -->
+																					<thead>
+																						<tr>
+																							<th style="width: 10px">#</th>
+																							<th>Checklist Item</th>
+																							<th>Response</th>
+
+																						</tr>
+																					</thead>
+																					<tbody id="tbodyC">
+
+																					</tbody>
+																				</table>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group">
+																			<label for="closureReason">Reason for Closure
+																			</label>
+																			<textarea class="form-control form-control-sm"
+																				name="closureReasonM" id="closureReasonM" rows="3"
+																				maxlength="3000" placeholder="Reason for Closure"
+																				disabled></textarea>
+
+																		</div>
+																	</div>
+
+																</div>
+															</div>
+
+
+															<div class="row table-responsive">
+																<div class="col-sm-12">
+																	<div class="form-group">
+																		<table
+																			class="table uploadTable table-head-fixed table-bordered table-striped filedownload"
+																			id="filedetailsM">
+																			<thead>
+																				<tr>
+																					<th>File Name</th>
+																					<th>File Size</th>
+																					<th>Uploaded Date</th>
+																					<th>Uploaded by</th>
+																					<th></th>
+																				</tr>
+																			</thead>
+																			<tbody>
+
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
+
+
+															<!-- LINKED ACTION PLAN -->
+
+															<div class="row">
+																<div class="col-sm-12">
+																	<div>
+																		<div class="card-header">
+																			<h3 class="card-title">
+																				<i class="fas fa-link"></i>&nbsp;Action Plan Linked
+																			</h3>
+																		</div>
+
+
+																		<div class="card-body" id="actionDiv">
+																			<table id="actionplantable"
+																				class="table table-responsive table-bordered table-striped actionplantable">
+																				<thead>
+																					<tr>
+																						<th>Action Plan ID</th>
+																						<th>Name</th>
+																						<th>Owner</th>
+																						<th>Status</th>
+																						<th>Frequency</th>
+																						<th>Completion(%)</th>
+																						<th>Completion Date</th>
+																						<!-- 	<th id="unlinkHead"></th> -->
+																					</tr>
+																				</thead>
+																				<tbody id="actPlanBody">
+
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+
+															<!-- LINKED ACTION PLAN -->
+
+
+														</div>
+														<div class="modal-footer">
+															<button class="btn btn-secondary" data-dismiss="modal">
+																<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- view Modal -->
+
+
+										</div>
+										<!-- BS STEPPER END -->
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+		</div>
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- Comment Modal -->
+	<div class="modal fade" id="commentmodal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Comments</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="card-body">
+					<!-- /.tab-pane -->
+					<div class="tab-pane" id="comments">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label for="comments">Reason For Rejection <code>*</code></label>
+									<textarea class="form-control" name="reason" maxlength="3000"
+										placeholder="Reason For Rejection" id="reason"></textarea>
+								</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button type="button" id="reject" name="reject"
+								class="btn btn-info">
+								<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+							</button>
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check"
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+				</div>
+				<!-- /.Card -->
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+
+
+	<!-- ./wrapper -->
+	<!-- PAGE PLUGINS -->
+
+	<!-- BS-Stepper -->
+	<script th:src="@{/plugins/bs-stepper/js/bs-stepper.min.js}"></script>
+
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/IncidentVerifier.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+
+
+
+</body>
+
+</html>

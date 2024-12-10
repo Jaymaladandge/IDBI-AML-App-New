@@ -1,0 +1,34 @@
+﻿spring:
+  profiles:
+    include:
+      - api
+      - product
+    active:
+      - dev
+  application:
+    name: OMS-WEB
+jasypt:
+  encryptor:
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+
+server:
+  servlet:
+    session:
+     cookie:
+        same-site: strict
+          
+roles:
+    admin: ROLE_ADMIN
+    branch: ROLE_USER
+organisation:
+  name: LIC
+  usrname: LICUSR
+erm-app:
+  privatekeycertpath: certs/ermKeyStore.p12
+  password: ENC(X0xey6Snj6B50QGnqgezjCkzf0Rtk8U/)
+  keystore: ENC(CqS3bgf78GJCRUMORJrAZA==)
+  
+file-location:
+  unprocessedFilePath: C:/Users/user/MisReport/
+ 

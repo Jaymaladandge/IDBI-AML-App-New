@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+
+</head>
+<!-- <div id="load"></div> -->
+
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Role Management</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/mainRolePage}">Role
+										Management</a></li>
+								<li class="breadcrumb-item active">Edit</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content-header -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-12">
+							<div class="invoice p-3 mb-3">
+								<div class="card card-info card-tabs">
+									<div class="card-header">
+										<h3 class="card-title">Edit</h3>
+									</div>
+									<!-- /.col -->
+								</div>
+								<form autocomplete="off" role="form" method="post"
+									th:action="@{/editActionRole}" id="submitRoleForm"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+
+									<input type="hidden" id="encryptedJsonUpdate"
+										name="encryptedJson" /> <input type="hidden"
+										name="clientName" id="clientName" th:value="${userName}"
+										th:name="clientName" /> <input type="hidden"
+										name="roleCategoryId" id="roleCategoryId"
+										th:value="${roleDto.roleCategoryId}" th:name="roleCategoryId" />
+
+									<input type="hidden" name="sourceName" id="sourceName"
+										th:value="${roleDto.sourceName}" th:name="sourceName" /> <input
+										type="hidden" name="statusFlgh" id="statusFlgh"
+										th:value="${roleDto.statusFlg}" th:name="statusFlgh" />
+
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="roleId">Role ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="roleId" name="roleId" th:field="${roleDto.roleId}"
+															readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="statusFlg">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="statusFlg" name="statusFlg"
+															th:value="${recordStatus}" readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="roleName">Role Name<code>*</code></label> <input
+														type="text" name="roleName" th:field="${roleDto.roleName}"
+														class="form-control form-control-sm normal"
+														style="text-transform: uppercase" placeholder="Role Name"
+														id="roleName" />
+
+												</div>
+											</div>
+
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="roleCategory">Role Category <code>*</code></label>
+
+													<select class="select2" name="roleCategory"
+														data-placeholder="Role Category" id="roleCategory"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:each="paramKeySelected : ${paramKeySelected}"
+															th:value="${paramKeySelected.recordId}"
+															th:text="${paramKeySelected.paramKey}" selected />
+														<option th:each="paramKey : ${paramKeyList}"
+															th:value="${paramKey.recordId}"
+															th:text="${paramKey.paramKey}" />
+
+													</select>
+												</div>
+											</div>
+
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="moduleCode">Module Access <code>*</code></label>
+
+													<select class="select2 text-capitalize" name="moduleCode"
+														data-placeholder="Module Access" id="moduleCode"
+														multiple="multiple" style="width: 100%;">
+														<option
+															th:each="codeMasterDtoSelected : ${codeMasterDtoSelected}"
+															th:value="${codeMasterDtoSelected.codeValue}"
+															th:text="${codeMasterDtoSelected.codeValueDesc}" selected />
+														<option th:each="codeMaster : ${codeMasterList}"
+															th:value="${codeMaster.codeValue}"
+															th:text="${codeMaster.codeValueDesc}" />
+													</select>
+
+												</div>
+											</div>
+
+
+											<div class="col-sm-6">
+												<label for="roleStatus">Active Status<code>*</code></label>
+
+												<div class="form-group">
+													<div class="row">
+														<div class="col-sm-3">
+															<div class="custom-control custom-radio">
+																<input class="custom-control-input" type="radio"
+																	id="customRadio1" name="roleStatus" value="A"
+																	th:checked="${roleDto.roleStatus} eq 'A' ? 'checked' ">
+																<label for="customRadio1" class="custom-control-label ">Active</label>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="custom-control custom-radio">
+																<input class="custom-control-input" type="radio"
+																	id="customRadio2" name="roleStatus" value="I"
+																	th:checked="${roleDto.roleStatus} eq 'I' ? 'checked' ">
+																<label for="customRadio2" class="custom-control-label">InActive</label>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+
+										</div>
+
+
+										
+
+
+										<div class="row">
+											<div class="col-sm-12">
+
+												<div class="card collapsed-card">
+													<div class="card-header">
+														<h3 class="card-title">
+															<label class="check" style="color: #17a2b8;">Select
+																Menu for Role </label>
+														</h3>
+
+														<div class="card-tools">
+															<button type="button" class="btn btn-tool"
+																data-card-widget="collapse" data-toggle="tooltip"
+																title="Collapse">
+																<i class="fas fa-plus" style="color: #17a2b8;"></i>
+															</button>
+
+														</div>
+													</div>
+
+													<div class="card-body">
+														<div class="row">
+															<ul class="control menu_list col-sm-12" id="menuList">
+																<li th:each="menu,itr : ${menuList}"
+																	class="leaf col-sm-5 nav-item has-treeview"><input
+																	type="checkbox" th:value="${menu.menuId}"
+																	th:id="${menu.menuId} + ${itr.index}"
+																	name="parentHeaderT" class="hideChecked"
+																	th:if="${menu.checkFlg eq 'true'}"
+																	th:checked="${menu.checkFlg}" /> <input
+																	type="checkbox" th:value="${menu.menuId}"
+																	th:id="${menu.menuId} + ${itr.index}"
+																	name="parentHeader" class="hide"
+																	th:if="${menu.checkFlg eq 'false'}" th:checked="false" />
+																	<label th:for="${menu.menuId}"
+																	th:text="${menu.menuName}" class="selectit "></label>
+																	<ul class="children"
+																		th:unless="${menu.actionPath} eq null">
+
+																		<li style="display: inline-block;"
+																			class="text-capitalize menuAction"
+																			th:name="${menu.menuId}" th:rel="${menu.actionPath}"
+																			th:typ="${menu.menuType}"></li>
+
+																		<li th:each="values : ${actionValues}"
+																			style="display: inline-block;"
+																			class="children text-capitalize hideA"><input
+																			type="checkbox" th:value="${values}"
+																			class="menucheck" name="menucheckT"
+																			th:id="${values}+'~'+ ${menu.menuId}"
+																			th:if="${menu.checkFlg eq 'true'}"
+																			th:checked="${#lists.contains(menu.menuAction,values)} ? 'checked'">
+
+																			<input type="checkbox" th:value="${values}"
+																			th:id="${values}+'~'+ ${menu.menuId}"  name="menucheck"
+																			class="hide" th:if="${menu.checkFlg eq 'false'}">
+																			<label th:text="${values}" class="selectit"></label>
+																		</li>
+
+																	</ul>
+																	<ul th:if="${menu.actionPath} eq null" class="children"
+																		id="submenuList">
+																		<li th:each="submenu,iter : ${menu.subMenus}"
+																			class="testLi"><input
+																			th:id="${submenu.subMenuId} + ${iter.index}"
+																			type="checkbox" th:value="${submenu.subMenuId}"
+																			name="childHeaderT" class="childHeader"
+																			th:if="${submenu.checkFlg eq 'true'}"
+																			th:checked="${submenu.checkFlg}" /> <input
+																			th:id="${submenu.subMenuId} + ${iter.index}"
+																			type="checkbox" th:value="${submenu.subMenuId}"
+																			name="childHeader" class="childHeader"
+																			th:if="${submenu.checkFlg eq 'false'}"
+																			th:checked="false" /> <label
+																			th:for="${submenu.subMenuId}"
+																			th:text="${submenu.subMenuName}" class="selectit"></label>
+																			<ul th:if="${menu.actionPath} eq null"
+																				class="children">
+																				<li style="display: inline-block;"
+																					class="text-capitalize subMenuAction"
+																					th:styp="${submenu.subMenuType}"
+																					th:name="${submenu.subMenuId}"></li>
+
+																				<li th:each="values : ${actionValues}"
+																					class="children text-capitalize hideA testClass"
+																					style="display: inline-block;"><input
+																					type="checkbox" class="submenuchecked"
+																					th:value="${values}" name="submenucheckT"
+																					th:id="${values}+'~'+ ${submenu.subMenuId}"
+																					th:if="${submenu.checkFlg eq 'true'}"
+																					th:checked="${#lists.contains(submenu.subMenuAction,values)} ? 'checked' " />
+																					<input type="checkbox" class="submenuchecked"
+																					th:value="${values}" name="submenucheck"
+																					th:id="${values}+'~'+ ${submenu.subMenuId}"
+																					th:if="${submenu.checkFlg eq 'false'}" /> <label
+																					th:text="${values}" class="selectit"></label></li>
+																			</ul></li>
+																	</ul></li>
+															</ul>
+
+															<div></div>
+
+
+														</div>
+													</div>
+													<!-- /.card-body -->
+												</div>
+											</div>
+										</div>
+										
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="comments">Provide your comments <code>*</code></label>
+													<textarea class="form-control" name="commentRo"
+														maxlength="3000" placeholder="Comments" id="commentRo"></textarea>
+												</div>
+											</div>
+										</div>
+										<br>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<table
+														class="table uploadTable table-head-fixed table-bordered table-striped"
+														id="filedetails" th:if="${roleDto.filedetails != null}">
+														<thead>
+															<tr>
+																<th>File Name</th>
+																<th>File Size (kb)</th>
+																<th>Uploaded Date</th>
+																<th>Uploaded by</th>
+																<th></th>
+																<th></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="mvc : ${roleDto.filedetails}">
+																<td th:text="${mvc.fileName}"></td>
+																<td th:text="${mvc.fileSize}"></td>
+																<td th:text="${mvc.uploadTimestamp}"></td>
+																<td th:text="${mvc.uploadedBy}" class="text-capitalize">
+																</td>
+																<td><a th:name='${mvc.fileName}' href="#"
+																	class="btn btn-info downloadfile"><i
+																		class="fas fa-download"></i></a></td>
+																<td class="project-actions text-right"><a
+																	class="btn btn-danger btn-sm disabled" id="closerow"><i
+																		class="fa fa-window-close"></i></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+										<!-- ./row -->
+
+
+										<div class="card-footer">
+											<button type="submit" class="btn btn-info" id="submitRo"
+												name="edit">
+												<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+											</button>
+											<a href="#" data-toggle="modal" data-whatever="mainRasPage"
+												data-target="#cancelmodel"><button type="reset"
+													class="btn btn-warning" title="Cancel">
+													<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+												</button></a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- /.card-footer -->
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+
+				<div class="modal-footer">
+
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check"
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+				</div>
+				<!-- /.Card -->
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.Cancel Modal -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/RoleEdit.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+
+
+
+
+	<!-- PAGE PLUGINS -->
+
+</body>
+
+</html>

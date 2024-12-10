@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>User Summary</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">User Management</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+											<div class="row">
+												<div class="col-sm-12">
+													<!-- <div class="card-header" data-card-widget="collapse">
+															<h3 class="card-title text-bold">Search</h3>
+															<button type="button" class="btn btn-tool float-right"
+																data-toggle="tooltip" title="Collapse">
+																<em class="fas fa-plus" style="color: #007bff;"></em>
+															</button>
+														</div> -->
+													<!-- <div class="card-body">
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchUserList}" id="searchForm"
+																th:object="${encryptedRequest}">
+																<input type="hidden" id="encryptedJson"
+																	name="encryptedJson" />
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group row">
+																			<div class="col-sm-3">
+																				<label for="Select Parameter">Select
+																					Parameter</label> <select class="select2" name="dimension"
+																					id="dimension" data-placeholder="Select Parameter"
+																					style="width: 100%;">
+																					<option value=''>Select</option>
+																				<option value='userId'>User Id</option>
+																				<option value='username'>Username</option>
+																				<option value='userEmail'>Email</option>
+																				<option value='srno'>SRNO</option>
+																				<option value='userActiveStatus'>
+																					Status</option>
+																					
+																				</select>
+																			</div>
+																			<div class="col-sm-5">
+																				<label for="Value">Value</label> <input type="text"
+																					class="form-control form-control-sm"
+																					name="searchcriteria" id="searchcriteria"
+																					placeholder="Value" maxlength="50">
+																			</div>
+																			<div class="col-sm-2">
+																				<label for="search"></label>
+																				<h3>
+																					<a class="btn btn-sm btn-info" href="#" id="search"
+																						title="Search" onclick="searchData()"> <em
+																						class="fas fa-search fa-1x text-black"></em>
+																					</a>
+																				</h3>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</form>
+														</div> -->
+													<!-- card-body -->
+													<!-- card -->
+												</div>
+												<!-- ./col -->
+											</div>
+											<!-- ./row -->
+
+											<!-- /row -->
+
+											<div class="card card-outline card-secondary">
+											<form autocomplete="off" role="form" method="post"
+																th:action="@{/searchUserSummary}" id="searchUserForm"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonUser"
+																	name="encryptedJson" />
+												</form>					
+												<div class="row m-2 p-2">
+													<div class="col-md-3 m-1 pl-3">
+														<div class="form-group row">
+															<label for="officeType">Select Office <code>*</code></label>
+															<select class="select2 text-capitalize"
+																name="usrDropdown" data-placeholder="Office"
+																id="usrDropdown" style="width: 100%;">
+																<option value=''>Select</option>
+																<option value='CENTRAL'>CENTRAL</option>
+																<option value='ZONE'>ZONE</option>
+																<option value='REGION'>REGION</option>
+																<option value='BRANCH'>BRANCH</option>
+
+
+															</select>
+														</div>
+													</div>
+
+													<div class="col-sm-2 mt-3">
+														<button type="button" id="fetchDataBtn"
+															class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+															name="fetchDataBtn">Fetch Users</button>
+													</div>
+												</div>
+
+
+											</div>
+											
+											
+
+
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<div class="card card-outline card-secondary">
+														<div class="card-header">
+															<input type="hidden" th:value="*{message}" id="message" />
+															<!-- <span class="float-right"> <a
+																th:href="@{/createUser}" class="btn bg-teal"
+																style="margin-right: 5px;" title="Create User"> <i
+																	class="fas fa-plus-square"></i>&nbsp;Create
+															</a></span> -->
+														</div>
+														<div class="card-body table-responsive">
+
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/editlistUser}" id="editUserForm"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonEdit"
+																	name="encryptedJson" /><input type="hidden"
+																	name="userRole" id="userRole" th:value="${userRole}"
+																	th:name="clientName" />
+
+
+																<table id="usertable"
+																	class="table table-head-fixed table-bordered table-striped">
+																	<thead>
+																		<tr>
+
+																			<th>User ID</th>
+																			<th>User Name</th>
+																			<th>Email ID</th>
+																			<th>Role</th>
+																			<th>Branch Id</th>
+																			<th>Branch Name</th>
+																			<th>Vertical</th>
+																			<th>Status</th>
+																			<th></th>
+																			<th></th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="uList:${userList}">
+
+																			<td><a class="text-blue viewUserModel"
+																				data-toggle="modal" href="#" th:id="${uList.userId}"
+																				th:text="${uList.userId}"> </a></td>
+																			<td th:text="${uList.username}"
+																				class="text-capitalize"></td>
+																			<td
+																				th:text="${#strings.toLowerCase(uList.userEmail)}"></td>
+																			<td th:text="${uList.userRole}"></td>
+																			<td th:text="${uList.branchId}"></td>
+																			<td th:text="${uList.branchName}"
+																				class="text-capitalize"></td>
+																			<td th:text="${uList.vertical}"></td>
+																			<td th:switch="${uList.userActiveStatus}"><span
+																				th:case="'Active'" class="badge bg-success">Active</span>
+																				<span th:case="'Reject'" class="badge bg-warning">Rejected</span>
+																				<span th:case="'Draft'" class="badge bg-purple">Pending
+																					Approval</span><span th:case="'Edit'"
+																				class="badge bg-info">Modified</span><span
+																				th:case="'InActive'" class="badge bg-danger">In-Active</span></td>
+
+																			<td class="project-actions text-center">
+																				<!--  th:if="${#lists.contains(btnName,'edit')}" -->
+																				<span
+																				th:unless="${uList.userActiveStatus} eq 'Active'  or ${uList.userActiveStatus} eq 'Reject'  or ${uList.userActiveStatus} eq 'InActive'">
+																					<a class="btn btn-sm bg-purple disabled"
+																					th:href="@{/editlistUser}" title="Edit"> <i
+																						class="fa fa-edit fa-1x text-black"></i>
+																				</a>
+																			</span> <span
+																				th:if="${uList.userActiveStatus} eq 'Active'  or ${uList.userActiveStatus} eq 'Reject' or ${uList.userActiveStatus} eq 'InActive'">
+																					<a class="btn btn-sm bg-purple editUser"
+																					th:id="${uList.userId}" title="Edit"> <i
+																						class="fa fa-edit fa-1x text-black"></i></a>
+																			</span>
+																			</td>
+																			<td class="project-actions text-center"><span><a
+																					class="btn btn-sm bg-maroon viewAuditTrail"
+																					href="#" th:id="${uList.userId}"
+																					title="Audit Trail"><i class="fab fa-twitch"></i></a></span></td>
+
+
+																		</tr>
+
+
+																	</tbody>
+																</table>
+															</form>
+															<!-- /form -->
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse">
+												<!-- timeline time label -->
+												<div class="time-label">
+													<span class="bg-success"> 10 Feb. 2014 </span>
+												</div>
+												<!-- /.timeline-label -->
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 5
+															mins ago</span>
+
+														<h3 class="timeline-header border-0">
+															<a href="#">Rohit Singh</a> approved request
+														</h3>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline item -->
+												<div class="time-label">
+													<span class="bg-success"> 3 Jan. 2014 </span>
+												</div>
+												<div>
+													<i class="fas fa-envelope bg-primary"></i>
+
+													<div class="timeline-item">
+														<span class="time"><i class="far fa-clock"></i> 27
+															mins ago</span>
+
+														<h3 class="timeline-header">
+															<a href="#">Akshay Mhatre</a> created request
+														</h3>
+
+														<div class="timeline-body">Request created.</div>
+														<div class="timeline-footer">
+															<a href="#" class="btn btn-warning btn-flat btn-sm">View
+																comment</a>
+														</div>
+													</div>
+												</div>
+												<!-- END timeline item -->
+												<!-- timeline time label -->
+
+												<!-- /.timeline-label -->
+
+												<!-- END timeline item -->
+												<div>
+													<i class="far fa-clock bg-gray"></i>
+												</div>
+											</div>
+										</div>
+										<!-- /.tab-pane -->
+
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+
+
+				<!-- /modal -->
+				<!-- Timeline Modal -->
+				<div class="modal fade" id="timelinemodal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">Audit Trail</h5>
+
+								<!-- 								<button type="button" class="close text-white" -->
+								<!-- 									data-dismiss="modal" aria-label="Close"> -->
+								<!-- 									<span aria-hidden="true">&times;</span> -->
+								<!-- 								</button> -->
+							</div>
+
+							<!-- form start -->
+							<div class="card-body">
+								<!-- /.tab-pane -->
+								<div class="tab-pane" id="timeline">
+
+									<!-- The timeline -->
+									<div class="timeline timeline-inverse">
+										<div class="time-label">
+											<span class="bg-success"> 10 May 2021 </span>
+										</div>
+
+										<!-- timeline item -->
+										<div>
+											<i class="fas fa-comments bg-warning"></i>
+
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 27
+													mins ago</span>
+
+												<h3 class="timeline-header">
+													<a href="#">Akshay Mhatre</a> approved the record.
+												</h3>
+
+												<div class="timeline-body">User Verified Successfully.</div>
+
+											</div>
+										</div>
+										<!-- END timeline item -->
+										<div>
+											<i class="far fa-clock bg-gray"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card-footer">
+								<span class="float-left" aria-hidden="true">
+
+									<button class="btn btn-secondary" data-dismiss="modal">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</span>
+							</div>
+							<!-- /.card-footer -->
+						</div>
+					</div>
+				</div>
+				<!-- /.modal -->
+				<!-- View Modal -->
+				<div class="modal fade" id="viewUserModel">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">
+									USER ID - <span id="userIdLabel"></span>
+								</h5>
+								<button type="button" class="close text-white"
+									data-dismiss="modal" aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+							<form class="form-horizontal">
+								<div class="card-body">
+
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="parameter_key">User Name</label> <input
+													type="text" class="form-control form-control-sm"
+													id="mUserName" name="mUserName" value=""
+													placeholder="User Name" readonly>
+											</div>
+										</div>
+
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="parameter_key">Email ID</label> <input
+													type="email" class="form-control form-control-sm"
+													id="mUserEmail" name="mUserEmail" value=""
+													placeholder="Email Id" readonly>
+											</div>
+										</div>
+
+
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="parameter_key">Mobile Number</label> <input
+													type="text" class="form-control form-control-sm"
+													id="mUserMobile" name="mUserMobile" value=""
+													placeholder="Mobile Number" readonly>
+											</div>
+										</div>
+									</div>
+
+									<div class="card card-info bg-cyan p-2 mt-1">
+										<h3 class="card-title">&nbsp; Details for Role</h3>
+									</div>
+									<div class="row">
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="riskcategory">Office Type </label> <input
+													type="text" class="form-control form-control-sm"
+													id="mOfficeType" name="mOfficeType" value=""
+													placeholder="Office Type" readonly>
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="riskcategory">Department </label> <input
+													type="text" class="form-control form-control-sm"
+													id="mDepartment" name="mDepartment" value=""
+													placeholder="Office Type" readonly>
+
+											</div>
+										</div>
+										<div class="col-sm-4">
+											<div class="form-group">
+												<label for="userRoleShortName">User Role Short Name
+												</label>
+												<!--  <input
+															type="text" class="form-control form-control-sm textCapitalize"
+															id="mUserRoleShortName" name="mUserRoleShortName"
+															value=""
+															placeholder="User Role Position" readonly> -->
+												<textarea class="form-control" name="mUserRoleShortName"
+													id="mUserRoleShortName" placeholder="rolename" wrap="soft"
+													rows="1" cols="1" readonly> </textarea>
+
+
+											</div>
+										</div>
+									</div>
+
+									<!-- <div class="row">
+											<div class="col-sm-4">
+											<label for="switchAccessFlg">Switch Office </label> <input
+															type="text" class="form-control form-control-sm"
+															id="switchAccessFlg" name="switchAccessFlg"
+															value=""
+															placeholder="switchAccessFlg" readonly>
+											</div>
+											</div> -->
+
+
+								</div>
+								<div class="row" id="fileDiv" style="display: none">
+									<div class="col-sm-12">
+										<div class="card card-outline card-secondary">
+											<div class="card-header">
+												<h3 class="card-title text-bold">Document List</h3>
+											</div>
+											<div class="card-body">
+												<table class="table table-bordered table-striped"
+													id="modalFileId">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Uploaded By</th>
+															<th>Uploaded Date</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+										</div>
+
+									</div>
+								</div>
+
+
+
+
+
+								<div class="card-footer">
+
+									<button class="btn btn-secondary" id="backbtn">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</div>
+								<!-- /.card-footer -->
+							</form>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- Comment Modal -->
+
+
+
+				<!-- /.modal -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<script th:src="@{/dist/appjs/erm/userSummary.js}"></script>
+
+
+
+
+
+	<!-- <script>
+	//search method
+	function searchData() {
+		var searchParam = $('#dimension').find(":selected").val();
+		var searchValue = $('#searchcriteria').val().toUpperCase();
+		if (searchParam == '') {
+			toastr.info('Please Select Search Parameter For Search');
+		} else if (searchValue == '') {
+			toastr.info('Please Add Some Value For Search');
+		} else {
+			if (searchParam == 'raRecordStatus') {
+				if (searchValue.includes('PENDING APPROVAL')) {
+					searchValue = 'D';
+				} else {
+					searchValue = searchValue.charAt(0);
+				}
+			}
+			var sortValue = $('#sorting').find(":selected").val();
+			var pageValJson = "{\"searchParam\":" + "\"" + searchParam
+					+ "\",\"searchValue\":\"" + searchValue
+					+ "\",\"sortValue\":\"" + reason + "\"}";
+			var iterationCount = 1000;
+			var keySize = 128;
+			//passPhrase is the key
+			var passphrase = CryptoJS.lib.WordArray.random(128 / 8)
+					.toString(CryptoJS.enc.Hex);
+			var aesUtil = new AesUtil(keySize, iterationCount);
+			var ciphertext = aesUtil.encrypt(reverseText(passphrase),
+					pageValJson);
+			$("#encryptedJson").val(ciphertext + ':~:' + passphrase);
+			$("#searchForm").submit();
+		}
+	}
+	</script>
+	
+ -->
+
+
+</body>
+</html>

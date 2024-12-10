@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+/* input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+} */
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed ">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1 class="m-0 text-secondary">Benchmark</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item active"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/mainBenchmarkPage}">Benchmark </a></li>
+								<li class="breadcrumb-item active">Create</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-info">
+								<div class="card-header">
+									<h3 class="card-title">Create</h3>
+								</div>
+								<!-- /.card-header -->
+								<!-- form start -->
+
+								<form autocomplete="off" class="form-horizontal"
+									id="benchMarkForm" th:action="@{/createActionBm}" method="post"
+									th:object="${encryptedRequest}" enctype="multipart/form-data">
+									<input type="hidden" id="encryptedJson" name="encryptedJson"
+										th:field="*{encryptedJson}" /> <input type="hidden"
+										id="userName" name="userName" th:value="${bmDto.userName}" />
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="bmId">Benchmark ID</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold" id="bmId"
+															name="bmId" th:value="${bmid}" readonly>
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="bmRecordStatus">Record Status</label>
+													<div class="input-group">
+														<input type="text"
+															class="form-control form-control-sm text-bold"
+															id="bmRecordStatus" name="bmRecordStatus"
+															th:value="${recordStatus}" readonly>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="bmName">Benchmark Name<code>*</code></label> <input
+														class="form-control form-control-sm text-capitalize"
+														type="text" name="bmName" placeholder="Benchmark Name"
+														id="bmName" />
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="bmdatatype">Benchmark Data Type<code>*</code></label>
+													<select class="select2" name="bmDatatype" id="bmDatatype"
+														data-placeholder="Benchmark Datatype" style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='percentage'>Percentage</option>
+														<option value='number'>Number</option>
+
+													</select>
+												</div>
+											</div>
+
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="bmDescription">Benchmark Description<code>*</code></label>
+													<textarea class="form-control form-control-sm"
+														name="bmDescription" id="bmDescription" rows="3"
+														placeholder="Benchmark Description" maxlength="3000"
+														style="overflow: auto;"></textarea>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<label for="bmDataFlg">Benchmark Value to be
+													Considered <code>*</code>
+												</label> <select class="select2" name="bmDataFlg" id="bmDataFlg"
+													data-placeholder="Benchmark Value to be Considered"
+													style="width: 100%;">
+													<option value=''>Select</option>
+													<option value='P'>Proportionate</option>
+													<option value='F'>Fixed</option>
+												</select>
+
+											</div>
+
+											<div class="col-sm-6">
+												<label for="bmValueTypeFlag">Benchmark Value Type <code>*</code></label>
+												<select class="select2" name="bmValueTypeFlag" id="bmValueTypeFlag"
+													data-placeholder="Benchmark Value Type"
+													style="width: 100%;">
+													<option value=''>Select</option>
+													<option value='P'>Percentage</option>
+													<option value='A'>Absolute</option>
+												</select>
+
+											</div>
+										</div>
+
+										<div class="row mt-2">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="bmAssessmentPeriod">Benchmark Value
+														Capture Frequency <code>*</code>
+													</label> <select class="select2" name="bmAssessmentPeriod"
+														id="bmAssessmentPeriod"
+														data-placeholder="Assessment Period" style="width: 100%;">
+														<option value=''>Select</option>
+														<option value='M'>Monthly</option>
+														<option value='Q'>Quarterly</option>
+														<option value='H'>Half Yearly</option>
+														<option value='Y'>Yearly</option>
+														<option value='O'>Other</option>
+													</select>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<input type="number" name="show" min="1" step="1"
+														onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+														style="display: none" placeholder="Enter Number of Months"
+														class="form-control form-control-sm" id="show" />
+												</div>
+												<div style="display: none" id="monthText">
+													<p>months</p>
+												</div>
+												<div style="display: none" id="months">
+													<span aria-hidden="true">&times;</span>
+												</div>
+											</div>
+										</div>
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="applicableOffice">Applicable Office<code>*</code>
+													</label>
+													<div class="form-check row"
+														th:each="officeName : ${OfficeNameList}">
+														<input class="form-check-input pr-3" type="checkbox"
+															name="applicableOffice" th:text="${officeName}"
+															th:value="${officeName}" th:id="${officeName}" />
+													</div>
+
+
+												</div>
+											</div>
+
+										</div>
+
+
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label>Document Attachment</label>
+													<div class="custom-file">
+														<input type="file"
+															class="custom-file-input input-group-sm" id="customFile"
+															style="display: none;" name="files[]" multiple="multiple"
+															onchange="getFileData(this);" /> <label
+															class="btn bg-gray" for="customFile">Choose file</label>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<table class="table uploadTable" id="filedetails"
+													style="display: none">
+													<thead>
+														<tr>
+															<th>File Name</th>
+															<th>File Size</th>
+															<th>Uploaded Date</th>
+															<th>Uploaded by</th>
+															<th></th>
+														</tr>
+													</thead>
+													<tbody>
+													</tbody>
+												</table>
+											</div>
+
+										</div>
+										<!-- ./row -->
+										<div class="card-footer">
+											<a class="btn btn-info" id="create"> <i
+												class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+											</a> <a href="#" data-toggle="modal"
+												data-whatever="mainBenchmarkPage" data-target="#cancelmodel"><button
+													type="reset" class="btn btn-warning" title="Cancel">
+													<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+												</button></a>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- Confirmation Modal -->
+	<div class="modal fade" id="confirmmodal">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h5 class="modal-title">Confirm</h5>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="card-body">
+					<!-- /.tab-pane -->
+					<div class="tab-pane" id="confirm">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group">Are You Sure You Want To Submit
+									This Record?</div>
+							</div>
+						</div>
+						<div class="card-footer">
+							<button type="button" class="btn btn-secondary"
+								data-dismiss="modal">
+								<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+							</button>
+							<button type="button" id="submitBm" name="create"
+								class="btn btn-info">
+								<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+							</button>
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Cancel Modal -->
+	<div class="modal fade" id="cancelmodel">
+		<div class="modal-dialog modal-fluid">
+			<div class="modal-content">
+				<div class="modal-header bg-info">
+					<h6 class="modal-title">Confirm</h6>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<!-- form start -->
+				<div class="modal-body">
+					<h5 class="card-title">
+						If you leave this page, all changes will be lost. <br> Press
+						"Ok" to Continue.
+					</h5>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-dismiss="modal">
+						<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+					</button>
+					<a class="btn btn-primary target"><i class="fas fa-check"
+						style="padding: 0 7px 0 0px;"></i>Ok </a>
+				</div>
+				<!-- /.Card -->
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<!-- /.Cancel Modal -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/BenchmarkCreate.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- PAGE PLUGINS -->
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

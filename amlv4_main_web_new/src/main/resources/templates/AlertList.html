@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.viewThresh {
+	visibility: visible;
+	width: 120px;
+	background-color: white;
+	text-align: center;
+	border-radius: 6px;
+	padding: 5px 0;
+	/* Position the tooltip */
+	position: absolute;
+	z-index: 1;
+	bottom: 2em;
+	left: 75%;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus
+	{
+	background-color: #FCD900 !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Alert List</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Alert List</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-secondary">
+								<div class="card-body">
+									<div class="line-content">
+										<form autocomplete="off" role="form" method="post"
+											id="mainForm" aria-labelledby="mainForm"
+											th:action="@{/fetchAlertList}"
+											th:object="${encryptedRequest}">
+											<input type="hidden" id="encryptedJson" name="encryptedJson" />
+											<input type="hidden" id="message" th:value="${msg}"
+												name="message" />
+											<!-- <div class="row float-right">
+												<a class="text-blue" data-toggle="modal"
+													data-target="#alertFilterModel" href="#"><em
+													class="fas fa-filter " style="color: rgb(78, 78, 78);">&nbsp;&nbsp;ALERT
+														FILTER</em> </a>
+
+											</div> -->
+											<br>
+											<div class="row">
+												<div class="col-12 col-sm-6 col-md-3"
+													th:each="obj : ${statusList}">
+													<div class="info-box card-outline"
+														th:classappend="${obj.flg} eq 'Y' ? card-success : ''">
+														<span class="info-box-icon elevation-1"
+															th:classappend="${obj.bgClass}"><a
+															th:id="${obj.status}" href="#"
+															onclick="fetchAlertListByStatus('U',this.id)"> <em
+																class=" " th:classappend="${obj.symbol}"></em>
+														</a></span>
+														<div class="info-box-content">
+															<span class="info-box-text" th:text="${obj.statusDesc}"></span>
+															<span class="info-box-number" th:text="${obj.cnt}">
+															</span>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="table-responsive">
+												<input type="hidden" id="filterAlertStatus"
+													name="filterAlertStatus" th:value="${filterStatus}" />
+												<div id="ucicTab">
+													<br>
+													<table id="ucicAlertList"
+														class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr style="text-align: center;">
+																<th scope="col">UCIC Number</th>
+																<th scope="col">Suspected Customers</th>
+																<th scope="col">Scenarios Breached</th>
+																<th scope="col">Alert Count</th>
+																<th scope="col">Max Alert Age</th>
+																<th scope="col">Transaction Value</th>
+																<th scope="col">Transaction Count</th>
+																<th scope="col">Reg Report Status</th>
+																<th scope="col">STR/SAR Status</th>
+																<th scope="col">ACCF Risk</th>
+																<th scope="col"></th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:each="obj : ${alertList}">
+																<td class="text-left" style="width: 25%;"><a
+																	th:text="${obj.aggVal}" title="View Ucic Customers"
+																	href="#" style="color: rgb(78, 78, 78)"
+																	class=" text-black text-bold fetchSummaryDetails"
+																	th:status="${filterStatus}" th:act="UcicCust"
+																	th:val="${obj.aggVal}"> </a></td>
+																<td class="text-center" style="width: 2%;"><span
+																	style="border-radius: 90px; text-align: center; background-color: #FFBF00">
+																		&nbsp;&nbsp; <a th:text="${obj.noOfCust}"
+																		title="View Suspected Customers" href="#"
+																		style="color: white"
+																		class=" text-bold fetchSummaryDetails"
+																		th:status="${filterStatus}" th:act="Customer"
+																		th:val="${obj.aggVal}"> </a> &nbsp;&nbsp;
+																</span></td>
+																<td class="text-center"><span class="bg-danger"
+																	style="border-radius: 90px; text-align: center; background-color: teal">
+																		&nbsp;&nbsp;<a th:text="${obj.noOfRules}"
+																		style="color: grey" title="View Scenarios Breached"
+																		href="#" class=" text-bold fetchSummaryDetails"
+																		th:status="${filterStatus}" th:act="Rule"
+																		th:val="${obj.aggVal}"> </a> &nbsp;&nbsp;
+																</span></td>
+																<td class="text-center"><span class="bg-cyan"
+																	style="border-radius: 90px; text-align: center; background-color: teal">
+																		&nbsp;&nbsp; <a th:text="${obj.noOfAlerts}"
+																		style="color: grey" title="View Alerts" href="#"
+																		class=" text-bold fetchSummaryDetails"
+																		th:status="${filterStatus}" th:act="AlertCount"
+																		th:val="${obj.aggVal}"> </a> &nbsp;&nbsp;
+																</span></td>
+																<td class="text-center text-bold"><span
+																	class="bg-teal"
+																	style="border-radius: 70px; text-align: center;">
+																		&nbsp;&nbsp;<label style="color: white"
+																		th:text="${obj.maxAlertAgeNum}"></label> &nbsp;&nbsp;
+																</span></td>
+																<td class="text-right" style="width: 30%;"><a
+																	th:text="${obj.alertValSum}"
+																	style="color: rgb(78, 78, 78)"
+																	title="View Transaction Amount" href="#"
+																	class=" text-bold fetchSummaryDetails text-right"
+																	th:status="${filterStatus}" th:act="Amount"
+																	th:val="${obj.aggVal}"> </a> &nbsp;&nbsp;</td>
+																<td class="text-right" style="width: 10%;">
+																	&nbsp;&nbsp; <a th:text="${obj.alertValCnt}"
+																	title="View Alerts" href="#"
+																	style="color: rgb(78, 78, 78)"
+																	th:unless="${obj.alertValCnt} eq 0"
+																	class=" text-bold fetchSummaryDetails"
+																	th:status="${filterStatus}" th:act="Count"
+																	th:val="${obj.aggVal}"> </a><a
+																	style="color: rgb(78, 78, 78)"
+																	th:text="${obj.alertValCnt}" title="View Alerts"
+																	th:if="${obj.alertValCnt} eq 0" class=" text-bold "
+																	th:status="${filterStatus}" th:act="Count"
+																	th:val="${obj.aggVal}"> </a> &nbsp;&nbsp;
+																</td>
+																<td class="text-center text-bold" style="width: 10%;">
+																	<a th:unless="${obj.regFlg} eq No" th:act="regReport"
+																	th:text="${obj.regFlg}"
+																	class=" text-bold fetchSummaryDetails"
+																	th:val="${obj.aggVal}"
+																	style="color: red; text-decoration: underline;"
+																	href="#"></a> <a th:if="${obj.regFlg} eq No"
+																	th:text="${obj.regFlg}"
+																	style="color: green; text-decoration: underline;"></a>
+																</td>
+																<td class="text-center text-bold"><a
+																	th:text="${obj.strFlg}" th:act="strReport"
+																	th:unless="${obj.strFlg} eq No"
+																	class=" text-bold fetchSummaryDetails"
+																	style="color: red; text-decoration: underline;"
+																	th:val="${obj.aggVal}" href="#"></a> <a
+																	th:text="${obj.strFlg}" th:if="${obj.strFlg} eq No"
+																	style="color: green; text-decoration: underline;"></a>
+																</td>
+																<td class="text-center text-bold"><a
+																	th:text="${obj.accfRisk}" th:refId="${obj.accfRefNum}"
+																	class=" text-bold fetchAccfRisk"
+																	th:classappend="${obj.accfRiskColor}"
+																	th:val="${obj.aggVal}" href="#"></a></td>
+																<td><a class="btn btn-xs fetchAlertDetails"
+																	th:classappend="${obj.riskFlg}" th:flg="${obj.aggKey}"
+																	th:risk="${obj.riskFlg}" th:regFlg="${obj.regFlg}"
+																	th:strFlg="${obj.strFlg}" th:val="${obj.aggVal}"
+																	title="Proceed"> <em
+																		class="fas text-white fa-arrow-right"></em></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+											<div class="modal fade" id="viewUcicModel">
+												<div class="modal-dialog modal-xl">
+													<div class="modal-content">
+														<div class="modal-header "
+															style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+															<h5 class="modal-title">
+																View Details For UCIC Number - <span id="ucicId"></span>
+															</h5>
+															<button type="button" class="close text-white"
+																data-dismiss="modal" aria-label="Close">
+																<span aria-hidden="true">&times;</span>
+															</button>
+														</div>
+														<div class="card-body">
+															<div class="row " style="justify-content: center;">
+																<table id="custTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Name</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Pan</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Branch</th>
+																	</tr>
+																	<tbody id="tBodyCust">
+																	</tbody>
+																</table>
+																<table id="ucicCustTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Name</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Pan</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Customer Branch</th>
+																	</tr>
+																	<tbody id="tBodyUcicCust">
+																	</tbody>
+																</table>
+																<table id="ruleTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Description</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Indicator</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Classification</th>
+																	</tr>
+																	<tbody id="tBodyRule">
+																	</tbody>
+																</table>
+																<table id="cntTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Alert Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Description</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Count</th>
+																	</tr>
+																	<tbody id="tBodyCnt">
+																	</tbody>
+																</table>
+																<table id="amtTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Alert Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Description</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Amount</th>
+																	</tr>
+																	<tbody id="tBodyAmt">
+																	</tbody>
+																</table>
+																<table id="alertCountTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Alert Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Id</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Rule Description</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Transaction Amount</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Transaction Count</th>
+																	</tr>
+																	<tbody id="tBodyAlertCnt">
+																	</tbody>
+																</table>
+																<table id="ctrTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col"
+																			style="background-color: #bba7c2; text-align: center;"
+																			colspan="8">Cash transaction Report (CTR)</th>
+																	</tr>
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">Month
+																			Of Record</th>
+																		<th scope="col" style="background-color: #bba7c2">Year
+																			of Record</th>
+																		<th scope="col" style="background-color: #bba7c2">Customer
+																			Id</th>
+																		<!-- 	<th scope="col" style="background-color: #bba7c2">Account
+																			Number</th>
+																		<th scope="col" style="background-color: #bba7c2">Account
+																			Name</th> -->
+																		<th scope="col" style="background-color: #bba7c2">Total
+																			Credit</th>
+																		<th scope="col" style="background-color: #bba7c2">Total
+																			Debit</th>
+																		<th scope="col" style="background-color: #bba7c2">FINGate
+																			Version</th>
+																	</tr>
+																	<tbody id="tBodyCtrReg">
+																	</tbody>
+																</table>
+																<table id="ntrTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col"
+																			style="background-color: #bba7c2; text-align: center;"
+																			colspan="8">Non-Profit Organisation Transaction
+																			Report (NTR)</th>
+																	</tr>
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">Month
+																			Of Record</th>
+																		<th scope="col" style="background-color: #bba7c2">Year
+																			of Record</th>
+																		<th scope="col" style="background-color: #bba7c2">Customer
+																			Id</th>
+																		<!-- <th scope="col" style="background-color: #bba7c2">Account
+																			Number</th>
+																		<th scope="col" style="background-color: #bba7c2">Account
+																			Name</th> -->
+																		<th scope="col" style="background-color: #bba7c2">Total
+																			Credit</th>
+																		<th scope="col" style="background-color: #bba7c2">Total
+																			Debit</th>
+																		<th scope="col" style="background-color: #bba7c2">FINGate
+																			Version</th>
+																	</tr>
+																	<tbody id="tBodyNtrReg">
+																	</tbody>
+																</table>
+																<table id="cbwtrTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col"
+																			style="background-color: #bba7c2; text-align: center;"
+																			colspan="7">Cross Border Wire Transfer Report
+																			(CBWTR)</th>
+																	</tr>
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">Month
+																			Of Record</th>
+																		<th scope="col" style="background-color: #bba7c2">Year
+																			of Record</th>
+																		<th scope="col" style="background-color: #bba7c2">Customer
+																			Id</th>
+																		<!-- <th scope="col" style="background-color: #bba7c2">Account
+																			Number</th>
+																		<th scope="col" style="background-color: #bba7c2">Account
+																			Name</th> -->
+																		<th scope="col" style="background-color: #bba7c2">Total
+																			Amount</th>
+																		<th scope="col" style="background-color: #bba7c2">FINGate
+																			Version</th>
+																	</tr>
+																	<tbody id="tBodyCbwtrReg">
+																	</tbody>
+																</table>
+																<table id="strTab"
+																	class="table table-lg table-head-fixed table-bordered table-striped "
+																	style="width: 90%">
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">Request
+																			Number</th>
+																		<th scope="col" style="background-color: #bba7c2">STR
+																			Date</th>
+																		<th scope="col" style="background-color: #bba7c2">Customer
+																			Id</th>
+																		<th scope="col" style="background-color: #bba7c2">GOS</th>
+																		<th scope="col" style="background-color: #bba7c2">FIU
+																			Batch Id</th>
+																		<th scope="col" style="background-color: #bba7c2">FINGate
+																			Version</th>
+																	</tr>
+																	<tbody id="tBodyStr">
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+												<!-- /.card-footer -->
+											</div>
+										</form>
+										<div class="modal fade" id="alertFilterModel">
+											<div class="modal-dialog modal-lg">
+												<div class="modal-content">
+													<div class="modal-header"
+														style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+														<h5 class="modal-title">Alert Filter</h5>
+														<button type="button" class="close text-white"
+															data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<!-- form start -->
+													<form class="form-horizontal">
+														<div class="card-body">
+															<div class="row">
+																<table class="table table-sm table-hover">
+																	<tr>
+																		<th scope="col">Select Risk</th>
+																		<th scope="col"><select class=" text-capitalize"
+																			name="risk" data-placeholder="Risk" id="risk"
+																			style="width: 100%;">
+																				<option value=''>Select</option>
+																				<option value='ALL' selected>ALL</option>
+																				<option value='H'>High</option>
+																				<option value='L'>Low</option>
+																				<option value='M'>Medium</option>
+																		</select></th>
+																	</tr>
+																	<tr>
+																		<th scope="col">Select Regulatory Status</th>
+																		<th scope="col"><select class=" text-capitalize"
+																			name="regStat" data-placeholder="Regulatory Status"
+																			id="regStat" style="width: 100%;">
+																				<option value=''>Select</option>
+																				<option value='ALL' selected>ALL</option>
+																				<option value='Y'>Yes</option>
+																				<option value='N'>No</option>
+																		</select></th>
+																	</tr>
+																	<tr>
+																		<th scope="col">Select STR Status</th>
+																		<th scope="col"><select class=" text-capitalize"
+																			name="strStat" data-placeholder="STR Status"
+																			id="strStat" style="width: 100%;">
+																				<option value=''>Select</option>
+																				<option value='ALL' selected>ALL</option>
+																				<option value='Y'>Yes</option>
+																				<option value='N'>No</option>
+																		</select></th>
+																	</tr>
+																	<tr>
+																		<th scope="col">
+																			<button type="button" id="fetchFilterAlert"
+																				class="btn btn-sm btn-outline-info"
+																				name="fetchFilterAlert">Apply Filter</button>
+																		</th>
+																		<th scope="col" colspan="3"></th>
+																	</tr>
+																</table>
+															</div>
+														</div>
+													</form>
+												</div>
+												<!-- /.modal-content -->
+											</div>
+											<!-- /.modal-dialog -->
+										</div>
+
+										<div class="modal fade" id="viewAccfModal">
+											<div class="modal-dialog modal-xl">
+												<div class="modal-content">
+													<div class="modal-header "
+														style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+														<h5 class="modal-title">
+															Alert Criticality Classification Framework Risk - <span
+																id="ucicNo"></span>
+														</h5>
+														<button type="button" class="close text-white"
+															data-dismiss="modal" aria-label="Close">
+															<span aria-hidden="true">&times;</span>
+														</button>
+													</div>
+													<div class="card-body">
+														<div class="row col-sm-12 text-center">
+															<div class="col-sm-12">
+																<table id="accfTab"
+																	class="table table-sm table-head-fixed table-bordered table-striped "
+																	style="width: 100%">
+																	<tr>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Rule Category</th>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Category
+																			Weight</th>
+																		<th scope="col" colspan="3"
+																			style="background-color: #bba7c2">Alert Details</th>
+																		<th scope="col" style="background-color: #bba7c2">Percentage</th>
+																		<th scope="col" style="background-color: #bba7c2">Calculated
+																			Weight</th>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Category Risk</th>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Total Category
+																			Weight</th>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Derived Risk</th>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Customer Risk</th>
+																		<th scope="col" rowspan="2"
+																			style="background-color: #bba7c2">Final Risk</th>
+																	</tr>
+																	<tr>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Risk Type</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Alert Count</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			Penalise Count</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			(Total Penalise/Total Alert)*100</th>
+																		<th scope="col" style="background-color: #bba7c2">
+																			(Category Weight*Percentage)/100</th>
+
+																	</tr>
+																	<tbody id="tBodyAccf">
+																	</tbody>
+																</table>
+															</div>
+														</div>
+														<br> 
+														<div class="card-footer table-sm">
+															<button class="btn btn-secondary" data-dismiss="modal">
+																<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em>
+																Back
+															</button>
+														</div>
+													</div>
+												</div>
+											</div>
+											<!-- /.card-footer -->
+										</div>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/aml/alertList.js}"></script>
+	<script th:src="@{/dist/appjs/aml/accfRisk.js}"></script>
+	<script>
+		$(function() {
+			$("#ucicAlertList").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : [ 0, 10 ]
+				} ],
+				"order" : [ 4, "desc" ],
+				"responsive" : false,
+				"lengthMenu" : [ 25, 50, 75, 100 ],
+				"autoWidth" : false,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			}).buttons().container().appendTo(
+					'#ucicAlertList_wrapper .col-md-6:eq(0)');
+
+		});
+
+		risk
+	</script>
+</body>
+</html>

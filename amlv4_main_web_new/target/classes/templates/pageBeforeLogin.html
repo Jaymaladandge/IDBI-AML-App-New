@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<link rel="shortcut icon" type="image/png"
+	 th:href="@{/login-dist/images/pa3.png}"/>
+<title>i-AML Login</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+</head>
+<body class='bg-none'>
+<div class='position-relative'>
+   <div class='bg-overlap position-relative overflow-hidden min-vh-100 py-5'>
+	<nav class="navbar navbar-expand-lg container mt-3 fixed-top">
+		<div class="container-fluid">
+			<a class="navbar-brand" href="#"><img
+				th:src="@{/dist/img/IDBI-Bank-1.png}" width='170'></a>
+			<button class="navbar-toggler" type="button"
+				data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+		</div>
+	</nav>
+  
+         <div class='container py-5'>
+    	  <div class='row pt-2'>
+			<div class='col-12 col-md-4 px-4 py-3' th:each="productList:${productList}">
+				<div class="card h-100 rounded-5 overflow-hidden c-example__tilt js-tilt" data-tilt-axis="" data-tilt-glare="true" data-tilt-perspective="1000" data-tilt-scale="1.05" data-tilt-speed="400" data-tilt-max="40">
+					<img th:src="@{'/login-dist/images/'+${productList.getProductImageName}}"
+						class="card-img-top card_imghover" alt="...">
+					<div class="card-body">
+						<h5 class="card-title"><span th:text="${productList.getProductName}"></span></h5>
+						<p class="card-text"><span th:text="${productList.getProductDesc}"></span></p>
+					</div>
+					<div class="card-footer border-0 py-3 text-center">
+						<a th:id="${productList.getProductDesc+'~'+productList.getProductActiveStatus+'~'+productList.getProductURL}" class="btn btn-outline-warning w-75 rounded-4 getLoginPage"><span style="color:black;">Go to
+							Application</span></a>
+					</div>
+				</div>
+			</div>
+          </div>
+         </div>
+      </div>
+   </div>
+	
+<footer class="loginfooter container fixed-bottom" style='bottom: 20px;'>
+  <div class="">
+	<div class="row py-1">
+			<div class="col">
+				© 2020-2021 All rights reserved.</div>
+			<div class="col text-center">
+				<img class="img-fluid" src="/aml-v4/dist/img/flag.png"
+					alt="Proudly Made In India"> Proudly
+				Made In India
+			</div>
+			<div class="col text-end">
+				Designed &amp; Developed by
+				<img class="img-fluid" th:src="@{/login-dist/images/IDBI-Intech-logo.svg}"
+					alt="IDBI Intech Ltd" width='100'>
+			</div>
+		</div>
+	</div>
+	
+</footer>
+<div class='light x1'></div>
+      <div class='light x2'></div>
+      <div class='light x3'></div>
+      <div class='light x4'></div>
+      <div class='light x5'></div>
+      <div class='light x6'></div>
+      <div class='light x7'></div>
+      <div class='light x8'></div>
+      <div class='light x9'></div>
+ 
+   
+
+<div class='bg-fixed-img'></div>
+</body>
+<link rel="stylesheet" th:href="@{/plugins/bootstrap/bootstrap.css}">
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<script type="text/javascript"
+	th:src="@{/login-dist/js/jquery.js}"></script>
+<script type="text/javascript"
+	th:src="@{/login-dist/js/bootstrap.bundle.js}"></script>
+<script th:src="@{/login-dist/js/tilt.jquery.js}"></script>
+<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+<script>
+
+$('.js-tilt').tilt({
+	glare: true,
+	maxGlare: .5
+})
+</script>
+
+<style>
+.c-example__tilt {
+  transform-style: preserve-3d;
+  transform: perspective(300px);
+}
+
+.card {
+	transition: 0.3s;
+	border: 1px solid rgba(255, 255,255, 0.08) !important;
+	backdrop-filter: blur(10px);
+    background: linear-gradient(rgba(209, 209, 209, 0.15) 0%, rgba(202, 202, 202, 0.3) 100%);    
+    opacity: 1;
+}
+
+.card:hover {
+	box-shadow: 5px 10px 10px #ddd;
+}
+
+
+.navbar{ 
+    backdrop-filter: blur(20px);
+    background: linear-gradient(rgba(209, 209, 209, 0.15) 0%, rgba(102, 102, 102, 0.05) 100%);
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.024) 0px 0.80621px 2.41863px -0.3125px, rgba(0, 0, 0, 0.024) 0px 1.91086px 5.73258px -0.625px, rgba(0, 0, 0, 0.024) 0px 3.48561px 10.4568px -0.9375px, rgba(0, 0, 0, 0.024) 0px 5.79481px 17.3844px -1.25px, rgba(0, 0, 0, 0.024) 0px 9.35815px 28.0745px -1.5625px, rgba(0, 0, 0, 0.024) 0px 15.3184px 45.9551px -1.875px, rgba(0, 0, 0, 0.024) 0px 26.3772px 79.1316px -2.1875px, rgba(0, 0, 0, 0.024) 0px 48px 144px -2.5px;
+    opacity: 1;
+    }
+  .loginfooter{ 
+    backdrop-filter: blur(20px);
+    background: linear-gradient(rgba(209, 209, 209, 0.15) 0%, rgba(102, 102, 102, 0.05) 100%);
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.024) 0px 0.80621px 2.41863px -0.3125px, rgba(0, 0, 0, 0.024) 0px 1.91086px 5.73258px -0.625px, rgba(0, 0, 0, 0.024) 0px 3.48561px 10.4568px -0.9375px, rgba(0, 0, 0, 0.024) 0px 5.79481px 17.3844px -1.25px, rgba(0, 0, 0, 0.024) 0px 9.35815px 28.0745px -1.5625px, rgba(0, 0, 0, 0.024) 0px 15.3184px 45.9551px -1.875px, rgba(0, 0, 0, 0.024) 0px 26.3772px 79.1316px -2.1875px, rgba(0, 0, 0, 0.024) 0px 48px 144px -2.5px;
+    opacity: 1;
+    }
+
+ .first-fold {
+   min-height:calc(70vh);
+   background: rgb(255,27,107);
+   background: linear-gradient(117deg, rgba(255,27,107,1) 0%, rgba(69,202,255,1) 100%);
+   border-radius:0 0 100px 100px;
+   }
+   span.verticle-line:before, .hero_container_text_space h1:before {
+   width: 24px;
+   height: 2px;
+   background-color: #F26F24;
+   display: inline-block;
+   vertical-align: middle;
+   content: "";
+   position: absolute;
+   left: 12px;
+   top: 10px;
+   }
+   .light {
+   position: absolute;
+   width: 0px;
+   opacity: .75;
+   background-color: white;
+   box-shadow: #ccc 0px 0px 20px 2px;
+   opacity: 0;
+   top: 100vh;
+   bottom: 0px;
+   left: 0px;
+   right: 0px;
+   margin: auto;
+   }
+   .x1{
+   -webkit-animation: floatUp 4s infinite linear;
+   -moz-animation: floatUp 4s infinite linear;
+   -o-animation: floatUp 4s infinite linear;
+   animation: floatUp 4s infinite linear;
+   -webkit-transform: scale(1.0);
+   -moz-transform: scale(1.0);
+   -o-transform: scale(1.0);
+   transform: scale(1.0);
+   }
+   .x2{
+   -webkit-animation: floatUp 7s infinite linear;
+   -moz-animation: floatUp 7s infinite linear;
+   -o-animation: floatUp 7s infinite linear;
+   animation: floatUp 7s infinite linear;
+   -webkit-transform: scale(1.6);
+   -moz-transform: scale(1.6);
+   -o-transform: scale(1.6);
+   transform: scale(1.6);
+   left: 15%;
+   }
+   .x3{
+   -webkit-animation: floatUp 2.5s infinite linear;
+   -moz-animation: floatUp 2.5s infinite linear;
+   -o-animation: floatUp 2.5s infinite linear;
+   animation: floatUp 2.5s infinite linear;
+   -webkit-transform: scale(.5);
+   -moz-transform: scale(.5);
+   -o-transform: scale(.5);
+   transform: scale(.5);
+   left: -15%;
+   }
+   .x4{
+   -webkit-animation: floatUp 4.5s infinite linear;
+   -moz-animation: floatUp 4.5s infinite linear;
+   -o-animation: floatUp 4.5s infinite linear;
+   animation: floatUp 4.5s infinite linear;
+   -webkit-transform: scale(1.2);
+   -moz-transform: scale(1.2);
+   -o-transform: scale(1.2);
+   transform: scale(1.2);
+   left: -34%;
+   }
+   .x5{
+   -webkit-animation: floatUp 8s infinite linear;
+   -moz-animation: floatUp 8s infinite linear;
+   -o-animation: floatUp 8s infinite linear;
+   animation: floatUp 8s infinite linear;
+   -webkit-transform: scale(2.2);
+   -moz-transform: scale(2.2);
+   -o-transform: scale(2.2);
+   transform: scale(2.2);
+   left: -57%;
+   }
+   .x6{
+   -webkit-animation: floatUp 3s infinite linear;
+   -moz-animation: floatUp 3s infinite linear;
+   -o-animation: floatUp 3s infinite linear;
+   animation: floatUp 3s infinite linear;
+   -webkit-transform: scale(.8);
+   -moz-transform: scale(.8);
+   -o-transform: scale(.8);
+   transform: scale(.8);
+   left: -81%;
+   }
+   .x7{
+   -webkit-animation: floatUp 5.3s infinite linear;
+   -moz-animation: floatUp 5.3s infinite linear;
+   -o-animation: floatUp 5.3s infinite linear;
+   animation: floatUp 5.3s infinite linear;
+   -webkit-transform: scale(3.2);
+   -moz-transform: scale(3.2);
+   -o-transform: scale(3.2);
+   transform: scale(3.2);
+   left: 37%;
+   }
+   .x8{
+   -webkit-animation: floatUp 4.7s infinite linear;
+   -moz-animation: floatUp 4.7s infinite linear;
+   -o-animation: floatUp 4.7s infinite linear;
+   animation: floatUp 4.7s infinite linear;
+   -webkit-transform: scale(1.7);
+   -moz-transform: scale(1.7);
+   -o-transform: scale(1.7);
+   transform: scale(1.7);
+   left: 62%;
+   }
+   .x9{
+   -webkit-animation: floatUp 4.1s infinite linear;
+   -moz-animation: floatUp 4.1s infinite linear;
+   -o-animation: floatUp 4.1s infinite linear;
+   animation: floatUp 4.1s infinite linear;
+   -webkit-transform: scale(0.9);
+   -moz-transform: scale(0.9);
+   -o-transform: scale(0.9);
+   transform: scale(0.9);
+   left: 85%;
+   }
+   @-webkit-keyframes floatUp{
+   0%{top: 100vh; opacity: 0;}
+   25%{opacity: 1;}
+   50%{top: 0vh; opacity: .8;}
+   75%{opacity: 1;}
+   100%{top: -100vh; opacity: 0;}
+   }
+   @-moz-keyframes floatUp{
+   0%{top: 100vh; opacity: 0;}
+   25%{opacity: 1;}
+   50%{top: 0vh; opacity: .8;}
+   75%{opacity: 1;}
+   100%{top: -100vh; opacity: 0;}
+   }
+   @-o-keyframes floatUp{
+   0%{top: 100vh; opacity: 0;}
+   25%{opacity: 1;}
+   50%{top: 0vh; opacity: .8;}
+   75%{opacity: 1;}
+   100%{top: -100vh; opacity: 0;}
+   }
+   @keyframes floatUp{
+   0%{top: 100vh; opacity: 0;}
+   25%{opacity: 1;}
+   50%{top: 0vh; opacity: .8;}
+   75%{opacity: 1;}
+   100%{top: -100vh; opacity: 0;}
+   }
+   @-webkit-keyframes fadeIn{
+   from{opacity: 0;}
+   to{opacity: 1;}
+   }
+   @-moz-keyframes fadeIn{
+   from{opacity: 0;}
+   to{opacity: 1;}
+   }
+   @-o-keyframes fadeIn{
+   from{opacity: 0;}
+   to{opacity: 1;}
+   }
+   @keyframes fadeIn{
+   from{opacity: 0;}
+   to{opacity: 1;}
+   }
+   @-webkit-keyframes fadeOut{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 0;}
+   }
+   @-moz-keyframes fadeOut{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 0;}
+   }
+   @-o-keyframes fadeOut{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 0;}
+   }
+   @keyframes fadeOut{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 0;}
+   }
+   @-webkit-keyframes finalFade{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 1;}
+   }
+   @-moz-keyframes finalFade{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 1;}
+   }
+   @-o-keyframes finalFade{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 1;}
+   }
+   @keyframes finalFade{
+   0%{opacity: 0;}
+   30%{opacity: 1;}
+   80%{opacity: .9;}
+   100%{opacity: 1;}
+   }
+   
+   .bg-fixed-img {
+   width: 100%;
+   background: url('../aml-v4/login-dist/images/bg1.jpg');
+   background-size:cover;
+   z-index:-1;
+   position:fixed;
+   top:0;
+   bottom:0;
+   right:0;
+   left:0;
+   }
+   .right-img {
+   width:100%;
+   min-height: 200px;
+   }
+   .z-index-top {
+   z-index: 9999;
+   }
+</style>
+<script type="text/javascript">
+ $('.getLoginPage')
+.click(
+	function() {
+		var status = $(this).attr('id');
+		var url=status.split("~")[2];
+		var activeStatus=status.split("~")[1];
+		
+		if(activeStatus === 'D'){
+			
+			toastr.warning('This Appliction Will Be Available Soon...');
+		}else{
+			window.location = url;
+		}
+		
+	});
+</script>
+</html>

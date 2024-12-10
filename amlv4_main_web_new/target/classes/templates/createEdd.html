@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.transparent {
+	color: rgba(0, 0, 0, 0);
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.outlineCss {
+	border-top: 3px solid #17a2b8;
+	border-left: 1px solid #17a2b8;
+	border-right: 1px solid #17a2b8;
+	border-bottom: 1px solid #17a2b8;
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+#loader2 {
+	position: fixed;
+	left: 700px;
+	top: 220px;
+	width: 10%;
+	height: 10%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div sec:authorize="isAuthenticated()">
+		<div class="wrapper">
+			<!-- Included header.html -->
+			<div th:insert="/header::header"></div>
+			<div class="content-wrapper">
+				<div class="content-header">
+					<div class="container-fluid">
+						<div class="row mb-2">
+							<div class="col-sm-6">
+								<h1 class="m-0">Create Branch Edd</h1>
+							</div>
+							<!-- /.col -->
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+									<li class="breadcrumb-item"><a
+										th:href="@{/redirectToTestSummary}">Branch Edd Management</a></li>
+									<li class="breadcrumb-item active"><a href="#">Create
+									</a></li>
+								</ol>
+							</div>
+							<!-- /.col -->
+						</div>
+						<!-- /.row -->
+					</div>
+					<!-- /.container-fluid -->
+				</div>
+				<section class="content">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="card card-sm">
+									<div class="card-header card-sm"
+										style="background-color: #bba7c2">
+										<h3 class="card-title text-bold">Create</h3>
+									</div>
+									<form autocomplete="off" class="form-horizontal"
+										id="createTestForm" th:action="@{/saveTestData}" method="post"
+										th:object="${encryptedRequest}" enctype="multipart/form-data">
+										<input type="hidden" id="encryptedJson" name="encryptedJson" />
+										<input type="hidden" id="testDetailsJson"
+											name="testDetailsJson" value="" />
+										<div class="card-body">
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="testId">Branch EDD ID</label>
+														<div class="input-group">
+															<input type="text"
+																class="form-control form-control-sm text-bold"
+																id="testId" name="testId"
+																th:field="${testMasterDto.testId}" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="raRecordStatus">Record Status</label>
+														<div class="input-group">
+															<input type="text"
+																class="form-control form-control-sm  text-bold"
+																id="raRecordStatus" name="raRecordStatus" value="Create"
+																readonly>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12" id="testDesc">
+													<div class="form-group">
+														<label for="DocDesc">EDD Description <code>*</code></label>
+														<div class="input-group mb-2">
+															<textarea class="form-control form-control-sm"
+																id="testDescription" name="testDescription" rows="3"
+																maxlength="3000" placeholder="Edd Description"></textarea>
+
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="testCategory">EDD Category <code>*</code></label>
+														<div class="input-group">
+															<select
+																class="form-control form-control-sm select2 text-capitalize"
+																name="testCategory" id="testCategory"
+																data-placeholder="Select Test Category"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option class="text-capitalize"
+																	th:each="category : ${testMasterDto.categoryList}"
+																	th:value="${category}" th:text="${category}" />
+															</select>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="subTestCategory">EDD Sub Category <code>*</code>
+														</label>
+														<div class="input-group">
+															<select
+																class="form-control form-control-sm select2 text-capitalize"
+																name="testSubCategory" id="testSubCategory"
+																data-placeholder="Select Test Sub Category"
+																style="width: 100%;">
+																<option value=''>Select</option>
+															</select>
+
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row" id="preEdd" style="display: none">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="testCategory">User Role <code>*</code></label>
+														<div class="input-group">
+															<select
+																class="form-control form-control-sm select2 text-capitalize"
+																name="eddRole" id="eddRole"
+																data-placeholder="Select EDD Role" style="width: 100%;">
+																<option value=''>Select</option>
+															</select>
+														</div>
+													</div>
+												</div>
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="subTestCategory">EDD Action <code>*</code>
+														</label>
+														<div class="input-group">
+															<select
+																class="form-control form-control-sm select2 text-capitalize"
+																name="eddRoleAction" id="eddRoleAction"
+																data-placeholder="Select Edd Role Action"
+																style="width: 100%;">
+																<option value=''>Select</option>
+															</select>
+
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row" id="postEdd" style="display: none">
+												<div class="col-sm-6">
+													<div class="form-group">
+														<label for="subTestCategory">EDD Action <code>*</code>
+														</label>
+														<div class="input-group">
+															<select
+																class="form-control form-control-sm select2 text-capitalize"
+																name="eddRoleAction" id="eddRoleAction"
+																data-placeholder="Select Edd Role Action"
+																style="width: 100%;">
+																<option value=''>Select</option>
+															</select>
+
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12" id="testDesc">
+													<div class="form-group">
+														<label for="DocDesc">Edd Instruction <code>*</code></label>
+														<div class="input-group mb-2">
+															<textarea class="form-control form-control-sm"
+																id="TestInstruction" name="TestInstruction" rows="3"
+																maxlength="3000" placeholder="Edd Instruction"></textarea>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="row">
+												<div class="col-sm-12">
+													<div class="card border-secondary">
+														<div class="card-header text-secondary"
+															style="height: 2.5rem;">
+															<h6 class="card-title">Add New Questions</h6>
+														</div>
+														<div class="card-body">
+															<div class="row">
+																<div class="col-sm-12" id="testDesc">
+																	<div class="form-group">
+																		<label for="DocDesc">EDD Template</label>
+																		<code class="ml-2"> Note: Please refer Template
+																			for Upload Test Details</code>
+																		<div>
+																			<button th:formaction="@{/downloadTemplate}"
+																				class="btn btn-sm btn-outline-info" data-dl
+																				formnovalidate>
+																				<em class="fa fa-download"></em> Download
+																			</button>
+																		</div>
+																	</div>
+																</div>
+															</div>
+															<div class="row">
+																<div class="col-sm-12">
+																	<div class="form-group" id="downloadbutton"
+																		style="display: block;">
+																		<label for="actionPlanId">Upload EDD Questions
+																			<code>*</code>
+																		</label>
+																		<div class="custom-file">
+																			<input type="file"
+																				class="excel_file-input input-group-sm"
+																				onchange="getExcelData(this);" id="excel_file"
+																				style="display: none;" name="excel_file"
+																				accept=".xlsx, .xls" /> <label class="mt-n2"
+																				for="excel_file"> <img alt="Excel"
+																				src="../aml-v4/dist/img/Microsoft-Excel-icon.png" />
+																			</label><label class="btn btn-sm btn-secondary ml-2 mt-n2"
+																				for="excel_file">Choose file</label> <span
+																				id="messages" class="text-danger"></span>
+																		</div>
+																		<br /> <br />
+																		<div class="card-body question table-responsive"
+																			id="checkout"></div>
+																	</div>
+																</div>
+																<div class="row" style="display: none;" id="upload">
+																	<div class="col-sm-12">
+																		<div class="card-body">
+																			<table id="ExcelUploader"
+																				class="table table-head-fixed table-bordered table-striped text-capitalize ExcelUpload"
+																				style="display: none">
+																				<caption class='transparent'>CAPTION</caption>
+																				<thead>
+																					<tr>
+																						<th scope="col">File Name</th>
+																						<th scope="col">File Size</th>
+																						<th scope="col">Upload Date</th>
+																						<th scope="col">Upload By</th>
+																						<th scope="col"></th>
+																					</tr>
+																				</thead>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="card-footer">
+												<!-- submit button & cancel button -->
+												<div class="form-group">
+													<br />
+													<button type="button" class="btn btn-success btn-sm"
+														value="create" title="submit" name="btnsubmit"
+														id="btnsubmit">
+														<em class="fas fa-save" style="padding: 0 7px 0 0px;"></em>
+														Submit
+													</button>
+													<a href="#" data-toggle="modal" data-whatever="home"
+														data-target="#cancelmodel"><button type="reset"
+															class="btn btn-warning btn-sm" title="Cancel">
+															<em class="fas fa-times" style="padding: 0 7px 0 0px;"></em>Cancel
+														</button></a>
+												</div>
+												<!-- submit button & cancel button -->
+											</div>
+										</div>
+									</form>
+								</div>
+								<div class="modal fade" id="cancelmodel">
+									<div class="modal-dialog modal-fluid">
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h6 class="modal-title">Confirm</h6>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<!-- form start -->
+											<div class="modal-body">
+												<h5 class="card-title">
+													If you leave this page, all changes will be lost. <br>
+													Press "Ok" to Continue.
+												</h5>
+											</div>
+
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary btn-sm"
+													data-dismiss="modal">
+													<em class="fas fa-times" style="padding: 0 7px 0 0px;"></em>Cancel
+												</button>
+												<a class="btn btn-primary target btn-sm"
+													th:href="@{/redirectToTestSummary}"><em
+													class="fas fa-check" style="padding: 0 7px 0 0px;"></em>Ok
+												</a>
+											</div>
+											<!-- /.Card -->
+										</div>
+										<!-- /.modal-content -->
+									</div>
+									<!-- /.modal-dialog -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</div>
+			<div th:insert="/footer::footer"></div>
+		</div>
+	</div>
+
+	<!-- REQUIRED SCRIPTS -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/unpkg.xlsx.full.min.js}"></script>
+	<script th:src="@{/dist/appjs/aml/testValidation.js}"></script>
+</body>
+</html>

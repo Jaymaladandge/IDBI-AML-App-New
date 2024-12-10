@@ -1,0 +1,3121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+.thHead {
+	background-color: #4fa9a7 !important;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+	width: true
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+.alert-investigation-tab {
+	background-color: #2E8BC0;
+}
+
+body {
+	line-height: 1.1;
+}
+
+.current {
+	color: green;
+}
+
+.modal-xl {
+	max-width: 95%;
+}
+
+#pagin li {
+	display: inline-block;
+}
+</style>
+
+<style>
+.btn-drona {
+	min-width: 180px;
+	padding: 10px 0;
+	color: #fff;
+	border-radius: 50px;
+	font-size: 18px;
+	cursor: pointer;
+	transition: all 0.3s ease;
+	position: relative;
+	display: inline-block;
+	box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5), 7px 7px 20px
+		0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+	outline: none;
+	background: rgb(49, 45, 10);
+	background: radial-gradient(circle, rgba(49, 45, 10, 1) 0%,
+		rgba(74, 74, 74, 1) 0%, rgba(0, 0, 0, 1) 100%);
+	line-height: 5px;
+	border: none;
+	text-transform: uppercase;
+	font-weight: bold;
+	overflow: hidden;
+	box-shadow: -1px -1px 5px 0px rgba(255, 255, 255, 1), -4px -4px 5px 0px
+		rgba(255, 255, 255, 1), 7px 7px 5px 0px rgba(0, 0, 0, 0.15), 0px 4px
+		5px 0px rgba(0, 0, 0, 0.15);
+}
+
+.btn-drona:before, .btn-drona:after {
+	position: absolute;
+	content: "";
+	height: 0%;
+	width: 1px;
+	box-shadow: -1px -1px 20px 0px rgba(255, 255, 255, 1), -4px -4px 5px 0px
+		rgba(255, 255, 255, 1), 7px 7px 20px 0px rgba(0, 0, 0, 0.4), 4px 4px
+		5px 0px rgba(0, 0, 0, 0.3);
+}
+
+.btn-drona:before {
+	right: 0;
+	top: 0;
+	transition: all 500ms ease;
+}
+
+.btn-drona:after {
+	left: 0;
+	bottom: 0;
+	transition: all 500ms ease;
+}
+
+.btn-drona:hover {
+	background: #ccc;
+	color: #222;
+	font-weight: bold;
+	box-shadow: none;
+	animation: pulse-shadow 2s infinite;
+	cursor: pointer;
+}
+
+.btn-drona .text {
+	position: absolute;
+	left: 20%;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.btn-drona .arrow {
+	float: left;
+	color: #f1c40f;
+	margin-left: 80%;
+	transition: 1s;
+	font-size: 20px;
+}
+
+.btn-drona:hover .arrow {
+	margin-left: 130%;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::roleHeader" style="width: 100%"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content">
+			<form class="form-horizontal" id="invForm"
+				th:action="@{/alertCompliance}" method="post"
+				th:object="${encryptedRequest}">
+				<input type="hidden" id="encryptedJson" name="encryptedJson" /> <input
+					type="hidden" id="alertStatus" name="alertStatus"
+					th:value="${alertStatus}" /> <input type="hidden" id="aggFlg"
+					name="aggFlg" th:value="${alertData.alertAggFlg}" /> <input
+					type="hidden" id="aggVal" name="aggVal"
+					th:value="${alertData.alertAggVal}" /><input type="hidden"
+					id="userName" name="userName" th:value="${userDto.username}" />
+				<section class="content-header">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-6">
+								<h1>Overview</h1>
+							</div>
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a
+										th:href="@{/fetchAlertList}">Alert Summary</a></li>
+									<li class="breadcrumb-item active">Overview</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="content">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="card card-outline card-primary col-sm-12">
+								<br>
+								<table
+									class="table table-sm table-head-fixed table-bordered table-striped ">
+									<thead>
+										<tr style="border: 2px solid"
+											th:styleappend="${alertData.accfRiskColor}">
+											<td class="text-bold">UCIC Number</td>
+											<td th:if="${alertData.markCustFlg} "
+												th:text="${alertData.ucicId}" id="ucicId"
+												class="text-red text-bold  "></td>
+											<td th:unless="${alertData.markCustFlg}" id="ucicId"
+												th:text="${alertData.ucicId}" class=" text-teal text-bold  "></td>
+											<td class="text-bold">Mail Count</td>
+											<td th:if="${alertData.mailCnt} eq 0"
+												class="text-teal text-bold  "><a class="text-teal"
+												th:text="${alertData.mailCnt}" href="#" th:id="mailCnt"></a></td>
+											<td th:unless="${alertData.mailCnt} eq 0"
+												class="text-teal text-bold  "><a
+												class="text-red mailDetails" th:text="${alertData.mailCnt}"
+												href="#" th:id="mailCnt"></a></td>
+											<td class="text-bold">Regulatory Status</td>
+											<td class="text-bold text-center"><a th:act="regReport"
+												th:unless="${alertData.regStatus} eq No"
+												class=" text-bold fetchSummaryDetails" title="View Details"
+												style="color: red; text-decoration: underline;"
+												th:val="${alertData.ucicId}" href="#"><em
+													class="fas fa-flag"></em></a> <a
+												th:if="${alertData.regStatus} eq No"
+												style="color: green; text-decoration: underline;"><em
+													class="fas fa-flag"></em></a></td>
+											<td class="text-bold">STR Status</td>
+											<td class="text-bold text-center"><a th:act="strReport"
+												th:unless="${alertData.strStatus} eq No"
+												th:text="${alertData.strStatus}"
+												class=" text-bold fetchSummaryDetails" title="View Details"
+												style="color: red; text-decoration: underline;"
+												th:val="${alertData.ucicId}" href="#"> </a> <a
+												th:if="${alertData.strStatus} eq No"
+												th:text="${alertData.strStatus}"
+												style="color: green; text-decoration: underline;"> </a></td>
+											<td class="text-bold">ACCF Risk</td>
+											<td class="text-bold text-center"><a
+												th:text="${alertData.accfRisk}"
+												class=" text-bold fetchAccfRisk"
+												th:refId="${alertData.accfRefNum}"
+												th:classappend="${alertData.accfRiskColor}"
+												th:val="${alertData.ucicId}" href="#"></a></td>
+											<td class="text-bold">Tagged Customers</td>
+											<td class="text-bold text-center"><span
+												style="border-radius: 70px; color: white; text-align: center; background-color: #008000">
+													&nbsp;&nbsp; <a class="text-white ucicDetails"
+													th:text="${alertData.customerIdCnt}" href="#"
+													th:id="ucicId"></a> &nbsp;&nbsp;
+											</span></td>
+											<td class="text-bold">Involved Customers</td>
+											<td class="text-bold text-center"><span
+												style="border-radius: 70px; color: white; text-align: center; background-color: red">
+													&nbsp;&nbsp; <label th:text="${alertData.involvedCustCnt}"></label>&nbsp;&nbsp;
+											</span></td>
+										</tr>
+									</thead>
+								</table>
+								<div class="line-content table-responsive"
+									th:each="custObj : ${alertData.custDataList}">
+									<table
+										class="table table-sm table-head-fixed table-bordered table-striped ">
+										<thead>
+											<tr>
+												<th scope="col" colspan="8"
+													style="background-color: #bba7c2"
+													class="text-left text-bold text-grey">Customer Details</th>
+												<th scope="col" colspan="2"
+													style="background-color: #bba7c2;"><a href="#"
+													class="btn-drona2 transaction" th:id="${custObj.custId}"
+													style="text-decoration: underline; font-size: 14px;">
+														Credit Card Statement </a></th>
+												<th scope="col" colspan="2"
+													style="background-color: #bba7c2;"><a href="#"
+													class="dmat transaction" th:id="${custObj.custId}"
+													style="text-decoration: underline; font-size: 14px;">
+														Dmat Account Statement </a></th>
+												<!-- <th scope="col" style="background-color: #bba7c2"
+													class="text-right text-bold text-red">
+													<div class="div-gap">
+														<button class="btn-drona" th:id="${custObj.custFullName}"
+															type="button" th:onclick="checkAIResponse('C',this.id)">
+															<span class="text">Ask Drona</span> <span class="arrow">&#10163;</span>
+														</button>
+													</div>
+												</th> -->
+											</tr>
+											<tr>
+												<td class="text-bold">Customer Id</td>
+												<td class="text-blue text-bold"><a class="custModel"
+													th:text="${custObj.custId}"
+													th:classappend="${custObj.custRisk}" href="#"
+													th:id="${custObj.custId}"></a></td>
+												<td class="text-bold">Customer Name</td>
+												<td class="text-capitalize"
+													th:text="${custObj.custFullName}"></td>
+												<td class="text-bold">Primary Branch</td>
+												<td class="text-capitalize" th:text="${custObj.branchId}"></td>
+												<td class="text-bold ">PAN Number</td>
+												<td th:text="${custObj.custPanNo}"></td>
+												<td class="text-bold ">Occupation</td>
+												<td th:text="${custObj.custOccupation}"></td>
+												<td class="text-bold " th:if="${custObj.custType} eq 'I'">Date
+													Of Birth</td>
+												<td class="text-bold " th:if="${custObj.custType}  eq 'N'">Date
+													Of Registration</td>
+												<td
+													th:text="${#calendars.format(custObj.custDob,'dd-MM-YYYY')} "></td>
+											</tr>
+										</thead>
+									</table>
+									<div class="card card-success card-outline card-outline-tabs">
+										<div class="card-header p-0 border-bottom-0">
+											<ul class="nav nav-tabs text-bold">
+												<li class="nav-item col-xs-2"><a
+													class="nav-link   active" href="#alertedAcc"
+													id="alertedAccLink" data-toggle="tab"><em
+														class="fas fa-list-ul text-white"></em>&nbsp;Alerted
+														Accounts</a></li>
+												<li class="nav-item col-xs-2"><a class="nav-link  "
+													th:actCustId="${custObj.custId}" href="#otherActAcc"
+													id="otherActAccLink" data-toggle="tab"><em
+														class="fas fa-list-ul text-white"></em>&nbsp; Active
+														Accounts </a></li>
+												<li class="nav-item  col-xs-2"><a class="nav-link  "
+													href="#otherCloseAcc" id="otherCloseAccLink"
+													th:closeCustId="${custObj.custId}" data-toggle="tab"><em
+														class="fas fa-list-ul text-white"></em>&nbsp; Close
+														Accounts </a></li>
+											</ul>
+										</div>
+									</div>
+									<div class="tab-content">
+										<div class="active tab-pane" id="alertedAcc">
+											<table th:id="${#strings.trim(custObj.custId)} +'AlertTab'"
+												class="acctTab table table-sm table-head-fixed table-bordered table-striped ">
+												<thead>
+													<tr>
+														<td colspan="14" class="text-left text-bold text-grey"
+															style="background-color: #bba7c2">Alerted Account
+															Details</td>
+													</tr>
+													<tr class="text-bold">
+														<td>Account Number</td>
+														<td>Branch Id</td>
+														<td>Account Open Date</td>
+														<td>Account Type/Product Code</td>
+														<td>Nominee Details</td>
+														<td>Account Status</td>
+														<td>Freeze Status</td>
+														<td>Account Balance</td>
+														<td>Label Code</td>
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="acctObj : ${custObj.acctList}">
+														<td th:text="${acctObj.accountNo}"></td>
+														<td th:text="${acctObj.branchId}"></td>
+														<td
+															th:text="${#calendars.format(acctObj.acctOpnDate,'dd/MM/YYYY')}"></td>
+														<td
+															th:text="${acctObj.accountType} + '/' + ${acctObj.productCode}"></td>
+														<td th:text="${acctObj.nomDetails}"></td>
+														<td th:text="${acctObj.acctStatus}"></td>
+														<td><a id="freezeSts" class="freezeStscls" href="#" th:text="${acctObj.freezeStatus}" th:attr="data-account-id=${acctObj.accountId}"></a></td>
+														<td th:text="${acctObj.acBalanceAmt}"><a><span>
+														
+														</span></a></td>
+														<td th:text="${acctObj.labelCode}"></td>
+														<td><a class="btn btn-sm bg-teal graphDetails"
+															th:graphTranAcid="${acctObj.accountId}"
+															th:gaccStno="${acctObj.accountNo}"
+															title="View Graph Analysis"> <em
+																class="fas fa-chart-pie fa-1x text-white"></em>
+														</a></td>
+														<td><a class="btn btn-sm bg-orange acctStmtDetails"
+															th:acStid="${acctObj.accountId}"
+															th:accStno="${acctObj.accountNo}"
+															title="Account Statement"> <em
+																class="fa fa-receipt fa-1x text-white"></em>
+														</a></td>
+														<td><a class="btn btn-sm bg-teal ledgerStmtDetails"
+															th:ledgeAcStid="${acctObj.accountId}"
+															th:ledgeAccStno="${acctObj.accountNo}"
+															title="Ledger Account Statement"> <em
+																class="fas fa-book fa-1x text-white"></em>
+														</a></td>
+														<td><a class="btn btn-sm bg-cyan tranDetails"
+															th:id="${acctObj.accountId}"
+															th:Acno="${acctObj.accountNo}"
+															title="Transaction Details"> <em
+																class="fa fa-rupee-sign fa-1x text-white"></em>
+														</a></td>
+														<td><a class="btn btn-sm bg-green retdPersonDetails"
+															th:acid="${acctObj.accountId}"
+															th:Accno="${acctObj.accountNo}" title="Related Person">
+																<em class="fas fa-users fa-1x text-black"></em>
+														</a></td>
+													</tr>
+												</tbody>
+											</table>
+										</div>
+										<div class=" tab-pane" id="otherActAcc">
+											<table th:id="${#strings.trim(custObj.custId)} +'ActTab'"
+												class="acctTab table table-sm table-head-fixed table-bordered table-striped ">
+												<thead>
+													<tr>
+														<td colspan="12" class="text-left text-bold text-grey"
+															style="background-color: #bba7c2">Active Account
+															Details</td>
+													</tr>
+													<tr class="text-bold">
+														<td>Account Number</td>
+														<td>Branch Id</td>
+														<td>Account Open Date</td>
+														<td>Account Type/Product Code</td>
+														<td>Nominee Details</td>
+														<td>Account Status</td>
+														<td>Account Balance</td>
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
+													</tr>
+												</thead>
+												<tbody>
+												</tbody>
+											</table>
+										</div>
+										<div class="tab-pane" id="otherCloseAcc">
+											<table th:id="${#strings.trim(custObj.custId)} +'CloseTab'"
+												class="acctTab table table-sm table-head-fixed table-bordered table-striped ">
+												<thead>
+													<tr>
+														<td colspan="12" class="text-left text-bold text-grey"
+															style="background-color: #bba7c2">Closed Account
+															Details</td>
+													</tr>
+													<tr class="text-bold">
+														<td>Account Number</td>
+														<td>Branch Id</td>
+														<td>Account Open Date</td>
+														<td>Account Type/Product Code</td>
+														<td>Nominee Details</td>
+														<td>Account Status</td>
+														<td>Account Balance</td>
+														<td></td>
+														<td></td>
+														<td></td>
+														<td></td>
+													</tr>
+
+												</thead>
+												<tbody>
+
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+								<ul id="pagin" class="text-right">
+								</ul>
+
+								<div>
+									<table
+										class="table table-sm table-head-fixed table-bordered table-striped ">
+										<thead>
+											<tr>
+												<td colspan="6" class="text-left text-bold text-grey"
+													style="background-color: #bba7c2">Alert Details</td>
+												<td colspan="2" class="text-center text-bold text-grey"
+													style="background-color: #bba7c2; text-decoration: underline;"><a
+													href="#" th:id="${alertData.ucicId}"
+													th:status="${alertStatus}" style="color: #c72727;"
+													class="alertHistory" title="Click here for alert history">Alert
+														History</a></td>
+											</tr>
+											<tr class="text-bold">
+												<td>Alert Id</td>
+												<td>Rule Id</td>
+												<td>Rule Description</td>
+												<td>Alert Start Date</td>
+												<td>Alert End Date</td>
+												<td>Release Date</td>
+												<td>Alert Value</td>
+												<td>Alert Risk</td>
+												
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="alertObj : ${alertData.alertList}">
+												<td><a th:text="${alertObj.alertId}"
+													class="text-blue alertModel" href="#"
+													th:id="${alertObj.alertId}"></a></td>
+												<td><a th:text="${alertObj.alertRuleId}"
+													th:title="${alertObj.alertRuleDesc}"
+													class="text-blue ruleModel" href="#"
+													th:id="${alertObj.alertRuleId}"></a></td>
+												<td th:text="${alertObj.alertRuleDesc}"></td>
+												<td
+													th:text="${#calendars.format(alertObj.alertStartDate,'dd/MM/YYYY')}"></td>
+												<td
+													th:text="${#calendars.format(alertObj.alertEndDate,'dd/MM/YYYY')}"></td>
+													<td
+													th:text="${#calendars.format(alertObj.releaseDate,'dd/MM/YYYY')}"></td>
+												<td th:text="${alertObj.alertVal}"></td>
+												<td th:text="${alertObj.accfRisk}" class="text-bold"
+													th:classappend="${alertObj.accfRiskColor}"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div th:if="${#lists.size(commentData) > 0}">
+									<table
+										class="table table-sm table-head-fixed table-bordered table-striped ">
+										<thead>
+											<tr>
+												<td colspan="8" class="text-center text-bold text-grey"
+													style="background-color: #bba7c2">Comment Details</td>
+											</tr>
+											<tr class="text-bold">
+												<td>User Name</td>
+												<td>User Role</td>
+												<td>Alert Status</td>
+												<td>User Comment</td>
+												<td>Comment Date</td>
+												<td>TAT</td>
+											</tr>
+
+										</thead>
+										<tbody>
+											<tr th:each="alertObj : ${commentData}">
+												<td th:text="${alertObj.actUserId}"></td>
+												<td th:text="${alertObj.actUserRoleId}"></td>
+												<td th:text="${alertObj.actStatus}"></td>
+												<td th:text="${alertObj.actUserComment}"></td>
+												<td
+													th:text="${#calendars.format(alertObj.actEndTime,'dd/MM/YYYY')}"></td>
+												<td th:text="${alertObj.actTat}"></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<table class="table uploadTable table-sm table-bordered"
+											id="filedetails" style="display: none">
+											<thead>
+												<tr>
+													<td colspan="8" class="text-left text-bold text-grey"
+														style="background-color: #bba7c2">Document Attachment</td>
+												</tr>
+												<tr>
+													<th scope="col">File Name</th>
+													<th scope="col">File Size</th>
+													<th scope="col">Uploaded Date</th>
+													<th scope="col">Uploaded by</th>
+													<th scope="col"></th>
+												</tr>
+											</thead>
+											<tbody>
+											</tbody>
+										</table>
+									</div>
+
+								</div>
+								<div>
+									<table class="table table-sm table-head-fixed table-striped ">
+										<!-- <thead>
+											<tr>
+												<td colspan="8" class="text-center text-bold text-grey"
+													style="background-color: #bba7c2">Comments Section</td>
+											</tr>
+											<tr>
+												<td colspan="8"><textarea
+														class="form-control form-control-sm" id="alertComment"
+														rows="2" name="alertComment"
+														placeholder="Provide Your Comments"></textarea></td>
+											</tr>
+
+										</thead> -->
+										<tbody>
+											<tr th:unless="${alertStatus} eq 'G'">
+												<td><button
+														class="btn btn-success btn-sm px-4 rounded-1"
+														onclick="executeSubmit('C','Not Suspicious')"
+														type="button" id="close" style="border-radius: 5px;">Not
+														Suspicious</button>
+													<button class="btn btn-warning btn-sm px-4 rounded-1"
+														type="button" id="escalateUp"
+														onclick="executeSubmit('U','Suspicious')"
+														style="border-radius: 5px;">Suspicious</button>
+													<button class="btn btn-primary btn-sm px-4 rounded-1"
+														onclick="executeSubmit('H','Hold')" type="button"
+														id="hold" style="border-radius: 5px;"
+														th:unless="${alertStatus} eq 'H'">Hold</button>
+													<button type="button"
+														class="btn btn-info btn-sm px-4 rounded-1"
+														data-toggle="modal" data-target="#exampleModal"
+														data-whatever="">Send Email</button>
+													<button th:if="${userDto.raiseStrFlg}"
+														class="btn btn-danger btn-sm px-4 rounded-1"
+														onclick="executeSubmit('R','Raise STR')" type="button"
+														id="raiseStr" style="border-radius: 5px;">Raise
+														STR</button> <!-- th:if="${userDto.raiseStrFlg}"-->
+													<button class="btn btn-dark btn-sm px-4 rounded-1"
+														th:id="${alertStatus}" th:name="${alertData.ucicId}"
+														th:onclick="executeEddSubmit(this.id,this.name)"
+														type="button" id="preEdd" style="border-radius: 5px;">Pre
+														EDD</button> <!-- <button class="btn btn-dark btn-sm px-4 rounded-1"
+														onclick="executeSubmit('M','Mark Customer')" type="button"
+														id="mark" style="border-radius: 5px;">Mark
+														Customer</button> -->
+													<button th:if="${userDto.escBackFlg}"
+														class="btn btn-info btn-sm px-4 rounded-1"
+														onclick="executeSubmit('E','Escalate Back')" type="button"
+														id="escBack" style="border-radius: 5px;">Escalate
+														Back</button>
+												<td colspan="6"></td>
+											</tr>
+											<tr th:if="${alertStatus} eq 'G'">
+												<td>
+													<button th:if="${userDto.escBackFlg}"
+														class="btn btn-info btn-sm px-4 rounded-1"
+														onclick="executeSubmit('E','Escalate Back')" type="button"
+														id="escBack" style="border-radius: 5px;">Escalate
+														Back</button> <!-- 	<button class="btn btn-dark btn-sm px-4 rounded-1"
+														onclick="executeSubmit('M','Mark Customer')" type="button"
+														id="mark" style="border-radius: 5px;">Mark
+														Customer</button> -->
+													<button class="btn btn-success btn-sm px-4 rounded-1"
+														onclick="executeSubmit('G','Agreed')" type="button"
+														id="close" style="border-radius: 5px;">Agreed</button>
+													<button th:if="${userDto.raiseStrFlg}"
+														class="btn btn-danger btn-sm px-4 rounded-1"
+														onclick="executeSubmit('R','Raise STR')" type="button"
+														id="raiseStr" style="border-radius: 5px;">Raise
+														STR</button>
+													<button th:if="${userDto.raiseStrFlg}"
+														class="btn btn-dark btn-sm px-4 rounded-1"
+														onclick="executeEddSubmit('E','Pre EDD')" type="button"
+														id="preEdd" style="border-radius: 5px;">PRE EDD</button>
+													<button class="btn btn-primary btn-sm px-4 rounded-1"
+														onclick="executeSubmit('H','Hold')" type="button"
+														id="hold" style="border-radius: 5px;"
+														th:unless="${alertStatus} eq 'H'">Hold</button>
+												</td>
+												<td colspan="6"></td>
+											</tr>
+
+										</tbody>
+									</table>
+								</div>
+								<div class="modal fade" id="viewTranModel">
+									<input type="hidden" id="encryptedJsonFile"
+										name="encryptedJson" />
+									<div class="modal-dialog modal-lg">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Transaction Details For Account Number - <span
+														id="accNoLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row col-sm-12 text-center">
+													<div class="col-sm-5 ">
+														<label for="Select Parameter">From Date</label>
+														<div class="input-group date" data-target-input="nearest">
+															<input type="text"
+																class="form-control form-control-sm datetimepicker-input"
+																placeholder="Start Date" name="tranStartDate"
+																id="tranStartDate" data-target="#tranStartDate"
+																onkeydown="return false" />
+															<div class="input-group-append"
+																data-target="#tranStartDate"
+																data-toggle="datetimepicker">
+																<div class="input-group-text">
+																	<em class="far fa-calendar-alt"></em>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-5">
+														<label for="Select Parameter">End Date</label>
+														<div class="input-group date" data-target-input="nearest">
+															<input type="text"
+																class="form-control form-control-sm  datetimepicker-input"
+																placeholder="End Date" name="tranEndDate"
+																id="tranEndDate" data-target="#tranEndDate"
+																onkeydown="return false" />
+															<div class="input-group-append"
+																data-target="#tranEndDate" data-toggle="datetimepicker">
+																<div class="input-group-text">
+																	<em class="far fa-calendar-alt"></em>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-2">
+														<input type="hidden" name="tranAcidId" id="tranAcidId">
+														<label for="search">&nbsp;</label><input type="hidden"
+															name="tranAc" id="tranAc"> <label for="search">&nbsp;</label>
+														<div>
+															<a class="btn btn-outline-info btn-sm " href="#"
+																id="search" title="Search" onclick="searchTranData()">
+																<em class="fas fa-search fa-1x text-black"></em>
+															</a>
+														</div>
+													</div>
+												</div>
+												<br>
+												<div class="row " id="tranDiv"
+													style="justify-content: center;"></div>
+
+												<div class="card-footer table-sm">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+
+								<div class="modal fade" id="viewUcicModel">
+									<div class="modal-dialog modal-lg">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Customer Details For UCIC Number - <span
+														th:text="${alertData.ucicId}"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row " style="justify-content: center;">
+													<table
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col" colspan="3" class="text-center">
+																Customer Tagged to UCIC</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">
+																Customer Id</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Customer Name</th>
+														</tr>
+														<tbody>
+															<tr th:each="custUcicObj : ${alertData.ucicCustList}">
+																<td th:text="${custUcicObj.custId}"></td>
+																<td th:text="${custUcicObj.custName}"></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+
+												<div class="card-footer table-sm">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+								<div class="modal fade" id="viewMailListModel">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Customer Details For UCIC Number - <span
+														th:text="${alertData.ucicId}"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row " style="justify-content: center;">
+													<table
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col" colspan="6" class="text-center">
+																Mail List</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">
+																TO</th>
+															<th scope="col" style="background-color: #bba7c2">
+																CC</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Subject</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Message</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Maker Id</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Update Time</th>
+														</tr>
+														<tbody>
+															<tr th:each="mailObj : ${alertData.mailList}">
+																<td th:text="${mailObj.toEmail}"></td>
+																<td th:text="${mailObj.ccEmail}"></td>
+																<td th:text="${mailObj.subject}"></td>
+																<td th:text="${mailObj.message}"></td>
+																<td th:text="${mailObj.makerId}"></td>
+																<td
+																	th:text="${#calendars.format(mailObj.makerTimestamp,'dd/MM/YYYY')}"></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+
+												<div class="card-footer table-sm">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+								<div class="modal fade" id="viewReltdPersonModel">
+									<input type="hidden" id="encryptedJsonFile"
+										name="encryptedJson" />
+									<div class="modal-dialog modal-lg">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Related Details For Account Number - <span id="acctNoLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row " style="justify-content: center;">
+													<table
+														class="table table-sm table-head-fixed table-bordered table-striped "
+														style="width: 60%">
+														<tr>
+															<th scope="col" colspan="3" class="text-center">Related
+																Person Details</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">Account
+																Name</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Customer Id</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Holder Type</th>
+														</tr>
+														<tbody id="aasDiv"></tbody>
+													</table>
+												</div>
+
+												<div class="card-footer table-sm">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+								<div class="modal fade" id="viewAICheckModel">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">Response From Drona</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row " style="justify-content: center;">
+													<table
+														class="table table-sm table-head-fixed table-bordered table-striped "
+														style="width: 100%">
+														<tr>
+															<th scope="col" colspan="5">Question Section</th>
+															<th scope="col" colspan="1"><a href="#"
+																onclick="askAIResponse()">Ask Again</a></th>
+														</tr>
+														<tr>
+															<th scope="col" colspan="6"><textArea id="queId"
+																	class="form-control text-capitalize"
+																	style="width: 100%; height: 75px" rows="1"></textArea></th>
+														<tr>
+														<tr>
+															<th scope="col"><a href="#" onclick="askDrona('C')"
+																title="Ask Response from Engine 1">Engine 1</a>&nbsp;&nbsp;
+																<a href="#" onclick="askDrona('G')">Engine 2</a></th>
+														</tr>
+														<tr>
+															<th scope="col" colspan="6"><textArea
+																	id="dronaReponse" disabled
+																	style="width: 100%; height: 250px" rows="2"></textArea></th>
+
+														</tr>
+													</table>
+												</div>
+												<div class="card-footer table-sm">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+
+
+								<div class="modal fade" id="graphAnalysisModal">
+									<div class=" modal-dialog modal-xl" style="width: 100%">
+										<div class=" card modal-content">
+											<div class="modal-header custom-modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">Account Statement Summary for :
+												</h5>
+												<h5 class="modal-title" id="gAcctStmtNo"></h5>
+												<input type="hidden" id="accGID" name="accGIDName">
+												<input type="hidden" id="tranACIDG" name="tranACIDGNAme">
+
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-12">
+
+														<div class="dateDiv table-responsive"
+															style="text-align: center; display: flex; justify-content: center; align-items: center;">
+															<label for="sDat">Start Date:</label>&nbsp; <input
+																type="date" id="gsDate" name="sDateGraph"
+																style="margin-right: 20px;"> <label for="eDat">End
+																Date:</label> &nbsp;<input type="date" id="geDate"
+																name="eDateGraph" style="margin-right: 20px;">
+
+															<div class="form-group m-1 p-1"
+																style="text-align: center; margin-right: 20px;">
+																<label for="selCredDbt">Select:</label>&nbsp; <select
+																	class="select2" name="selCrDB" id="credDebDD"
+																	data-placeholder="Select Credit / Debit"
+																	style="width: 150px;">
+																	<option value=''>Select</option>
+																	<option value='C'>Credit</option>
+																	<option value='D'>Debit</option>
+																</select>
+															</div>
+
+															<div class="form-group m-1 p-1"
+																style="text-align: center;">
+																<a class="btn btn-secondary btn-sm" id="ftchGReport">
+																	<i class="fas fa-chart-line"
+																	style="padding: 0 7px 0 0px;"></i>Fetch Data
+																</a>
+															</div>
+														</div>
+
+													</div>
+												</div>
+
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group row">
+															<div class="row col-sm-12">
+
+																<!-- GRAPH DETAILS -->
+
+																<!-- CREDIT 3 MONTHS GRAPH -->
+																<div class="divCrdCls" id="credDivG" style="width: 100%">
+
+																	<div class="card card-info">
+																		<div class="card card-info card-tabs">
+																			<div class="card-header custom-modal-header"
+																				style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+																				<h6 class="modal-title text-center">Channel
+																					Wise Credit Summary</h6>
+																			</div>
+																		</div>
+
+																		<div style="margin: auto">
+																			<div class="btn-group btn-group-toggle"
+																				data-toggle="buttons">
+																				<label class="btn bg-olive active"> <input
+																					type="radio" name="optionsCred" id="optionPieCred"
+																					class="checkRadioCred" autocomplete="off"
+																					value="optionPieCred" checked> Pie Chart
+																				</label> <label class="btn bg-olive"> <input
+																					type="radio" name="optionsCred" id="optionBarCred"
+																					class="checkRadioCred" autocomplete="off"
+																					value="optionBarCred"> Bar Chart
+																				</label>
+																			</div>
+																		</div>
+
+
+																		<div class="row-md-12">
+
+																			<div class="pieViewCred" id="pieViewCred">
+																				<div class="row m-1 p-1">
+																					<!-- Column for Pie Charts -->
+																					<div class="col-md-6">
+																						<div class="row m-1 p-1">
+																							<div class="col-md-10">
+																								<div class="card">
+																									<div class="card-body">
+																										<div class="pieChartQQ" id="pieChartQQ">
+																											<canvas id="pieChartTQ"
+																												style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+																										</div>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																						<div class="row m-1 p-1">
+																							<div class="col-md-10">
+																								<div class="card">
+																									<div class="card-body">
+																										<div class="pieChartValue" id="pieChartValue">
+																											<canvas id="pieChartValQ"
+																												style="min-height: 360px; height: 360px; max-height: 360px; max-width: 100%;"></canvas>
+																										</div>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																					</div>
+																					<!-- Column for Table -->
+																					<div class="col-md-6">
+																						<div class="card-body">
+																							<div class="tblList">
+																								<div class="row mt-2">
+																									<div class="col-sm-12 text-center">
+																										<table
+																											class="table table-head-fixed table-bordered table-striped creditTbl"
+																											id="creditTbl">
+																											<thead style="text-align: center">
+																												<tr>
+																													<th>Channel Type</th>
+																													<th>Transaction Count (%)</th>
+																													<th>Transaction Value</th>
+																												</tr>
+																											</thead>
+																											<tbody style="text-align: center"
+																												id="crdtBdy" class="crdtBdy">
+																												<!-- Table body content -->
+																											</tbody>
+																											<tfoot style="text-align: center"
+																												id="credFoot" class="credFoot">
+																												<tr>
+																													<th id="totalCRD">Total :</th>
+																													<td id="tCredCount"
+																														class="tCredCount text-bold"></td>
+																													<td id="tCredValCount"
+																														class="tCredValCount text-bold"></td>
+																												</tr>
+																											</tfoot>
+																										</table>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+
+
+																			<div class="barViewCred" id="barViewCred">
+																				<div class="col-md-8" style="float: left;">
+																					<div class="card-body">
+																						<div class="chartBARCREDIT" id="chartBARCREDIT"
+																							style="margin: auto;">
+																							<canvas id="barChartCred"
+																								style="min-height: 360px; height: 360px; max-height: 360px; max-width: 100%;"></canvas>
+																						</div>
+																					</div>
+																				</div>
+																				<div class="col-md-4" style="float: right;">
+																					<table
+																						class="table table-sm table-head-fixed table-bordered table-striped creditTbl"
+																						id="creditTbl1" style="width: 100%;">
+																						<thead style="text-align: center">
+																							<tr>
+																								<th>Channel Type</th>
+																								<th>Transaction Count (%)</th>
+																								<th>Transaction Value</th>
+																							</tr>
+																						</thead>
+																						<tbody style="text-align: center" id="crdtBdy1"
+																							class="crdtBdy">
+
+																						</tbody>
+																						<tfoot style="text-align: center" id="credFoot1"
+																							class="credFoot">
+																							<tr>
+																								<th id="totalCRD1">Total</th>
+																								<td id="tCredCount1"
+																									class="tCredCount text-bold"></td>
+																								<td id="tCredValCount1"
+																									class="tCredValCount text-bold"></td>
+																							</tr>
+																						</tfoot>
+																					</table>
+
+																				</div>
+
+
+
+																			</div>
+
+																		</div>
+
+																	</div>
+
+																	<div class="card card-info">
+																		<div class="card card-info card-tabs">
+																			<div class="card-header custom-modal-header"
+																				style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+																				<h6 class="modal-title text-center">Line Chart
+																					Analysis For Credit</h6>
+																			</div>
+																		</div>
+																		<div class="card-body">
+
+																			<div class="table-responsive">
+
+																				<div class="row p-1">
+
+																					<div class="card-body">
+
+																						<div class="credLINEBAR" id="credLINEBAR">
+																							<canvas id="credLINEChart" height="300"></canvas>
+																						</div>
+
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+
+																</div>
+
+																<!-- CREDIT 3 MONTHS GRAPH -->
+
+																<!-- DEBT 3 MONTHS GRAPH -->
+
+																<div class="divCrdCls" id="dbtDivG" style="width: 100%">
+
+																	<div class="card card-info">
+																		<div class="card card-tabs">
+																			<div class="card-header custom-modal-header"
+																				style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+																				<h6 class="modal-title text-center">Channel
+																					Wise Debit Summary</h6>
+																			</div>
+																		</div>
+																		<div style="margin: auto">
+																			<div class="btn-group btn-group-toggle"
+																				data-toggle="buttons">
+																				<label class="btn bg-olive active"> <input
+																					type="radio" name="options" id="optionPie"
+																					class="checkRadio" autocomplete="off"
+																					value="optionPie" checked> Pie Chart
+																				</label> <label class="btn bg-olive"> <input
+																					type="radio" name="options" id="optionBar"
+																					class="checkRadio" autocomplete="off"
+																					value="optionBar"> Bar Chart
+																				</label>
+																			</div>
+																		</div>
+
+																		<div class="row-md-12">
+																			<div class="pieView" id="pieView">
+																				<div class="row m-1 p-1">
+																					<!-- Column for Pie Charts -->
+																					<div class="col-md-6">
+																						<div class="row m-1 p-1">
+																							<div class="col-md-10">
+																								<div class="card">
+																									<div class="card-body">
+																										<div class="pieChartTP" id="pieChartTP">
+																											<canvas id="pieChartCOTP"
+																												style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+																										</div>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																						<div class="row m-1 p-1">
+																							<div class="col-md-10">
+																								<div class="card">
+																									<div class="card-body">
+																										<div class="pieChartDBT" id="pieChartDBT">
+																											<canvas id="pieChartDBTTP"
+																												style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+																										</div>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																					</div>
+																					<!-- Column for Table -->
+																					<div class="col-md-6">
+																						<div class="card-body">
+																							<div class="tblList">
+																								<div class="row mt-2">
+																									<div class="col-sm-12 text-center">
+																										<table
+																											class="table table-head-fixed table-bordered table-striped debitTbl"
+																											id="debitTbl">
+																											<thead style="text-align: center">
+																												<tr>
+																													<th>Channel Type</th>
+																													<th>Transaction Count</th>
+																													<th>Transaction Value</th>
+																												</tr>
+																											</thead>
+																											<tbody style="text-align: center" id="dbtBdy"
+																												class="dbtBdy">
+																												<!-- Table body content -->
+																											</tbody>
+																											<tfoot style="text-align: center"
+																												id="debtFoot" class="debtFoot">
+																												<tr>
+																													<th id="totalDbt">Total :</th>
+																													<td id="tDbtCount"
+																														class="tDbtCount text-bold"></td>
+																													<td id="tDbtValCount"
+																														class="tDbtValCount text-bold"></td>
+																												</tr>
+																											</tfoot>
+																										</table>
+																									</div>
+																								</div>
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+																			</div>
+
+
+																			<div class="barView" id="barView">
+																				<div class="col-md-8" style="float: left;">
+																					<div class="card-body">
+																						<div class="chartBAR" id="chartBAR"
+																							style="margin: auto;">
+																							<canvas id="barChart"
+																								style="min-height: 360px; height: 360px; max-height: 360px; max-width: 100%;"></canvas>
+																						</div>
+																					</div>
+																				</div>
+
+																				<div class="col-md-4" style="float: right;">
+																					<table
+																						class="table table-sm table-head-fixed table-responsive table-bordered table-striped debitTbl"
+																						id="debitTblBar1" style="width: 100%;">
+																						<thead style="text-align: center">
+																							<tr>
+																								<th>Channel Type</th>
+																								<th>Transaction Count</th>
+																								<th>Transaction Value</th>
+																							</tr>
+																						</thead>
+																						<tbody style="text-align: center" id="dbtBdy1"
+																							class="dbtBdy">
+
+																						</tbody>
+																						<tfoot style="text-align: center" id="debtFoot1"
+																							class="debtFoot">
+																							<tr>
+																								<th id="totalDbt1">Total :</th>
+																								<td id="tDbtCount1" class="tDbtCount text-bold"></td>
+																								<td id="tDbtValCount1"
+																									class="tDbtValCount text-bold"></td>
+																							</tr>
+																						</tfoot>
+																					</table>
+
+																				</div>
+
+																			</div>
+
+
+																		</div>
+
+																	</div>
+
+																	<div class="card card-info">
+																		<div class="card card-info card-tabs">
+																			<div class="card-header custom-modal-header"
+																				style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+																				<h6 class="modal-title text-center">Line Chart
+																					Analysis For Debit</h6>
+																			</div>
+																		</div>
+																		<div class="card-body">
+
+																			<div class="table-responsive">
+
+																				<div class="row p-1">
+
+																					<div class="card-body">
+
+																						<div class="debtLINEBAR" id="debtLINEBAR">
+																							<canvas id="debtLINEChart" height="300"></canvas>
+																						</div>
+
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+
+																</div>
+
+																<!-- DEBT 3 MONTHS GRAPH -->
+
+
+
+
+																<!-- BAR CHAT FOR BOTH CREDIT AND DEBIT -->
+																<div class="col-sm-12" id="crdDbtDivG">
+																	<div class="card card-info">
+																		<div class="card card-info card-tabs">
+																			<div class="card-header custom-modal-header"
+																				style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+																				<h6 class="modal-title text-center">Channel
+																					Wise Analysis For Credit And Debit</h6>
+																			</div>
+																		</div>
+																		<div class="card-body">
+
+																			<div class="pieDivTemp table-responsive">
+
+																				<div class="row p-1">
+
+																					<div class="card-body">
+
+																						<div class="CREDDEBTBAR" id="CREDDEBTBAR">
+																							<canvas id="visitors-chart" height="300"></canvas>
+																						</div>
+
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+
+																	</div>
+																</div>
+																<!-- BAR CHAT FOR BOTH CREDIT AND DEBIT -->
+
+
+																<!-- GRAPH DETAILS -->
+
+															</div>
+														</div>
+													</div>
+												</div>
+
+											</div>
+
+										</div>
+									</div>
+								</div>
+
+
+								<!-- View Account Statement Modal -->
+								<div class="modal fade" id="accountStmtModal">
+									<div class=" modal-dialog modal-xl" style="width: 100%">
+										<div class=" card modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">Account Statement For Account
+													No :</h5>
+												<h5 class="modal-title" id="acctStmtNo"></h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group row">
+															<div class="row col-sm-12">
+																<div class="col-sm-3">
+																	<label for="Select Parameter">Transaction
+																		Channel <code>*</code>
+																	</label> <select class="form-control-sm select2"
+																		name="tranType" id="tranType"
+																		data-placeholder="Select Parameter"
+																		style="width: 100%;">
+																		<option value='TC1'>Cash At ATM</option>
+																		<option value='TC2'>Cash At Branch</option>
+																		<option value='TS1'>NEFT/RTGS</option>
+																		<option value='TS2'>IMPS</option>
+																		<option value='TS3'>UPI</option>
+																		<option value='GT1'>General Transaction</option>
+																		<option value='CB1'>Cross Border Transaction</option>
+																		<option value='ALL' selected>ALL</option>
+																	</select>
+																</div>
+																<div class="col-sm-2">
+																	<label for="Select Parameter">Transaction Sub
+																		Type</label> <select class="form-control-sm select2"
+																		name="creDebFlg" id="creDebFlg"
+																		data-placeholder="Select Parameter"
+																		style="width: 100%;">
+																		<option value='A' selected>ALL</option>
+																		<option value='C'>Credit</option>
+																		<option value='D'>Debit</option>
+																	</select>
+																</div>
+																<div class="col-sm-3 ">
+																	<label for="Select Parameter">From Date</label>
+																	<div class="input-group date"
+																		data-target-input="nearest">
+																		<input type="text"
+																			class="form-control form-control-sm datetimepicker-input"
+																			placeholder="Start Date" name="startDate"
+																			id="startDate" data-target="#startDate"
+																			onkeydown="return false" />
+																		<div class="input-group-append"
+																			data-target="#startDate" data-toggle="datetimepicker">
+																			<div class="input-group-text">
+																				<em class="far fa-calendar-alt"></em>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<label for="Select Parameter">End Date</label>
+																	<div class="input-group date"
+																		data-target-input="nearest">
+																		<input type="text"
+																			class="form-control form-control-sm  datetimepicker-input"
+																			placeholder="End Date" name="endDate" id="endDate"
+																			data-target="#endDate" onkeydown="return false" />
+																		<div class="input-group-append" data-target="#endDate"
+																			data-toggle="datetimepicker">
+																			<div class="input-group-text">
+																				<em class="far fa-calendar-alt"></em>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-1">
+																	<input type="hidden" name="acidId" id="acidId">
+																	<label for="search">&nbsp;</label>
+																	<div>
+																		<a class="btn btn-outline-info btn-sm " href="#"
+																			id="search" title="Search" onclick="searchData()">
+																			<em class="fas fa-search fa-1x text-black"></em>
+																		</a>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="modal-body row justify-content-center">
+												<div class="col-auto table-responsive">
+													<table id="acctStmt"
+														class="table table-head-fixed table-bordered table-striped"
+														style="width: 100%">
+														<caption></caption>
+														<thead>
+															<tr>
+																<td class="thHead text-bold" scope="col"
+																	style="width: 50%;">Transaction Date</td>
+																<th class="thHead text-bold" scope="col">Transaction
+																	ID</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Particular</th>
+																<th class="thHead text-bold" scope="col">Debit
+																	Amount</th>
+																<th class="thHead text-bold" scope="col">Credit
+																	Amount</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Remarks</th>
+																<th class="thHead text-bold" scope="col">Source
+																	details</th>
+																<th class="thHead text-bold" scope="col">Destination
+																	Details</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Channel</th>
+															</tr>
+														</thead>
+														<tbody>
+														</tbody>
+													</table>
+													<table id="noDataTab"
+														class="table table-head-fixed table-bordered table-striped"
+														style="display: none">
+														<caption></caption>
+														<thead>
+															<tr>
+																<th class="thHead text-bold" scope="col">Transaction
+																	ID</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Date</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Amount</th>
+																<th class="thHead text-bold" scope="col">Tran Type</th>
+																<th class="thHead text-bold" scope="col">Branch Id</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Particular</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Remarks</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr class="mainTab">
+																<td colspan="3" style="text-align: center;">No Data
+																	Available</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="viewAlertHistoryModel">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Alert History For UCIC Number - <span
+														th:text="${alertData.ucicId}"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row " style="justify-content: center;">
+													<table id="alertHistTab"
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col" colspan="6" class="text-center">
+																Alert History</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert Id</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert Rule Description</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert Start Date</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert End Date</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert Status</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert Comments</th>
+														</tr>
+														<tbody id="histTbody">
+
+														</tbody>
+													</table>
+													<table id="alertHistCommentTab"
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%;">
+														<tr>
+															<th scope="col" colspan="6" class="text-center">
+																Alert Comments</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">
+																User Name</th>
+															<th scope="col" style="background-color: #bba7c2">
+																User Role</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Alert Status</th>
+															<th scope="col" style="background-color: #bba7c2">
+																User Comment</th>
+															<th scope="col" style="background-color: #bba7c2">
+																Comment Date</th>
+															<th scope="col" style="background-color: #bba7c2">
+																TAT</th>
+														</tr>
+														<tbody id="histCommTbody">
+
+														</tbody>
+													</table>
+												</div>
+
+												<div class="card-footer table-sm">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+
+								<!-- Dmat Account Statement Modal -->
+								<div class="modal fade" id="myModal2" tabindex="-1"
+									role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog modal-xl" role="document">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title" id="myModalLabel">Dmat Account
+													Statement</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body"
+												style="max-height: 500px; overflow-y: auto;">
+												<div class="row">
+													<div class="col-sm-10">
+														<table class="table table-striped table-bordered"
+															id="dmatTransactionTable">
+															<thead
+																style="background-color: teal; color: antiquewhite;">
+																<tr>
+																	<th scope="col">DPM_CLIENT_ID</th>
+																	<th scope="col">ID</th>
+																	<th scope="col">SHORT_NAME</th>
+																	<th scope="col">FIRST_HOLDER_NAME</th>
+																	<th scope="col"></th>
+																</tr>
+															</thead>
+															<tbody id="itemTableBody2">
+																<!-- Table rows will be inserted here -->
+															</tbody>
+														</table>
+													</div>
+
+												</div>
+												<hr class="my-4">
+												<!-- Adds a horizontal line as a boundary between the tables -->
+												<div>
+													<h5 id="tableHeader"
+														class="modal-title  rounded text-center"
+														style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5)); padding: 10px;">Dmat
+														Account Statement</h5>
+													<table id="secondTable"
+														class="display table table-striped table-bordered">
+														<thead
+															style="background-color: teal; color: antiquewhite;">
+															<tr>
+																<th scope="col">Booking Date</th>
+																<th scope="col">DPM Reference Number</th>
+																<th scope="col">Particulars</th>
+																<th scope="col">ISIN Code</th>
+																<th scope="col">Company Name</th>
+																<th scope="col">Debit</th>
+																<th scope="col">Credit</th> 
+																<th scope="col">Quantity</th>
+																<th scope="col">Closing Rate</th> 
+																<th scope="col">DPM Client Id</th> 
+															</tr>
+														</thead>
+														<tbody id="tranBody">
+															<!-- Add more rows as needed -->
+														</tbody>
+													</table>
+
+												</div>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary"
+													data-dismiss="modal">Close</button>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+									aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog modal-xl" role="document">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title" id="myModalLabel">Credit Card
+													Statement</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body table-responsive">
+
+												<table class="table table-striped table-bordered"
+													id="transactionTable">
+													<thead style="background-color: teal; color: antiquewhite;">
+														<tr>
+															<th scope="col">Sr No</th>
+															<th scope="col">Card Number</th>
+															<th scope="col">CMS Account Number</th>
+															<th scope="col">Txn Reference Number</th>
+															<th scope="col">Txn Date</th>
+															<th scope="col">Txn Code</th>
+															<th scope="col">Txn Amount</th>
+															<th scope="col">Txn Currency</th>
+															<th scope="col">Transaction Description</th>
+															<th scope="col">MCC</th>
+															<th scope="col">Set Date</th>
+															<th scope="col">CD Indicator</th>
+															<th scope="col">Approval Code</th>
+															<th scope="col">Channel ID</th>
+														</tr>
+													</thead>
+													<tbody id="itemTableBody">
+														<!-- Table rows will be inserted here -->
+													</tbody>
+												</table>
+
+											</div>
+
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary"
+													data-dismiss="modal">Close</button>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								
+								<div class="modal fade" id="freezeStatusModal" tabindex="-1" role="dialog"
+									aria-labelledby="myModalLabel" aria-hidden="true">
+									<div class="modal-dialog modal-xl" role="document">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title" id="myModalLabel">Freeze Status</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body table-responsive">
+
+												<table class="table table-striped table-bordered"
+													id="statusTable">
+													<thead style="background-color: teal; color: antiquewhite;">
+														<tr>
+															<th scope="col">RECORD_ID</th>
+															<th scope="col">ACID</th>
+															<th scope="col">FREEZE_CODE</th>
+															<th scope="col">FREEZE_REASON_CODE</th>
+															<th scope="col">FREEZE_REMARKS</th>
+															<th scope="col">FREEZE_DATE</th>
+															<th scope="col">LIEN_AMT</th>
+															<th scope="col">LIEN_REMARKS</th>
+															<th scope="col">LIEN_DATE</th>
+															<th scope="col">REC_UPLOAD_DATE</th>
+														</tr>
+													</thead>
+													<tbody id="freezeStatusTable">
+														<!-- Table rows will be inserted here -->
+													</tbody>
+												</table>
+
+											</div>
+
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary"
+													data-dismiss="modal">Close</button>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								
+								<div class="modal fade" id="viewCustModel">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header" id="grad1"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Cust ID - <span id="custIdLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<!-- form start -->
+											<div class="card-body">
+
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="cust_fullname_label">Customer Full
+																Name</label> <input type="text"
+																class="form-control form-control-sm" id="custFullName"
+																name="custFullName" value=""
+																placeholder="Customer Full Name" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custPan_label">Customer Pan Number</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custPanNo" name="custPanNo" value=""
+																placeholder="Customer Pan Number" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custOccupation_label">Customer
+																Occupation</label> <input type="text"
+																class="form-control form-control-sm" id="custOccupation"
+																name="custOccupation" value=""
+																placeholder="Customer Occupation" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custOccupation_label">Customer Open
+																date</label> <input type="text"
+																class="form-control form-control-sm" id="custOpnDate"
+																name="custOpnDate" value=""
+																placeholder="Customer Open Date" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="cust_Type_label">Customer Type</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custIndFlg" name="custIndFlg" value=""
+																placeholder="Customer Type" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custConst_label">Customer
+																Constitution</label> <input type="text"
+																class="form-control form-control-sm"
+																id="custConstitution" name="custConstitution" value=""
+																placeholder="Customer Constitution" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custCategory_label">Customer Risk</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custRisk" name="custRisk" value=""
+																placeholder="Customer Risk" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custCategory_label">Last Kyc Date</label> <input
+																type="text" class="form-control form-control-sm"
+																id="lastKycDate" name="lastKycDate" value=""
+																placeholder="Last Kyc Date" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row" id="indRow" style="display: none">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="cust_Type_label">Customer Minor Flg</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custMinFlg" name="custMinFlg" value=""
+																placeholder="Customer Minor Flg" readonly>
+														</div>
+													</div>
+													<div class="col-sm-2">
+														<div class="form-group">
+															<label for="custConst_label">Customer Nre Flg</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custNreFlg" name="custNreFlg" value=""
+																placeholder="Customer NRE Flg" readonly>
+														</div>
+													</div>
+													<div class="col-sm-2">
+														<div class="form-group">
+															<label for="custCategory_label">Customer Gender</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custGender" name="custGender" value=""
+																placeholder="Customer Gender" readonly>
+														</div>
+													</div>
+													<div class="col-sm-2">
+														<div class="form-group">
+															<label for="custCategory_label">Customer DOB</label> <input
+																type="text" class="form-control form-control-sm"
+																id="custDob" name="custDob" value=""
+																placeholder="Customer DOB" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custCategory_label">Customer Annual
+																Income</label> <input type="text"
+																class="form-control form-control-sm"
+																id="custAnnualIncome" name="custAnnualIncome" value=""
+																placeholder="Customer Annual Income" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row" id="nidRow" style="display: none">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="cust_Type_label">Company Id</label> <input
+																type="text" class="form-control form-control-sm"
+																id="compId" name="compId" value=""
+																placeholder="Company Id" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custConst_label">Date Of Registration</label>
+															<input type="text" class="form-control form-control-sm"
+																id="dateOfReg" name="dateOfReg" value=""
+																placeholder="Date Of Registration" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custCategory_label">Place Of
+																Registration</label> <input type="text"
+																class="form-control form-control-sm" id="placeOfReg"
+																name="placeOfReg" value=""
+																placeholder="Place Of Registration" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="custCategory_label">Customer Turnover</label>
+															<input type="text" class="form-control form-control-sm"
+																id="custTurnOver" name="custTurnOver" value=""
+																placeholder="Customer Turnover" readonly>
+														</div>
+													</div>
+												</div>
+												<div
+													class="card card-success card-outline card-outline-tabs">
+													<div class="card-header p-0 border-bottom-0">
+														<ul class="nav nav-tabs text-bold">
+															<li class="nav-item col-xs-2"><a
+																class="nav-link   active" href="#docDetails"
+																id="docDetailsLink" data-toggle="tab"><em
+																	class="fas fa-list-ul text-white"></em>&nbsp;Document
+																	Details </a></li>
+															<li class="nav-item col-xs-2"><a class="nav-link  "
+																href="#contactDetails" id="contactDetailsLink"
+																data-toggle="tab"><em
+																	class="fas fa-list-ul text-white"></em>&nbsp;Contact
+																	Details</a></li>
+															<li class="nav-item  col-xs-2"><a class="nav-link  "
+																href="#addressDetails" id="addressDetailsLink"
+																data-toggle="tab"><em
+																	class="fas fa-list-ul text-white"></em>&nbsp;Address
+																	Details</a></li>
+														</ul>
+													</div>
+												</div>
+												<div class="tab-content">
+													<div class="active tab-pane" id="docDetails">
+														<div class="row" id="docIdRow">
+															<div class="col-sm-12 table-responsive">
+																<div class="card card-outline card-secondary">
+																	<div class="card-header"
+																		style="background-color: #00AA9E;">
+																		<h3 class="card-title text-white">Customer
+																			Document Details</h3>
+																	</div>
+																	<div class="card-body" id="grad5">
+																		<table
+																			class="table table-bordered custDocDtls bg-light"
+																			id="custDocDtls" style="width: 100%">
+																			<tr>
+																				<th scope="col">Doc Code</th>
+																				<th scope="col">Doc Description</th>
+																				<th scope="col">Doc Value</th>
+																				<th scope="col">Doc Issue Country</th>
+																				<th scope="col">Doc Issue Place</th>
+																				<th scope="col">Doc Issue date</th>
+																			</tr>
+																			<tbody id="tbodyDocR">
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class=" tab-pane" id="contactDetails">
+														<div class="row" id="contactIdRow">
+															<div class="col-sm-12 table-responsive">
+																<div class="card card-outline card-secondary">
+																	<div class="card-header"
+																		style="background-color: #00AA9E;">
+																		<h3 class="card-title text-white">Customer
+																			Contact Details</h3>
+																	</div>
+																	<div class="card-body" id="grad5">
+																		<table
+																			class="table table-bordered custContactDtls bg-light"
+																			id="custContactDtls" style="width: 100%">
+																			<tr>
+																				<th scope="col">Record Type</th>
+																				<th scope="col">Record Value</th>
+																			</tr>
+																			<tbody id="tbodyContactR">
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class=" tab-pane" id="addressDetails">
+														<div class="row" id="ruleAddressRow">
+															<div class="col-sm-12 table-responsive">
+																<div class="card card-outline card-secondary">
+																	<div class="card-header"
+																		style="background-color: #00AA9E;">
+																		<h3 class="card-title text-white">Customer
+																			Address Details</h3>
+																	</div>
+																	<div class="card-body" id="grad2">
+																		<table
+																			class="table table-bordered custAddressDtls bg-light"
+																			id="custAddressDtls" style="width: 100%">
+																			<tr>
+																				<th scope="col">City</th>
+																				<th scope="col">State</th>
+																				<th scope="col">Country</th>
+																				<th scope="col">Zip Code</th>
+																				<th scope="col">Address Category</th>
+																				<th scope="col">Address</th>
+																			</tr>
+																			<tbody id="tbodyAddressR">
+																			</tbody>
+																		</table>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+												<div class="card-footer">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="viewUcicRegModel">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													View Details For UCIC Number - <span id="ucicId"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row " style="justify-content: center;">
+													<table id="ctrTab"
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col"
+																style="background-color: #bba7c2; text-align: center;"
+																colspan="8">Cash transaction Report (CTR)</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">Month
+																Of Record</th>
+															<th scope="col" style="background-color: #bba7c2">Year
+																of Record</th>
+															<th scope="col" style="background-color: #bba7c2">Customer
+																Id</th>
+															<th scope="col" style="background-color: #bba7c2">Total
+																Credit</th>
+															<th scope="col" style="background-color: #bba7c2">Total
+																Debit</th>
+															<th scope="col" style="background-color: #bba7c2">FINGate
+																Version</th>
+														</tr>
+														<tbody id="tBodyCtrReg">
+														</tbody>
+													</table>
+													<table id="ntrTab"
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col"
+																style="background-color: #bba7c2; text-align: center;"
+																colspan="8">Non-Profit Organisation Transaction
+																Report (NTR)</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">Month
+																Of Record</th>
+															<th scope="col" style="background-color: #bba7c2">Year
+																of Record</th>
+															<th scope="col" style="background-color: #bba7c2">Customer
+																Id</th>
+															<th scope="col" style="background-color: #bba7c2">Total
+																Credit</th>
+															<th scope="col" style="background-color: #bba7c2">Total
+																Debit</th>
+															<th scope="col" style="background-color: #bba7c2">FINGate
+																Version</th>
+														</tr>
+														<tbody id="tBodyNtrReg">
+														</tbody>
+													</table>
+													<table id="cbwtrTab"
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col"
+																style="background-color: #bba7c2; text-align: center;"
+																colspan="7">Cross Border Wire Transfer Report
+																(CBWTR)</th>
+														</tr>
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">Month
+																Of Record</th>
+															<th scope="col" style="background-color: #bba7c2">Year
+																of Record</th>
+															<th scope="col" style="background-color: #bba7c2">Customer
+																Id</th>
+															<th scope="col" style="background-color: #bba7c2">Total
+																Amount</th>
+															<th scope="col" style="background-color: #bba7c2">FINGate
+																Version</th>
+														</tr>
+														<tbody id="tBodyCbwtrReg">
+														</tbody>
+													</table>
+													<table id="strTab"
+														class="table table-lg table-head-fixed table-bordered table-striped "
+														style="width: 90%">
+														<tr>
+															<th scope="col" style="background-color: #bba7c2">Request
+																Number</th>
+															<th scope="col" style="background-color: #bba7c2">STR
+																Date</th>
+															<th scope="col" style="background-color: #bba7c2">Customer
+																Id</th>
+															<th scope="col" style="background-color: #bba7c2">GOS</th>
+															<th scope="col" style="background-color: #bba7c2">FIU
+																Batch Id</th>
+															<th scope="col" style="background-color: #bba7c2">FINGate
+																Version</th>
+														</tr>
+														<tbody id="tBodyStr">
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+								<div class="modal fade" id="viewRuleModel">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Rule ID - <span id="ruleIdLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<label for="ruleDesc_label">Rule Description</label>
+															<textarea class="form-control form-control-sm"
+																id="ruleDesc" name="ruleDesc"
+																placeholder="Rule Description" readonly></textarea>
+														</div>
+													</div>
+												</div>
+
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="ruleFrequency_label">Rule Frequency</label> <input
+																type="text" class="form-control form-control-sm"
+																id="ruleFrequency" name="ruleFrequency" value=""
+																placeholder="Rule Frequency" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="riskcategory">Rule Classification </label> <input
+																type="text" class="form-control form-control-sm"
+																id="ruleClassification" name="ruleClassification"
+																value="" placeholder="Rule Classification" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="ruleIndicator_label">Rule Indicator </label>
+															<input type="text" class="form-control form-control-sm"
+																id="ruleIndicator" name="ruleIndicator" value=""
+																placeholder="Rule Indicator" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="ruleCategory_label">Rule Category</label> <input
+																type="text" class="form-control form-control-sm"
+																id="ruleCategory" name="ruleCategory" value=""
+																placeholder="Rule Category" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="ruleTrnChannel_label">Rule
+																Transaction Channel</label> <input type="text"
+																class="form-control form-control-sm" id="ruleTrnChannel"
+																name="ruleTrnChannel" value=""
+																placeholder="Rule Transaction Channel" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="ruleTrnSubChannel_label">Rule
+																Transaction Sub Channel </label> <input type="text"
+																class="form-control form-control-sm"
+																id="ruleTrnSubChannel" name="ruleTrnSubChannel" value=""
+																placeholder="Rule Trn Sub Channel" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="ruleAggType_label">Rule Aggregate
+																Type</label> <input type="text"
+																class="form-control form-control-sm" id="ruleAggType"
+																name="ruleAggType" value=""
+																placeholder="Rule Aggregate Type" readonly>
+														</div>
+													</div>
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="actionStatus_label">Record Status</label> <input
+																type="text" class="form-control form-control-sm"
+																id="actionStatus" name="actionStatus" value=""
+																placeholder="Record Status" readonly>
+														</div>
+													</div>
+												</div>
+												<div class="card card-info bg-cyan p-2 mt-1">
+													<h3 class="card-title">&nbsp; Details for Rule
+														Threshold</h3>
+												</div>
+												<div class="row" id="ruleThresRow">
+													<div class="col-sm-12 table-responsive">
+														<div class="card card-outline card-secondary">
+															<div class="card-header">
+																<h3 class="card-title">Rule Threshold</h3>
+															</div>
+															<div class="card-body">
+																<table class="table table-bordered ruleThresDtls"
+																	id="ruleThresDtls" style="width: 100%">
+																	<tr>
+																		<th scope="col">Rule Id</th>
+																		<th scope="col">Rule Parameter</th>
+																		<th scope="col">Rule Key</th>
+																	</tr>
+																	<tbody id="tbodyR">
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="card card-info bg-cyan p-2 mt-1">
+													<h3 class="card-title">&nbsp; Details for Rule Risk
+														Parameter</h3>
+												</div>
+												<div class="row" id="ruleRiskRow">
+													<div class="col-sm-12 table-responsive">
+														<div class="card card-outline card-secondary">
+															<div class="card-header">
+																<h3 class="card-title">Rule Risk Parameter</h3>
+															</div>
+															<div class="card-body">
+																<table class="table table-bordered ruleRiskDtls"
+																	id="ruleRiskDtls" style="width: 100%">
+																	<tr>
+																		<th scope="col">Rule Risk Id</th>
+																		<th scope="col">Risk Parameter</th>
+																		<th scope="col">Risk value</th>
+																	</tr>
+																	<tbody id="tbodyRiskR">
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="card-footer">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+								<div class="modal fade bd-example-modal-lg" id="exampleModal"
+									tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+									aria-hidden="true">
+									<div class="modal-dialog modal-lg" role="document">
+										<div class="modal-content">
+											<input type="hidden" id="encryptedJson" name="encryptedJson" />
+											<input type="hidden" id="hdnUcic" name="hdnUcic"
+												th:value="${alertData.ucicId}" />
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title" id="exampleModalLabel">Mail
+													Content</h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<table class="table table-sm table-bordered ">
+													<tr>
+														<td class="bg-secondary text-center"><label
+															for="recipient-name" class="col-form-label">Select
+																Customer Id </label></td>
+														<td colspan="2"><select class="select2 "
+															name="custIdList" id="custIdList"
+															data-placeholder="Select Customer Id"
+															style="width: 100%;">
+																<option value=''>Select Customer Id</option>
+																<option th:each="custObj : ${alertData.custDataList}"
+																	th:value="${custObj.custId} + '~' +${ custObj.custFullName} +'~'+${ custObj.branchMail}"
+																	class="text-capitalize"
+																	th:text="${custObj.custId} + '-' +${#strings.toUpperCase(custObj.custFullName)}"></option>
+														</select></td>
+													</tr>
+													<tr>
+														<td class="bg-secondary text-center"><label
+															for="recipient-name" class="col-form-label">To </label></td>
+														<td colspan="2"><input type="text" id="emailTo"
+															class="form-control" name="emailTo"></td>
+													</tr>
+													<tr>
+														<td class="bg-secondary text-center"><label
+															for="recipient-name" class="col-form-label">CC </label></td>
+														<td colspan="2"><input type="text"
+															th:value="${mailcc}" class="form-control"
+															id="emailCC" name="emailCC"></td>
+													</tr>
+													<tr>
+														<td class="bg-secondary text-center"><label
+															for="message-text" class="col-form-label">Subject
+														</label></td>
+														<td colspan="2"><textarea class="form-control"
+																id="subject" name="subject"></textarea></td>
+													</tr>
+													<tr>
+														<td colspan=3 align="center"><textarea rows="10"
+																th:field="${userDto.mailContent}" cols="90"
+																id="messageData" name="messageData" class="form-control"
+																required> </textarea></td>
+													</tr>
+												</table>
+											</div>
+											<div class=" text-center">
+												<button type="button" class="btn btn-secondary"
+													data-dismiss="modal">Close</button>
+												<button type="button" class="btn btn-primary"
+													id="sendMailBtn">Send Mail</button>
+											</div>
+											<br>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="closemodal">
+									<input type="hidden" id="encryptedJsonClose"
+										name="encryptedJson" /> <input type="hidden" id="action"
+										name="action" />
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">User Comments For</h5>
+												&nbsp;
+												<h5 class="modal-title text-bold text-orange" id="actModal"></h5>
+												&nbsp;
+												<h5 class="modal-title">Action</h5>
+												<h5 class="modal-title" id="ucicId"></h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<!-- form start -->
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<textarea class="form-control" name="alertComment"
+																rows="5" maxlength="3000"
+																placeholder="Provide Your Comments" id="alertComment"></textarea>
+														</div>
+													</div>
+												</div>
+												<!-- /.row -->
+											</div>
+											<div class="card-footer">
+												<a class="btn btn-info" id="finalAct"
+													th:onclick="finalSubmit()"> <em class="fas fa-save"
+													style="padding: 0 7px 0 0px;"></em>Submit
+												</a>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade bd-example-modal-xl" id="eddModal"
+									tabindex="-1" role="dialog" aria-labelledby="eddModalLabel"
+									aria-hidden="true">
+									<div class="modal-dialog modal-xl" role="document">
+										<div class="modal-content">
+											<input type="hidden" id="encryptedJson" name="encryptedJson" />
+											<input type="hidden" id="hdnUcic" name="hdnUcic"
+												th:value="${alertData.ucicId}" />
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title" id="exampleModalLabel">PRE EDD
+													For UCIC Number -</h5>
+												<h5 class="modal-title" id="exampleModalLabel"
+													th:text="${alertData.ucicId}"></h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<table class="table table-sm table-bordered ">
+													<tr
+														style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 123, 250, 0.5));">
+														<td class="text-center"><label for="recipient-name"
+															class="col-form-label">Select EDD Type </label> <code>*</code></td>
+														<td colspan="2"><select class="select2 "
+															name="eddType" id="eddType"
+															data-placeholder="Select EDD Type" style="width: 100%;">
+																<option value='' selected>Select EDD Type</option>
+																<option value='C'>Customer Id Base</option>
+																<option value='A'>Account Number Base</option>
+														</select></td>
+														<td class=" text-center"><label for="recipient-name"
+															class="col-form-label">Select Customer Id </label> <code>*</code></td>
+														<td colspan="2"><select class="select2 "
+															name="eddCustIdList" id="eddCustIdList"
+															data-placeholder="Select Customer Id"
+															style="width: 100%;">
+																<option value=''>Select Customer Id</option>
+																<option value='NA'>NA</option>
+																<option th:each="custObj : ${alertData.custDataList}"
+																	th:value="${custObj.custId} + '~' +${ custObj.custFullName} +'~'+${custObj.branchId}"
+																	class="text-capitalize"
+																	th:text="${custObj.custId} + '-' +${#strings.toUpperCase(custObj.custFullName)}"></option>
+														</select></td>
+													</tr>
+													<tr
+														style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 123, 250, 0.5));">
+														<td class="text-center"><label for="recipient-name"
+															class="col-form-label">Select Branch Id </label> <code>*</code></td>
+														<td colspan="2"><select class="select2 "
+															name="branchIdList" id="branchIdList"
+															data-placeholder="Select Branch Id" style="width: 100%;">
+																<option value=''>Select Branch Id</option>
+														</select></td>
+														<td class="text-center"><label for="recipient-name"
+															class="col-form-label">Select Action </label> <code>*</code></td>
+														<td colspan="2"><select class="select2 "
+															name="alertAction" id="alertAction"
+															data-placeholder="Select Action" style="width: 100%;">
+																<option value=''>Select Action</option>
+																<option value='H'>Hold</option>
+																<option value='C'>Not Suspicious</option>
+																<option value='U'>Suspicious</option>
+																<option value='R' th:if="${userDto.raiseStrFlg}">Raise
+																	STR</option>
+																<option value='E' th:if="${userDto.escBackFlg}">Escalate
+																	Back</option>
+														</select></td>
+													</tr>
+													<tr>
+														<td colspan="6"><textarea class="form-control"
+																name="alertCommentText" rows="3" maxlength="3000"
+																placeholder="Provide Your Comments"
+																id="alertCommentText"></textarea></td>
+													</tr>
+													<tr>
+														<td colspan="6" class="bg-teal text-center text-bold"
+															style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">Select
+															EDD</td>
+													</tr>
+													<tr>
+														<td colspan="6"><table id="eddTab"
+																class="table table-sm table-head-fixed table-bordered table-striped">
+																<thead>
+																	<tr>
+																		<th scope="col">EDD Id</th>
+																		<th scope="col">EDD Description</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr th:each="testMasterObj:${userDto.eddDto.testList}">
+																		<td th:id="${testMasterObj.testId}"><input
+																			type="checkbox" th:id="${testMasterObj.testId}"
+																			name="eddCheck" class="eddCheck"> <a
+																			th:id="${testMasterObj.testId}" href="#"
+																			class="eddView" th:text="${testMasterObj.testId}">
+																		</a></td>
+																		<td th:text="${testMasterObj.testDescription}"
+																			class="text-capitalize"></td>
+																	</tr>
+																</tbody>
+															</table></td>
+													</tr>
+												</table>
+
+												<div class=" text-left">
+													<button type="button" class="btn btn-sm btn-secondary"
+														data-dismiss="modal">Close</button>
+													<button type="button" class="btn btn-sm btn-primary"
+														onclick="eddSubmit()" id="sendEddBtn">Send EDD</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="viewAlertModel">
+									<input type="hidden" id="encryptedJsonFile"
+										name="encryptedJson" />
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Alert ID - <span id="alertIdLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row" id="ruleThresRow">
+													<div class="col-sm-12">
+														<div class="card card-outline card-secondary">
+															<div class="card-header">
+																<h3 class="card-title">Alert Details</h3>
+															</div>
+															<div class="card-body  table-responsive">
+																<table class="table table-bordered alertDtls table-sm"
+																	id="alertDtls" style="width: 100%">
+																	<thead id="alertDtlsHead">
+																	</thead>
+																	<tbody id="alertDtlsBody">
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="card-footer">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+
+								<div class="modal fade" id="eddViewModal">
+									<input type="hidden" id="encryptedJsonFile"
+										name="encryptedJson" />
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													EDD ID - <span id="eddIdLabel"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row" id="ruleThresRow">
+													<div class="col-sm-12">
+														<div class="card card-outline card-secondary">
+															<div class="card-header">
+																<h3 class="card-title">EDD Details</h3>
+															</div>
+															<div class="card-body table-responsive">
+																<div class="row">
+																	<div class="col-sm-12" id="testDesc">
+																		<div class="form-group">
+																			<label for="DocDesc">EDD Description</label>
+																			<div class="input-group mb-2">
+																				<textarea class="form-control form-control-sm"
+																					id="testDescription" name="testDescription"
+																					rows="2" readonly></textarea>
+
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="ruleId">EDD Category</label>
+																			<div class="input-group">
+																				<input type="text" id="eddCat"
+																					class="form-control form-control-sm text-bold text-capitalize"
+																					readonly>
+																			</div>
+																		</div>
+																	</div>
+																	<div class="col-sm-6">
+																		<div class="form-group">
+																			<label for="subTestCategory">EDD Sub Category
+																			</label>
+																			<div class="input-group">
+																				<input type="text" id="eddSubCat"
+																					class="form-control form-control-sm text-bold text-capitalize"
+																					readonly>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-sm-12">
+																		<div class="form-group">
+																			<label for="DocDesc">EDD Instruction </label>
+																			<div class="input-group mb-2">
+																				<textarea class="form-control form-control-sm"
+																					id="TestInstruction" name="TestInstruction"
+																					rows="2" placeholder="Edd Instruction" readonly></textarea>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="row">
+																	<div class="col-sm-12" id="">
+																		<div class="form-group">
+																			<label for="DocDesc">EDD Questions </label>
+																			<div class="row table-responsive">
+																				<table id="eddQueTab"
+																					class="table table-sm table-head-fixed table-bordered table-striped">
+																					<thead>
+																						<tr>
+																							<th scope="col">QUESTION</th>
+																							<th scope="col">QUESTION_TYPE</th>
+																							<th scope="col">OPTIONS</th>
+																						</tr>
+																					</thead>
+																					<tbody id="eddTbody">
+
+																					</tbody>
+																				</table>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="card-footer">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+								<div class="modal fade" id="LedgerStmtModal">
+									<div class=" modal-dialog modal-xl" style="width: 100%">
+										<div class=" card modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">Ledger Account Statement For
+													Account No :</h5>
+												<h5 class="modal-title" id="ledgeAcctStmtNo"></h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group row">
+															<div class="row col-sm-12">
+																<div class="col-sm-3">
+																	<label for="Select Parameter">Transaction Type
+																		<code>*</code>
+																	</label> <select class="form-control-sm select2"
+																		name="tranType" id="ledgeTranType"
+																		data-placeholder="Select Parameter"
+																		style="width: 100%;">
+																		<option value="A">All</option>
+																		<option value="C">Cash</option>
+																		<option value="T">Transfer</option>
+																		<option value="L">Clearing</option>
+																	</select>
+																</div>
+																<div class="col-sm-2">
+																	<label for="Select Parameter">Credit/Debit</label> <select
+																		class="form-control-sm select2" name="creDebFlg"
+																		id="ledgeCreDebFlg"
+																		data-placeholder="Select Parameter"
+																		style="width: 100%;">
+																		<option value='B' selected>Both</option>
+																		<option value='C'>Credit</option>
+																		<option value='D'>Debit</option>
+																	</select>
+																</div>
+																<div class="col-sm-3 ">
+																	<label for="Select Parameter">From Date</label>
+																	<div class="input-group date"
+																		data-target-input="nearest">
+																		<input type="text"
+																			class="form-control form-control-sm datetimepicker-input"
+																			placeholder="Start Date" name="ledgeStartDate"
+																			id="ledgeStartDate" data-target="#ledgeStartDate"
+																			onkeydown="return false" />
+																		<div class="input-group-append"
+																			data-target="#ledgeStartDate"
+																			data-toggle="datetimepicker">
+																			<div class="input-group-text">
+																				<em class="far fa-calendar-alt"></em>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-3">
+																	<label for="Select Parameter">End Date</label>
+																	<div class="input-group date"
+																		data-target-input="nearest">
+																		<input type="text"
+																			class="form-control form-control-sm  datetimepicker-input"
+																			placeholder="End Date" name="ledgeEndDate"
+																			id="ledgeEndDate" data-target="#ledgeEndDate"
+																			onkeydown="return false" />
+																		<div class="input-group-append"
+																			data-target="#ledgeEndDate"
+																			data-toggle="datetimepicker">
+																			<div class="input-group-text">
+																				<em class="far fa-calendar-alt"></em>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+																<div class="col-sm-1">
+																	<input type="hidden" name="ledgeAcidId"
+																		id="ledgeAcidId"> <label for="search">&nbsp;</label>
+																	<div>
+																		<a class="btn btn-outline-info btn-sm " href="#"
+																			id="search" title="Search"
+																			onclick="LedgerSearchData()"> <em
+																			class="fas fa-search fa-1x text-black"></em>
+																		</a>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="modal-body row justify-content-center">
+												<div class="col-auto table-responsive">
+													<table id="ledgerAcctStmt"
+														class="table table-head-fixed table-bordered table-striped"
+														style="width: 100%">
+														<caption></caption>
+														<thead>
+															<tr>
+																<td class="thHead text-bold" scope="col"
+																	style="width: 50%;">Tran Date</td>
+																<th class="thHead text-bold" scope="col">Tran ID</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Particular</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Remarks</th>
+																<th class="thHead text-bold" scope="col">Tran Type</th>
+																<th class="thHead text-bold" scope="col">Debit</th>
+																<th class="thHead text-bold" scope="col">Credit</th>
+																<th class="thHead text-bold" scope="col">EOD
+																	balance</th>
+															</tr>
+														</thead>
+														<tbody>
+														</tbody>
+													</table>
+													<table id="noDataTab"
+														class="table table-head-fixed table-bordered table-striped"
+														style="display: none">
+														<caption></caption>
+														<thead>
+															<tr>
+																<td class="thHead text-bold" scope="col"
+																	style="width: 50%;">Transaction Date</td>
+																<th class="thHead text-bold" scope="col">Transaction
+																	ID</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Particular</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Remarks</th>
+																<th class="thHead text-bold" scope="col">Transaction
+																	Type</th>
+																<th class="thHead text-bold" scope="col">Debit
+																	Amount</th>
+																<th class="thHead text-bold" scope="col">Credit
+																	Amount</th>
+																<th class="thHead text-bold" scope="col">End of day
+																	balance</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr class="mainTab">
+																<td colspan="3" style="text-align: center;">No Data
+																	Available</td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+
+										</div>
+									</div>
+								</div>
+								<div class="modal fade" id="viewAccfModal">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header "
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												<h5 class="modal-title">
+													Alert Criticality Classification Framework Risk - <span
+														id="ucicNo"></span>
+												</h5>
+												<button type="button" class="close text-white"
+													data-dismiss="modal" aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+												<div class="row col-sm-12 text-center">
+													<div class="col-sm-12">
+														<table id="accfTab"
+															class="table table-sm table-head-fixed table-bordered table-striped "
+															style="width: 100%">
+															<tr>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Rule Category</th>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Category Weight</th>
+																<th scope="col" colspan="3"
+																	style="background-color: #bba7c2">Alert Details</th>
+																<th scope="col" style="background-color: #bba7c2">Percentage</th>
+																<th scope="col" style="background-color: #bba7c2">Calculated
+																	Weight</th>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Category Risk</th>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Total Category
+																	Weight</th>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Derived Risk</th>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Customer Risk</th>
+																<th scope="col" rowspan="2"
+																	style="background-color: #bba7c2">Final Risk</th>
+															</tr>
+															<tr>
+																<th scope="col" style="background-color: #bba7c2">
+																	Risk Type</th>
+																<th scope="col" style="background-color: #bba7c2">
+																	Alert Count</th>
+																<th scope="col" style="background-color: #bba7c2">
+																	Penalise Count</th>
+																<th scope="col" style="background-color: #bba7c2">
+																	(Total Penalise/Total Alert)*100</th>
+																<th scope="col" style="background-color: #bba7c2">
+																	(Category Weight*Percentage)/100</th>
+
+															</tr>
+															<tbody id="tBodyAccf">
+															</tbody>
+														</table>
+													</div>
+												</div>
+												<br>
+												<div class="card-footer table-sm">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+													</button>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-footer -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</section>
+			</form>
+
+		</div>
+		<!-- /.content-wrapper -->
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/alertinvestigate.js}"></script>
+	<script th:src="@{/dist/appjs/erm/filedownload.js}"></script>
+	<script th:src="@{/dist/appjs/aml/accfRisk.js}"></script>
+	<script>
+		//Pagination
+		var pageSize = 1;
+
+		var pageCount = $(".line-content").length / pageSize;
+
+		for (var i = 0; i < pageCount; i++) {
+			$("#pagin").append('<li><a href="#">' + (i + 1) + '</a></li> ');
+		}
+		$("#pagin li").first().find("a").addClass("current")
+		showPage = function(page) {
+			$(".line-content").hide();
+			$(".line-content").each(function(n) {
+				if (n >= pageSize * (page - 1) && n < pageSize * page)
+					$(this).show();
+			});
+		}
+
+		showPage(1);
+
+		$("#pagin li a").click(function() {
+			$("#pagin li a").removeClass("current");
+			$(this).addClass("current");
+			showPage(parseInt($(this).text()))
+		});
+
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+			bsCustomFileInput.init();
+		})
+
+		//
+		$(function() {
+			$("#eddTab").DataTable({
+				"columnDefs" : [ {
+					orderable : false
+				} ],
+				"responsive" : false,
+				"lengthMenu" : [ 3, 8, 12, 16 ],
+				"autoWidth" : true,
+				"searching" : true,
+				"fixedHeader" : true,
+				"language" : {
+					"emptyTable" : "No Data Available"
+				}
+			});
+
+		});
+	</script>
+</body>
+</html>

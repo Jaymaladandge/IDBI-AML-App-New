@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"> </title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini sidebar-collapse layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Top Risk</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Top Risk</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-12">
+							<!-- <form class="form-horizontal" id="topriskfrm"> -->
+							<div class="invoice p-3 mb-3">
+								<div class="card card-tabs">
+									<div class="card-header p-2">
+										<ul class="nav nav-tabs">
+											<li class="nav-item"><a
+												class="nav-link bg-secondary active" href="#activity"
+												id="summarylink" data-toggle="tab"><i
+													class="fas fa-list-ul text-white">&nbsp;List</i> </a></li>
+											<li class="nav-item"><a class="nav-link bg-secondary"
+												href="#timeline" id="timelinelink" data-toggle="tab"
+												style="display: none"><i
+													class="fas fa-history text-white">&nbsp;Log</i></a></li>
+
+										</ul>
+									</div>
+									<!-- /.card-header -->
+									<div class="card-body">
+										<div class="tab-content">
+											<div class="active tab-pane" id="activity">
+												<div class="row">
+													<div class="col-12">
+														<a th:href="@{/createTopRisk}"><button
+																class="btn bg-teal float-left"
+																style="margin-right: 5px;"
+																title="Create Top Risk">
+																<i class="fas fa-plus-square"></i>
+															</button></a>
+													</div>
+												</div>
+												<br>
+												<div class="row">
+													<div class="col-sm-3">
+														<label for="Select Parameter">Select Parameter</label> <select
+															class="select2" name="dimension" id="dimension"
+															data-placeholder="Select Parameter" style="width: 100%;">
+															<option value=''>Select</option>
+															<option value='risk-id'>Top Risk Id</option>
+															<option value='theme'>Theme</option>
+															<option value='department'>Department</option>
+															<option value='kri-id'>KRI Id</option>
+															<option value='status'>Status</option>
+															<option value='edit'>Edited In Last (X) Days</option>
+															<option value='create'>Created In Last (X) Days</option>
+															<option value='approve'>Activated In Last (X)
+																Days</option>
+															<option value='approve'>Closed In Last (X) Days</option>
+														</select> <br> <br>
+													</div>
+													<div class="col-sm-5">
+														<label for="Value">Value</label> <input type="text"
+															class="form-control form-control-sm"
+															name="searchcriteria" id="searchcriteria"
+															placeholder="Value">
+													</div>
+													<div class="col-sm-2">
+														<label for="Sort">Sort</label> <select class="select2"
+															name="sorting" id="sorting" data-placeholder="Sort"
+															style="width: 100%;">
+															<option value=''>Sort</option>
+															<option value='a'>Ascending</option>
+															<option value='d'>Descending</option>
+															<option value='n'>None</option>
+														</select> <br> <br>
+													</div>
+													<div class="col-sm-2">
+														<label for="Sort"></label> <a class="text-info" href="#"><h3>
+																<i class="fab fa-searchengin"></i>
+															</h3></a><br>
+													</div>
+
+
+
+												</div>
+												<!-- /.row -->
+
+												<div class="row">
+													<div class="col-sm-12">
+														<table id="toprisktable"
+															class="table table-head-fixed table-bordered table-striped">
+															<thead>
+																<tr>
+																	<th>Top Risk ID</th>
+																	<th>Theme</th>
+																	<th>Description</th>
+																	<th>Status</th>
+																	<th>Date</th>
+																	<th></th>
+																	<th></th>
+																	<th></th>
+																</tr>
+															</thead>
+															<tbody>
+																<tr>
+																	<td><a href="#" data-toggle="modal"
+																		data-target="#topriskdetailsmodal">LIC04058921007610</a></td>
+																	<td>Top Line Growth</td>
+																	<td>Inappropriate execution of business strategy
+																		1) Inability to attract and retain key agents/ key
+																		sales personnel. 2) Inability to maintain relationship
+																		with Corporate Agents 3) Inability to retain existing
+																		customer base and appropriately utilize existing
+																		database for cross selling 4) Inability to provide
+																		appropriate and timely customer service</td>
+																	<td><span class="badge bg-success">Open</span></td>
+																	<td>20/10/2021</td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple"
+																			th:href="@{/modifyTopRisk}" title="Edit"> <i
+																				class="fa fa-edit fa-1x text-black"></i></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-maroon" href="#" title="Log">
+																				<i class="fa fa-history fa-1x text-black"></i>
+																		</a></span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-navy" href="#"
+																			data-toggle="modal" data-target="#closemodal"
+																			title="Close"><i class="fas fa-times-circle"></i></a></span></td>
+																</tr>
+																<tr>
+																	<td><a href="#" data-toggle="modal"
+																		data-target="#topriskdetailsmodal">LIC04058921007613</a></td>
+																	<td>Persistency</td>
+																	<td>Lower than expected persistency likely to
+																		impact profitability.</td>
+																	<td><span class="badge bg-success">Open</span></td>
+																	<td>21/10/2020</td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple "
+																			th:href="@{/modifyTopRisk}" title="Edit"> <i
+																				class="fa fa-edit fa-1x text-black"></i></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-maroon" href="#" title="Log">
+																				<i class="fa fa-history fa-1x text-black"></i>
+																		</a></span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-navy" href="#"
+																			data-toggle="modal" data-target="#closemodal"
+																			title="Close"><i class="fas fa-times-circle"></i></a></span></td>
+																</tr>
+																<tr>
+																	<td><a href="#" data-toggle="modal"
+																		data-target="#topriskdetailsmodal">LIC04058921007614</a></td>
+																	<td>Human Resources</td>
+																	<td>Lack of succession planning for key positions
+																		/ levels [especially since retirement of senior
+																		management and high performing sales team members
+																		(SBAs) in next 5-10 years</td>
+																	<td><span class="badge bg-danger">Closed</span></td>
+																	<td>25/10/2021</td>
+																	<td class="project-actions text-center"><span>
+																			<a class="btn btn-sm bg-purple disabled"
+																			th:href="@{/modifyTopRisk}" title="Edit"> <i
+																				class="fa fa-edit fa-1x text-black"></i></a>
+																	</span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-maroon" href="#" title="Log">
+																				<i class="fa fa-history fa-1x text-black"></i>
+																		</a></span></td>
+																	<td class="project-actions text-center"><span><a
+																			class="btn btn-sm bg-navy disabled" href="#"
+																			data-toggle="modal" data-target="#closemodal"
+																			title="Close" ><i class="fas fa-times-circle"></i></a></span></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+													<!-- /.col -->
+												</div>
+												<!-- /.row -->
+
+
+
+											</div>
+											<!-- /.tab-pane -->
+											<div class="tab-pane" id="timeline">
+												<div class="timeline timeline-inverse">
+													<!-- timeline time label -->
+													<div class="time-label">
+														<span class="bg-warning"> 14 May 2021 </span>
+													</div>
+													<!-- /.timeline-label -->
+
+
+													<!-- timeline item -->
+													<div>
+														<i class="fas fa-comments bg-warning"></i>
+
+														<div class="timeline-item">
+															<span class="time"><i class="far fa-clock"></i> 27
+																mins ago</span>
+
+															<h3 class="timeline-header">
+																<a href="#">Akshay Mhatre</a> approved the record.
+															</h3>
+
+															<div class="timeline-body">Top risk Verified
+																Successfully.</div>
+
+														</div>
+													</div>
+													<!-- END timeline item -->
+
+
+													<!-- timeline item -->
+													<div>
+														<i class="fas fa-comments bg-warning"></i>
+
+														<div class="timeline-item">
+															<span class="time"><i class="far fa-clock"></i> 1
+																day ago</span>
+
+															<h3 class="timeline-header">
+																<a href="#">Rohit Singh</a> edited the record.
+															</h3>
+
+															<div class="timeline-body">Top risk Details
+																Modified Successfully.</div>
+
+														</div>
+													</div>
+													<!-- END timeline item -->
+
+
+
+													<div>
+														<i class="far fa-clock bg-gray"></i>
+													</div>
+												</div>
+												<!-- /.tab-pane -->
+											</div>
+										</div>
+										<!-- /.tab-content -->
+									</div>
+									<!-- /.card-body -->
+								</div>
+								<!-- /.card -->
+								<!-- KRI Details Modal -->
+								<div class="modal fade" id="topriskdetailsmodal">
+									<div class="modal-dialog modal-xl">
+										<div id="deptId"></div>
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h5 class="modal-title">Top Risk ID : LIC04058921007610</h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="card-body">
+
+												<!-- create row -->
+												<div class="row invoice-info">
+													<div class="col-sm-4 invoice-col">
+														<label for="Theme">Theme</label> <input type="text"
+															class="form-control form-control-sm col-10 text-bold "
+															id="theme" name="theme" value="Persistency" readonly>
+														<br>
+													</div>
+
+													<div class="col-sm-8 invoice-col">
+														<label for="Description">Description</label>
+														<textarea class="form-control form-control-sm"
+															name="description" id="description"
+															placeholder="Description" rows="2" cols="3000"
+															maxlength="3000" disabled>Lack of succession planning for key positions / levels [especially since retirement of senior management and high performing sales team members (SBAs) in next 5-10 years</textarea>
+														<br>
+													</div>
+													<div class="row col-sm-12">
+														<div class="col-sm-12">
+															<label for="file upload">File Details</label>
+															<table class="table uploadTable">
+																<thead>
+																	<tr>
+																		<th>File Name</th>
+																		<th>File Size</th>
+																		<th>Upload By</th>
+																		<th>Upload Date</th>
+																		<th></th>
+																		<th></th>
+																	</tr>
+																</thead>
+																<tbody>
+																	<tr>
+																		<td>Functional-requirements.docx</td>
+																		<td>49.8005 kb</td>
+																		<td>Rohit Singh</td>
+																		<td>10/05/2021</td>
+																		<td class="text-right py-0 align-middle">
+																			<div class="btn-group btn-group-sm">
+																				<a href="#" class="btn btn-info"><i
+																					class="fas fa-download"></i></a>
+																			</div>
+																		</td>
+																		<td></td>
+																</tbody>
+															</table>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-md-12">
+															<!-- <div class="card card-outline "> -->
+
+															<label>Department Details</label>
+															<div class="card-body deptclass">
+
+																<div class="card card-primary card-outline">
+																	<div class="card-header">
+																		<h5 class="card-title">Marketing</h5>
+																	</div>
+																	<div class="card-body">
+																		<div class="row">
+																			<div class=" card-outline ">
+																				<div class="card-body">
+																					<div class=" card-primary card-outline">
+																						<div class="card-header">
+																							<h5 class="card-title">Central Office</h5>
+
+																						</div>
+																						<div class="card-body">
+																							<div class="row">
+																								<table id="kriedittab"
+																									class="table centraloffice table-head-fixed table-bordered table-striped">
+																									<thead>
+																										<tr>
+																											<th>KRI ID</th>
+																											<th>KRI Name</th>
+																											<th class="text-danger">Red</th>
+																											<th class="text-warning">Amber</th>
+																											<th class="text-success">Green</th>
+																											<th>KRI Weight</th>
+																										</tr>
+																									</thead>
+																									<tbody>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567890</a></td>
+																											<td>Percentage in variation in net
+																												addition (of agents) from target</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567890" value="10"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567890" value="50"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567890" value="100"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm centralofficeweight"
+																												value="40"
+																												onblur="updateCummWt('centralofficeweight','centralofficecummWt','centralofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567891</a></td>
+																											<td>Delay in mission critical projects</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567891" value="20"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567891" value="60"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567891" value="80"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm centralofficeweight"
+																												value="60"
+																												onblur="updateCummWt('centralofficeweight','centralofficecummWt','centralofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																									</tbody>
+																								</table>
+																							</div>
+																						</div>
+																						<div class="card-footer text-green">
+																							<label><i class="fas fa-dumbbell"></i>&nbsp;Cumulative
+																								KRI Weight - </label> <label id="centralofficecummWt">100</label><label
+																								id="centralofficewt">%</label>
+																						</div>
+																						<!-- /.card-footer -->
+																					</div>
+																					<div class=" card-primary card-outline">
+																						<div class="card-header">
+																							<h5 class="card-title">Zonal Office</h5>
+
+																						</div>
+																						<div class="card-body">
+																							<div class="row">
+																								<table id="kriedittab"
+																									class="table table-head-fixed table-bordered table-striped">
+																									<thead>
+																										<tr>
+																											<th>KRI ID</th>
+																											<th>KRI Name</th>
+																											<th class="text-danger">Red</th>
+																											<th class="text-warning">Amber</th>
+																											<th class="text-success">Green</th>
+																											<th>KRI Weight</th>
+																										</tr>
+																									</thead>
+																									<tbody>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567890</a></td>
+																											<td>Percentage in variation in net
+																												addition (of agents) from target</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567890" value="10"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567890" value="50"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567890" value="100"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm zonalofficeweight"
+																												value="40"
+																												onblur="updateCummWt('zonalofficeweight','zonalofficecummWt','zonalofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567891</a></td>
+																											<td>Delay in mission critical projects</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567891" value="20"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567891" value="60"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567891" value="80"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm zonalofficeweight"
+																												value="60"
+																												onblur="updateCummWt('zonalofficeweight','zonalofficecummWt','zonalofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																									</tbody>
+																								</table>
+																							</div>
+																						</div>
+																						<div class="card-footer text-green">
+																							<label><i class="fas fa-dumbbell"></i>&nbsp;Cumulative
+																								KRI Weight - </label> <label id="zonalofficecummWt">100</label><label
+																								id="zonalofficewt">%</label>
+																						</div>
+																						<!-- /.card-footer -->
+
+
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+
+																</div>
+																<div class="card card-primary card-outline">
+																	<div class="card-header">
+																		<h5 class="card-title">Audit</h5>
+																	</div>
+																	<div class="card-body">
+																		<div class="row">
+																			<div class=" card-outline ">
+																				<div class="card-body">
+																					<div class=" card-primary card-outline">
+																						<div class="card-header">
+																							<h5 class="card-title">Central Office</h5>
+
+																						</div>
+																						<div class="card-body">
+																							<div class="row">
+																								<table id="kriedittab"
+																									class="table centraloffice table-head-fixed table-bordered table-striped">
+																									<thead>
+																										<tr>
+																											<th>KRI ID</th>
+																											<th>KRI Name</th>
+																											<th class="text-danger">Red</th>
+																											<th class="text-warning">Amber</th>
+																											<th class="text-success">Green</th>
+																											<th>KRI Weight</th>
+																										</tr>
+																									</thead>
+																									<tbody>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567890</a></td>
+																											<td>Percentage in variation in net
+																												addition (of agents) from target</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567890" value="10"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567890" value="50"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567890" value="100"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm centralofficeweight"
+																												value="40"
+																												onblur="updateCummWt('centralofficeweight','centralofficecummWt','centralofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567891</a></td>
+																											<td>Delay in mission critical projects</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567891" value="20"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567891" value="60"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567891" value="80"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm centralofficeweight"
+																												value="60"
+																												onblur="updateCummWt('centralofficeweight','centralofficecummWt','centralofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																									</tbody>
+																								</table>
+																							</div>
+																						</div>
+																						<div class="card-footer text-green">
+																							<label><i class="fas fa-dumbbell"></i>&nbsp;Cumulative
+																								KRI Weight - </label> <label id="centralofficecummWt">100</label><label
+																								id="centralofficewt">%</label>
+																						</div>
+																						<!-- /.card-footer -->
+																					</div>
+																					<div class=" card-primary card-outline">
+																						<div class="card-header">
+																							<h5 class="card-title">Zonal Office</h5>
+
+																						</div>
+																						<div class="card-body">
+																							<div class="row">
+																								<table id="kriedittab"
+																									class="table table-head-fixed table-bordered table-striped">
+																									<thead>
+																										<tr>
+																											<th>KRI ID</th>
+																											<th>KRI Name</th>
+																											<th class="text-danger">Red</th>
+																											<th class="text-warning">Amber</th>
+																											<th class="text-success">Green</th>
+																											<th>KRI Weight</th>
+																										</tr>
+																									</thead>
+																									<tbody>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567890</a></td>
+																											<td>Percentage in variation in net
+																												addition (of agents) from target</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567890" value="10"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567890" value="50"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567890" value="100"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm zonalofficeweight"
+																												value="40"
+																												onblur="updateCummWt('zonalofficeweight','zonalofficecummWt','zonalofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																										<tr>
+																											<td><a href="#" data-toggle="modal"
+																												data-target="#kridetailsmodal">01234567891</a></td>
+																											<td>Delay in mission critical projects</td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="red-01234567891" value="20"
+																												name="red-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="amb-01234567891" value="60"
+																												name="amb-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm"
+																												id="gre-01234567891" value="80"
+																												name="gre-01234567890" readonly></td>
+																											<td><input type="text"
+																												class="form-control form-control-sm zonalofficeweight"
+																												value="60"
+																												onblur="updateCummWt('zonalofficeweight','zonalofficecummWt','zonalofficewt')"
+																												id="kw-01234567890" name="kw-01234567890"
+																												readonly></td>
+																										</tr>
+																									</tbody>
+																								</table>
+																							</div>
+																						</div>
+																						<div class="card-footer text-green">
+																							<label><i class="fas fa-dumbbell"></i>&nbsp;Cumulative
+																								KRI Weight - </label> <label id="zonalofficecummWt">100</label><label
+																								id="zonalofficewt">%</label>
+																						</div>
+																						<!-- /.card-footer -->
+
+
+																					</div>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+
+																</div>
+
+															</div>
+														</div>
+														<!-- /.col -->
+														<!-- /.col -->
+													</div>
+
+													<!-- /.row -->
+												</div>
+											</div>
+											<!-- /.card-body -->
+											<div class="card-footer"></div>
+											<!-- /.card-footer -->
+
+										</div>
+										<!-- /.modal-content -->
+									</div>
+									<!-- /.modal-dialog -->
+								</div>
+								<!-- Close Modal -->
+								<div class="modal fade" id="closemodal">
+									<div class="modal-dialog modal-xl">
+										<div class="modal-content">
+											<div class="modal-header bg-info">
+												<h5 class="modal-title">Closure Comment</h5>
+												<button type="button" class="close" data-dismiss="modal"
+													aria-label="Close">
+													<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+
+											<!-- form start -->
+
+											<div class="card-body">
+												<!-- /.tab-pane -->
+												<div class="tab-pane" id="comments">
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="comments">Reason For Closure <code>*</code></label>
+																<textarea class="form-control" name="reason"
+																	placeholder="Reason For Closure" id="reason"></textarea>
+															</div>
+														</div>
+													</div>
+													<div class="card-footer">
+														<button type="submit" id="submit" class="btn btn-info">
+															<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Submit
+														</button>
+													</div>
+													<!-- /.row -->
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+									<!-- /.Close modal -->
+							</div>
+							<!-- /.invoice -->
+
+							<!-- </form> -->
+							<!-- /.form -->
+
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script>
+		$(function() {
+			$("#toprisktable").DataTable({
+				"columnDefs" : [ {
+					orderable : false,
+					targets : [5, 6, 7 ]
+				} ],
+				"responsive" : true,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true,
+				"buttons" : [ "csv", "excel", "pdf", "print" ]
+			}).buttons().container().appendTo(
+					'#toprisktable_wrapper .col-md-6:eq(0)');
+		});
+	</script>
+	<script>
+		$(function() {
+			$("#audittrailTab").DataTable({
+				"responsive" : true,
+				"autoWidth" : true,
+				"searching" : false,
+				"fixedHeader" : true,
+				"buttons" : [ "csv", "excel", "pdf", "print" ]
+			}).buttons().container().appendTo(
+					'#audittrailTab_wrapper .col-md-6:eq(0)');
+		});
+	</script>
+	<script>
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+		})
+		$(document).ready(function() {
+
+			$("a .fa-history").click(function() {
+				$('#timelinelink').css('class', 'border');
+				$('#timelinelink').css('display', '');
+				$('#timelinelink').click();
+			});
+
+			$("#summarylink").click(function() {
+				$('#timelinelink').css('display', 'none');
+			});
+
+		});
+
+		$("#today").text(moment(new Date()).format('DD/MM/YYYY'));
+	</script>
+
+	<script type="text/javascript">
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			setTimeout(function() {
+				document.getElementById('load').style.visibility = "hidden";
+			}, 1000);
+		}
+	</script>
+	<!-- PAGE PLUGINS -->
+
+</body>
+</html>

@@ -1,0 +1,27 @@
+
+server:
+  port: 8084
+  ssl:
+    key-store-password: iengage
+    key-store: src/main/resources/certs/ebininfosoft-ssl-key.p12
+    key-store-type: PKCS12
+    protocol: TLS
+    ciphers: HIGH,MEDIUM,!MD5,!RC4
+  servlet:
+    contextPath: /aml-v4
+    session:
+      timeout: 300M
+      cookie:
+        http-only: true
+        secure: true
+        
+app-url:
+  uri: https://localhost:1112/
+  
+file-location:
+  loc: D:/OfficeDocs
+  
+erm-title:
+ title: i-AML
+ loginTitle: i-AML Login
+ copyRightTitle: i-AML Login

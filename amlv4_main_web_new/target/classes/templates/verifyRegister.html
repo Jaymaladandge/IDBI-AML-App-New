@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+.selectedRow{
+	color: #fff;
+	background-color: #044383 !important;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Home</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<!-- 								<li class="breadcrumb-item active">Risk Value Capture</li> -->
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+								<div class="card-header p-2">
+									<ul class="nav nav-tabs">
+										<li class="nav-item"><a
+											class="nav-link bg-secondary active" href="#activity"
+											id="summarylink" data-toggle="tab"><i
+												class="fas fa-list-ul text-white"></i>&nbsp;List</a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#timeline" id="timelinelink" data-toggle="tab"
+											style="display: none"><i class="fab fa-twitch text-white"></i>&nbsp;Audit
+												Trail - <span id="auditLabelId"> </span></a></li>
+										<li class="nav-item"><a class="nav-link bg-secondary"
+											href="#actionplan" id="actionplanlink" data-toggle="tab"
+											style="display: none"><i class="fas fa-tools text-white"></i>&nbsp;Action
+												Plan - <span id="actionLabelId"></span></a></li>
+									</ul>
+								</div>
+								<!-- /.row -->
+								<!-- Filter Table row -->
+								<!-- /.card-header -->
+								<div class="card-body">
+									<div class="tab-content">
+										<div class="active tab-pane" id="activity">
+
+											<!-- ./row -->
+
+
+											<input type="hidden" th:value="${message}" id="message" />
+
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<div class="card card-outline card-info">
+														<div class="card-header">
+
+															<select class="form-control form-control-sm select2 "
+																name="controlDept" id="selectDept"
+																data-placeholder="Department" style="width: 30%;">
+																<option class="text-capitalize"
+																	th:value="${DEPARTMENTID}" th:text="${DEPARTMENTNAME}"
+																	selected />
+
+																<option class="text-capitalize"
+																	th:each="deptList : ${deptList}"
+																	th:value="${deptList.deptId}"
+																	th:text="${deptList.deptName}" />
+															</select> <span id="themeerror"></span>
+
+															<!-- 															<form autocomplete="off" role="form" method="post" -->
+															<!-- 																th:action="@{/exportRegister}" id="export" -->
+															<!-- 																th:object="${encryptedRequest}"> -->
+															<!-- 																<input type="hidden" id="encryptedJsonExport" -->
+															<!-- 																	name="encryptedJson" /> <span class="float-right"><a -->
+															<!-- 																	class="btn text-white export" -->
+															<!-- 																	style="margin-right: 5px; background-color: #006400;" -->
+															<!-- 																	title="Create ControlLibrary"> <i -->
+															<!-- 																		class="fas fa-file-excel"></i>&nbsp;&nbsp;Export -->
+															<!-- 																</a></span> -->
+															<!-- 															</form> -->
+
+														</div>
+
+														<div class="card-body table-responsive">
+															<div></div>
+
+															<!-- 															<form autocomplete="off" role="form" method="post" -->
+															<!-- 																th:action="@{/inherentSaveAction}" -->
+															<!-- 																id="riskAssessmentFrm"> -->
+
+															<!-- 																<input type="hidden" id="encryptedJsonReg" -->
+															<!-- 																	name="encryptedJson" /> -->
+
+															<form class="form-horizontal" id="riskAssessmentFrm"
+																autocomplete="off"
+																th:action="@{/verifyInherentSaveAction}" method="post">
+																<input type="hidden" id="encryptedJsonVC"
+																	name="encryptedJson" /> <input type="hidden"
+																	id="userName" name="userName" th:value="${userName}" />
+																<input type="hidden" th:value="*{message}" id="message" />
+																<input type="hidden" name="userRole" id="userRole"
+																	th:value="${userRole}" th:name="clientName" /> <input
+																	type="hidden" id="reportingOfcId"
+																	th:value="${officeMaster.reportingOfficeCode}" /> <input
+																	type="hidden" id="officeId"
+																	th:value="${officeMaster.officeId}" />
+
+																<input type="hidden" th:value="${highLightId}" id="highLightId" >
+
+																<table id="controlTable"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+																	<thead>
+
+
+
+																		<!-- 																		<tr> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th colspan="2"> Inherent Risk</th> -->
+
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+																		<!-- 																			<th></th> -->
+
+
+
+																		<!-- 																		</tr> -->
+
+																		<tr>
+																			<th>Sr No.</th>
+																			<th>Risk ID</th>
+																			<th>Risk Function</th>
+																			<th>Department</th>
+																			<th>Risk Description</th>
+																			<th>Risk Classification</th>
+																			<th>SubRisk</th>
+																			<th>Risk Impact</th>
+
+																			<th>Probability of Risk</th>
+																			<th>Impact Value</th>
+
+																			<th>Inherent Risk Rating</th>
+																			<th>Control Description</th>
+																			<th>Control Owner</th>
+																			<th>Control Effectiveness</th>
+																			<th>Residual Risk Rating</th>
+																			<th>Record Status</th>
+																			<th>Action Plan</th>
+																			<th></th>
+																			<th></th>
+																			<th></th>
+
+
+
+																		</tr>
+
+																	</thead>
+
+																	<tbody class="registerBody">
+																		<tr th:each="register : ${register}">
+																			<td th:text="${register.srNo}"></td>
+																			<td><a class="text-blue viewControlModal"
+																				data-toggle="modal" href="#"
+																				th:id="${register.riskId}"
+																				th:text="${register.riskId}"> </a></td>
+
+																			<td th:text="${register.riskFunction}"></td>
+
+																			<td th:text="${register.riskDept}"></td>
+																			<td th:text="${register.riskDescription}"></td>
+																			<td th:text="${register.riskClassification}"></td>
+																			<td th:text="${register.subRiskClassification}"></td>
+																			<td th:text="${register.riskImpact}"></td>
+
+
+																			<td th:if="${register.inherentAssCapFlg == 'OPEN'}"><select
+																				class="form-control form-control-sm select2 text-capitalize ratingImpact"
+																				name="controlDept"
+																				th:id="'likelihood-'+${#strings.replace(register.riskId,'/','')}"
+																				data-placeholder="Likelihood Occurrence"
+																				style="width: 100%;" disabled>
+																					<option value=''>Select</option>
+																					<option
+																						th:text="${register.selectedLikelihood.probRiskEvent}"
+																						th:value="${register.selectedLikelihood.rating}"
+																						selected />
+																					<option class="float-center"
+																						th:each="likelihood : ${register.likelihoodRatingList}"
+																						th:value="${likelihood.rating}"
+																						th:text="${likelihood.probRiskEvent}" />
+
+
+																			</select> <span id="themeerror"></span></td>
+
+
+																			<td
+																				th:unless="${register.inherentAssCapFlg == 'OPEN'}">
+																				<select
+																				class="form-control form-control-sm select2 text-capitalize ratingImpact"
+																				name="controlDept"
+																				th:id="'likelihood-'+${#strings.replace(register.riskId,'/','')}"
+																				data-placeholder="Likelihood Occurrence"
+																				style="width: 100%;" disabled>
+																					<option value=''>Select</option>
+
+																					<option th:text="${register.probRiskEvent}"
+																						th:value="${register.probRiskEvent}" selected />
+
+																					<option th:each="likelihood : ${probablity}"
+																						th:value="${likelihood.rating}"
+																						th:text="${likelihood.probRiskEvent}" />
+
+
+																			</select> <span id="themeerror"></span>
+																			</td>
+
+
+
+
+																			<td th:if="${register.inherentAssCapFlg == 'OPEN'}"><select
+																				class="form-control form-control-sm select2 text-capitalize ratingImpact"
+																				name="controlAssessmentFreq"
+																				th:id="'impactRating-'+${#strings.replace(register.riskId,'/','')}"
+																				data-placeholder="Impact Rating"
+																				style="width: 100%;" disabled>
+																					<option value=''>Select</option>
+																					<option
+																						th:text="${register.selectedImpact.financeImpact}"
+																						th:value="${register.selectedImpact.rating}"
+																						selected></option>
+
+																					<option class="text-capitalize"
+																						th:each="impactRating : ${register.impactRatingScaleList}"
+																						th:value="${impactRating.rating}"
+																						th:text="${impactRating.financeImpact}" />
+
+																					<!-- 																					<option class="text-capitalize" -->
+																					<!-- 																						th:each="impactRating : ${impactList}" -->
+																					<!-- 																						th:value="${impactRating.rating}" -->
+																					<!-- 																						th:text="${impactRating.financeImpact}" /> -->
+																			</select> <span id="themeerror"></span></td>
+
+																			<td
+																				th:unless="${register.inherentAssCapFlg == 'OPEN'}"><select
+																				class="form-control form-control-sm select2 text-capitalize ratingImpact "
+																				name="controlAssessmentFreq"
+																				th:id="'impactRating-'+${#strings.replace(register.riskId,'/','')}"
+																				data-placeholder="Impact Rating"
+																				style="width: 100%;" disabled>
+																					<option value=''>Select</option>
+																					<option th:text="${register.financeImpact}"
+																						th:value="${register.financeImpact}" selected></option>
+
+																					<option class="text-capitalize"
+																						th:each="impactRating : ${impactList}"
+																						th:value="${impactRating.rating}"
+																						th:text="${impactRating.financeImpact}" />
+																			</select> <span id="themeerror"></span></td>
+
+
+
+																			<td th:unless="${register.severityLevel == 'NA'}">
+																				<span class="badge text-white"
+																				th:id="'inherentRiskResult-'+${#strings.replace(register.riskId,'/','')}"
+																				th:style="'background-color:'+${register.inherentRiskStatusCol}"
+																				data-assessmentDate="" data-assessmentValue=""
+																				th:text="${register.severityLevel}"> </span>
+
+																			</td>
+
+
+
+
+																			<td th:text="${register.controlDescription}"></td>
+																			<td th:text="${register.cntrlOwner}"></td>
+
+
+																			<td th:if="${register.inherentAssCapFlg == 'OPEN'}"><select
+																				class="form-control form-control-sm select2 text-capitalize cntrlAssessment"
+																				name="controlAssessmentFreq"
+																				th:data-hiddenId="${register.riskId}"
+																				th:id="'controlAssessment-'+${#strings.replace(register.riskId,'/','')}"
+																				data-placeholder="Control Assessment"
+																				style="width: 100%;" disabled>
+																					<option value=''>Select</option>
+																					<option class="text-capitalize"
+																						th:each="selectedcntrl : ${register.selectedControlEffectiveDto}"
+																						th:value="${selectedcntrl.effectiveValue}"
+																						th:text="${selectedcntrl.effectiveNess}" selected />
+
+																					<!-- 																					<option -->
+																					<!-- 																						th:each="cntrolEffect : ${register.cntrlEffectiveDto}" -->
+																					<!-- 																						th:value="${cntrolEffect.effectiveValue}" -->
+																					<!-- 																						th:text="${#strings.toLowerCase(cntrolEffect.effectiveNess)}" -->
+																					<!-- 																						class="text-capitalize float-center" /> -->
+
+																					<option
+																						th:each="cntrolEffect : ${register.cntrlEffectiveDto}"
+																						th:value="${cntrolEffect.effectiveValue}"
+																						th:text="${#strings.toLowerCase(cntrolEffect.effectiveNess)}"
+																						class="text-capitalize" />
+
+																			</select> <span id="themeerror"></span></td>
+
+
+																			<td
+																				th:unless="${register.inherentAssCapFlg == 'OPEN'}"><select
+																				class="form-control form-control-sm select2 text-capitalize cntrlAssessment"
+																				name="controlAssessmentFreq"
+																				th:data-hiddenId="${register.riskId}"
+																				th:id="'controlAssessment-'+${#strings.replace(register.riskId,'/','')}"
+																				data-placeholder="Control Assessment"
+																				style="width: 100%;" disabled>
+																					<option value=''>Select</option>
+																					<option class="text-capitalize"
+																						th:each="selectedcntrl : ${register.selectedControlEffectiveDto}"
+																						th:value="${selectedcntrl.effectiveValue}"
+																						th:text="${selectedcntrl.effectiveNess}" selected />
+
+																					<option
+																						th:each="cntrolEffect : ${register.cntrlEffectiveDto}"
+																						th:value="${cntrolEffect.effectiveValue}"
+																						th:text="${#strings.toLowerCase(cntrolEffect.effectiveNess)}"
+																						class="text-capitalize" />
+																			</select> <span id="themeerror"></span></td>
+
+
+
+
+																			<!-- 																			<td th:if="${register.cntrlEffectiveness == 'NA'}"> -->
+																			<!-- 																				<span class="badge text-white" -->
+																			<!-- 																				th:style="'background-color:'+${register.controlEffectivenessCol}">NA</span> -->
+																			<!-- 																			</td> -->
+
+																			<!-- 																			<td -->
+																			<!-- 																				th:if="${register.cntrlEffectiveness == 'partially effective'}"> -->
+																			<!-- 																				<span class="badge" -->
+																			<!-- 																				th:style="'background-color:'+${register.controlEffectivenessCol}" -->
+																			<!-- 																				th:text="${register.cntrlEffectiveness}"> </span> -->
+
+																			<!-- 																			</td> -->
+
+																			<!-- 																			<td -->
+																			<!-- 																				th:if="${register.cntrlEffectiveness == 'effective'}"> -->
+																			<!-- 																				<span class="badge text-white" -->
+																			<!-- 																				th:style="'background-color:'+${register.controlEffectivenessCol}" -->
+																			<!-- 																				th:text="${register.cntrlEffectiveness}"> </span> -->
+
+																			<!-- 																			</td> -->
+
+																			<!-- 																			<td -->
+																			<!-- 																				th:if="${register.cntrlEffectiveness == 'ineffective'}"> -->
+																			<!-- 																				<span class="badge text-white" -->
+																			<!-- 																				th:style="'background-color:'+${register.controlEffectivenessCol}" -->
+																			<!-- 																				th:text="${register.cntrlEffectiveness}"> </span> -->
+
+																			<!-- 																			</td> -->
+
+																			<!-- 																			<td -->
+																			<!-- 																				th:unless="${register.cntrlEffectiveness == 'ineffective' OR register.cntrlEffectiveness == 'effective' OR register.cntrlEffectiveness == 'partially effective' OR register.cntrlEffectiveness == 'NA'}"> -->
+																			<!-- 																				<span class="badge text-white bg-secondary" -->
+																			<!-- 																				th:text="${register.cntrlEffectiveness}"> </span> -->
+
+																			<!-- 																			</td> -->
+
+
+
+
+
+
+																			<!-- 																			<td -->
+																			<!-- 																				th:unless="${register.residualRiskRating == 'NA'}"> -->
+																			<!-- 																				<span class="badge text-white" -->
+																			<!-- 																				th:id="'residualRating-'+${#strings.replace(register.riskId,'/','')}" -->
+																			<!-- 																				th:style="'background-color:'+${register.residualRiskCol}" -->
+																			<!-- 																				th:text="${register.residualRiskRating}"> </span> -->
+
+																			<!-- 																			</td> -->
+
+
+
+																			<td th:if="${register.residualRiskRating == 'NA'}">
+																				<span class="badge text-white"
+																				th:id="'residualRating-'+${#strings.replace(register.riskId,'/','')}"
+																				th:style="'background-color:'+${register.residualRiskCol}">NA</span>
+																			</td>
+																			<td th:if="${register.residualRiskRating == 'low'}">
+																				<span class="badge text-white"
+																				th:id="'residualRating-'+${#strings.replace(register.riskId,'/','')}"
+																				th:style="'background-color:'+${register.residualRiskCol}"
+																				th:text="${register.residualRiskRating}"></span>
+																			</td>
+
+																			<td
+																				th:if="${register.residualRiskRating == 'medium'}">
+																				<span class="badge text-white"
+																				th:id="'residualRating-'+${#strings.replace(register.riskId,'/','')}"
+																				th:style="'background-color:'+${register.residualRiskCol}"
+																				th:text="${register.residualRiskRating}"></span>
+																			</td>
+
+																			<td th:if="${register.residualRiskRating == 'high'}">
+																				<span class="badge text-white"
+																				th:id="'residualRating-'+${#strings.replace(register.riskId,'/','')}"
+																				th:style="'background-color:'+${register.residualRiskCol}"
+																				th:text="${register.residualRiskRating}"></span>
+																			</td>
+
+
+																			<td
+																				th:unless="${register.residualRiskRating == 'low' OR register.residualRiskRating == 'medium' OR register.residualRiskRating == 'high' OR register.residualRiskRating == 'NA'}">
+																				<span class="badge text-white bg-secondary"
+																				th:id="'residualRating-'+${#strings.replace(register.riskId,'/','')}"
+																				th:text="${register.residualRiskRating}"> </span>
+
+																			</td>
+
+
+
+																			<td th:switch="${register.riskStatus}"><span
+																				th:case="'O'" class="badge text-white"
+																				th:style="'background-color:'+${register.recordStatusCol}">Open</span>
+																				<span th:case="'R'" class="badge"
+																				th:style="'background-color:'+$register.recordStatusCol}">Rejected</span>
+																				<span th:case="'D'" class="badge text-white"
+																				th:style="'background-color:'+${register.recordStatusCol}">Pending
+																					Approval</span> <span th:case="'C'"
+																				class="badge bg-danger">Close</span><span
+																				th:case="'X'" class="badge text-white"
+																				th:style="'background-color:'+${register.recordStatusCol}">Deleted</span><span
+																				th:case="'E'" class="badge text-white"
+																				th:style="'background-color:'+${register.recordStatusCol}">Edited</span></td>
+
+
+
+																			<td th:text="${register.keyMitigationMeasures}"></td>
+
+
+																			<td class="project-actions text-center"><span><a
+																					th:id="${register.riskId}" title="Detailed View"
+																					data-pagename='verifyRegister'
+																					class="btn-sm bg-primary checkRiskData"><i
+																						class="fas fa-glasses text-white	"></i></a></span></td>
+
+
+
+																			<td th:if="${register.inherentAssCapFlg == 'OPEN'}"
+																				class="project-actions text-center"><span><a
+																					th:id="'Modify-'+${#strings.replace(register.riskId,'/','')}"
+																					title="Modify"
+																					th:data-modifyId="${#strings.replace(register.riskId,'/','')}"
+																					class="btn-sm bg-maroon modifyData notSelected "><i
+																						th:id="'pencil-'+${#strings.replace(register.riskId,'/','')}"
+																						class="fas fa-pencil-alt fa-1x text-white"></i> <i
+																						th:id="'cross-'+${#strings.replace(register.riskId,'/','')}"
+																						style="display: none;"
+																						class="fas fa-times fa-1x text-white"></i></a></span></td>
+
+																			<td
+																				th:unless="${register.inherentAssCapFlg == 'OPEN'}"
+																				class="project-actions text-center"><span><a
+																					th:id="'Modify-'+${register.riskId}" title="Modify"
+																					th:data-modifyId="${#strings.replace(register.riskId,'/','')}"
+																					class="btn-sm btn-secondary"><i
+																						id="'pencil1-'+${#strings.replace(register.riskId,'/','')}"
+																						class="fas fa-pencil-alt fa-1x text-white"></i> <i
+																						id="'cross1-'+${#strings.replace(register.riskId,'/','')}"
+																						style="display: none;"
+																						class="fas fa-times fa-1x text-white"></i></a></span></td>
+
+
+																			<td th:if="${register.inherentAssCapFlg == 'OPEN'}"
+																				class="project-actions text-center"><span><a
+																					title="Submit" th:id="${register.riskId}"
+																					class="btn-sm btn-success saveAssessmentArrow">
+																						<i class="fas fa-check-circle"></i>
+																				</a></span></td>
+
+																			<td
+																				th:unless="${register.inherentAssCapFlg == 'OPEN'}"
+																				class="project-actions text-center"><span><a
+																					class="btn-sm btn-secondary"
+																					th:id="${register.riskId}"
+																					title="Disable for other Department"> <i
+																						class="fas fa-check-circle"></i>
+																				</a></span></td>
+
+
+
+																		</tr>
+
+																	</tbody>
+																</table>
+
+															</form>
+															<input type="hidden" value="" id="freezeValue" />
+															<!-- /form -->
+															<form autocomplete="off" role="form" method="post"
+																th:action="@{/riskData}" id="registerForm"
+																th:object="${encryptedRequest}">
+
+																<input type="hidden" id="encryptedJsonReg"
+																	name="encryptedJson" />
+															</form>
+														</div>
+														<!-- /card-body -->
+													</div>
+													<!-- /card -->
+												</div>
+												<!-- /col -->
+											</div>
+											<!-- /row -->
+										</div>
+										<!-- /.tab-pane -->
+										<div class="tab-pane" id="timeline">
+											<div class="timeline timeline-inverse"></div>
+										</div>
+
+									</div>
+									<!-- /.tab-content -->
+								</div>
+								<!-- /.card-body -->
+							</div>
+							<!-- /.card -->
+						</div>
+						<!-- /col -->
+					</div>
+					<!-- /row -->
+				</div>
+
+				<!-- /modal -->
+				<!-- Timeline Modal -->
+				<div class="modal fade" id="timelinemodal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">Audit Trail</h5>
+
+								<!-- 								<button type="button" class="close text-white" -->
+								<!-- 									data-dismiss="modal" aria-label="Close"> -->
+								<!-- 									<span aria-hidden="true">&times;</span> -->
+								<!-- 								</button> -->
+							</div>
+
+							<!-- form start -->
+							<div class="card-body">
+								<!-- /.tab-pane -->
+								<div class="tab-pane" id="timeline">
+
+									<!-- The timeline -->
+									<div class="timeline timeline-inverse">
+										<div class="time-label">
+											<span class="bg-success"> 10 May 2021 </span>
+										</div>
+
+										<!-- timeline item -->
+										<div>
+											<i class="fas fa-comments bg-warning"></i>
+
+											<div class="timeline-item">
+												<span class="time"><i class="far fa-clock"></i> 27
+													mins ago</span>
+
+												<h3 class="timeline-header">
+													<a href="#">Akshay Mhatre</a> approved the record.
+												</h3>
+
+												<div class="timeline-body">User Verified Successfully.</div>
+
+											</div>
+										</div>
+										<!-- END timeline item -->
+										<div>
+											<i class="far fa-clock bg-gray"></i>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="card-footer">
+								<span class="float-left" aria-hidden="true">
+
+									<button class="btn btn-secondary" data-dismiss="modal">
+										<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+									</button>
+								</span>
+							</div>
+							<!-- /.card-footer -->
+						</div>
+					</div>
+				</div>
+				<!-- /.modal -->
+
+
+
+
+				<!-- Confirmation Modal -->
+				<div class="modal fade" id="controlAssessmentModal">
+					<div class="modal-dialog modal-xl">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">Assessment Details</h5>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+
+							<!-- form start -->
+
+							<div class="card-body">
+								<!-- /.tab-pane -->
+								<div class="tab-pane" id="confirm">
+
+
+									<input type="hidden" id="hiddenRiskId" value="" />
+									<!-- 									<input -->
+									<!-- 										type="text" id="impct"> <input type="text" -->
+									<!-- 										id="probablity"> <input type="text" -->
+									<!-- 										id="inherentRiskResult"> <input type="text" -->
+									<!-- 										id="controlEffectiveness"> <input type="text" -->
+									<!-- 										id="residualResult"> -->
+
+
+
+									<!-- Hidden Calculation Part Start -->
+									<div class="row table-responsive" id="hiddenMatrix"
+										style="display: ''">
+										<div class="col-sm-12">
+											<div class="card card-outline card-secondary">
+												<div class="card-header text-blue">
+													<label><i class="fas fa-calculator"></i>&nbsp; Risk
+														Rating </label>
+
+												</div>
+												<input type="hidden" id="assessmentValue" />
+												<div class="card-body table-responsive">
+													<table id="matrixTable"
+														class="table table-head-fixed table-bordered table-striped text-capitalize">
+														<thead>
+															<tr>
+
+																<th>Risk Id</th>
+																<th>Likelihood Rating</th>
+																<th>Impact Rating</th>
+																<th>Inherent Risk Rating</th>
+																<th>Control Effectiveness</th>
+																<th>Residual Assessment</th>
+																<th>Assessment Date</th>
+																<th>Captured By</th>
+
+															</tr>
+														</thead>
+														<tbody class="matrixBody">
+															<tr>
+																<td><span id="assessmentRiskId"></span></td>
+																<td><span id="assessmentLikelihood"></span></td>
+																<td><span id="assessmentImpact"></span></td>
+																<td><span class="badge text-white"
+																	id="assessmentInherentRisk"></span></td>
+																<td><span id="assessmentCntrlEffectiveness"></span></td>
+																<td><span class="badge text-white"
+																	id="assessmentResidual"></span></td>
+																<td><span id="assessmentDate"></span></td>
+																<td><span class="text-capitalize" id="capturedBy"></span></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+												<!-- /card-body -->
+											</div>
+											<!-- /card -->
+										</div>
+										<!-- /col -->
+									</div>
+									<!-- /row -->
+									<!-- Hidden Calculation Part End -->
+
+
+									<!-- Additional Action Plan -->
+<!-- 									<div class="row text-capitalize" id="additionalActionPlan" -->
+<!-- 										style="display: none;"> -->
+<!-- 										<div class="col-sm-12"> -->
+<!-- 											<div class="form-group"> -->
+<!-- 												<label for="controlDescCO"> Additional Action Plan  -->
+<!-- 												</label> -->
+<!-- 												<textarea class="form-control form-control-sm officeDesc" -->
+<!-- 													name="additionalActionPlan" id="additionalActionPlan" -->
+<!-- 													maxlength="3000" -->
+<!-- 													placeholder="Additional Action Plan "></textarea> -->
+<!-- 											</div> -->
+<!-- 										</div> -->
+<!-- 									</div> -->
+
+
+
+									<!-- Justification for the Rating Override -->
+									<div class="row text-capitalize" id="ratingOverride"
+										style="display: none;">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="controlDescCO"> Justification for the
+													Control Assessment Rating Override <code>*</code>
+												</label>
+												<textarea class="form-control form-control-sm officeDesc"
+													name="overRidejustification" id="overRidejustification"
+													maxlength="3000"
+													placeholder="Justification for the Rating Override"></textarea>
+											</div>
+										</div>
+									</div>
+
+
+
+									<!-- Justification for the Rating -->
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="controlDescCO"> Justification for the
+													Control Assessment Rating <code>*</code>
+												</label>
+												<textarea class="form-control form-control-sm officeDesc"
+													name="justification" id="justification" maxlength="3000"
+													placeholder="Justification for the Control Assessment Rating"></textarea>
+
+											</div>
+										</div>
+									</div>
+
+									<!-- Compensative Rating -->
+									<div class="row text-capitalize">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="controlDescCO"> Compensating Controls
+													for Control Assessment Rating <code>*</code>
+												</label>
+												<textarea class="form-control form-control-sm "
+													name="compensating" id="compensating" maxlength="3000"
+													placeholder="Compensating Controls for Control Assessment Rating"></textarea>
+											</div>
+										</div>
+									</div>
+
+
+									<!-- Improvements Areas -->
+									<div class="row text-capitalize">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label id='improvementLbl' for="controlDescCO">
+													Improvements Areas for Control Assessment Rating <code>*</code>
+												</label>
+												<textarea class="form-control form-control-sm "
+													id="improvementAreas" maxlength="3000"
+													name="improvementAreas"
+													placeholder="Improvements Areas for Control Assessment Rating"></textarea>
+											</div>
+										</div>
+									</div>
+
+
+									<!--  Additional Comments -->
+									<div class="row">
+										<div class="col-sm-12">
+											<div class="form-group">
+												<label for="comments">Provide your comments <code>*</code>
+												</label>
+												<textarea class="form-control form-control-sm"
+													name="commentControl" maxlength="3000"
+													placeholder="Comments" id="commentControl"></textarea>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="card-footer">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">Are You Sure You Want To
+													Submit This Record?</div>
+											</div>
+										</div>
+
+										<button type="button" id="No" class="btn btn-secondary"
+											data-dismiss="modal">
+											<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+										</button>
+										<button type="button" id="submitAssessment" name="Create"
+											class="btn btn-info saveAssessment">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+										</button>
+									</div>
+									<!-- /.row -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Confirmation Modal -->
+
+
+				<!-- Cancel Modal -->
+				<div class="modal fade" id="cancelmodel">
+					<div class="modal-dialog modal-fluid">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h6 class="modal-title">Confirm</h6>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+							<!-- form start -->
+							<div class="modal-body">
+								<input type="hidden" value="" id="hiddenId" />
+								<h5 class="card-title">Please save the changes Otherwise,
+									your changes could get lost. Press "Ok" to Continue.</h5>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary"
+									data-dismiss="modal">
+									<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>Cancel
+								</button>
+								<a th:href="@{/verifyRegister}" class="btn btn-primary target"
+									data-pagename="verifyRegister"><i class="fas fa-check"
+									style="padding: 0 7px 0 0px;"></i>Ok </a>
+							</div>
+						</div>
+						<!-- /.modal-content -->
+					</div>
+					<!-- /.modal-dialog -->
+				</div>
+				<!-- /.Cancel Modal -->
+
+				<!-- Save Confirmation Modal -->
+				<div class="modal fade" id="saveconfirmmodal">
+					<div class="modal-dialog modal-lg">
+						<div class="modal-content">
+							<div class="modal-header bg-info">
+								<h5 class="modal-title">Confirm</h5>
+								<button type="button" class="close" data-dismiss="modal"
+									aria-label="Close">
+									<span aria-hidden="true">&times;</span>
+								</button>
+							</div>
+
+							<!-- form start -->
+
+							<div class="card-body">
+								<!-- /.tab-pane -->
+								<div class="tab-pane" id="confirm">
+
+									<div class="row">
+										<div class="col-sm-12">
+
+											<span id="saveAssessmentRiskId" style="display: none;"></span>
+											<div class="form-group">Are You Sure You Want To Submit
+												This Record?</div>
+										</div>
+									</div>
+									<div class="card-footer">
+										<button type="button" id="No" class="btn btn-secondary"
+											data-dismiss="modal">
+											<i class="fas fa-times" style="padding: 0 7px 0 0px;"></i>No
+										</button>
+										<button type="button" id="finalSave" name="Create"
+											title="Save" class="btn btn-info target">
+											<i class="fas fa-save" style="padding: 0 7px 0 0px;"></i>Yes
+										</button>
+									</div>
+									<!-- /.row -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Save Confirmation Modal -->
+
+
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/registerVerify.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<script>
+	
+	$(document).ready(function() {
+	
+	
+	$("#riskstmttable").DataTable({
+	
+		"order": [0, "desc"],
+		"responsive": false,
+		"lengthMenu": [25, 50, 75, 100],
+		"autoWidth": true,
+		"searching": true,
+		"fixedHeader": true,
+		"buttons": ["csv", "excel", "pdf", "print"],
+		"language": {
+			"emptyTable": "No Data Available",
+			"search": "Search Department:"
+		},
+		
+		
+	}).buttons().container().appendTo(
+		'#riskstmttable_wrapper .col-md-6:eq(0)');
+		
+	$('#riskstmttable').DataTable().columns(3).every( function () {
+   		var that = this;
+
+	    $( 'input', this.footer() ).on( 'keyup change', function () {
+	        that
+	            .search( this.value )
+	            .draw();
+	    });
+	});
+});
+
+
+$(document).ready(function() {
+var startDate="";
+	//Date range picker
+			$('#startDate').datetimepicker({
+                     closeOnDateSelect:false,
+                     closeOnTimeSelect: true,
+                     maxDate: new Date(),
+                     format: 'DD-MM-YYYY',
+                     onChangeDateTime: function(dp,$input){
+                               startDate = $("#startDate").val();
+                               //alert(startDate);
+                               }
+                                                           });
+			
+			//Date range picker
+			$('#endDate').datetimepicker({
+                     closeOnDateSelect:false,
+                     closeOnTimeSelect: true,
+                     maxDate: new Date(),
+                     format: 'DD-MM-YYYY',
+                     onClose: function(current_time, $input){
+                            var endDate = $("#endDate").val();
+                            if(startDate>endDate){
+                                   alert('Please select correct date');
+                             }
+             }
+              });
+});
+</script>
+
+</body>
+</html>

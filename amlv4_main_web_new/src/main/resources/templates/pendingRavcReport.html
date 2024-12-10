@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
+	{
+	-webkit-appearance: none;
+	margin: 0;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Pending Value Capture Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Pending Value Capture Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+
+								<div class="card-body">
+
+									<form id="frmpendingKRIVC" autocomplete="off"
+										th:action="@{/benchmarkVcAction}" method="post"
+										th:object="${encryptedRequest}">
+
+										<input type="hidden" id="encryptedJson" name="encryptedJson" />
+										<input type="hidden" id="userDept" name="userDept"
+											th:value="${userDept}" />
+
+										<div class="card card-info">
+											<div class="card-header">
+												<h3 class="card-title">Pending Value Capture Report</h3>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeType">Select Office Type <code>*</code></label>
+															<select class="select2 text-capitalize" name="officeType"
+																data-placeholder="Office Type" id="officeType"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option th:each="officeNameList : ${officeNameList}"
+																	th:value="${officeNameList.codeValue}"
+																	th:text="${officeNameList.codeValueDesc}" />
+															</select>
+														</div>
+													</div>
+													
+													<!-- <div class="col-sm-3">
+														<div class="form-group">
+															<label for="module">Select Module Name <code>*</code></label>
+															<select class="select2 text-capitalize" name="module"
+																data-placeholder="Select Module" id="module"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option value='RA'>Risk Appetite</option>
+																<option value='BM'>Benchmark</option>
+
+															</select>
+														</div>
+													</div> -->
+
+													<!-- <div class="col-sm-3">
+														<div class="form-group">
+															<label for="status">Select Status <code>*</code></label>
+															<select class="select2 text-capitalize" name="status"
+																data-placeholder="Select Status" id="status"
+																style="width: 100%;">
+																<option value=''>Select</option>
+																<option value='P'>Pending</option>
+																<option value='C'>Captured</option>
+
+															</select>
+														</div>
+													</div> -->
+
+													<div class="col-sm-2 mt-2">
+
+														<button type="button" id="fetchDataBtn"
+															class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+															name="fetchDataBtn">Fetch Data</button>
+
+													</div>
+
+												</div>
+												
+												
+												<div id="showRaTable" style="width: 100%;">
+													<div class="row">
+														<div class="col-sm-12">
+															<div class="card-body">
+																<table id="RaValueCapturetable" style="width: 100%;"
+																	class="table table-head-fixed table-bordered table-striped RaValueCapturetable">
+																	<thead>
+																		<tr>
+																			<th>Statement ID</th>
+																			<th>Department Name</th>
+																			<th>Assessment Value</th>
+																			<th>Date</th>
+																			<th>Office Code</th>
+																		</tr>
+																	</thead>
+																	<tbody id="tbodyRa">
+
+																	</tbody>
+																</table>
+
+
+															</div>
+
+														</div>
+													</div>
+												</div>
+												
+									
+									<!-- view RA Modal -->
+									<div class="modal fade" id="riskmodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">View</h5>
+													<button type="button" class="close text-white"
+														data-dismiss="modal" aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- /.col -->
+												<div class="card-body">
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="actionPlanId">Statement ID</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm text-bold"
+																		id="parameterId" name="parameterId" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="recordstatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		id="recordstatus" name="recordstatus" readonly>
+
+																</div>
+															</div>
+														</div>
+													</div>
+													<!-- /row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskcategory">Risk Category </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="riskcate" id="riskcate" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskcategory">Risk Sub Category </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="risksubcate" id="risksubcate" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskstmtname">Statement Name </label>
+																<textarea class="form-control form-control-sm"
+																	name="riskstmtname" id="riskstmtname" readonly></textarea>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="datapdept">Department Providing Data
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="datapdept" id="datapdept" readonly>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="riskdescription">Description </label>
+																<textarea class="form-control form-control-sm"
+																	name="riskdescription" id="riskdescription" readonly></textarea>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="datapoints">Data Points To Be
+																	Considered </label>
+																<textarea class="form-control form-control-sm"
+																	name="datapoints" id="datapoints"
+																	placeholder="Data Points" readonly></textarea>
+															</div>
+														</div>
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="datatype">Data Type </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="datatype" id="datatype" readonly>
+															</div>
+														</div>
+														<div class="col-sm-6">
+															<div class="form-group">
+																<label for="department">Department Responsible </label>
+																<input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="datadept" id="datadept" readonly>
+															</div>
+														</div>
+
+
+													</div>
+													<!-- /.row -->
+
+													<div class="row">
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="department">Capture Value Department
+																</label> <input type="text"
+																	class="form-control form-control-sm text-capitalize"
+																	name="capturedept" id="capturedept" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="frequency">Update Frequency </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="frequency" id="frequency" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="criteria">Assessment Criteria </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="criteria" id="criteria" readonly>
+															</div>
+														</div>
+														<div class="col-sm-3">
+															<div class="form-group">
+																<label for="threshold">Tolerance Threshold </label> <input
+																	type="text" class="form-control form-control-sm"
+																	name="threshold" id="threshold"
+																	placeholder="Tolerance Threshold" readonly>
+															</div>
+														</div>
+
+													</div>
+													<!-- /.row -->
+													<div class="row" id="asrDiv" style="display: none">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary">
+																<div class="card-header">
+																	<h3 class="card-title">Assessment Value Record</h3>
+																</div>
+																<div class="card-body table-responsive">
+																	<table class="table table-bordered table-striped"
+																		id="capturetbl">
+																		<thead>
+																			<tr>
+																				<th>Department Name</th>
+																				<th>Tolerance Threshold</th>
+																				<th>Assessment Value</th>
+																				<th>Assessment Status</th>
+																				<th>Captured By</th>
+																				<th>Captured Date</th>
+																			</tr>
+																		</thead>
+																		<tbody></tbody>
+																	</table>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<!-- /.row -->
+
+												</div>
+												<!-- /.card-body -->
+												<div class="card-footer">
+													<button class="btn btn-secondary" data-dismiss="modal">
+														<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+													</button>
+												</div>
+												<!-- /.row -->
+											</div>
+											<!-- modal-content -->
+										</div>
+										<!-- /modal-dialog -->
+									</div>
+									<!-- End View Ra Modal -->
+									
+
+											</div>
+
+										</div>
+										<!-- /.card-body -->
+
+									</form>
+								</div>
+								<!-- /.col sm-12 -->
+							</div>
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<!-- Developer Added JS -->
+	<script th:src="@{/dist/appjs/erm/pendingReportsRA.js}"></script>
+
+	<!-- PAGE PLUGINS -->
+
+
+</body>
+</html>

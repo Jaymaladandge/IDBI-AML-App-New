@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" type="image/png" th:href="@{/login-dist/images/pa3.png}" />
+	<title sec:authentication="principal.ermTitle"></title>
+
+	<!-- Font Awesome Icons -->
+
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Select2 -->
+	<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+	<style>
+		#load {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			opacity: 1;
+		}
+
+		.card-info:not(.card-outline)>.card-header {
+			background-color: #044383 !important;
+		}
+
+		.bg-info {
+			background-color: #044383 !important;
+		}
+
+		.btn-info {
+			color: #fff;
+			background-color: #044383 !important;
+			border-color: #044383 !important;
+			box-shadow: none;
+		}
+
+		.viewThresh {
+			visibility: visible;
+			width: 120px;
+			background-color: white;
+			text-align: center;
+			border-radius: 6px;
+			padding: 5px 0;
+			/* Position the tooltip */
+			position: absolute;
+			z-index: 1;
+			bottom: 2em;
+			left: 75%;
+		}
+
+		.nav-pills>li.active>a,
+		.nav-pills>li.active>a:hover,
+		.nav-pills>li.active>a:focus {
+			background-color: #FCD900 !important;
+		}
+	</style>
+</head>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>STR MIS Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a th:href="@{/SelectReportsMainPage}">Reports</a></li>
+								<li class="breadcrumb-item active">STR MIS Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+
+							<div class="card card-info card-tabs">
+
+								<div class="card-header" style="background-color: rgb(255, 223, 191);">
+									<h3 class="card-title">STR MIS Report</h3>
+								</div>
+								<!-- /.col -->
+								<div class="card-body">
+
+
+									<form autocomplete="off" role="form" method="post"
+										th:action="@{/exportAlertDumpReporttest}" id="getExport"
+										th:object="${encryptedRequest}">
+										<input type="hidden" id="encryptedJson" name="encryptedJson" />
+										<!--<input type="hidden" id="exportDumpReportGson"
+											th:value="${activityReportGson}" />-->
+										<span class="float-right"><a th:id="${requestId}"
+												class="btn text-white getExportClass"
+												style="margin-right: 5px; background-color: green  ;"
+												title="Export Report">
+												<i class="fas fa-file-excel"></i>&nbsp;&nbsp;Export
+											</a></span>
+
+
+
+										<!--<label for="fdt1" style="display: block;">STR Start Date : <span
+												id="startDateSpan">
+												<font th:text="${startDate}"> </font>
+											</span> </label>
+
+										<label for="fdt1" style="display: block;">STR End Date : <span id="endDateSpan">
+												<font th:text="${endDate}"> </font>
+											</span> </label>-->
+
+
+										<input type="hidden" id="requestId" value="requestId"
+											th:value="${sessionRequestId}" />
+
+
+
+										<div class="card-body">
+
+											<!-- Filters Start -->
+											<!--<form autocomplete="off" role="form" method="post" th:action="@{/fetchReportCountList}"
+										id="searchAlertId" aria-labelledby="searchAlertId"
+										th:object="${encryptedRequest}">
+										<input type="hidden" id="encryptedJsonSearch" name="encryptedJson" />-->
+											<!--<input
+											type="hidden" id="message" th:value="${msg}" name="message" />-->
+											<!--<div class="row table-responsive mt-2">-->
+											<!--<div class="card card-outline card-secondary ml-3">-->
+											<div class="card-body table-responsive">
+												<table id="alertCountList"
+													class="table table-head-fixed table-bordered text-capitalize" style="border: 1px solid rgb(225, 225, 225);
+													border-collapse: collapse; ">
+													<thead>
+														<tr
+															style="color: rgb(64, 0, 64); background-color: rgb(167, 211, 211); text-align: center; ">
+
+															<th scope="col">Str Request No</th>
+															<th scope="col">UCIC Id</th>
+															<th scope="col">Customer Id</th>
+															<th scope="col">Customer Name</th>
+															<th scope="col">Consititution Code</th>
+															<th scope="col">Occupation Code (At CRM Level)</th>
+															<th scope="col">Account Number</th>
+															<th scope="col">Account Name</th>
+															<th scope="col">Account Open Date</th>
+															<th scope="col">Occupation Code (At Account Level)</th>
+															<th scope="col">Account Status</th>
+															<th scope="col">Branch Code</th>
+															<th scope="col">Risk Code</th>
+															<th scope="col">Str Request Date</th>
+															<th scope="col">Str Request Type</th>
+															<th scope="col">Str Request Status</th>
+
+															<th scope="col">Source of Alert</th>
+															<th scope="col">Types Of Suspicious</th>
+															<th scope="col">Suspicious Due to</th>
+															<th scope="col">Red Flag Indicator</th>
+
+															<th scope="col">Analyst Id</th>
+															<th scope="col">Analyst Comment</th>
+															<th scope="col">Reviewer Id</th>
+															<th scope="col">Reviewer Comment</th>
+															<th scope="col">Verifier Id</th>
+															<th scope="col">Verifier Comment</th>
+
+
+
+															<!--
+														<th scope="col">Total UCIC Count</th>
+														<th scope="col">Total Customer Involved Count</th>
+														<th scope="col">Total Alert Count</th>
+														<th scope="col">Total Action Count</th>-->
+														</tr>
+													</thead>
+
+													<tbody class="alertCountBody">
+														<tr th:each="itr:${alertCountListBody.strMisReportBeanList}">
+
+															<td th:text="${itr.strNo}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.ucicNumber}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.custId}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.customerName}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+
+															<td th:text="${itr.custConstitution}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.custOccupation}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.accountNo}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.accountName}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.accOpenDate}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.accountStatus}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.riskCode}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.requestDate}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.strReqType}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.strStatus}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.analystId}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.analystComment}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.reviewerId}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.reviewerComment}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.verifierId}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+															<td th:text="${itr.verifierComment}"
+																style="text-align: left; vertical-align: middle; "
+																nowrap>
+
+															</td>
+
+														</tr>
+
+														<!--														<div th:remove="tag"
+															th:each="order, orderIndex:${alertCountListBody}"
+															th:with="articleCount=${order.AlertDumpTableList.size()}">
+															<tr
+																th:style="${orderIndex.odd}? 'background-color: #f8f8ff;' : 'background-color: #f0ffff;'">
+																<td th:text="${order.customerId}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle; "
+																	nowrap>
+																</td>
+																<td th:text="${order.accountNo}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle;"
+																	nowrap>
+																</td>
+																</td>
+																<td th:text="${order.ucicNo}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].ticketId}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].ruleId}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].ruleDesc}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].userId}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].userRole}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].actStatus}"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].actComment}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].actDate}:''"
+																	style="text-align: left; " nowrap>
+																</td>
+																<td th:text="${articleCount>0}?${order.AlertDumpTableList[0].alertTat}:''"
+																	style="text-align: right; " nowrap>
+																</td>
+																<td th:text="${order.strRequested}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${order.strRequestedId}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${order.strStatus}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${order.strSource}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: left; vertical-align: middle; "
+																	nowrap>
+																</td>
+																<td th:text="${order.ctr}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: right; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${order.ntr}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: right; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${order.cbwtr}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: right; vertical-align: middle;"
+																	nowrap>
+																</td>
+																<td th:text="${order.ccr}"
+																	th:rowspan="${order.AlertDumpTableList.size()}"
+																	style="text-align: right;  vertical-align: middle;"
+																	nowrap>
+																</td>
+
+																<input type="hidden"
+																	th:value="${order.AlertDumpTableList[0].startDate}"
+																	id="startDateTempHidden">
+
+																<input type="hidden"
+																	th:value="${order.AlertDumpTableList[0].endDate}"
+																	id="endDateTempHidden">
+
+
+															</tr>
+															<tr th:each="article,stats:${order.AlertDumpTableList}"
+																th:if="${!stats.first}"
+																th:style="${orderIndex.odd}? 'background-color: #f8f8ff;' : 'background-color: #f0ffff ;'">
+																<td th:text="${article.ticketId}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.ruleId}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.ruleDesc}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.userId}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.userRole}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.actStatus}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.actComment}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.actDate}"
+																	style="text-align: left; " nowrap> </td>
+																<td th:text="${article.alertTat}"
+																	style="text-align: right; " nowrap> </td>
+
+															</tr>
+														</div>-->
+
+
+
+
+
+
+
+													</tbody>
+
+
+												</table>
+											</div>
+											<!--</div>-->
+											<!--</div>-->
+											<!--</form>-->
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+			</section>
+		</div>
+
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+
+	<!-- REQUIRED SCRIPTS -->
+	<!-- PAGE PLUGINS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<!-- Header Js -->
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/aml/strMisReportPage.js}"></script>
+	<script>
+		$(function () {
+			$("#alertCountList").DataTable({
+				"columnDefs": [{
+					orderable: false,
+					targets: [7]
+				}],
+				"order": [0, "desc"],
+				"responsive": false,
+				"lengthMenu": [25, 50, 75, 100],
+				"autoWidth": true,
+				"searching": true,
+				"fixedHeader": true,
+				"language": {
+					"emptyTable": "No Data Available"
+				}
+			}).buttons().container();
+		});
+	</script>
+	<!--<script>
+		$('#mainForm').hide();
+	</script>-->
+
+	<script>
+		$(document).ready(function () {
+
+
+
+		});
+		function formatDateToCustomFormat(date) {
+
+			const day = String(date.getDate()).padStart(2, '0');
+			const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+			const year = date.getFullYear();
+			const hours = String(date.getHours()).padStart(2, '0');
+			const minutes = String(date.getMinutes()).padStart(2, '0');
+			return `${day}-${month}-${year} ${hours}:${minutes}`;
+		}
+
+		$(document).ready(function () {
+			//alert("hello2");
+			$("#startDateSpan").text($("#startDateTempHidden").val());
+
+			$("#endDateSpan").text($("#endDateTempHidden").val());
+			// startDateTempHidden
+			//var startDateHidden = $("#startDateHidden").val();
+			//alert(startDateHidden);
+			//var endDateHidden = $("#endDateHidden").val();
+		})
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<!-- Font Awesome Icons -->
+	<link rel="stylesheet" th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+	<!-- overlayScrollbars -->
+	<link rel="stylesheet" th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+	<!-- Select2 -->
+	<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+	<!-- Toastr -->
+	<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+	<!-- daterange picker -->
+	<link rel="stylesheet" th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+	<!-- Tempusdominus Bootstrap 4 -->
+	<link rel="stylesheet" th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+	<!-- Theme style -->
+	<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+	<!-- DataTables -->
+	<link rel="stylesheet" th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+	<link rel="stylesheet" th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+
+	<link rel="stylesheet" th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+	<style>
+		.card-info:not(.card-outline)>.card-header {
+			background-color: #044383 !important;
+		}
+
+		.bg-info {
+			background-color: #044383 !important;
+		}
+
+		.btn-info {
+			color: #fff;
+			background-color: #044383 !important;
+			border-color: #044383 !important;
+			box-shadow: none;
+		}
+
+		.btn bg-maroon {
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			display: inline-block;
+			padding: 15px 25px;
+			font-size: 24px;
+			cursor: pointer;
+			text-align: center;
+			text-decoration: none;
+			outline: none;
+			color: #fff;
+			background-color: #4CAF50;
+			border: none;
+			border-radius: 15px;
+			box-shadow: 0 9px #999;
+		}
+
+		#load {
+			position: fixed;
+			left: 0px;
+			top: 0px;
+			width: 100%;
+			height: 100%;
+			z-index: 9999;
+			background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+			opacity: 1;
+		}
+	</style>
+</head>
+<div id="load"></div>
+
+<body class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<!-- <div class="col-sm-6">
+							<h1>Edit Logic</h1>
+						</div> -->
+						<!-- /.col -->
+						<div class="col-sm-12">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<!-- /.content-header -->
+			<!-- Main content -->
+			<section class="content">
+				<div class="container-fluid">
+					<!-- /.row -->
+					<div class="row">
+					<!--approve form action-->
+						<form autocomplete="off" role="form" method="post" id="approveform"
+							th:action="@{/approveformaction}" th:object="${encryptedRequest}"
+							enctype="multipart/form-data" class="col-sm-12">
+							<input type="hidden" id="encryptedJson" name="encryptedJson" />
+							<div class="bs-stepper-content">
+							<input type="hidden"  name="recordid" id="recordid" th:value= "${acctDetails.recordId}">
+							<input type="hidden"  name="approveStatus" id="approveStatus" value="V"/>
+							<input type="hidden"  name="rejectStatus" id="rejectStatus" value="R"/>
+								<div id="create-part" class="content" role="tabpanel"
+									aria-labelledby="create-part-trigger">
+									<div class="row">
+
+										<div class="col-12">
+											<!-- Main content -->
+											<div class="card card-info">
+												<div class="card-body">
+													<div class="row">
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="RecordStatus">Record Status</label>
+																<div class="input-group">
+																	<input type="text"
+																		class="form-control form-control-sm  text-bold"
+																		 id="recordStatus"
+																		name="recordStatus" th:value="${acctDetails.recordStatus}"readonly>
+																</div>
+															</div>
+														</div>
+
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="AccountNumber">Account
+																	Number</label>
+																<div class="input-group">
+																	<input type="number" class="form-control text-bold"
+																		id="accountNumber" name="accountNumber"
+																		th:value="${acctDetails.accountNumber}"
+																		readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="row">
+
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="AccountName">Account
+																	Name</label>
+																<div class="input-group">
+																	<input type="text" class="form-control text-bold"
+																		id="accountName" name="accountName"
+																		th:value="${acctDetails.accountName}" readonly>
+																</div>
+															</div>
+														</div>
+														<div class="col-sm-4">
+															<div class="form-group">
+																<label for="CustId">
+																	CustId</label>
+																<div class="input-group">
+																	<input type="text" class="form-control text-bold"
+																		id="custId" name="custId"
+																		th:value="${acctDetails.custId}" readonly>
+																</div>
+															</div>
+														</div>
+													</div>
+
+													<div class="row">
+
+														<div class="col-sm-2">
+															<div class="form-group">
+																<label for="RuleId">RuleId</label>
+																<div class="input-group">
+																	<input type="text" class="form-control text-bold"
+																		id="ruleId" name="ruleId"
+																		th:value="${acctDetails.ruleId}" readonly>
+																</div>
+															</div>
+
+														</div>
+														<!-- New date added -->
+														<div class="col-sm-2">
+															<div class="form-group">
+																<label for="StartDate">StartDate</label>
+																<div class="input-group">
+																	<input type="text" class="form-control text-bold"
+																		id="startdate" name="startdate"
+																		th:value="${acctDetails.startdate}" readonly>
+																</div>
+															</div>
+
+														</div>
+														<div class="col-sm-2">
+															<div class="form-group">
+																<label for="EndDate">EndDate<code>*</code></label>
+																<div class="input-group">
+																	<input type="text" class="form-control text-bold"
+																		id="enddate" name="enddate"
+																		th:value="${acctDetails.enddate}" readonly>
+																</div>
+															</div>
+
+														</div>
+
+													</div>
+												</div>
+												<div class="card-footer">
+													<button type="button" id="approve" name="approve"
+														class="btn btn-success approved" title="Approve">
+														<i class="fas fa-vote-yea"
+															style="padding: 0 7px 0 0px;"></i>Approve
+													</button>
+													<button type="button" class="btn bg-red" 
+														id="reject" name="reject" title="Reject">
+														<i class="fas fa-circle-notch"
+															style="padding: 0 7px 0 0px;"></i>Reject
+													</button>
+												</div>
+											</div>
+											<!-- /.invoice -->
+										</div>
+										<!-- /.col -->
+									</div>
+									<!-- /.row -->
+								</div>
+							</div>
+						</form>
+						
+						
+						<!--Rejectformaction-->
+						<form autocomplete="off" role="form" method="post" id="rejectform"
+							th:action="@{/rejectformaction}" th:object="${encryptedRequest}"
+							enctype="multipart/form-data" class="col-sm-12">
+						<input type="hidden" id="editEncryptedJson" name="encryptedJson" />
+						</form>
+					</div>
+			</section>
+			<!-- /.content -->
+		</div>
+
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- /.login-box -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+
+</body>
+<!--<script>
+("#approve")
+				.click(
+						function() {
+							
+							var recordId = $(this).attr('id');
+							
+							
+							var pageValJson = "{\"recordId\":\"" 
+									+recordId + "\" }" 
+					 
+							console.log(pageValJson);
+							var iterationCount = 1000;
+							var keySize = 128;
+							//passPhrase is the key
+							var passphrase = CryptoJS.lib.WordArray.random(
+									128 / 8).toString(CryptoJS.enc.Hex);
+
+							var aesUtil = new AesUtil(keySize, iterationCount);
+
+							var ciphertext = aesUtil.encrypt(
+									reverseText(passphrase), pageValJson);
+
+							$("#encryptedJson").val(
+									ciphertext + ':~:' + passphrase);
+
+							$("#verifyform").submit(); 
+
+						});
+</script>-->
+<script>
+
+/*Loader*/
+document.onreadystatechange = function() {
+	var state = document.readyState
+	setTimeout(function() {
+		document.getElementById('load').style.visibility = "hidden";
+	}, 1000);
+}
+/*Loader*/
+//approve function
+	$("#approve")
+		.click(
+
+			function () {
+			
+				var apString = "{\"recordId\":\""
+					+ $("#recordid").val() + "\",\n"
+					+ "\"recordStatus\":\""
+					+ $("#approveStatus").val() + "\"}"
+               
+				alert(apString)
+				var iterationCount = 1000;
+			    var keySize = 128;
+			    //passPhrase is the key
+			    var passphrase = CryptoJS.lib.WordArray.random(
+				128 / 8).toString(CryptoJS.enc.Hex);
+
+			    var aesUtil = new AesUtil(keySize,
+				iterationCount);
+
+			    var ciphertext = aesUtil.encrypt(
+				reverseText(passphrase), apString);
+
+			    $("#encryptedJson").val(
+				ciphertext + ':~:' + passphrase);
+
+				$("#approveform").submit();
+
+			});
+</script>
+
+
+<script>
+//reject status
+$("#reject")
+		.click(
+
+			function () {
+			
+				var apString = "{\"recordId\":\""
+					+ $("#recordid").val() + "\",\n"
+					+ "\"recordStatus\":\""
+					+ $("#rejectStatus").val() + "\"}"
+                 
+				//alert(apString)
+				
+				var iterationCount = 1000;
+			    var keySize = 128;
+			    //passPhrase is the key
+			    var passphrase = CryptoJS.lib.WordArray.random(
+				 128 / 8).toString(CryptoJS.enc.Hex);
+
+			    var aesUtil = new AesUtil(keySize,
+				iterationCount);
+			    var ciphertext = aesUtil.encrypt(
+				reverseText(passphrase), apString);
+
+			    $("#editEncryptedJson").val(
+				ciphertext + ':~:' + passphrase);
+
+				$("#rejectform").submit();
+
+			});
+</script>
+
+
+</html>

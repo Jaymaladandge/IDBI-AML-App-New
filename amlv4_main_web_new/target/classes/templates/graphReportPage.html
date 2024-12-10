@@ -1,0 +1,2261 @@
+<!-- nsAlertinvestigate -->
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/png"
+	th:href="@{/login-dist/images/pa3.png}" />
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../AMLv4_web/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+.thHead {
+	background-color: #4fa9a7 !important;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+}
+
+.disabled {
+	pointer-events: none !important;
+	cursor: default !important;
+	/* If you want to change the cursor as well */
+	opacity: 0.5; /* Example: Reducing opacity for disabled appearance */
+}
+
+.alert-info1 {
+	color: #084298;
+	background-color: #cfe2ff;
+	border-color: #cfe2ff;
+}
+
+.alert-investigation-tab {
+	background-color: #2E8BC0;
+}
+
+.tblHead {
+	background-color: #00AA9E !important;
+	color: #fff;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+body {
+	line-height: 1.1;
+}
+
+.current {
+	color: green;
+}
+
+#pagin li {
+	display: inline-block;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+	background-color: #20c997;
+}
+
+.customer-details {
+	background-color: #d7f2f3;
+}
+
+.tableFixHead {
+	width: 100%;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+/* .tableFixHead tbody {
+	display: block;
+	width: 100%;
+	overflow: auto;
+	height: 50px;
+} */
+.tableFixHead thead tr {
+	display: block;
+}
+
+.tableFixHead th, .tableFixHead td {
+	padding: 5px 10px;
+	width: 200px;
+}
+
+.viewEntityModel {
+	z-index: 1050;
+	/* Adjust as needed */
+}
+
+.viewEntityModel2 {
+	z-index: 1000;
+	/* Adjust as needed */
+}
+
+.custom-card-header {
+	background-color: #00AA9E !important;
+	color: white;
+}
+</style>
+</head>
+<div id="load"></div>
+
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::roleHeader" style="width: 100%"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content">
+			<form class="form-horizontal" id="invForm"
+				th:action="@{/nsAlertCompliance}" method="post"
+				th:object="${encryptedRequest}">
+				<input type="hidden" id="encryptedJson" name="encryptedJson" /> <input
+					type="hidden" id="alertStatus" name="alertStatus"
+					th:value="${alertStatus}" /> <input type="hidden" id="aggFlg"
+					name="aggFlg" th:value="${alertData.alertAggFlg}" /> <input
+					type="hidden" id="aggVal" name="aggVal"
+					th:value="${alertData.alertAggVal}" /> <input type="hidden"
+					id="buttonEvent" name="buttonEvent" value="" /> <input
+					type="hidden" th:value="${message}" id="message" />
+				<section class="content-header">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-6">
+								<h1>Overview</h1>
+							</div>
+							<div class="col-sm-6">
+								<ol class="breadcrumb float-sm-right">
+									<li class="breadcrumb-item"><a
+										th:href="@{/nsFilterAlertList}">Alert Summary</a></li>
+									<li class="breadcrumb-item active">Overview</li>
+								</ol>
+							</div>
+						</div>
+					</div>
+				</section>
+				<section class="content">
+					<div class="container-fluid">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="card ">
+
+									<div class="card-header"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										<h3 class="card-title text-bold text-center">
+											Request Id - <font id="requestId"
+												th:text="${requestJson.request_id}"> </font>
+										</h3>
+									</div>
+
+									<div class="card-body">
+
+										<!-- Individual Person  -->
+										<div class="row"
+											th:if="${#strings.equalsIgnoreCase(requestJson.customer_type, 'Individual')}">
+											<div class="col-md-custom-3" style="width: 30%;">
+
+												<!-- Profile Image -->
+												<div class="card card-outline card-secondary">
+													<div class="card-body box-profile">
+														<div class="row">
+															<div class="col-sm-7 text-bold">Customer Name</div>
+															<div class="col-sm-5">
+																<a class="float-right text-capitalize"
+																	th:text="${#strings.toLowerCase(requestJson.customer_name)}"></a>
+															</div>
+														</div>
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-6 text-bold">Customer Id</div>
+															<div class="col-sm-6">
+																<a href="#" class="badge bg-info float-right custModel"
+																	th:id="${requestJson.customer_id}"
+																	th:text="${requestJson.customer_id}"></a>
+															</div>
+														</div>
+
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-7 text-bold">Gender</div>
+															<div class="col-sm-5">
+																<a class="float-right" th:text="${requestJson.gender}"></a>
+															</div>
+														</div>
+
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-7 text-bold">Date of Birth</div>
+															<div class="col-sm-5">
+																<a class="float-right"
+																	th:text="${requestJson.year_of_birth}"></a>
+															</div>
+														</div>
+
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-7 text-bold">Customer Type</div>
+															<div class="col-sm-5">
+																<a class="float-right"
+																	th:text="${requestJson.customer_type}"> </a>
+															</div>
+														</div>
+
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-7 text-bold">Threshold</div>
+															<div class="col-sm-5">
+																<span class=" float-right text-bold  "
+																	th:if="${requestJson.threshold eq null}"> NA </span> <span
+																	class=" float-right text-bold text-blue"
+																	th:unless="${requestJson.threshold eq null}"
+																	th:text="${requestJson.threshold + '%'}"></span>
+															</div>
+														</div>
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+
+
+											</div>
+											<!-- /.col -->
+											<div class="col-md-custom-8" style="width: 2%;"></div>
+											<div class="col-md-custom-8" style="width: 68%;">
+												<div class="card card-outline card-secondary">
+													<div class="card-header p-2">
+														<ul class="nav nav-pills"
+															style="background-color: '#20c997';">
+															<li class="nav-item"><a class="nav-link active"
+																href="#activity" data-toggle="tab">Country Details</a></li>
+															<li class="nav-item"><a class="nav-link"
+																href="#timeline" data-toggle="tab">Document Details</a></li>
+															<li class="nav-item"><a class="nav-link"
+																href="#settings" data-toggle="tab">Association
+																	Details</a></li>
+														</ul>
+													</div>
+													<!-- /.card-header -->
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="active tab-pane" id="activity">
+																<!-- First tab Start  -->
+																<table id="countryDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Name</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Type</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Remark</th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr th:each="itr,country: ${requestJson.country_list}">
+
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(country.count)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(itr.country_name)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${itr.country_type}"></td>
+																			<td class="text-capitalize"
+																				th:if="${itr.country_remarks eq 'NA'}"><font>Not
+																					Required</font></td>
+																			<td class="text-capitalize"
+																				th:unless="${itr.country_remarks eq 'NA'}"><font
+																				th:text="${itr.country_remarks}"> </font></td>
+																		</tr>
+																	</tbody>
+																</table>
+
+																<!-- ./First tab ENd -->
+															</div>
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="timeline">
+																<!-- Second tab Start  -->
+																<table id="documentDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">
+																				Document type</th>
+																			<th class="text-capitalize" scope="col">
+																				Document Value</th>
+																			<th class="text-capitalize" scope="col">
+																				Document Remark</th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr th:each="itr,document: ${requestJson.id_details}">
+
+																			<td th:text="${document.count}"></td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(itr.id_type)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(itr.id_value)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:if="${itr.id_remarks eq 'NA'}"><font>Not
+																					Required</font></td>
+																			<td th:unless="${itr.id_remarks eq 'NA'}"><font
+																				th:text="${itr.id_remarks}"> </font></td>
+																		</tr>
+																	</tbody>
+																</table>
+																<!-- ./Second tab ENd -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane" id="settings">
+																<!-- Third Tab Start -->
+																<table id="AssociationDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">
+																				Customer Name</th>
+																			<th class="text-capitalize" scope="col">
+																				Relation Type</th>
+																			<th class="text-capitalize" scope="col">
+																				Customer Type</th>
+																			<th class="text-capitalize" scope="col"></th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr
+																			th:each="association, itr: ${requestJson.associations}">
+
+																			<td th:text="${itr.count}"></td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(association.related_customer_details.customer_name)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(association.relation_type)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(association.customer_type)}">
+																			</td>
+
+																			<td><span><a href="#"
+																					th:data-requestId="${requestJson.request_id}"
+																					th:data-custType="${requestJson.customer_type}"
+																					th:id="${association.part_serial_number}"
+																					title="View Association Details"
+																					class="btn-sm bg-primary viewAssociation"><i
+																						class="fas fa-glasses text-white	"></i></a></span></td>
+
+																		</tr>
+																	</tbody>
+																</table>
+																<!-- ./ Third Tab End -->
+															</div>
+															<!-- /.tab-pane -->
+														</div>
+														<!-- /.tab-content -->
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+											</div>
+											<!-- /.col -->
+										</div>
+										<!-- /.row -->
+
+
+										<!-- Non-Individual Person  -->
+										<div class="row"
+											th:unless="${#strings.equalsIgnoreCase(requestJson.customer_type, 'Individual')}">
+											<div class="col-md-custom-3" style="width: 30%;">
+
+												<!-- Profile Image -->
+												<div class="card card-outline card-secondary">
+													<div class="card-body box-profile">
+														<div class="row">
+															<div class="col-sm-7 text-bold">Entity Name</div>
+															<div class="col-sm-5">
+																<a class="float-right text-capitalize"
+																	th:text="${#strings.toLowerCase(requestJson.customer_name)}"></a>
+															</div>
+														</div>
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-6 text-bold">Entity Id</div>
+															<div class="col-sm-6">
+																<a href="#" class="badge bg-info float-right custModel"
+																	th:id="${requestJson.customer_id}"
+																	th:text="${requestJson.customer_id}"></a>
+															</div>
+														</div>
+
+
+
+
+
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-7 text-bold">Customer Type</div>
+															<div class="col-sm-5">
+																<a class="float-right"
+																	th:text="${requestJson.customer_type}"> </a>
+															</div>
+														</div>
+
+														<hr>
+
+														<div class="row">
+															<div class="col-sm-7 text-bold">Threshold</div>
+															<div class="col-sm-5">
+																<span class=" float-right text-bold text-blue"
+																	th:text="${requestJson.threshold + '%'}"></span>
+															</div>
+														</div>
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+
+
+											</div>
+											<!-- /.col -->
+											<div class="col-md-custom-8" style="width: 2%;"></div>
+											<div class="col-md-custom-8" style="width: 68%;">
+												<div class="card card-outline card-secondary">
+													<div class="card-header p-2">
+														<ul class="nav nav-pills"
+															style="background-color: '#20c997';">
+															<li class="nav-item"><a class="nav-link active"
+																href="#activity" data-toggle="tab">Country Details</a></li>
+															<li class="nav-item"><a class="nav-link"
+																href="#timeline" data-toggle="tab">Document Details</a></li>
+															<li class="nav-item"><a class="nav-link"
+																href="#settings" data-toggle="tab">Association
+																	Details</a></li>
+														</ul>
+													</div>
+													<!-- /.card-header -->
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="active tab-pane" id="activity">
+																<!-- First tab Start  -->
+																<table id="countryDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Name</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Type</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Remark</th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr th:each="itr,country: ${requestJson.country_list}">
+
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(country.count)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(itr.country_name)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${itr.country_type}"></td>
+																			<td class="text-capitalize"
+																				th:if="${itr.country_remarks eq 'NA'}"><font>Not
+																					Required</font></td>
+																			<td class="text-capitalize"
+																				th:unless="${itr.country_remarks eq 'NA'}"><font
+																				th:text="${itr.country_remarks}"> </font></td>
+																		</tr>
+																	</tbody>
+																</table>
+
+																<!-- ./First tab ENd -->
+															</div>
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="timeline">
+																<!-- Second tab Start  -->
+																<table id="documentDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">
+																				Document type</th>
+																			<th class="text-capitalize" scope="col">
+																				Document Value</th>
+																			<th class="text-capitalize" scope="col">
+																				Document Remark</th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr th:each="itr,document: ${requestJson.id_details}">
+
+																			<td th:text="${document.count}"></td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(itr.id_type)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(itr.id_value)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:if="${itr.id_remarks eq 'NA'}"><font>Not
+																					Required</font></td>
+																			<td th:unless="${itr.id_remarks eq 'NA'}"><font
+																				th:text="${itr.id_remarks}"> </font></td>
+																		</tr>
+																	</tbody>
+																</table>
+																<!-- ./Second tab ENd -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane" id="settings">
+																<!-- Third Tab Start -->
+																<table id="AssociationDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">
+																				Customer Name</th>
+																			<th class="text-capitalize" scope="col">
+																				Relation Type</th>
+																			<th class="text-capitalize" scope="col">
+																				Customer Type</th>
+																			<th class="text-capitalize" scope="col"></th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+
+																		<tr
+																			th:each="association, itr: ${requestJson.associations}">
+
+																			<td th:text="${itr.count}"></td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(association.related_customer_details.customer_name)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(association.relation_type)}">
+																			</td>
+																			<td class="text-capitalize"
+																				th:text="${#strings.toLowerCase(association.customer_type)}">
+																			</td>
+
+																			<td><span><a href="#"
+																					th:data-requestId="${requestJson.request_id}"
+																					th:data-custType="${requestJson.customer_type}"
+																					th:id="${association.part_serial_number}"
+																					title="View Association Details"
+																					class="btn-sm bg-primary viewAssociation"><i
+																						class="fas fa-glasses text-white	"></i></a></span></td>
+
+																		</tr>
+																	</tbody>
+																</table>
+																<!-- ./ Third Tab End -->
+															</div>
+															<!-- /.tab-pane -->
+														</div>
+														<!-- /.tab-content -->
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+											</div>
+											<!-- /.col -->
+										</div>
+										<!-- /.row -->
+
+										<div class="card ">
+											<div class="card-header text-bold"
+												style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+												Alert Details</div>
+											<div class="card-body">
+												<table id="alertList"
+													class="table table-sm table-head-fixed table-bordered table-striped table-responsive">
+
+													<thead>
+
+														<tr>
+															<th class="text-capitalize text-center" colspan="3"
+																style="background-color: #d7f2f3;" scope="col">Customer
+																Details</th>
+
+
+															<th class="text-capitalize text-center" colspan="4"
+																style="background-color: #f1807e;" scope="col">Negative
+																List Details</th>
+
+															<th class="text-capitalize text-center" colspan="4"
+																style="background-color: #9fcdff;" scope="col">Scanning
+																Details</th>
+
+															<th class="text-capitalize text-center" colspan="3"
+																style="background-color: #C3EBD6;" scope="col">Other
+																Details</th>
+
+															<th rowspan="2" class="text-capitalize" scope="col"></th>
+
+															<th rowspan="2" class="text-capitalize" scope="col">
+																<div class="select-all-container">
+																	<label for="selectAll">Apply All</label> <input
+																		type="checkbox" id="selectAll">
+																</div>
+															</th>
+
+
+														</tr>
+														<tr>
+															<th class="text-capitalize" scope="col">Id</th>
+															<th class="text-capitalize" scope="col">Name</th>
+															<th class="text-capitalize" scope="col">Relation
+																Type</th>
+
+
+															<th class="text-capitalize" scope="col">Id</th>
+															<th class="text-capitalize" scope="col">Name</th>
+															<th class="text-capitalize" scope="col">Type</th>
+															<th class="text-capitalize" scope="col">Remark</th>
+
+															<th class="text-capitalize" scope="col">Screening
+																Type</th>
+															<th class="text-capitalize" scope="col">Matching
+																Percentage</th>
+															<th class="text-capitalize" scope="col">Id Match</th>
+															<th class="text-capitalize" scope="col">Matching
+																Details</th>
+
+															<th class="text-capitalize" scope="col">Generated
+																Time</th>
+															<th class="text-capitalize" scope="col">Regulatory
+																Status</th>
+															<th class="text-capitalize" scope="col">STR Status</th>
+
+
+
+														</tr>
+													</thead>
+													<tbody>
+														<!--  bg-info -->
+														<tr th:id="${'rowId~'+obj.alertId}"
+															th:each="obj : ${alertData.amlNsAlertMasterList}">
+															<td><font th:text="${obj.custId}"></font></td>
+															<td class="text-capitalize"
+																th:text="${#strings.toLowerCase(obj.customerName)}">
+															</td>
+															<td th:text="${obj.relationType}"></td>
+
+															<td><span style="cursor: pointer;"
+																class="badge bg-info viewEntityProfile"
+																th:text="${obj.entId}" th:id="${obj.entId}"></span></td>
+															<td class="text-capitalize"
+																th:text="${#strings.toLowerCase(obj.listName)}"></td>
+															<td th:text="${obj.lisType}"></td>
+															<td style="white-space: pre-line;"
+																th:text="${obj.remark}"></td>
+
+															<td><font th:text="${obj.scanType}"></font></td>
+															<td th:text="${obj.fuzzyVal}"></td>
+															<td><font th:text="${obj.matchFlag}"> </font></td>
+															<td><span style="cursor: pointer;"
+																th:id="${obj.alertId}" class="badge bg-info alertModal">
+																	View</span></td>
+
+
+															<!-- <td><font th:text="${obj.custId}"></font></td> -->
+
+
+															<td
+																th:text="${#calendars.format(obj.generatedTime,'dd/MM/YYYY')}">
+															</td>
+
+															<td class="text-bold " th:text="${obj.regStatus}"></td>
+															<td class="text-bold" th:text="${obj.strStatus}"></td>
+
+
+
+
+
+
+															<td th:if="${obj.previousAlertStatus =='U'}"><input
+																type="hidden" th:id="${'alertCommentId~'+obj.alertId}"
+																th:data-hiddenComment="${'hiddenAlertId~'+obj.alertId}" />
+																<span><a title="Add Comment" href="#"
+																	th:id="${'comment~'+obj.alertId}"
+																	th:class="${'btn-sm bg-danger mt-1 suspiciousCls alertIdCls~'+ obj.alertId} "><i
+																		class="far fa-comment-alt text-bold text-black "></i></a></span>
+
+
+															</td>
+
+															<td th:if="${obj.previousAlertStatus =='C'}"><input
+																type="hidden" th:id="${'alertCommentId~'+obj.alertId}"
+																th:data-hiddenComment="${'hiddenAlertId~'+obj.alertId}" />
+																<span><a title="Add Comment" href="#"
+																	th:id="${'comment~'+obj.alertId}"
+																	th:class="${'btn-sm bg-success mt-1 suspiciousCls alertIdCls~'+ obj.alertId} "><i
+																		class="far fa-comment-alt text-bold text-black "></i></a></span>
+
+
+															</td>
+
+															<td th:if="${obj.previousAlertStatus =='NA'}"><input
+																type="hidden" th:id="${'alertCommentId~'+obj.alertId}"
+																th:data-hiddenComment="${'hiddenAlertId~'+obj.alertId}" />
+																<span><a title="Add Comment" href="#"
+																	th:id="${'comment~'+obj.alertId}"
+																	th:class="${'btn-sm bg-warning mt-1 suspiciousCls alertIdCls~'+ obj.alertId} "><i
+																		class="far fa-comment-alt text-bold text-black "></i></a></span>
+
+															</td>
+															<td><input type="checkbox" th:id="${obj.alertId}"
+																class="btn btn-success btn-xs selectAlert"
+																title="Select" /></td>
+														</tr>
+													</tbody>
+												</table>
+
+											</div>
+										</div>
+										<!-- <input type="text" th:field="${#lists.size(commentData)"}> -->
+
+
+									</div>
+									<div class="card-footer">
+										<table class="">
+
+											<tbody>
+												<tr th:unless="${alertStatus} eq 'G'">
+													<td>
+														<button class="btn btn-success btn-sm px-4 rounded-1"
+															type="button" id="escalateUp"
+															onclick="executeSubmit('','Suspicious')"
+															style="border-radius: 5px;">Submit</button> <!--  NOT SUSPICIOUS BUTTON START -->
+														<!-- <button
+															class="btn btn-success btn-sm px-4 rounded-1"
+															onclick="executeSubmit('C','Not Suspicious')"
+															type="button" id="close" style="border-radius: 5px;">Not
+															Suspicious</button>
+														<!--  NOT SUSPICIOUS BUTTON END --> <!--
+														<button class="btn btn-warning btn-sm px-4 rounded-1"
+															type="button" id="escalateUp"
+															onclick="executeSubmit('U','Suspicious')"
+															style="border-radius: 5px;">Suspicious</button> -->
+
+														<button class="btn btn-primary btn-sm px-4 rounded-1"
+															onclick="executeSubmit('H','Hold')" type="button"
+															id="hold" style="border-radius: 5px;">Unclear</button>
+
+														<button th:if="${userDto.escBackFlg}"
+															class="btn btn-info btn-sm px-4 rounded-1"
+															onclick="executeSubmit('E','Escalate Back')"
+															type="button" id="escBack" style="border-radius: 5px;">Escalate
+															Back</button>
+
+														<button th:if="${userDto.raiseStrFlg}"
+															class="btn btn-danger btn-sm px-4 rounded-1"
+															onclick="executeSubmit('R','Raise STR')" type="button"
+															id="raiseStr" style="border-radius: 5px;">Raise
+															STR</button> <!-- <div class="btn btn-sm px-4 rounded-1">
+														<label for="file-input"> <em
+															title="Click here for Attachment"
+															class="fas fa-paperclip"> </em>
+														</label> <input id="file-input" onchange="getFileData(this);"
+															style="display: none;" type="file" />
+													</div> -->
+													<td colspan="6"></td>
+												</tr>
+												<tr th:if="${alertStatus} eq 'G'">
+													<td>
+														<button th:if="${userDto.escBackFlg}"
+															class="btn btn-info btn-sm px-4 rounded-1"
+															onclick="executeSubmit('E','Escalate Back')"
+															type="button" id="escBack" style="border-radius: 5px;">Escalate
+															Back</button>
+													</td>
+													<td colspan="6"></td>
+												</tr>
+
+											</tbody>
+										</table>
+									</div>
+
+								</div>
+
+							</div>
+						</div>
+
+						<!-- Customer Profile Modal Start -->
+						<div class="modal fade" id="viewCustModel">
+							<div class="modal-dialog modal-xl">
+								<div class="modal-content">
+									<div class="modal-header" id="grad1"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										<h5 class="modal-title">
+											Cust ID - <span id="custIdLabel"></span>
+										</h5>
+										<button type="button" class="close text-white"
+											data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<!-- form start -->
+									<div class="card-body">
+
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="cust_fullname_label">Customer Full Name</label>
+													<input type="text" class="form-control form-control-sm"
+														id="custFullName" name="custFullName" value=""
+														placeholder="Customer Full Name" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custPan_label">Customer Pan Number</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custPanNo" name="custPanNo" value=""
+														placeholder="Customer Pan Number" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custOccupation_label">Customer
+														Occupation</label> <input type="text"
+														class="form-control form-control-sm" id="custOccupation"
+														name="custOccupation" value=""
+														placeholder="Customer Occupation" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custOccupation_label">Customer Open
+														date</label> <input type="text"
+														class="form-control form-control-sm" id="custOpnDate"
+														name="custOpnDate" value=""
+														placeholder="Customer Open Date" readonly>
+												</div>
+											</div>
+										</div>
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="cust_Type_label">Customer Type</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custIndFlg" name="custIndFlg" value=""
+														placeholder="Customer Type" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custConst_label">Customer Constitution</label>
+													<input type="text" class="form-control form-control-sm"
+														id="custConstitution" name="custConstitution" value=""
+														placeholder="Customer Constitution" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custCategory_label">Customer Risk</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custRisk" name="custRisk" value=""
+														placeholder="Customer Risk" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custCategory_label">Last Kyc Date</label> <input
+														type="text" class="form-control form-control-sm"
+														id="lastKycDate" name="lastKycDate" value=""
+														placeholder="Last Kyc Date" readonly>
+												</div>
+											</div>
+										</div>
+										<div class="row" id="indRow" style="display: none">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="cust_Type_label">Customer Minor Flg</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custMinFlg" name="custMinFlg" value=""
+														placeholder="Customer Minor Flg" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custConst_label">Customer Nre Flg</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custNreFlg" name="custNreFlg" value=""
+														placeholder="Customer NRE Flg" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custCategory_label">Customer Gender</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custGender" name="custGender" value=""
+														placeholder="Customer Gender" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custCategory_label">Customer Annual
+														Income</label> <input type="text"
+														class="form-control form-control-sm" id="custAnnualIncome"
+														name="custAnnualIncome" value=""
+														placeholder="Customer Annual Income" readonly>
+												</div>
+											</div>
+										</div>
+										<div class="row" id="nidRow" style="display: none">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="cust_Type_label">Company Id</label> <input
+														type="text" class="form-control form-control-sm"
+														id="compId" name="compId" value=""
+														placeholder="Company Id" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custConst_label">Date Of Registration</label> <input
+														type="text" class="form-control form-control-sm"
+														id="dateOfReg" name="dateOfReg" value=""
+														placeholder="Date Of Registration" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custCategory_label">Place Of
+														Registration</label> <input type="text"
+														class="form-control form-control-sm" id="placeOfReg"
+														name="placeOfReg" value=""
+														placeholder="Place Of Registration" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custCategory_label">Customer Turnover</label> <input
+														type="text" class="form-control form-control-sm"
+														id="custTurnOver" name="custTurnOver" value=""
+														placeholder="Customer Turnover" readonly>
+												</div>
+											</div>
+										</div>
+										<div class="card card-info  p-2 mt-1" id="grad4">
+											<h3 class="card-title text-dark">&nbsp; Details for
+												Customer Document</h3>
+										</div>
+										<div class="row" id="docIdRow">
+											<div class="col-sm-12 table-responsive">
+												<div class="card card-outline card-secondary">
+													<div class="card-header" style="background-color: #00AA9E;">
+														<h3 class="card-title text-white">Customer Document
+															Details</h3>
+													</div>
+													<div class="card-body" id="grad5">
+														<table class="table table-bordered custDocDtls bg-light"
+															id="custDocDtls" style="width: 100%">
+															<tr>
+																<th scope="col">Doc Code</th>
+																<th scope="col">Doc Description</th>
+																<th scope="col">Doc Value</th>
+																<th scope="col">Doc Issue Country</th>
+																<th scope="col">Doc Issue Place</th>
+																<th scope="col">Doc Issue date</th>
+															</tr>
+															<tbody id="tbodyDocR">
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="card card-info  p-2 mt-1" id="grad4">
+											<h3 class="card-title text-dark">&nbsp; Details for
+												Customer Contact</h3>
+										</div>
+										<div class="row" id="contactIdRow">
+											<div class="col-sm-12 table-responsive">
+												<div class="card card-outline card-secondary">
+													<div class="card-header" style="background-color: #00AA9E;">
+														<h3 class="card-title text-white">Customer Contact
+															Details</h3>
+													</div>
+													<div class="card-body" id="grad5">
+														<table
+															class="table table-bordered custContactDtls bg-light"
+															id="custContactDtls" style="width: 100%">
+															<tr>
+																<th scope="col">Record Type</th>
+																<th scope="col">Record Value</th>
+															</tr>
+															<tbody id="tbodyContactR">
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="card card-info  p-2 mt-1" id="grad3">
+											<h3 class="card-title text-dark">&nbsp; Details for
+												Customer Address</h3>
+										</div>
+										<div class="row" id="ruleAddressRow">
+											<div class="col-sm-12 table-responsive">
+												<div class="card card-outline card-secondary">
+													<div class="card-header" style="background-color: #00AA9E;">
+														<h3 class="card-title text-white">Customer Address
+															Details</h3>
+													</div>
+													<div class="card-body" id="grad2">
+														<table
+															class="table table-bordered custAddressDtls bg-light"
+															id="custAddressDtls" style="width: 100%">
+															<tr>
+																<th scope="col">City</th>
+																<th scope="col">State</th>
+																<th scope="col">Country</th>
+																<th scope="col">Zip Code</th>
+																<th scope="col">Address Category</th>
+																<th scope="col">Address</th>
+															</tr>
+															<tbody id="tbodyAddressR">
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+										<div class="card-footer">
+											<button class="btn btn-secondary" data-dismiss="modal">
+												<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Customer Profile Modal End -->
+
+
+						<!-- Entity Profile Modal Start -->
+						<div class="modal fade" id="viewEntityModel">
+							<div class="modal-dialog modal-xl">
+								<div class="modal-content">
+									<div class="modal-header" id="grad1"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										<h5 class="modal-title">
+											Negative List Entity ID - <span id="listId"></span>
+										</h5>
+										<button type="button" class="close text-white"
+											data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<!-- form start -->
+									<div class="card-body">
+
+										<div class="row">
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="cust_fullname_label">Customer Name</label> <input
+														type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="entityName" name="entityName" value=""
+														placeholder="Customer Name" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custPan_label">Customer Type</label> <input
+														type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="entityType" name="entityType" value=""
+														placeholder="Customer Type" readonly>
+												</div>
+											</div>
+
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custPan_label">Gender</label> <input
+														type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="gender" name="gender" value="" placeholder="Gender"
+														readonly>
+												</div>
+											</div>
+
+
+
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custOccupation_label">Birth Day</label> <input
+														type="text" class="form-control form-control-sm"
+														id="entBirthDay" name="entBirthDay" value=""
+														placeholder="Birth Day" readonly>
+												</div>
+											</div>
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custOccupation_label">Birth Month</label> <input
+														type="text"
+														class="form-control form-control-sm text-capitalize"
+														id="entBirthMonth" name="entBirthMonth" value=""
+														placeholder="Birth Month" readonly>
+												</div>
+											</div>
+
+											<div class="col-sm-3">
+												<div class="form-group">
+													<label for="custOccupation_label">Birth Year</label> <input
+														type="text" class="form-control form-control-sm"
+														id="entBirthYear" name="custOpnDate" value=""
+														placeholder="Customer Open Date" readonly>
+												</div>
+											</div>
+
+											<!-- <div class="col-sm-3">
+												<div class="form-group" style="margin-top: 32px;">
+													<label for="custOccupation_label"></label> <a href="#"
+														class="text-blue"> <em class="fas fa-info-circle"></em>
+														<i>Position Remark</i>
+													</a>
+												</div>
+											</div> -->
+										</div>
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<label for="posRemark">Position Details</label>
+													<textarea style="white-space: pre-line;"
+														class="form-control form-control-sm" id="posRemark"
+														name="posRemark" placeholder="Position" readonly></textarea>
+												</div>
+											</div>
+
+										</div>
+										
+										<div id="appendedCheckboxes"></div>
+					
+										<!-- Address Details Row -->
+										<div class="row mt-3" id="addressDetailsRow">
+											<div class="col-sm-12 col-md-12 ">
+
+												<div
+													class="card card-secondary card-outline table-responsive">
+													<div class="card-header p-2">
+														<ul class="nav nav-pills">
+															<li class="nav-item"><a
+																class="nav-link profile-link1 add-link"
+																href="#addressModal" data-toggle="tab"> Address
+																	Details</a></li>
+															<li class="nav-item"><a
+																class="nav-link profile-link1 alias-tab alias-link"
+																href="#aliasModal" data-toggle="tab">Alias Details</a></li>
+															<li class="nav-item"><a
+																class="nav-link profile-link1 country-tab country-link"
+																href="#countryAssocModal" data-toggle="tab">Country
+																	Association </a></li>
+															<li class="nav-item"><a
+																class="nav-link profile-link1 identity-tab identi-link"
+																href="#identityDetails" data-toggle="tab">Identity
+																	Details </a></li>
+															<li class="nav-item"><a
+																class="nav-link profile-link1 source-tab source-link"
+																href="#sourceDetails" data-toggle="tab">Source
+																	Details </a></li>
+															<!-- <li class="nav-item"><a
+																class="nav-link profile-link position-tab"
+																href="#positionDetails" data-toggle="tab">Position
+																	Details </a></li> -->
+														</ul>
+													</div>
+													<!-- /.card-header -->
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="tab-pane profile-pane1"
+																id="addressModal">
+																<!-- Address Details -->
+
+																<table id="addrssDtlsModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+																			<th>Address Type Description</th>
+																			<th>Address</th>
+																			<th>City</th>
+																			<th>State Province Region</th>
+																			<th>Postal Code</th>
+																			<th>ISO Standard</th>
+																			<th>Country</th>
+
+																		</tr>
+																	</thead>
+																	<tbody class="addrssDtlsModaltbody">
+
+																	</tbody>
+
+																</table>
+
+																<!-- /.Address Details -->
+
+
+															</div>
+															<!-- /.tab-pane -->
+															<div class="tab-pane profile-pane1" id="aliasModal">
+																<!-- Alias Details -->
+																<table id="aliasDtlsTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+
+																			<!-- <th>Alias Name Description</th> -->
+																			<th>Alias Name</th>
+																			<th>Alias Type Description</th>
+																			<th>English Name</th>
+																			<th>English Description</th>
+
+
+																		</tr>
+																	</thead>
+																	<tbody class="aliasDtlsTblModaltbody">
+
+																	</tbody>
+
+																</table>
+																<!-- ./Alias Details -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane1" id="countryAssocModal">
+																<!-- Country Details -->
+																<table id="countryTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+																			<th>Association Type Description</th>
+																			<th>Administrative Unit Name</th>
+																			<th>ISO Standards</th>
+																			<th>Ownership Percentage Calculation</th>
+
+
+																		</tr>
+																	</thead>
+																	<tbody class="countryTblModalTbody">
+
+																	</tbody>
+
+																</table>
+																<!-- ./Country Details -->
+
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane1" id="identityDetails">
+
+																<!-- Identification Details -->
+																<table id="identityTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize table-responsive">
+
+																	<thead>
+																		<tr>
+
+																			<th>Sr No</th>
+																			<th>Country</th>
+
+																			<th>ISO Standards</th>
+																			<th>Identification Issuer</th>
+																			<th>Identification Type Description</th>
+																			<th>Identification Number</th>
+																			<th>Issue Year</th>
+																			<th>Issue Month</th>
+																			<th>Issue Day</th>
+																			<!-- <th>Expiration Type Description</th> -->
+																			<th>Expiration Year</th>
+																			<th>Expiration Month</th>
+																			<th>Expiration Day</th>
+
+																		</tr>
+																	</thead>
+																	<tbody class="identityTblModalBody">
+
+																	</tbody>
+
+																</table>
+																<!-- ./Identification Details -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane1" id="sourceDetails">
+																<!-- Identification Details -->
+																<table id="sourceTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+																			<th>Source URL</th>
+																		</tr>
+																	</thead>
+																	<tbody class="sourceTblModalBody">
+
+																	</tbody>
+
+																</table>
+																<!-- ./Identification Details -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane1" id="positionDetails">
+																<!-- Position Details -->
+																<table id="positionTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+																			<th>Position</th>
+																		</tr>
+																	</thead>
+																	<tbody class="positionTblModalBody">
+
+																	</tbody>
+
+																</table>
+																<!-- ./Position Details -->
+															</div>
+															<!-- /.tab-pane -->
+
+														</div>
+														<!-- /.tab-content -->
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+												<!-- /.col -->
+											</div>
+										</div>
+										<!-- Address Details Row End -->
+
+										<!-- Media Start -->
+										<div class="row" id="mediaDetailsRow">
+											<div class="col-sm-12 col-md-12 table-responsive">
+
+												<div
+													class="card card-secondary card-outline table-responsive">
+													<div class="card-header p-2">
+														<ul class="nav nav-pills">
+															<li class="nav-item"><a
+																class="nav-link profile-link2 pep-link"
+																href="#pepModal" data-toggle="tab">PEP </a></li>
+															<li class="nav-item"><a
+																class="nav-link profile-link2 sanc-link"
+																href="#sanctionModal" data-toggle="tab">Sanction
+																	List</a></li>
+
+															<li class="nav-item"><a
+																class="nav-link profile-link2 adv-link"
+																href="#adverseModal" data-toggle="tab">Adverse Media</a></li>
+
+
+															<li class="nav-item"><a
+																class="nav-link profile-link2 enf-link"
+																href="#enforcementDetails" data-toggle="tab">Enforcement
+																	Details </a></li>
+															<li class="nav-item"><a
+																class="nav-link profile-link2 soe-link"
+																href="#soeDetails" data-toggle="tab">Soe Details </a></li>
+														</ul>
+													</div>
+													<!-- /.card-header -->
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="tab-pane profile-pane2" id="adverseModal">
+																<!-- Adverse Media Details -->
+																<!-- <div class="card-body">
+																	<div class="card-header p-1 custom-card-header">
+																		Primary Details</div>
+																	<br> -->
+																	<table id="adverseTblModal"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+																		<thead>
+																			<tr>
+																				<th>Sr No</th>
+																				<th>Adverse Media Description</th>
+																				<th>Sub-Category Label</th>
+																			</tr>
+																		</thead>
+																		<tbody class="adverseModaltbody">
+																		</tbody>
+																	</table>
+																<!-- </div> -->
+																<!-- /.Adverse Media Details -->
+
+																<!-- <div class="card-body">
+																	<div class="card-header p-1 custom-card-header">
+																		Secondary Details</div>
+																	<br>
+																	<table id="advSubTblModal"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																		<thead>
+																			<tr>
+																				<th>Sr No</th>
+																				<th>Sub-Category Label</th>
+																			</tr>
+																		</thead>
+																		<tbody class="advSubTblModalBody">
+
+																		</tbody>
+
+																	</table>
+																</div> -->
+
+															</div>
+															<!-- /.tab-pane -->
+															<div class="tab-pane profile-pane2" id="sanctionModal">
+																<!-- Sanction List Details -->
+																<table id="sanctionTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+																			<th>Sub-category Level</th>
+																			<th>Source Name</th>
+																			<th>Source Name Abbreviation</th>
+																			<th>Administrative Unit Name</th>
+																			<th>ISO Standard</th>
+																		</tr>
+																	</thead>
+																	<tbody class="sanctionTblModalBody">
+
+																	</tbody>
+
+																</table>
+
+																<!-- /Sanction List Details End -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane2 pep-pane"
+																id="pepModal">
+																<!-- Pep Details -->
+																<!-- <div class="card-body">
+																	<div class="card-header p-1 custom-card-header">
+																		Primary Details</div>
+																	<br> -->
+																	<table id="pepTblModal"
+																		class="table table-head-fixed table-bordered table-striped table-responsive">
+																		<thead>
+																			<tr>
+																				<th>Sr No</th>
+																				<th>Governing Institution</th>
+																				<th>Governing Role</th>
+
+																				<th>PEP Admin Level Description</th>
+																				<th>Is Primary PEP</th>
+																				<th>Is Active PEP</th>
+																				<th>Sub-Category Label</th>
+																				<th>Sub-Category Description</th>
+																				<th>Is In Country PEP Only</th>
+
+																				<th>Effective Type Description</th>
+																				<th>Effective Year</th>
+																				<th>Effective Month</th>
+																				<th>Effective Day</th>
+
+																				<th>Expiration Date Type Description</th>
+																				<th>Expiration Year</th>
+																				<th>Expiration Month</th>
+																				<th>Expiration Day</th>
+																			</tr>
+																		</thead>
+																		<tbody class="pepTblModalBody">
+
+																		</tbody>
+
+																	</table>
+																<!-- </div> -->
+																<!-- <div class="card-body">
+																	<div class="card-header p-1 custom-card-header">
+																		Secondary Details</div>
+																	<br>
+																	<table id="pepSubTblModal"
+																		class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																		<thead>
+																			<tr>
+																				<th>Sr No</th>
+																				<th>Sub-Category Label</th>
+																				<th>Sub-Category Description</th>
+
+																			</tr>
+																		</thead>
+																		<tbody class="pepSubTblModalBody">
+
+																		</tbody>
+
+																	</table>
+																</div> -->
+
+																<!-- /Pep Details End -->
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane2"
+																id="enforcementDetails">
+																<!-- enforcement Details -->
+																<table id="enforcementTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr No</th>
+																			<th>Enforcement Description</th>
+																			<th>Source Name</th>
+																			<th>Source Name Abbreviation</th>
+																			<th>Administrative Unit Name</th>
+																			<th>ISO Standards</th>
+
+																		</tr>
+																	</thead>
+																	<tbody class="enforcementTblModalTbody">
+
+																	</tbody>
+
+																</table>
+
+																<!-- /enforcement Details End -->
+
+															</div>
+															<!-- /.tab-pane -->
+
+															<div class="tab-pane profile-pane2" id="soeDetails">
+
+																<!-- enforcement Details -->
+																<table id="soeTblModal"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr no</th>
+																			<th>Soe Domain Description</th>
+
+																		</tr>
+																	</thead>
+																	<tbody class="soeTblModaltblBody">
+
+																	</tbody>
+
+																</table>
+
+																<!-- /enforcement Details End -->
+															</div>
+															<!-- /.tab-pane -->
+
+														</div>
+														<!-- /.tab-content -->
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+
+												<!-- /.col -->
+											</div>
+										</div>
+										<!-- ./ Media End -->
+
+										<!-- Relation Details Start -->
+										<div class="row" id="reltnDetailsRow">
+											<div class="col-sm-12 col-md-12 table-responsive">
+												<!-- <div class="card card-info  p-2 mt-1" id="grad3">
+													<h3 class="card-title text-dark">&nbsp; Relation
+														Details</h3>
+												</div> -->
+												<div class="row" id="ruleAddressRow">
+													<div class="col-sm-12 table-responsive">
+														<div class="card card-outline card-secondary">
+															<div class="card-header" style="background-color: '';">
+																<h3 class="card-title text-bold">Relation Details</h3>
+															</div>
+															<div class="card-body" id="grad2">
+																<table id="relationsDtls"
+																	class="table table-head-fixed table-bordered table-striped text-capitalize">
+
+																	<thead>
+																		<tr>
+																			<th>Sr no</th>
+																			<th>Entity Id</th>
+																			<th>Name</th>
+																			<th>Customer Type</th>
+
+																			<th>Gender</th>
+																			<th>Group Description</th>
+																			<th>Relationship Description</th>
+
+																		</tr>
+																	</thead>
+																	<tbody class="tbodyAddressR">
+
+																	</tbody>
+
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+
+
+												<!-- /.col -->
+											</div>
+										</div>
+										<!-- ./ Relation Modal End -->
+
+
+
+
+
+
+
+										<div class="card-footer">
+											<button type="button" class="btn btn-secondary"
+												id="modalCloseButton">
+												<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- Entity Profile Modal End -->
+
+						<!-- Close Modal Start -->
+						<div class="modal fade" id="closemodal">
+							<input type="hidden" id="encryptedJsonClose" name="encryptedJson" />
+							<input type="hidden" id="action" name="action" />
+							<div class="modal-dialog modal-xl">
+								<div class="modal-content">
+									<div class="modal-header"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										<h5 class="modal-title">User Comments For</h5>
+										&nbsp;
+										<h5 class="modal-title text-bold text-orange" id="actModal"></h5>
+										&nbsp;
+										<h5 class="modal-title">Action</h5>
+										<h5 class="modal-title" id="ucicId"></h5>
+										<button type="button" class="close text-white"
+											data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<!-- form start -->
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group">
+													<textarea class="form-control" name="alertComment" rows="5"
+														maxlength="3000" placeholder="Provide Your Comments"
+														id="alertComment"></textarea>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+									</div>
+									<div class="card-footer">
+										<a class="btn btn-info" id="finalAct"
+											th:onclick="finalSubmit()"> <em class="fas fa-save"
+											style="padding: 0 7px 0 0px;"></em>Submit
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- ./ Close Modal ENd -->
+
+
+						<!-- Association Modal Start -->
+						<div class="modal fade" id="associationModal">
+							<input type="hidden" id="encryptedJsonClose" name="encryptedJson" />
+							<input type="hidden" id="action" name="action" />
+							<div class="modal-dialog modal-xl">
+								<div class="modal-content">
+									<div class="modal-header"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										Association Details &nbsp;
+										<button type="button" class="close text-white"
+											data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<!-- form start -->
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="assocName">Association Name <code>*</code>
+													</label> <input type="text" class="form-control form-control-sm"
+														name="assocName" id="assocName"
+														placeholder="Association Name" readonly> <span
+														id="assocNameerror"></span>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="assocName">Relation Type <code>*</code>
+													</label> <input type="text" class="form-control form-control-sm"
+														name="relationType" id="relationType"
+														placeholder="Relation Type" readonly> <span
+														id="relationTypeerror"></span>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<div class="row">
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="assocName">Customer Type <code>*</code>
+													</label> <input type="text" class="form-control form-control-sm"
+														name="customerType" id="customerType"
+														placeholder="Customer Type" readonly> <span
+														id="assocNameerror"></span>
+												</div>
+											</div>
+											<div class="col-sm-6">
+												<div class="form-group">
+													<label for="assocName">Gender <code>*</code>
+													</label> <input type="text" class="form-control form-control-sm"
+														name="gender" id="Agender" placeholder="Gender" readonly>
+													<span id="gendererror"></span>
+												</div>
+											</div>
+										</div>
+										<!-- /.row -->
+										<!-- Counter , Document and Association Details Start -->
+										<div class="row">
+											<div class="col-md-12 col-sm-12">
+												<div class="card card-outline card-secondary">
+													<div class="card-header p-2">
+														<ul class="nav nav-pills"
+															style="background-color: '#20c997';">
+															<li class="nav-item"><a class="nav-link active"
+																href="#activityModal" data-toggle="tab">Country
+																	Details</a></li>
+															<li class="nav-item"><a class="nav-link"
+																href="#timelineModal" data-toggle="tab">Document
+																	Details</a></li>
+														</ul>
+													</div>
+													<!-- /.card-header -->
+													<div class="card-body">
+														<div class="tab-content">
+															<div class="active tab-pane" id="activityModal">
+																<!-- First tab Start  -->
+																<table id="countryDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Name</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Type</th>
+																			<th class="text-capitalize" scope="col">Country
+																				Remark</th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+																	</tbody>
+																</table>
+
+																<!-- ./First tab ENd -->
+															</div>
+															<!-- /.tab-pane -->
+															<div class="tab-pane" id="timelineModal">
+																<!-- Second tab Start  -->
+																<table id="documentDetails"
+																	class="table table-sm table-head-fixed table-bordered table-striped ">
+
+																	<thead>
+
+																		<tr>
+																			<th class="text-capitalize" scope="col">Sr No</th>
+																			<th class="text-capitalize" scope="col">
+																				Document type</th>
+																			<th class="text-capitalize" scope="col">
+																				Document Value</th>
+																			<th class="text-capitalize" scope="col">
+																				Document Remark</th>
+
+																		</tr>
+																	</thead>
+																	<tbody>
+																	</tbody>
+																</table>
+																<!-- ./Second tab ENd -->
+															</div>
+															<!-- /.tab-pane -->
+
+
+														</div>
+														<!-- /.tab-content -->
+													</div>
+													<!-- /.card-body -->
+												</div>
+												<!-- /.card -->
+											</div>
+										</div>
+										<!-- ./Counter , Document and Association Details Start End -->
+									</div>
+									<div class="card-footer">
+										<a class="btn btn-secondary backBtn"> <em
+											class="fas fa-arrow-circle-left"
+											style="padding: 0 7px 0 0px;"></em> Back
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- ./ Association Modal ENd -->
+
+						<!-- Alert Details Start-->
+						<!-- class="modal fade modal-lg show" id="alertModalView" style="padding-right: 17px; display: block; margin-left:25%" -->
+						<div class="modal fade modal-lg" id="alertModalView"
+							style="margin-left: 25%;">
+							<input type="hidden" id="encryptedJsonClose" name="encryptedJson" />
+							<input type="hidden" id="action" name="action" />
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+
+									<div class="modal-header"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										<h5 class="modal-title">Alert Matching Details</h5>
+
+
+										<button type="button" class="close text-white"
+											data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+									<!-- Main Content for Alert Matching Details -->
+									<div class="modal-body">
+										<div class="card table-responsive ">
+
+											<div class="card-body">
+												<table
+													class="table table-sm table-head-fixed table-bordered table-striped "
+													id="alertListModal">
+													<thead class="text-white"
+														style="background-color: #00AA9E;">
+														<tr>
+															<th class="tblHead text-center">Match Key</th>
+															<th class="tblHead text-center">Match Value</th>
+														</tr>
+													</thead>
+													<tbody class="alertListModalbody">
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+
+
+
+									<!-- ./ Main Content for Alert Matching Detaiils End -->
+								</div>
+							</div>
+						</div>
+						<!-- ./Alert Details End -->
+
+						<!-- Commement Modal-->
+						<div class="modal fade" id="commentModal">
+							<input type="hidden" id="encryptedJsonClose" name="encryptedJson" />
+							<input type="hidden" id="action" name="action" />
+							<div class="modal-dialog modal-xl">
+								<div class="modal-content">
+									<div class="modal-header"
+										style="background-image: linear-gradient(to right, rgba(0, 123, 255, 0.5), rgba(255, 0, 0, 0.5));">
+										<h5 class="modal-title">
+											Alert Id - <font class="alert-id"> </font>
+										</h5>
+
+										<!-- <h5 class="modal-title text-bold text-orange"
+											id="actModalText"></h5> -->
+
+
+										<h5 class="modal-title" id="ucicId"></h5>
+										<button type="button" class="close text-white"
+											data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+										</button>
+									</div>
+
+
+									<!-- Previous Secon dsart -->
+									<!-- collapsed-card id="collapse" -->
+									<div class="card-body">
+										<div style="display: none;" id="previousCommentId">
+											<div class="card previousCOmmentDetails">
+
+
+												<div class="card-header text-bold text-white"
+													style="background-color: #00AA9E;"
+													data-card-widget="collapse">
+													<em class="fab fa-twitter"></em> <font> Previous
+														Comment Details </font>
+												</div>
+												<div class="card-body">
+													<div>
+														<table id="previousAlertDtls"
+															class="table table-sm table-head-fixed table-bordered table-striped ">
+															<thead>
+																<!-- <tr>
+																<td colspan="8" class="text-center text-bold text-grey"
+																	style="background-color: #bba7c2">Comment Details</td>
+															</tr> -->
+																<tr class="text-bold">
+																	<th>User Name</th>
+																	<th>User Role</th>
+																	<th>Alert Status</th>
+																	<th>User Comment</th>
+																	<th>Comment Date</th>
+																	<th>TAT</th>
+
+																</tr>
+
+															</thead>
+															<tbody class="userComments">
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+
+
+										<!-- ./ Previous Section End-->
+										<!-- form start -->
+										<div class="card card-outline card-secondary">
+											<div class="card-body">
+
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<input type="hidden" id="hiddenAlertId" value="">
+															<div class="form-group">
+																<div
+																	class="custom-control custom-switch  custom-switch-on-danger">
+																	<input type="checkbox"
+																		class="custom-control-input actionSwitch"
+																		id="actionSwitch"> <label
+																		class="custom-control-label" for="actionSwitch">
+																		Is Suspicious?</label>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+
+
+												<div class="row">
+													<div class="col-sm-12">
+														<div class="form-group">
+															<input type="hidden" id="hiddenAlertId" value="">
+															<label for="addComment"> Add Comment <code>*</code></label>
+															<textarea class="form-control" name="alertComment"
+																rows="5" maxlength="3000"
+																placeholder="Provide Your Comments"
+																id="alertCommentModal"></textarea>
+														</div>
+													</div>
+												</div>
+
+											</div>
+										</div>
+										<!-- /.row -->
+									</div>
+
+									<div class="card-footer">
+										<a class="btn btn-info" id="finalAct"
+											th:onclick="saveComment()"> <em class="fas fa-save"
+											style="padding: 0 7px 0 0px;"></em>Save Comment
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- ./Alert Details End -->
+
+					</div>
+				</section>
+			</form>
+
+		</div>
+		<!-- /.content-wrapper -->
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/nsAlertinvestigate.js}"></script>
+	<!-- <script th:src="@{/dist/appjs/erm/filedownload.js}"></script> -->
+	<script>
+		/* Toaster*/
+		$(document).ready(function() {
+			var message = $('#message').val();
+
+			if (message != "") {
+				toastr.success(message);
+			}
+		});
+
+		// Toggle for Channel
+		$(document).ready(function() {
+
+			// suspiciousCls
+			$('.suspiciousCls').click(function() {
+
+				var alertId = $(this).attr("id");
+				var splitAlertId = alertId.split("~")[1];
+				//alert("alertId " + alertId);
+
+				$("#hiddenAlertId").val(alertId);
+				action = "Suspicious";
+				$('#action').val(status);
+				$('#actModalText').text(action);
+				$('#commentModal').modal('show');
+
+				$('#buttonEvent').val('U');
+				$("#hiddenAlertId").val();
+
+				//alert-id
+				$(".alert-id").text(splitAlertId);
+			});
+
+			// Old Switch Flag
+			$('.suspiciousSwitch').change(function() {
+
+				var id = $(this).attr("id");
+				var action;
+				//alert("id " + id);
+				if ($(this).is(':checked')) {
+					console.log('This is firing');
+					$('.toggle-off').removeClass('active');
+					$('.toggle-on').addClass('active');
+					//suspiciousCls 
+
+					action = "Suspicious";
+					$('#actModalText').text(action);
+					$('#action').val(status);
+					$('#commentModal').modal('show');
+
+					$('#buttonEvent').val('U');
+				} else {
+					$('.toggle-off').addClass('active');
+					$('.toggle-on').removeClass('active');
+
+					action = "Not Suspicious";
+					$('#actModalText').text(action);
+					$('#action').val(status);
+					$('#commentModal').modal('show');
+
+					$('#buttonEvent').val('C');
+				}
+			});
+
+		});
+
+		//Pagination
+		var pageSize = 1;
+
+		var pageCount = $(".line-content").length / pageSize;
+
+		for (var i = 0; i < pageCount; i++) {
+
+			$("#pagin").append('<li><a href="#">' + (i + 1) + '</a></li> ');
+		}
+		$("#pagin li").first().find("a").addClass("current")
+		showPage = function(page) {
+			$(".line-content").hide();
+			$(".line-content").each(function(n) {
+				if (n >= pageSize * (page - 1) && n < pageSize * page)
+					$(this).show();
+			});
+		}
+
+		showPage(1);
+
+		$("#pagin li a").click(function() {
+			$("#pagin li a").removeClass("current");
+			$(this).addClass("current");
+			showPage(parseInt($(this).text()))
+		});
+
+		$(function() {
+			//Initialize Select2 Elements
+			$('.select2').select2();
+			bsCustomFileInput.init();
+		})
+	</script>
+</body>
+
+</html>

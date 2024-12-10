@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title sec:authentication="principal.ermTitle"></title>
+<!-- Tell the browser to be responsive to screen width -->
+<meta
+	content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+	name="viewport">
+<!-- Font Awesome -->
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+
+
+
+<style>
+body {
+	margin: 0;
+	font-family: "Source Sans Pro", -apple-system, BlinkMacSystemFont,
+		"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+		"Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-size: .875rem !important;
+	font-weight: 400;
+	line-height: 1.5;
+	color: #212529;
+	text-align: left;
+	background-color: #fff;
+}
+
+header {
+	width: 100%;
+	padding: 10px 0 0 15px;
+}
+
+.login-box, .register-box {
+	width: 80%;
+	margin: 0px auto;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.content {
+	display: flex;
+	width: 100%;
+	margin: 10px auto;
+}
+
+.canvas {
+	width: 100%;
+	object-fit: contain;
+}
+
+/* 	hr {
+			margin-top: 1rem;
+			margin-bottom: 1rem;
+			border: 0;
+		} */
+.loginfooter {
+	bottom: 0;
+	position: fixed;
+	background: white;
+	border-top: 1px solid #dee2e6;
+	color: #869099;
+	width: 100%;
+	display: inline-flex;
+	padding: 5px 0 5px 0;
+}
+
+.beforefooter {
+	left: 10px;
+	bottom: 7%;
+	position: fixed;
+	width: 30%;
+	display: inline-flex;
+	text-align: right;
+	font-size: medium;
+	float: right;
+	border: 1px outset black;
+	background-color: lightblue;
+	height: 32px;
+	box-shadow: 1px 1px 10px 10px lightblue;
+}
+
+.float-right {
+	float: right !important;
+	text-align: end;
+	padding: 0 10px 0px 0px;
+}
+
+@media ( min-width : 576px) {
+	.card-columns {
+		column-count: 3;
+	}
+}
+
+@media ( min-width : 768px) {
+	.card-columns {
+		column-count: 3;
+	}
+}
+
+@media ( min-width : 992px) {
+	.card-columns {
+		column-count: 4;
+	}
+}
+
+@media ( min-width : 1200px) {
+	.card-columns {
+		column-count: 5;
+	}
+}
+
+.text-Capitalize {
+	text-transform: capitalize !important;
+}
+
+.table {
+	width: 100%;
+	max-width: 100%;
+	margin-bottom: 20px;
+	white-space: nowrap;
+}
+
+.thHead {
+	background-color: #4fa9a7 !important;
+	white-space: nowrap;
+	text-align: center;
+	font-weight: bold;
+}
+
+.tFooter {
+	font-weight: bold;
+}
+
+#sysTexta:hover {
+	color: red;
+}
+</style>
+</head>
+<div id="load"></div>
+
+<body
+	style="background: url(dist/img/photo-2.png); background-size: cover;">
+	<div th:insert="/header::roleHeader" style="width: 100%"></div>
+
+
+	<div class="content">
+
+		<div class="container-fluid">
+			<form autocomplete="off" role="form" method="post"
+				th:action="@{/fetchZoneWiseCount}" id="auditProfilePage">
+				<input type="hidden" id="encryptedJsonEdit" name="encryptedJson" />
+				<input type="hidden" id="piChartData" name="piChartData"
+					th:value="${verticalPiCountList}" /> <input type="hidden"
+					id="trendList" name="trendList" th:value="${zoneCountListForPie}" />
+				<input type="hidden" th:if="${regionCountList}" id="regionList"
+					name="regionList" th:value="${regionCountList}" />
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="card card-secondary card-outline verticalWindowCount">
+							<div class="card-header row">
+
+								<button type="button" id="verticalBtnBranch"
+									class="btn btn-sm btn-success text-white verticalBtnBranch">Branch
+									Monitoring</button>
+								&nbsp;
+
+								<button type="button" id="verticalBtnRom"
+									class="btn btn-sm btn-warning text-white verticalBtnRom">ROM
+									Monitoring</button>
+								&nbsp;
+
+								<button type="button" id="verticalBtnVigilance"
+									class="btn btn-sm btn-secondary text-white verticalBtnVigilance">Vigilance
+									Monitoring</button>
+								&nbsp;
+
+								<div th:if="${systemAdmin != null or hoAdmin != null}">
+									<a th:if="${hoAdmin eq 'NA' and systemAdmin != 'NA'}"
+										type="button" th:id="${'SA-'+systemAdmin}"
+										class="btn btn-sm btn-primary TMroleNameDiv"> System Admin</a>
+									<a th:if="${hoAdmin != 'NA'}" type="button"
+										th:id="${'SA-'+ hoAdmin}"
+										class="btn btn-sm btn-primary TMroleNameDiv"> System Admin</a>
+								</div>
+
+							</div>
+
+
+							<div class="card-body">
+
+								<div class="card card-secondary card-outline">
+									<div class="card-body">
+
+										<div class="row">
+											<div class="col-sm-2"></div>
+											<div class="col-sm-5 mt-2 ">
+												<div class="form-group row">
+													<label class="col-12">Select Date Range For Search
+														<code>*</code>
+													</label>
+													<!-- Date range
+															/.form group -->
+													<div class="input-group date" data-target-input="nearest">
+														<input type="text"
+															class="form-control col-6 datetimepicker-input"
+															placeholder="Start Date" name="startDate" id="startDate"
+															data-target="#startDate" onkeydown="return false" />
+														<div class="input-group-append" data-target="#startDate"
+															data-toggle="datetimepicker">
+															<div class="input-group-text">
+																<em class="far fa-calendar-alt"></em>
+															</div>
+														</div>
+														&nbsp;&nbsp;&nbsp; <input type="text"
+															class="form-control col-6 datetimepicker-input"
+															placeholder="End Date" name="endDate" id="endDate"
+															data-target="#endDate" onkeydown="return false" />
+														<div class="input-group-append" data-target="#endDate"
+															data-toggle="datetimepicker">
+															<div class="input-group-text">
+																<em class="far fa-calendar-alt"></em>
+															</div>
+
+														</div>
+
+
+													</div>
+												</div>
+											</div>
+											<div class="col-sm-2 mt-3">
+												<button type="button" id="fetchDataBtn"
+													class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+													name="fetchDataBtn">Fetch Report</button>
+											</div>
+
+										</div>
+										<hr>
+
+										<div class="row">
+											<div class="col-sm-6 mt-3 pl-3">
+												<table
+													class="table table-bordered table-striped"
+													id="zoneWiseReportTable" border="1">
+
+													<thead>
+														<tr>
+															<th scope="col" class="thHead text-bold">Zone Name</th>
+															<th scope="col" class="thHead text-bold">Open</th>
+															<th scope="col" class="thHead text-bold">Close</th>
+															<th scope="col" class="thHead text-bold">Pending For Verification</th>
+															<th scope="col" class="thHead text-bold ">Total</th>
+
+														</tr>
+													</thead>
+													<tbody id="zoneWiseCountBody">
+														<tr
+															th:each="zoneAlertCount:${zoneCount.zoneAlertCountList}">
+															<td class="text-capitalize"
+																th:text="${zoneAlertCount.zoneName}"></td>
+															<td class="text-red text-bold"
+																th:text="${zoneAlertCount.openCount}"></td>
+															<td class="text-green text-bold"
+																th:text="${zoneAlertCount.closeCount}"></td>
+															<td class="text-yellow text-bold"
+																th:text="${zoneAlertCount.escalateCount}"></td>
+															<td class="text-center text-bold regionWiseCount"
+																th:id="'zoneName~'+${zoneAlertCount.zoneName}"
+																th:name="zoneName"><a href="#"
+																class="badge badge-primary"
+																th:text="${zoneAlertCount.totalCount}"> </a></td>
+														</tr>
+
+
+													</tbody>
+													<tfoot id="zoneWiseCountFooter">
+														<tr>
+															<td class="tFooter">Total</td>
+															<td class="tFooter" th:text="${zoneCount.openCount}"></td>
+															<td class="tFooter" th:text="${zoneCount.closeCount}"></td>
+															<td class="tFooter" th:text="${zoneCount.escalateCount}"></td>
+															<td class="text-center tFooter"
+																th:text="${zoneCount.totalCount}"></td>
+														</tr>
+													</tfoot>
+												</table>
+											</div>
+											<div class="col-sm-6 " id="zone-pie-chart"
+												style="padding: 50px 0px 0px 0px !important;">
+												<canvas id="pieChartZone"
+													style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="card card-secondary card-outline" id="regionTable"
+									style="display: none">
+									<div class="card-header text-sm">
+										<h3 class="card-title">
+											Zone Name - <span class="text-capitalize" id="zoneId"></span>
+										</h3>
+									</div>
+									<div class="card-body" id="regionCardZone">
+										<div class="row">
+											<div class="col-sm-5 "
+												style="padding: 50px 0px 0px 0px !important;"
+												id="pie-app-chart">
+												<canvas id="regionPie"
+													style="min-height: 350px; height: 350px; max-height: 350px; max-width: 100%;"></canvas>
+											</div>
+											<div class="col-sm-7 mt-3 pl-3">
+												<table
+													class="table table-bordered table-striped regionWiseReportTable"
+													id="regionWiseReportTable" border="1">
+
+													<thead>
+														<tr>
+															<th scope="col" class="thHead text-bold">Region Name</th>
+															<th scope="col" class="thHead text-bold">Open</th>
+															<th scope="col" class="thHead text-bold">Close</th>
+															<th scope="col" class="thHead text-bold">Pending For Verification</th>
+															<th scope="col" class="thHead text-bold">Total</th>
+
+														</tr>
+													</thead>
+													<tbody id="regionWiseCountBody">
+
+													</tbody>
+													<tfoot id="regionWiseCounttFooter">
+													</tfoot>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="card card-secondary card-outline" id="branchTable"
+									style="display: none">
+									<div class="card-header text-sm">
+										<h3 class="card-title">
+											Region Name - <span class="text-capitalize" id="regionId"></span>
+										</h3>
+									</div>
+									<div class="card-body">
+										<div class="row">
+											<div class="col-sm-7">
+												<table
+													class="table table-bordered  table-striped branchWiseReportTable"
+													id="branchWiseReportTable" border="1">
+
+													<thead>
+														<tr>
+															<th scope="col" class="thHead text-bold">Branch</th>
+															<th scope="col" class="thHead text-bold">Open</th>
+															<th scope="col" class="thHead text-bold">Close</th>
+															<th scope="col" class="thHead text-bold">Pending For Verification</th>
+															<th scope="col" class="thHead text-bold">Total</th>
+
+														</tr>
+													</thead>
+													<tbody id="branchWiseCountBody">
+													</tbody>
+													<tfoot id="branchWiseCountFooter">
+													</tfoot>
+												</table>
+											</div>
+											<div class="col-sm-5">
+
+
+												<div class="col-sm-12" id="riskGraph"
+													style="padding: 50px 50px 0px 0px !important;">
+
+													<canvas id="pieChartRisk"
+														style="min-height: 200px; height: 200px; max-height: 200px; max-width: 100%;"></canvas>
+													<!-- <span class="text-bold"
+														style="padding: 10px 0px 0px 0px !important;">Risk-Wise
+														Graph</span> -->
+
+												</div>
+												<hr>
+												<div class="col-sm-12" id="classificationGraph"
+													style="padding: 50px 0px 0px 10px !important;">
+
+													<canvas id="pieChartClassification"
+														style="min-height: 200px; height: 200px; max-height: 200px; max-width: 100%;"></canvas>
+													<!-- <span class="text-bold"
+														style="padding: 10px 0px 0px 0px !important; text-align: center;">Classification-Wise
+														Graph</span> -->
+
+												</div>
+
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="card card-info card-outline mt-3" id="ruleTable"
+									style="display: none">
+									<div class="card-header text-sm">
+										<h3 class="card-title">
+											Branch ID - <span id="branchId"></span>
+										</h3>
+									</div>
+									<div class="card-body table-responsive">
+										<div class="row">
+											<div class="col-sm-12 mt-3 pl-3 ">
+												<table
+													class="table table-bordered table-striped ruleWiseReportTable "
+													id="ruleWiseReportTable" border="1">
+
+													<thead>
+														<tr>
+															<th scope="col" class="thHead text-bold ">Rule ID</th>
+															<th scope="col" class="thHead text-bold "
+																style="width: 30%;">Rule Description</th>
+															<th scope="col" class="thHead text-bold ">Rule
+																Severity</th>
+															<th scope="col" class="thHead text-bold ">Rule
+																Classification</th>
+															<th scope="col" class="thHead text-bold ">Open</th>
+															<th scope="col" class="thHead text-bold ">Close</th>
+															<th scope="col" class="thHead text-bold ">Verification</th>
+															<th scope="col" class="thHead text-bold ">Total</th>
+
+														</tr>
+													</thead>
+													<tbody id="ruleWiseCountBody">
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="card card-primary card-outline" id="accountTable"
+									style="display: none">
+									<div class="card-header">
+										<h5>
+											Rule ID - <span id="ruleId"></span>
+										</h5>
+									</div>
+									<div class="card-body table-responsive">
+										<div class="row">
+											<div class="col-sm-12 mt-3 pl-3">
+												<table
+													class="table table-bordered table-striped accountWiseReportTable"
+													id="accountWiseReportTable" border="1">
+
+													<thead>
+														<tr>
+															<th>Alert ID</th>
+															<th>Account No</th>
+															<th>Customer ID</th>
+															<th>Customer Name</th>
+															<th>Alert Status</th>
+															<th>Alert Category</th>
+															<th>Generated Date</th>
+															<th>Recurrence Count</th>
+														</tr>
+													</thead>
+													<tbody id="accountWiseCountBody">
+
+													</tbody>
+												</table>
+											</div>
+										</div>
+									</div>
+								</div>
+
+
+
+
+
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+
+	</div>
+	<footer class="loginfooter">
+		<div class="col-md-4" style="float: left; padding: 6px 0 0 10px;">
+			© 2022-2023 All rights reserved.</div>
+		<div class="col-md-4"
+			style="float: left; text-align: center; padding: 6px 0 0 10px;">
+			&nbsp;<img class="img-fluid" th:src="@{/dist/img/flag.png}"
+				alt="Proudly Made In India" width="" height=""> &nbsp; Proudly
+			Made In India
+		</div>
+		<div class="float-right col-md-4">
+			Designed &amp; Developed by <img class="img-fluid"
+				th:src="@{/dist/img/intech-logo.png}" alt="Photo" width="100"
+				height="100">
+		</div>
+	</footer>
+
+	<!-- VIEW ALERT MODAL -->
+	<div class="modal fade" id="viewAlertmodal">
+		<div class=" modal-dialog modal-xl">
+			<div class=" card modal-content">
+				<div class="modal-header bg-info">
+					<h3 class="modal-title text-white">Alert Details</h3>
+					<button type="button" class="close" data-dismiss="modal"
+						aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body p-1 m-1">
+
+					<div class="card card-tabs card-info card-outline m-2 p-2">
+
+						<div class="card-header p-2 border-bottom-0">
+							<ul class="nav nav-tabs">
+								<li class="nav-item"><a
+									class="nav-link card-title text-blue text-bold active"
+									href="#alertDetailstab" id="alertDetailstablink"
+									data-toggle="tab"> <em class="fa fa-tasks mr-1 mt-2"></em>Alert
+										Details
+								</a></li>
+							</ul>
+						</div>
+						<div class="tab-content">
+
+							<div class="active tab-pane" id="alertDetailstab">
+								<div class="row mt-2">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="alertIdM">Alert ID</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="alertIdM" name="alertIdM" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="alertStatus">Alert Status</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="alertStatus" name="alertStatus" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="custAcid">Customer ACID</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="custAcid" name="custAcid" readonly>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<div class="row">
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="ruleId">Rule Id</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold" id="ruleIdM"
+													name="ruleId" readonly>
+											</div>
+										</div>
+									</div>
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="ruleRisk">Rule Priority</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="ruleRiskM" name="ruleRisk" readonly>
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label for="ruleDescM">Rule Description </label>
+											<textarea class="form-control form-control-sm"
+												name="ruleDescM" id="ruleDescM" rows="2" maxlength="3000"
+												placeholder="Rule Description" disabled></textarea>
+										</div>
+									</div>
+
+								</div>
+
+
+								<div class="row">
+
+
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="custId">Customer Id</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold" id="custId"
+													name="custId" readonly>
+											</div>
+										</div>
+									</div>
+
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="branchId">Branch Id</label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="branchIdM" name="branchId" readonly>
+											</div>
+										</div>
+									</div>
+
+
+								</div>
+
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="region">Region </label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold" id="region"
+													name="region" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="zone">Zone </label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold" id="zone"
+													name="zone" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="generatedTime">Generated Time </label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="generatedTime" name="generatedTime" readonly>
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+								<div class="row">
+
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="custVertical">Customer Vertical </label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="custVertical" name="custVertical" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="actRoleId">Act Role Id </label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="actRoleId" name="actRoleId" readonly>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-4">
+										<div class="form-group">
+											<label for="ruleClassification">Rule Classification </label>
+											<div class="input-group">
+												<input type="text"
+													class="form-control form-control-sm text-bold"
+													id="ruleClassification" name="ruleClassification" readonly>
+											</div>
+										</div>
+									</div>
+
+								</div>
+
+
+								<div class="row" id='alertCatTable'>
+									<div class="col-sm-12">
+										<div class="card-body  table-responsive">
+											<table id="alrtcatTblM"
+												class="table table-head-fixed table-bordered table-striped alrtcatTblM">
+
+												<tbody class="aBody" id="aBody">
+
+
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+					</div>
+
+
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-secondary" data-dismiss="modal">
+						<em class="fa fa-arrow-circle-left fa-1x">&nbsp;</em> Back
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<form autocomplete="off" role="form" method="post"
+		th:action="@{/roleAction}" id="roleForm">
+		<input type="hidden" id="encryptedJson" name="encryptedJson" />
+	</form>
+	<!-- VIEW ALERT MODAL -->
+
+	<div th:if="${#authentication.principal.ntf15Days}">
+		<div class="beforefooter">
+			<h6>
+				&nbsp;
+				<svg xmlns="http://www.w3.org/2000/svg" class="admonition-icon"
+					width="15" height="15" viewBox="0 0 18 18">
+        <path
+						d="M0 9c0-5 4-9 9-9s9 4 9 9-4 9-9 9-9-4-9-9zm8-1v5c0 .6.4 1 1 1s1-.4 1-1V8c0-.6-.4-1-1-1s-1 .4-1 1zm1-2c.6 0 1-.4 1-1s-.4-1-1-1-1 .4-1 1 .4 1 1 1z"
+						fill="#0052CC" fill-rule="evenodd"> </path>
+    </svg>
+				&nbsp;&nbsp;<span sec:authentication="principal.ntf15Days"></span>&nbsp;&nbsp;
+			</h6>
+		</div>
+	</div>
+
+
+	<!-- /.login-box -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<!-- ChartJS -->
+	<script th:src="@{/plugins/chart.js/Chart.min.js}"></script>
+	<!-- uPlot -->
+	<script th:src="@{/plugins/uplot/uPlot.iife.min.js}"></script>
+	<script th:src="@{/dist/appjs/erm/jspdf.min.js}"></script>
+	<script th:src="@{/dist/appjs/erm/auditorProfileView.js}"></script>
+
+
+	<script>
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'interactive') {
+				//document.getElementById('contents').style.visibility = "hidden";
+			} else if (state == 'complete') {
+				setTimeout(
+						function() {
+							document.getElementById('interactive');
+							document.getElementById('load').style.visibility = "hidden";
+							//document.getElementById('contents').style.visibility = "visible";
+						}, 1000);
+			}
+		}
+	</script>
+	<script>
+		$(".TMroleNameDiv")
+				.click(
+						function() {
+
+							var roleName = $(this).attr('id').split("-")[1];
+							if (roleName != 'null') {
+								document.getElementById('load').style.visibility = "visible";
+								var moduleCode = '';
+								if (roleName === 'System Admin'
+										|| roleName === 'HO Admin') {
+									moduleCode = 'SA';
+								} else {
+									moduleCode = 'TM';
+								}
+								var searchFromDashboard = 'searchFrom';
+								sessionStorage.setItem('rolename', roleName);
+								sessionStorage
+										.setItem('moduleCode', moduleCode);
+								sessionStorage.setItem('searchFromDashboard',
+										searchFromDashboard);
+
+								var pageValJson = "{\"roleName\":\"" + roleName
+										+ "\",\n" + "\"moduleCode\":\""
+										+ moduleCode + "\",\n"
+										+ "\"searchFromDashboard\":\""
+										+ searchFromDashboard + "\"}";
+
+								var iterationCount = 1000;
+								var keySize = 128;
+								//passPhrase is the key
+								var passphrase = CryptoJS.lib.WordArray.random(
+										128 / 8).toString(CryptoJS.enc.Hex);
+
+								var aesUtil = new AesUtil(keySize,
+										iterationCount);
+
+								var ciphertext = aesUtil.encrypt(
+										reverseText(passphrase), pageValJson);
+
+								$("#encryptedJson").val(
+										ciphertext + ':~:' + passphrase);
+
+								$("#roleForm").submit();
+							} else {
+								toastr
+										.error("Access Not Available For This Position");
+							}
+						});
+	</script>
+
+
+
+	<script>
+		$(document).ready(function() {
+			if ($("#auditFlg").val() == false) {
+				var message = $('#message').val();
+				if (message != "") {
+					toastr.success(message);
+				}
+			}
+			$('.select2').select2();
+
+			bsCustomFileInput.init();
+		});
+	</script>
+</body>
+</html>

@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.transparent {
+	color: rgba(0, 0, 0, 0);
+}
+
+textarea {
+	overflow: hidden
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<div class="content-wrapper">
+			<!-- Content Header (Page header) -->
+			<div class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Edit Rule</h1>
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item"><a
+									th:href="@{/fetchAllRuleList}">Rule Management</a></li>
+								<li class="breadcrumb-item active">Edit Rule</li>
+							</ol>
+						</div>
+						<!-- /.col -->
+					</div>
+					<!-- /.row -->
+				</div>
+				<!-- /.container-fluid -->
+			</div>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-outline card-info">
+								<!-- /.card-header -->
+								<!-- form start -->
+								<form id="editRuleForm" method="post"
+									th:action="@{/saveEditedRule}" th:object="${encryptedRequest}">
+									<input type="hidden" id="encryptedJson" name="encryptedJson" />
+
+									<div class="card-body">
+										<div class="card card-success">
+											<div class="card-header" style="background-color: #B73D4B">
+												<h3 class="card-title text-center">Rule Details</h3>
+											</div>
+											<div class="card-body">
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="ruleId">Rule ID</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold text-capitalize"
+																	id="ruleId" name="ruleId" th:value="${ruleDto.ruleId}"
+																	readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="testCategory">Rule Status <code>*</code></label>
+															<div class="input-group">
+																<select
+																	class="form-control form-control-sm select2 text-capitalize"
+																	name="recordStatus" id="recordStatus"
+																	data-placeholder="Select Test Category"
+																	style="width: 100%;">
+																	<option value=''>Select</option>
+																	<option value="Y" selected>Active</option>
+																	<option value="N">Inactive</option>
+																</select>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-12" id="testDesc">
+														<div class="form-group">
+															<label for="DocDesc">Rule Description <code>*</code></label>
+															<div class="input-group mb-2">
+																<textarea class="form-control form-control-sm"
+																	th:text="${ruleDto.ruleDesc}" id="ruleDesc"
+																	name="ruleDesc" rows="2" maxlength="3000"></textarea>
+
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="ruleId">Rule Classification</label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold text-capitalize"
+																	th:value="${ruleDto.ruleClassification}" readonly>
+															</div>
+														</div>
+													</div>
+													<div class="col-sm-6">
+														<div class="form-group">
+															<label for="subTestCategory">Rule Indicator </label>
+															<div class="input-group">
+																<input type="text"
+																	class="form-control form-control-sm text-bold text-capitalize"
+																	th:value="${ruleDto.ruleIndicator}" readonly>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row">
+													<div class="col-sm-12" id="testDesc">
+														<div class="form-group">
+															<label for="DocDesc">Rule Threshold <code>*</code></label>
+															<div class="row table-responsive">
+																<table id="ruleThreshTab"
+																	class="table table-sm table-head-fixed table-bordered table-striped">
+																	<thead>
+																		<tr
+																			style="background-color: silver; border: 1px solid teal">
+																			<th scope="col"
+																				style="width: 10%; border: 1px solid teal">Rule
+																				Id</th>
+																			<th scope="col"
+																				style="width: 50%; border: 1px solid teal">Rule
+																				Parameter</th>
+																			<th scope="col"
+																				style="width: 10%; border: 1px solid teal">Parameter
+																				Value</th>
+																			<th scope="col"
+																				style="width: 5%; border: 1px solid teal"><a
+																				title="Click here to add new Question"
+																				class="btn btn-primary btn-sm disabled" id="addrow">
+																					<em class="fas fa-plus"></em>
+																			</a></th>
+																		</tr>
+																	</thead>
+																	<tbody>
+																		<tr th:each="ruleObj:${ruleDto.ruleThresholdDtoList}"
+																			th:id="tr+${ruleObjStat.index}"
+																			style="border: 1px solid teal">
+																			<td style="border: 1px solid teal"><input
+																				type="text" th:value="${ruleObj.ruleId}"
+																				style="width: 100%;" disabled /></td>
+																			<td style="border: 1px solid teal"><input
+																				type="text" class="text-capitalize"
+																				th:value="${ruleObj.ruleParameterDesc}"
+																				th:data-id="${ruleObj.ruleParameter}"
+																				style="width: 100%" disabled /></td>
+																			<td style="border: 1px solid teal"><input
+																				type="text" th:value="${ruleObj.ruleKey}"
+																				style="width: 100%;" /></td>
+																			<td style="border: 1px solid teal"><a
+																				class='btn btn-danger btn-sm' title="Remove"
+																				th:id="${ruleObjStat.index}"
+																				th:onclick="removeTr(this.id)"><em
+																					class="fa fa-window-close"></em></a></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row" th:if="${ruleDto.riskParamFlg}">
+													<div class="col-sm-12" id="testDesc">
+														<div class="form-group">
+															<label for="DocDesc">Existing Rule Risk Parameter
+																<code>*</code>
+															</label>
+															<div
+																class="col-sm-12 card card-primary card-outline card-outline-tabs"
+																id="testDesc">
+																<div class="card-header p-0 border-bottom-0">
+																	<ul class="nav  nav-tabs ml-auto card-outline-tabs">
+																		<li class="nav-item"
+																			th:each="scaleObj:${ruleDto.cmdDtoList}"
+																			th:id="tr+${scaleObjStat.index}"
+																			th:if="${scaleObj.name} eq 'GREEN'"><a
+																			th:href=" '#' +${scaleObj.name}"
+																			class="nav-link active text-bold " data-toggle="tab"
+																			th:style="'color:'+${scaleObj.color}"
+																			th:text="${scaleObj.name}"></a> &nbsp;</li>
+																		<li class="nav-item"
+																			th:each="scaleObj:${ruleDto.cmdDtoList}"
+																			th:id="tr+${scaleObjStat.index}"
+																			th:unless="${scaleObj.name} eq 'GREEN'"><a
+																			class="nav-link text-bold" data-toggle="tab"
+																			th:href="'#' +${scaleObj.name}"
+																			th:style="'color:'+${scaleObj.color}"
+																			th:text="${scaleObj.name}"></a> &nbsp;</li>
+																	</ul>
+																</div>
+																<div class="tab-content card-body">
+																	<div class=" card active tab-pane"
+																		th:each="scaleObj:${ruleDto.cmdDtoList}"
+																		th:if="${scaleObj.name eq 'GREEN'}"
+																		th:id="${scaleObj.name}">
+																		<div
+																			th:each="riskParamObj : ${ruleDto.ruleRiskDefDtoList}"
+																			th:if="${scaleObj.name eq riskParamObj.riskValue}">
+																			<table style="table-layout: fixed;"
+																				class="table table-sm table-head-fixed table-bordered table-striped ruleRiskTabClass ">
+																				<thead style="border: 1px solid teal">
+																					<tr style="border: 1px solid teal">
+																						<th scope="col"
+																							style="width: 9%; border: 1px solid teal">Conditions</th>
+																						<th scope="col"
+																							style="width: 19%; border: 1px solid teal">Condition
+																							Parameter</th>
+																						<th scope="col"
+																							style="width: 19%; border: 1px solid teal">Start
+																							Type</th>
+																						<th scope="col"
+																							style="width: 13%; border: 1px solid teal">Start
+																							Value</th>
+																						<th scope="col"
+																							style="width: 19%; border: 1px solid teal">End
+																							Type</th>
+																						<th scope="col"
+																							style="width: 13%; border: 1px solid teal">End
+																							Value</th>
+																						<th scope="col"
+																							style="width: 8%; border: 1px solid teal"><a
+																							th:trid="tr+${scaleObj.name}"
+																							th:onclick="addCondition(this)"
+																							title="Click here to add new Condition"
+																							class="btn btn-primary btn-sm " id="addrow">
+																								<em class="fas fa-plus"></em>
+																						</a></th>
+																					</tr>
+																				</thead>
+																				<tbody th:id="tr+${scaleObjStat.index}"
+																					style="border: 1px solid teal">
+																					<tr th:id="tr+${scaleObj.name}+0" class="main"
+																						th:color="${scaleObj.name}">
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									name="recordStatus"
+																									data-placeholder="Select Condition"
+																									style="width: 100%;">
+																									<option value=''>Select</option>
+																									<option
+																										th:each="asstDto : ${ruleDto.ruleCondn}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.ruleRiskType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.ruleCondn}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.ruleRiskType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									name="recordStatus"
+																									th:onchange="checkDiv(this)"
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;">
+																									<option value=''>Select</option>
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtosBt}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.ruleRiskParameter }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtosBt}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.ruleRiskParameter }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;">
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.startType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.startType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><input
+																							type="Number"
+																							th:value="${riskParamObj.startValue}"
+																							class="form-control form-control-sm"
+																							style="width: 100%" /></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									name="recordStatus"
+																									th:if="${riskParamObj.ruleRiskParameter  eq  'BT' } "
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;">
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select> <select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									name="recordStatus"
+																									th:unless="${riskParamObj.ruleRiskParameter  eq  'BT' } "
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;" disabled="disabled">
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><input
+																							type="Number" th:value="${riskParamObj.endValue}"
+																							class="form-control form-control-sm"
+																							style="width: 100%" /></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize disable"
+																									name="recordStatus" data-placeholder="Select "
+																									style="width: 100%;" th:disabled="true">
+																									<option value=''>Select</option>
+																									<option value="OR">OR</option>
+																									<option value="AND">AND</option>
+																									<option value="NA" selected>NA</option>
+																								</select>
+																							</div></td>
+																					</tr>
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																	<div class=" tab-pane" th:id="${scaleObj.name}"
+																		th:each="scaleObj:${ruleDto.cmdDtoList}"
+																		th:unless="${scaleObj.name eq 'GREEN'}">
+																		<div
+																			th:each="riskParamObj : ${ruleDto.ruleRiskDefDtoList}"
+																			th:if="${scaleObj.name eq riskParamObj.riskValue}">
+																			<table
+																				class="table table-sm table-head-fixed table-bordered table-striped ruleRiskTabClass"
+																				style="table-layout: fixed;">
+																				<thead style="border: 1px solid teal">
+																					<tr style="border: 1px solid teal">
+																						<th scope="col"
+																							style="width: 9%; border: 1px solid teal">Conditions</th>
+																						<th scope="col"
+																							style="width: 19%; border: 1px solid teal">Condition
+																							Parameter</th>
+																						<th scope="col"
+																							style="width: 19%; border: 1px solid teal">Start
+																							Type</th>
+																						<th scope="col"
+																							style="width: 13%; border: 1px solid teal">Start
+																							Value</th>
+																						<th scope="col"
+																							style="width: 19%; border: 1px solid teal">End
+																							Type</th>
+																						<th scope="col"
+																							style="width: 13%; border: 1px solid teal">End
+																							Value</th>
+																						<th scope="col"
+																							style="width: 8%; border: 1px solid teal"><a
+																							th:trid="tr+${scaleObj.name}"
+																							th:onclick="addCondition(this)"
+																							title="Click here to add new Condition"
+																							class="btn btn-primary btn-sm " id="addrow">
+																								<em class="fas fa-plus"></em>
+																						</a></th>
+																					</tr>
+																				</thead>
+																				<tbody th:id="tr+${scaleObjStat.index}"
+																					style="border: 1px solid teal">
+																					<tr th:id="tr+${scaleObj.name}+0" class="main"
+																						th:color="${scaleObj.name}">
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									name="recordStatus"
+																									data-placeholder="Select Condition"
+																									style="width: 100%;">
+																									<option value=''>Select</option>
+																									<option
+																										th:each="asstDto : ${ruleDto.ruleCondn}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.ruleRiskType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.ruleCondn}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.ruleRiskType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									name="recordStatus"
+																									th:onchange="checkDiv(this)"
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;">
+																									<option value=''>Select</option>
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtosBt}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.ruleRiskParameter }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtosBt}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.ruleRiskParameter }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;">
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.startType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.startType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><input
+																							type="Number"
+																							th:value="${riskParamObj.startValue}"
+																							class="form-control form-control-sm"
+																							style="width: 100%" /></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									th:data="${riskParamObj.ruleRiskParameter}"
+																									class="form-control form-control-sm select2 text-capitalize"
+																									th:if="${riskParamObj.ruleRiskParameter  eq  'BT' } "
+																									name="recordStatus"
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;">
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select> <select
+																									class="form-control form-control-sm select2 text-capitalize"
+																									th:unless="${riskParamObj.ruleRiskParameter  eq  'BT' } "
+																									name="recordStatus"
+																									data-placeholder="Select Parameter"
+																									style="width: 100%;" disabled="disabled">
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:if="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}"
+																										th:selected="selected" />
+																									<option
+																										th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																										th:value="${asstDto.asstType}"
+																										th:unless="${asstDto.asstType  eq riskParamObj.endType }"
+																										th:text="${asstDto.asstTypeDesc}" />
+																								</select>
+																							</div></td>
+																						<td style="border: 1px solid teal"><input
+																							type="Number" th:value="${riskParamObj.endValue}"
+																							class="form-control form-control-sm"
+																							th:if="${riskParamObj.ruleRiskParameter eq 'BT' }"
+																							style="width: 100%" /> <input type="Number"
+																							th:unless="${riskParamObj.ruleRiskParameter eq 'BT' }"
+																							th:value="${riskParamObj.endValue}"
+																							class="form-control form-control-sm"
+																							style="width: 100%" disabled="disabled" /></td>
+																						<td style="border: 1px solid teal"><div
+																								class="input-group">
+																								<select
+																									class="form-control form-control-sm select2 text-capitalize disable"
+																									name="recordStatus" data-placeholder="Select "
+																									style="width: 100%;" th:disabled="true">
+																									<option value=''>Select</option>
+																									<option value="OR">OR</option>
+																									<option value="AND">AND</option>
+																									<option value="NA" selected>NA</option>
+																								</select>
+																							</div></td>
+																					</tr>
+																				</tbody>
+																			</table>
+																		</div>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="row" th:unless="${ruleDto.riskParamFlg}">
+													<div class="form-group">
+														<label for="DocDesc">Rule Risk Parameters <code>*</code></label>
+													</div>
+													<div
+														class="col-sm-12 card card-primary card-outline card-outline-tabs"
+														id="testDesc">
+														<div class="card-header p-0 border-bottom-0">
+															<ul class="nav  nav-tabs ml-auto card-outline-tabs">
+																<li class="nav-item"
+																	th:each="scaleObj:${ruleDto.cmdDtoList}"
+																	th:id="tr+${scaleObjStat.index}"
+																	th:if="${scaleObjStat.index}==0"><a
+																	th:href=" '#' +${scaleObj.name}"
+																	class="nav-link active text-bold " data-toggle="tab"
+																	th:style="'color:'+${scaleObj.color}"
+																	th:text="${scaleObj.name}"></a> &nbsp;</li>
+																<li class="nav-item"
+																	th:each="scaleObj:${ruleDto.cmdDtoList}"
+																	th:id="tr+${scaleObjStat.index}"
+																	th:unless="${scaleObjStat.index}==0"><a
+																	class="nav-link text-bold" data-toggle="tab"
+																	th:href="'#' +${scaleObj.name}"
+																	th:style="'color:'+${scaleObj.color}"
+																	th:text="${scaleObj.name}"></a> &nbsp;</li>
+															</ul>
+														</div>
+														<div class="tab-content card-body">
+															<div class=" card active tab-pane"
+																th:id="${scaleObj.name}"
+																th:each="scaleObj:${ruleDto.cmdDtoList}"
+																th:if="${scaleObjStat.index}==0">
+																<table style="table-layout: fixed;"
+																	class="table table-sm table-head-fixed table-bordered table-striped ruleRiskTabClass ">
+																	<thead style="border: 1px solid teal">
+																		<tr style="border: 1px solid teal">
+																			<th scope="col"
+																				style="width: 9%; border: 1px solid teal">Conditions</th>
+																			<th scope="col"
+																				style="width: 19%; border: 1px solid teal">Condition
+																				Parameter</th>
+																			<th scope="col"
+																				style="width: 19%; border: 1px solid teal">Start
+																				Type</th>
+																			<th scope="col"
+																				style="width: 13%; border: 1px solid teal">Start
+																				Value</th>
+																			<th scope="col"
+																				style="width: 19%; border: 1px solid teal">End
+																				Type</th>
+																			<th scope="col"
+																				style="width: 13%; border: 1px solid teal">End
+																				Value</th>
+																			<th scope="col"
+																				style="width: 8%; border: 1px solid teal"><a
+																				th:trid="tr+${scaleObj.name}"
+																				th:onclick="addCondition(this)"
+																				title="Click here to add new Condition"
+																				class="btn btn-primary btn-sm " id="addrow"> <em
+																					class="fas fa-plus"></em></a></th>
+																		</tr>
+																	</thead>
+																	<tbody th:id="tr+${scaleObjStat.index}"
+																		style="border: 1px solid teal">
+																		<tr th:id="tr+${scaleObj.name}+0" class="main"
+																			th:color="${scaleObj.name}">
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						name="recordStatus"
+																						data-placeholder="Select Condition"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option th:each="asstDto : ${ruleDto.ruleCondn}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						name="recordStatus" th:onchange="checkDiv(this)"
+																						data-placeholder="Select Parameter"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="asstDto : ${ruleDto.asstTypeDtosBt}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						data-placeholder="Select Parameter"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><input
+																				type="Number" class="form-control form-control-sm"
+																				style="width: 100%" /></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						name="recordStatus"
+																						data-placeholder="Select Parameter"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><input
+																				type="Number" class="form-control form-control-sm"
+																				style="width: 100%" /></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize disable"
+																						name="recordStatus" data-placeholder="Select "
+																						style="width: 100%;" th:disabled="true">
+																						<option value=''>Select</option>
+																						<option value="OR">OR</option>
+																						<option value="AND">AND</option>
+																						<option value="NA" selected>NA</option>
+																					</select>
+																				</div></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+															<div class=" tab-pane" th:id="${scaleObj.name}"
+																th:each="scaleObj:${ruleDto.cmdDtoList}"
+																th:unless="${scaleObjStat.index}==0">
+																<table style="table-layout: fixed;"
+																	class="table table-sm table-head-fixed table-bordered table-striped ruleRiskTabClass">
+																	<thead style="border: 1px solid teal">
+																		<tr style="border: 1px solid teal">
+																			<th scope="col"
+																				style="width: 9%; border: 1px solid teal">Conditions</th>
+																			<th scope="col"
+																				style="width: 19%; border: 1px solid teal">Condition
+																				Parameter</th>
+																			<th scope="col"
+																				style="width: 19%; border: 1px solid teal">Start
+																				Type</th>
+																			<th scope="col"
+																				style="width: 13%; border: 1px solid teal">Start
+																				Value</th>
+																			<th scope="col"
+																				style="width: 19%; border: 1px solid teal">End
+																				Type</th>
+																			<th scope="col"
+																				style="width: 13%; border: 1px solid teal">End
+																				Value</th>
+																			<th scope="col"
+																				style="width: 8%; border: 1px solid teal"><a
+																				th:trid="tr+${scaleObj.name}"
+																				th:onclick="addCondition(this)"
+																				title="Click here to add new Condition"
+																				class="btn btn-primary btn-sm " id="addrow"> <em
+																					class="fas fa-plus"></em></a></th>
+																		</tr>
+																	</thead>
+																	<tbody th:id="tr+${scaleObjStat.index}"
+																		style="border: 1px solid teal">
+																		<tr th:id="tr+${scaleObj.name}+0" class="main"
+																			th:color="${scaleObj.name}">
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						name="recordStatus"
+																						data-placeholder="Select Condition"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option value="COUNT">Count</option>
+																						<option value="SUM" selected>Sum</option>
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						name="recordStatus" th:onchange="checkDiv(this)"
+																						data-placeholder="Select Parameter"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="asstDto : ${ruleDto.asstTypeDtosBt}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						data-placeholder="Select Parameter"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><input
+																				type="Number" class="form-control form-control-sm"
+																				style="width: 100%" /></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize"
+																						name="recordStatus"
+																						data-placeholder="Select Parameter"
+																						style="width: 100%;">
+																						<option value=''>Select</option>
+																						<option
+																							th:each="asstDto : ${ruleDto.asstTypeDtos}"
+																							th:value="${asstDto.asstType}"
+																							th:text="${asstDto.asstTypeDesc}" />
+																					</select>
+																				</div></td>
+																			<td style="border: 1px solid teal"><input
+																				type="Number" class="form-control form-control-sm"
+																				style="width: 100%" /></td>
+																			<td style="border: 1px solid teal"><div
+																					class="input-group">
+																					<select
+																						class="form-control form-control-sm select2 text-capitalize disable"
+																						name="recordStatus" data-placeholder="Select "
+																						style="width: 100%;" th:disabled="true">
+																						<option value=''>Select</option>
+																						<option value="OR">OR</option>
+																						<option value="AND">AND</option>
+																						<option value="NA" selected>NA</option>
+																					</select>
+																				</div></td>
+																		</tr>
+																	</tbody>
+																</table>
+															</div>
+														</div>
+													</div>
+													<hr>
+												</div>
+												<div class="card-footer">
+													<button type="button" id="saveEdit" class="btn btn-success"
+														name="saveEdit" title="Edit">
+														<em class="fas fa-vote-yea" style="padding: 0 7px 0 0px;"></em>Save
+													</button>
+													<a href="#" data-toggle="modal"
+														data-whatever="redirectToTestSummary"
+														data-target="#cancelmodel"><button type="reset"
+															class="btn btn-warning" title="Cancel">
+															<em class="fas fa-times" style="padding: 0 7px 0 0px;"></em>Cancel
+														</button></a>
+													<!-- Audit Trail Button -->
+													<a class="btn btn-secondary text-white viewAuditModal"
+														th:id="${ruleDto.ruleId}" title="Audit Trail"
+														data-toggle="modal"> <em class="fab fa-twitch"
+														style="padding: 0 7px 0 0px;"></em>Audit Trail
+													</a>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="modal fade" id="timelinemodal">
+										<div class="modal-dialog modal-xl">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h5 class="modal-title">Audit Trail</h5>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="card-body">
+													<!-- /.tab-pane -->
+													<div class="tab-pane" id="timeline">
+														<div class="timeline timeline-inverse" id="row_0"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<!-- /.card-body -->
+									<div class="modal fade" id="cancelmodel">
+										<div class="modal-dialog modal-fluid">
+											<div class="modal-content">
+												<div class="modal-header bg-info">
+													<h6 class="modal-title">Confirm</h6>
+													<button type="button" class="close" data-dismiss="modal"
+														aria-label="Close">
+														<span aria-hidden="true">&times;</span>
+													</button>
+												</div>
+												<!-- form start -->
+												<div class="modal-body">
+													<h5 class="card-title">
+														If you leave this page, all changes will be lost. <br>
+														Press "Ok" to Continue.
+													</h5>
+												</div>
+
+												<div class="modal-footer">
+													<button type="button" class="btn btn-secondary"
+														data-dismiss="modal">
+														<em class="fas fa-times" style="padding: 0 7px 0 0px;"></em>Cancel
+													</button>
+													<a class="btn btn-primary target"><em
+														class="fas fa-check" style="padding: 0 7px 0 0px;"></em>Ok
+													</a>
+
+												</div>
+
+												<!-- /.Card -->
+
+											</div>
+											<!-- /.modal-content -->
+										</div>
+										<!-- /.modal-dialog -->
+									</div>
+								</form>
+							</div>
+							<!-- /.card -->
+						</div>
+					</div>
+				</div>
+				<!--/. container-fluid -->
+			</section>
+
+		</div>
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/audittrail.js}"></script>
+	<script th:src="@{/dist/appjs/aml/editRule.js}"></script>
+
+</body>
+</html>

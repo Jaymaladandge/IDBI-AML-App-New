@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title sec:authentication="principal.ermTitle"></title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+
+input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button
+	{
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.col-md-1 {
+	width: 28.75%
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Fraud Monitoring Report</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Fraud Monitoring Report</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-tabs">
+
+								<div class="card-body">
+
+									<form id="exportPdfReport" autocomplete="off"
+										th:action="@{/exportFMRReport1}" method="post"
+										th:object="${encryptedRequest}">
+
+										<input type="hidden" id="encryptedJson" name="encryptedJson" />
+										<input type="hidden" id="userDept" name="userDept"
+											th:value="${userDept}" />
+										<input type="hidden"
+											id="officeCode" name="officeCode" th:value="${officeCode}" />
+										<input type="hidden" id="userDeptId" name="userDeptId"
+											th:value="${userDeptId}" />
+										 <input type="hidden"
+											id="officeId" name="officeId" th:value="${officeId}" />	
+
+										<div class="card ">
+											<div class="card-header bg-info">
+												<h3 class="card-title">Fraud Monitoring Report</h3>
+
+
+											</div>
+
+											<div class="card-body">
+
+												<div class="row">
+													<div class="col-sm-3">
+														<div class="form-group">
+															<label for="officeType">Select Office Type <code>*</code></label>
+															<select class="select2 text-capitalize" name="officeType"
+																id="officeType" data-placeholder="Office Type"
+																style="width: 100%;">
+																<option value=''></option>
+																<option
+																	th:each="officeName : ${cntrlLib.workflowOfficetypeList}"
+																	th:value="${officeName.codeValue}"
+																	th:text="${officeName.codeValueDesc}" />
+															</select>
+														</div>
+													</div>
+													
+													<!-- <div class="col-sm-4">
+												<div class="form-group">
+													<label for="incidentDept">Select Department <code>*</code></label>
+													<select class="select2 text-capitalize" name="incidentDept"
+														data-placeholder="Department" id="incidentDept"
+														style="width: 100%;">
+														<option value=''>Select</option>
+														<option th:if="${userDept} eq 'ERM'" value="all">ALL</option>
+														<option th:if="${userDept} eq 'ERM'"
+															th:each="deptList : ${deptList}"
+															th:value="${deptList.deptId}"
+															th:text="${deptList.deptName}" />
+														<option th:if="${userDept} != 'ERM'"
+															th:value="${userDeptId}" th:text="${userDept}" />
+													</select>
+												</div>
+											</div> -->
+
+
+													<div class="col-sm-2 mt-2">
+
+														<button type="button" id="fetchDataBtn"
+															class="btn btn-block btn-sm btn-outline-primary mt-4 fetchDataBtn"
+															name="fetchDataBtn">Fetch Data</button>
+
+													</div>
+
+												</div>
+												<div id="showImTable" style="width: 100%;">
+													<div class="row table-responsive mt-2">
+														<div class="col-sm-12 ">
+															<div class="card card-outline card-secondary ml-3">
+																<div class="card-header">
+																	<div class="row float-right">
+																		<div class="float-right">
+																			<button class="btn text-white exportPdf"
+																				style="margin-right: 5px; background-color: #FB0808;"
+																				title="Export Pdf Report">
+																				<i class="fas fa-file-pdf"></i>&nbsp;&nbsp;PDF
+																			</button>
+																		</div>
+																	</div>
+																	<div class="row">
+
+																		<div class="col-sm-7">
+																			<div class="form-group">
+																				<div>
+																					Name Of The Insurer: <strong>Life
+																						Insurance Corporation of India</strong>
+																				</div>
+																			</div>
+																		</div>
+
+																		<div class="col-sm-5">
+																			<div class="form-group">
+																				<div>
+																					Report For The Year Ending: <strong><span
+																						id='spFY'></span></strong>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</div>
+
+																<!-- Part 1 -->
+																<div class="card-header">
+																	<div>
+																		<strong>Part I </strong>
+																	</div>
+																	<div>
+																		<strong> Frauds Outstanding - Business
+																			segment wise : </strong>
+																	</div>
+																</div>
+																<!-- Part 1 -->
+
+
+																<div class="card-body">
+																	<table id="fmrIMtable" style="width: 100%;"
+																		class="table table-head-fixed table-bordered table-striped fmrIMtable text-capitalize">
+																		<thead>
+																			<tr>
+																				<th class="text-center" rowspan="2">Sl. No.</th>
+																				<th class="text-center" rowspan="2">Description
+																					of Fraud</th>
+																				<th class="text-center" colspan="2">Unresolved
+																					cases at the beginning of the year</th>
+																				<th class="text-center" colspan="2">New cases
+																					detected during the year</th>
+																				<th id="corpassPeriod1" class="text-center"
+																					colspan="2">Cases closed during the year</th>
+																				<th id="corpassPeriod2" class="text-center"
+																					colspan="2">Unresolved Cases at the end of the
+																					year</th>
+
+																			</tr>
+																			<tr>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																			</tr>
+																		</thead>
+																		<tbody id="tbodyIm">
+
+																		</tbody>
+																		<tfoot>
+																			<tr>
+																				<td class='text-bold'></td>
+																				<td class='text-bold'>Total</td>
+																				<td class='text-bold' id='tot1'></td>
+																				<td class='text-bold' id='tot2'></td>
+																				<td class='text-bold' id='tot3'></td>
+																				<td class='text-bold' id='tot4'></td>
+																				<td class='text-bold' id='tot5'></td>
+																				<td class='text-bold' id='tot6'></td>
+																				<td class='text-bold' id='tot7'></td>
+																				<td class='text-bold' id='tot8'></td>
+																			</tr>
+																		</tfoot>
+																	</table>
+																</div>
+																
+															</div>
+															
+															<!-- Part 2 -->
+																<div class="card-header">
+																	<div>
+																		<strong>Part II </strong>
+																	</div>
+																	<div>
+																		<strong> Statistical Details : (unresolved cases as at end of the year) –Business segment wise* </strong>
+																	</div>
+																</div>
+																<!-- Part 2 -->
+																<div class="card-body">
+																	<table id="fmrIMtable2" style="width: 100%;"
+																		class="table table-head-fixed table-bordered table-striped fmrIMtable2 text-capitalize">
+																		<thead>
+																			<tr>
+																				<th class="text-center">Sl. No.</th>
+																				<th class="text-center">Description
+																					of Fraud</th>
+																				<th class="text-center">Number of cases</th>
+																				<th class="text-center">Amount Involved(&#8377
+																					Rupees)</th>
+																			</tr>
+																		</thead>
+																		<tbody id="tbodyIm2">
+
+																		</tbody>
+																		<tfoot>
+																			<tr>
+																				<td class='text-bold'></td>
+																				<td class='text-bold'>Total</td>
+																				<td class='text-bold' id='tot2_1'></td>
+																				<td class='text-bold' id='tot2_2'></td>
+																			</tr>
+																		</tfoot>
+																	</table>
+																</div>
+																
+																
+																<!-- Part 3 -->
+																<div class="card-header">
+																	<div>
+																		<strong>Part III </strong>
+																	</div>
+																	<div>
+																		<strong> Preventive and Corrective steps taken during the year- Business segment wise* </strong>
+																	</div>
+																</div>
+																<!-- Part 3 -->
+																<div class="card-body">
+																	<table id="fmrIMtable3" style="width: 100%;"
+																		class="table table-head-fixed table-bordered table-striped fmrIMtable3 text-capitalize">
+																		<thead>
+																			<tr>
+																				<th class="text-center">Sl. No.</th>
+																				<th class="text-center">Description
+																					of Fraud</th>
+																				<th class="text-center">Preventive / Corrective action taken</th>
+																				
+																			</tr>
+																		</thead>
+																		<tbody id="tbodyIm3">
+
+																		</tbody>
+																	</table>
+																</div>
+																
+																<!-- Part 4 -->
+																<div class="card-header">
+																	<div>
+																		<strong>Part IV </strong>
+																	</div>
+																	<div>
+																		<strong> Cases Reported to Law Enforcement Agencies : </strong>
+																	</div>
+																</div>
+																<!-- Part 4 -->
+																
+																<div class="card-body">
+																	<table id="fmrIMtable4" style="width: 100%;"
+																		class="table table-head-fixed table-bordered table-striped fmrIMtable4 text-capitalize">
+																		<thead>
+																			<tr>
+																				<th class="text-center" rowspan="2">Sl. No.</th>
+																				<th class="text-center" rowspan="2">Description</th>
+																				<th class="text-center" colspan="2">Unresolved
+																					cases at the beginning of the year</th>
+																				<th class="text-center" colspan="2">New cases
+																					detected during the year</th>
+																				<th id="corpassPeriod1" class="text-center"
+																					colspan="2">Cases closed during the year</th>
+																				<th id="corpassPeriod2" class="text-center"
+																					colspan="2">Unresolved Cases at the end of the
+																					year</th>
+
+																			</tr>
+																			<tr>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																				<th class="text-center">No.</th>
+																				<th class="text-center">Amount involved(&#8377
+																					Rupees)</th>
+																			</tr>
+																		</thead>
+																		<tbody id="tbodyIm4">
+
+																		</tbody>
+																		<tfoot>
+																			<tr>
+																				<td class='text-bold'></td>
+																				<td class='text-bold'>Total</td>
+																				<td class='text-bold' id='tot4_1'></td>
+																				<td class='text-bold' id='tot4_2'></td>
+																				<td class='text-bold' id='tot4_3'></td>
+																				<td class='text-bold' id='tot4_4'></td>
+																				<td class='text-bold' id='tot4_5'></td>
+																				<td class='text-bold' id='tot4_6'></td>
+																				<td class='text-bold' id='tot4_7'></td>
+																				<td class='text-bold' id='tot4_8'></td>
+																			</tr>
+																		</tfoot>
+																	</table>
+																</div>
+																
+																
+														</div>
+													</div>
+
+												</div>
+
+											</div>
+
+										</div>
+										<!-- /.card-body -->
+
+									</form>
+								</div>
+								<!-- /.col sm-12 -->
+							</div>
+						</div>
+						<!-- /.row -->
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+	<!-- bs-custom-file-input -->
+	<script
+		th:src="@{/plugins/bs-custom-file-input/bs-custom-file-input.min.js}"></script>
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+	<script th:src="@{/dist/appjs/erm/fmr1IM.js}"></script>
+
+
+</body>
+</html>

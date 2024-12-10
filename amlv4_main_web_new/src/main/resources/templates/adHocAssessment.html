@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="https://www.thymeleaf.org"
+	xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>APIS</title>
+
+<!-- Font Awesome Icons -->
+<link rel="stylesheet"
+	th:href="@{/plugins/fontawesome-free/css/all.min.css}">
+<!-- overlayScrollbars -->
+<link rel="stylesheet"
+	th:href="@{/plugins/overlayScrollbars/css/OverlayScrollbars.min.css}">
+<!-- Select2 -->
+<link rel="stylesheet" th:href="@{/plugins/select2/css/select2.min.css}">
+<!-- Toastr -->
+<link rel="stylesheet" th:href="@{/plugins/toastr/toastr.min.css}">
+<!-- daterange picker -->
+<link rel="stylesheet"
+	th:href="@{/plugins/daterangepicker/daterangepicker.css}">
+<!-- Tempusdominus Bootstrap 4 -->
+<link rel="stylesheet"
+	th:href="@{/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css}">
+<!-- Theme style -->
+<link rel="stylesheet" th:href="@{/dist/css/adminlte.min.css}">
+
+<!-- DataTables -->
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-responsive/css/responsive.bootstrap4.min.css}">
+<link rel="stylesheet"
+	th:href="@{/plugins/datatables-buttons/css/buttons.bootstrap4.min.css}">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+<style>
+#load {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 100%;
+	z-index: 9999;
+	background: url(../aml-v4/dist/img/loader.gif) center no-repeat #fff;
+	opacity: 1;
+}
+
+.card-info:not(.card-outline)>.card-header {
+	background-color: #044383 !important;
+}
+
+.bg-info {
+	background-color: #044383 !important;
+}
+
+.btn-info {
+	color: #fff;
+	background-color: #044383 !important;
+	border-color: #044383 !important;
+	box-shadow: none;
+}
+
+.textCapitalize {
+	text-transform: capitalize;
+}
+</style>
+</head>
+<div id="load"></div>
+<body
+	class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+	<div class="wrapper">
+		<!-- Included header.html -->
+		<div th:insert="/header::header"></div>
+		<!-- Content Wrapper. Contains page content -->
+		<div class="content-wrapper">
+			<section class="content-header">
+				<div class="container-fluid">
+					<div class="row mb-2">
+						<div class="col-sm-6">
+							<h1>Ad Hoc Assessment</h1>
+						</div>
+						<div class="col-sm-6">
+							<ol class="breadcrumb float-sm-right">
+								<li class="breadcrumb-item"><a th:href="@{/home}">Home</a></li>
+								<li class="breadcrumb-item active">Ad Hoc Assessment</li>
+							</ol>
+						</div>
+					</div>
+				</div>
+				<!-- /.container-fluid -->
+			</section>
+			<section class="content">
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-outline card-secondary">
+								<div class="card-body">
+									<form autocomplete="off" role="form" method="post"
+										th:action="@{/submitAdHocAsst}" id="searchDateForm"
+										th:object="${encryptedRequest}">
+										<input type="hidden" id="encryptedDateJson"
+											name="encryptedJson" /> <input type="hidden" id="message"
+											th:value="${message}" name="message" /> <input type="hidden"
+											id="processFlg" th:value="${asstObj.processFlg}"
+											name="processFlg" />
+										<div class="row">
+											<div class="col-sm-12">
+												<div class="form-group row">
+													<label class="col-5">Select Date Range For
+														Assessment</label> <br> <br>
+													<!-- Date range -->
+													<!-- /.form group -->
+													<div class="input-group date" data-target-input="nearest">
+														<input type="text"
+															class="form-control form-control-sm col-3 datetimepicker-input"
+															placeholder="Start Date" name="startDate" id="startDate"
+															data-target="#startDate" onkeydown="return false" />
+														<div class="input-group-append" data-target="#startDate"
+															data-toggle="datetimepicker">
+															<div class="input-group-text">
+																<i class="far fa-calendar-alt"></i>
+															</div>
+														</div>
+														&nbsp; <input type="text"
+															class="form-control form-control-sm col-3 col-offset-1 datetimepicker-input"
+															placeholder="End Date" name="endDate" id="endDate"
+															data-target="#endDate" onkeydown="return false" />
+														<div class="input-group-append" data-target="#endDate"
+															data-toggle="datetimepicker">
+															<div class="input-group-text">
+																<i class="far fa-calendar-alt"></i>
+															</div>
+														</div>
+														&nbsp; &nbsp; <a id="create" class="btn btn-sm btn-info"
+															href="#" onclick="searchDateData()"
+															title="Start Assessment"> <i class="fas fa-save"
+															style="padding: 0 7px 0 0px;"></i>Start Assessment
+														</a>
+													</div>
+												</div>
+											</div>
+										</div>
+										<!-- /row -->
+									</form>
+								</div>
+								<!-- card-body -->
+							</div>
+							<!-- card -->
+						</div>
+						<!-- ./col -->
+					</div>
+					<!-- /row Search by date-->
+					<div class="row">
+						<div class="col-sm-12">
+							<div class="card card-outline card-secondary">
+								<div class="card-body">
+									<form autocomplete="off" role="form" method="post"
+										th:action="@{/startCalculation}" id="asstForm"
+										th:object="${encryptedRequest}">
+										<input type="hidden" id="encryptedDateJson"
+											name="encryptedJson" />
+										<div class="row">
+											<div class="card-body table-responsive">
+												<div class="row">
+													<label class="col-5">Previous Assessment </label> <br>
+													<br>
+													<table id="asstTable"
+														class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr>
+																<th>Start Date</th>
+																<th>End Date</th>
+																<th>Assessment Date</th>
+																<th>Assessment Period</th>
+																<th>Assessment Started By</th>
+																<th>Assessment Status</th>
+																<th>Pending Assessment Count</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr th:if="${asstObj.isPresent == 'Y'}">
+																<td
+																	th:text="${#calendars.format(asstObj.startDate,'dd/MM/YYYY')}"></td>
+																<td
+																	th:text="${#calendars.format(asstObj.endDate,'dd/MM/YYYY')}"></td>
+																<td
+																	th:text="${#calendars.format(asstObj.createdDate,'dd/MM/YYYY')}"></td>
+																<td th:text="${asstObj.asstPeriod}"></td>
+																<td th:text="${asstObj.creUserId}"></td>
+																<td th:switch="${asstObj.processFlg}"><span
+																	th:case="'In Progress'"> <input type="submit" class="btn bg-cyan"
+																		value="Start Calculation" id="start_Cal"></span> <span
+																	th:case="'Pending'" class="badge bg-purple">Pending</span>
+																	<span th:case="'Completed'" class="badge bg-success">Completed</span>
+																	<span th:case="'Calculation Started'"
+																	class="badge bg-orange">Calculation Started</span></td>
+																
+																<td><span th:if="${asstObj.notificationCnt == 0}"class="badge text-bold">0</span><a
+																	th:unless="${asstObj.notificationCnt == 0}" href="#" class="badge text-bold viewDetails"
+																	th:text="${asstObj.notificationCnt}"></a></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<!-- /row -->
+									</form>
+								</div>
+								<!-- card-body -->
+							</div>
+							<!-- card -->
+							<!-- View Top Risk Modal -->
+							<div class="modal fade" id="viewAsstDetails">
+								<div class=" modal-dialog modal-xl">
+									<div class=" modal-content">
+										<div class="modal-header bg-info">
+											<h5 class="modal-title">View Pending Assessment Request</h5>
+											<button type="button" class="close" data-dismiss="modal"
+												aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<div class="row table-responsive">
+												<div class="col-sm-12">
+													<table id="asstTab"
+														class="table table-head-fixed table-bordered table-striped ">
+														<thead>
+															<tr>
+																<th>Department Name</th>
+																<th>KRI Id</th>
+																<th>Office Id</th>
+																<th>Request Date</th>
+															</tr>
+														</thead>
+														<tbody>
+															<tr style='display:none;'>
+																<td></td>
+																<td></td>
+																<td></td>
+																<td></td>
+															</tr>
+														</tbody>
+													</table>
+												</div>
+											</div>
+										</div>
+										<div class="modal-footer">
+											<button class="btn btn-secondary" data-dismiss="modal">
+												<i class="fa fa-arrow-circle-left fa-1x">&nbsp;</i> Back
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- ./col -->
+					</div>
+					<!-- ./row -->
+					<!-- /row -->
+				</div>
+				<!-- /container-fluid -->
+			</section>
+			<!-- /.content -->
+		</div>
+		<!-- /.content-wrapper -->
+
+		<!-- Control Sidebar -->
+		<aside class="control-sidebar control-sidebar-dark">
+			<!-- Control sidebar content goes here -->
+		</aside>
+		<!-- /.control-sidebar -->
+		<!-- Included Footer -->
+		<div th:insert="/footer::footer"></div>
+	</div>
+	<!-- ./wrapper -->
+	<!-- REQUIRED SCRIPTS -->
+	<!-- jQuery -->
+	<script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+	<!-- Bootstrap -->
+	<script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+	<!-- jquery-validation -->
+	<script th:src="@{/plugins/jquery-validation/jquery.validate.min.js}"></script>
+	<script
+		th:src="@{/plugins/jquery-validation/additional-methods.min.js}"></script>
+
+	<!-- Select2 -->
+	<script th:src="@{/plugins/select2/js/select2.full.min.js}"></script>
+	<!-- Toastr -->
+	<script th:src="@{/plugins/toastr/toastr.min.js}"></script>
+
+	<!-- overlayScrollbars -->
+	<script
+		th:src="@{/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js}"></script>
+	<!-- AdminLTE App -->
+	<script th:src="@{/dist/js/adminlte.js}"></script>
+
+	<!-- DataTables  & Plugins -->
+	<script th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+
+	<script
+		th:src="@{/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/dataTables.responsive.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-responsive/js/responsive.bootstrap4.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/dataTables.buttons.min.js}"></script>
+	<script
+		th:src="@{/plugins/datatables-buttons/js/buttons.bootstrap4.min.js}"></script>
+
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- Tempusdominus Bootstrap 4 -->
+	<script
+		th:src="@{/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js}"></script>
+
+	<script th:src="@{/plugins/jszip/jszip.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/pdfmake.min.js}"></script>
+	<script th:src="@{/plugins/pdfmake/vfs_fonts.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.html5.min.js}"></script>
+	<script th:src="@{/plugins/datatables-buttons/js/buttons.print.min.js}"></script>
+	<script th:src="@{/plugins/moment/moment.min.js}"></script>
+	<!-- date-range-picker -->
+
+	<script th:src="@{/plugins/daterangepicker/daterangepicker.js}"></script>
+	<!-- Crypto JS JavaScript -->
+	<script th:src="@{/dist/appjs/aes.js}"></script>
+	<script th:src="@{/dist/appjs/pbkdf2.js}"></script>
+	<script th:src="@{/dist/appjs/AESUtil.js}"></script>
+	<script th:src="@{/dist/appjs/app.js}"></script>
+	<script th:src="@{/dist/appjs/erm/header.js}"></script>
+
+	<script th:src="@{/dist/appjs/erm/kriAsstment.js}"></script>
+
+
+	<script>
+		//loader
+		document.onreadystatechange = function() {
+			var state = document.readyState
+			if (state == 'complete') {
+				document.getElementById('load').style.visibility = "hidden";
+			}
+		}
+		$("#asstTable").DataTable({
+			"responsive" : false,
+			"autoWidth" : true,
+			"searching" : false,
+			"fixedHeader" : true,
+			"language" : {
+				"emptyTable" : "No Data Available"
+			}
+		}).buttons().container().appendTo('#asstTable_wrapper .col-md-6:eq(0)');
+	</script>
+	<script>
+		
+	</script>
+
+
+</body>
+</html>
